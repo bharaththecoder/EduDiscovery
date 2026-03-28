@@ -3,7 +3,7 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDpqfLnB-zoQnZdBHv9CLYcq5Dn0MxE0rY4",
+  apiKey: "AIzaSyDQfLnB-zoQnZdBHv9CLYcq5Dn0MxEOrY4",
   authDomain: "edudiscovery-9cff0.firebaseapp.com",
   projectId: "edudiscovery-9cff0",
   storageBucket: "edudiscovery-9cff0.appspot.com",
