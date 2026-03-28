@@ -13,7 +13,7 @@ export default function SearchPage() {
   const filters = ['All', 'Amaravati', 'Visakhapatnam', 'Guntur', 'Engineering', 'Medical'];
 
   useEffect(() => {
-    fetch("https://universities.hipolabs.com/search?country=India")
+    fetch("/colleges.json")
       .then(res => res.json())
       .then(data => {
         // Map and clean up API data to match our style

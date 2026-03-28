@@ -13,8 +13,8 @@ export default function HomePage() {
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
-        // Fetch some arbitrary colleges to feature
-        const res = await fetch('https://universities.hipolabs.com/search?country=India');
+        // Fetch colleges from our local stable snapshot
+        const res = await fetch('/colleges.json');
         const data = await res.json();
         
         // Map and deduplicate by name

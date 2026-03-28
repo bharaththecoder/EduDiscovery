@@ -21,7 +21,7 @@ export default function RecommendationPage() {
     
     try {
       // Fetch base list
-      const res = await fetch('https://universities.hipolabs.com/search?country=India');
+      const res = await fetch('/colleges.json');
       let data = await res.json();
       
       // Artificial delay to simulate AI thinking
