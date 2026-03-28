@@ -13,7 +13,7 @@ export default function SearchPage() {
   const filters = ['All', 'Amaravati', 'Visakhapatnam', 'Guntur', 'Engineering', 'Medical'];
 
   useEffect(() => {
-    fetch('http://universities.hipolabs.com/search?country=India')
+    fetch("https://universities.hipolabs.com/search?country=India&name=institute")
       .then(res => res.json())
       .then(data => {
         // Map and clean up API data to match our style
@@ -25,7 +25,7 @@ export default function SearchPage() {
             website: item.web_pages?.[0] || '#'
           };
         }).slice(0, 100); // Limit to 100 for performance
-        
+
         setAllColleges(cleaned);
         setFilteredColleges(cleaned);
         setLoading(false);
@@ -34,18 +34,18 @@ export default function SearchPage() {
 
   useEffect(() => {
     if (!allColleges.length) return;
-    
+
     let result = allColleges;
-    
+
     // Apply search
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      result = result.filter(c => 
-        c.name.toLowerCase().includes(term) || 
+      result = result.filter(c =>
+        c.name.toLowerCase().includes(term) ||
         c.state.toLowerCase().includes(term)
       );
     }
-    
+
     // Apply dummy filter matching for UI aesthetic
     if (activeFilter !== 'All') {
       if (['Engineering', 'Medical'].includes(activeFilter)) {
@@ -55,21 +55,21 @@ export default function SearchPage() {
         result = result.filter(c => c.state.toLowerCase().includes(activeFilter.toLowerCase()) || Math.random() > 0.8);
       }
     }
-    
+
     setFilteredColleges(result);
   }, [searchTerm, activeFilter, allColleges]);
 
   return (
     <div className="page-content">
       <h1 style={{ fontSize: '28px', marginBottom: '8px', lineHeight: 1.1 }}>
-        Discover Your <br/>
-        <span className="title-gradient" style={{fontStyle: 'italic'}}>Premier</span> Education
+        Discover Your <br />
+        <span className="title-gradient" style={{ fontStyle: 'italic' }}>Premier</span> Education
       </h1>
-      
+
       <div style={{ position: 'relative', margin: '24px 0' }}>
-        <input 
-          type="text" 
-          placeholder="Search by college name or city..." 
+        <input
+          type="text"
+          placeholder="Search by college name or city..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{
@@ -86,18 +86,18 @@ export default function SearchPage() {
 
       {/* Filter Chips */}
       <div className="no-scrollbar" style={{ display: 'flex', gap: '8px', overflowX: 'auto', margin: '0 -24px 24px -24px', padding: '0 24px' }}>
-        <button 
+        <button
           style={{ background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius-full)', padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}
         >
           <SlidersHorizontal size={14} /> Filters
         </button>
         {filters.map(f => (
-          <button 
+          <button
             key={f}
             onClick={() => setActiveFilter(f)}
-            style={{ 
+            style={{
               whiteSpace: 'nowrap',
-              padding: '6px 16px', 
+              padding: '6px 16px',
               borderRadius: 'var(--radius-full)',
               background: activeFilter === f ? 'var(--primary)' : 'var(--primary-glow)',
               color: activeFilter === f ? '#fff' : 'var(--primary)',
