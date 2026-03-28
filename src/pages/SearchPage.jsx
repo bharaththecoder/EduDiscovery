@@ -1,109 +1,178 @@
 import React, { useState, useEffect } from 'react';
-import { Search, SlidersHorizontal } from 'lucide-react';
+import { Search, SlidersHorizontal, ArrowLeft } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import CollegeCard from '../components/CollegeCard';
-import { motion } from 'framer-motion';
+import { curatedColleges } from '../data/curatedColleges';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function SearchPage() {
-  const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  const initialQuery = searchParams.get('q') || '';
+  const initialFilter = searchParams.get('filter') || 'All';
+
+  const [searchTerm, setSearchTerm] = useState(initialQuery);
   const [allColleges, setAllColleges] = useState([]);
   const [filteredColleges, setFilteredColleges] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeFilter, setActiveFilter] = useState('All');
+  const [activeFilter, setActiveFilter] = useState(initialFilter);
 
-  const filters = ['All', 'Amaravati', 'Visakhapatnam', 'Guntur', 'Engineering', 'Medical'];
+  const filters = ['All', 'Amaravati', 'Visakhapatnam', 'Vijayawada', 'Hyderabad', 'Chennai', 'Engineering', 'Medical', 'Management'];
 
   useEffect(() => {
+    // Fetch generic colleges
     fetch("/colleges.json")
       .then(res => res.json())
       .then(data => {
-        // Map and clean up API data to match our style
         const cleaned = Array.from(new Set(data.map(a => a.name))).map(name => {
           const item = data.find(a => a.name === name);
           return {
             name: item.name,
             state: item['state-province'] || 'India',
-            website: item.web_pages?.[0] || '#'
+            website: item.web_pages?.[0] || '#',
+            image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+            match: Math.floor(Math.random() * (99 - 70 + 1) + 70) // Generate random match for generic colleges
           };
-        }).slice(0, 100); // Limit to 100 for performance
+        }).slice(0, 150); // Give plenty of scrolling but limit performance hit
 
-        setAllColleges(cleaned);
-        setFilteredColleges(cleaned);
+        // Merge curated colleges with generic colleges, ensuring no duplicates and curated are prioritized
+        const curatedNames = new Set(curatedColleges.map(c => c.name));
+        const filteredCleaned = cleaned.filter(c => !curatedNames.has(c.name));
+        
+        setAllColleges([...curatedColleges, ...filteredCleaned]);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setAllColleges(curatedColleges);
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    setSearchTerm(searchParams.get('q') || '');
+    setActiveFilter(searchParams.get('filter') || 'All');
+  }, [searchParams]);
 
   useEffect(() => {
     if (!allColleges.length) return;
 
     let result = allColleges;
 
-    // Apply search
+    // Apply Search Term
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       result = result.filter(c =>
         c.name.toLowerCase().includes(term) ||
-        c.state.toLowerCase().includes(term)
+        (c.state && c.state.toLowerCase().includes(term)) ||
+        (c.tags && c.tags.some(t => t.toLowerCase().includes(term))) ||
+        (c.description && c.description.toLowerCase().includes(term))
       );
     }
 
-    // Apply dummy filter matching for UI aesthetic
+    // Apply Location/Category Filter
     if (activeFilter !== 'All') {
-      if (['Engineering', 'Medical'].includes(activeFilter)) {
-        // Dummy semantic filtering
-        result = result.filter(c => c.name.toLowerCase().includes(activeFilter.toLowerCase()) || Math.random() > 0.5);
+      const filterLower = activeFilter.toLowerCase();
+      
+      if (['engineering', 'medical', 'management'].includes(filterLower)) {
+         result = result.filter(c => 
+           (c.tags && c.tags.some(t => t.toLowerCase().includes(filterLower))) || 
+           c.name.toLowerCase().includes(filterLower)
+         );
       } else {
-        result = result.filter(c => c.state.toLowerCase().includes(activeFilter.toLowerCase()) || Math.random() > 0.8);
+         result = result.filter(c => 
+           (c.quickInfo && c.quickInfo.location.toLowerCase().includes(filterLower)) ||
+           (c.state && c.state.toLowerCase().includes(filterLower))
+         );
       }
     }
 
     setFilteredColleges(result);
   }, [searchTerm, activeFilter, allColleges]);
 
-  return (
-    <div className="page-content">
-      <h1 style={{ fontSize: '28px', marginBottom: '8px', lineHeight: 1.1 }}>
-        Discover Your <br />
-        <span className="title-gradient" style={{ fontStyle: 'italic' }}>Premier</span> Education
-      </h1>
+  const handleSearchChange = (e) => {
+    const val = e.target.value;
+    setSearchTerm(val);
+    if(val) {
+      searchParams.set('q', val);
+    } else {
+      searchParams.delete('q');
+    }
+    setSearchParams(searchParams);
+  };
 
-      <div style={{ position: 'relative', margin: '24px 0' }}>
+  const handleFilterClick = (f) => {
+    setActiveFilter(f);
+    if (f === 'All') {
+      searchParams.delete('filter');
+    } else {
+      searchParams.set('filter', f);
+    }
+    setSearchParams(searchParams);
+  };
+
+  return (
+    <div className="page-content" style={{ paddingBottom: '100px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
+        <button 
+          onClick={() => navigate(-1)} 
+          style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--surface-color)', border: '1px solid rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <ArrowLeft size={20} color="var(--text-main)" />
+        </button>
+        <h1 style={{ fontSize: '24px', fontWeight: '800', lineHeight: 1.1 }}>
+          Explore
+        </h1>
+      </div>
+
+      <div style={{ position: 'relative', margin: '0 0 24px 0' }}>
         <input
           type="text"
-          placeholder="Search by college name or city..."
+          placeholder="Search by college name, city, course..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleSearchChange}
           style={{
-            background: 'var(--surface-color)',
-            backdropFilter: 'var(--glass-blur)',
-            paddingLeft: '44px',
-            borderRadius: 'var(--radius-full)',
-            border: '1px solid rgba(255,255,255,0.8)',
-            boxShadow: 'var(--shadow-sm)'
+            width: '100%',
+            background: '#fff',
+            padding: '16px 20px 16px 50px',
+            borderRadius: '16px',
+            border: '2px solid transparent',
+            boxShadow: '0 8px 30px rgba(0,0,0,0.06)',
+            fontSize: '15px',
+            color: 'var(--text-main)',
+            outline: 'none',
+            transition: 'all 0.3s ease'
           }}
+          onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+          onBlur={(e) => e.target.style.borderColor = 'transparent'}
         />
-        <Search size={18} color="var(--text-muted)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
+        <Search size={20} color="var(--primary)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
       </div>
 
       {/* Filter Chips */}
-      <div className="no-scrollbar" style={{ display: 'flex', gap: '8px', overflowX: 'auto', margin: '0 -24px 24px -24px', padding: '0 24px' }}>
+      <div className="no-scrollbar" style={{ display: 'flex', gap: '8px', overflowX: 'auto', margin: '0 -24px 24px -24px', padding: '0 24px', paddingBottom: '8px' }}>
         <button
-          style={{ background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius-full)', padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}
+          style={{ background: '#000', color: '#fff', borderRadius: 'var(--radius-full)', padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: '600', border: 'none' }}
         >
           <SlidersHorizontal size={14} /> Filters
         </button>
         {filters.map(f => (
           <button
             key={f}
-            onClick={() => setActiveFilter(f)}
+            onClick={() => handleFilterClick(f)}
             style={{
               whiteSpace: 'nowrap',
-              padding: '6px 16px',
+              padding: '8px 16px',
               borderRadius: 'var(--radius-full)',
-              background: activeFilter === f ? 'var(--primary)' : 'var(--primary-glow)',
-              color: activeFilter === f ? '#fff' : 'var(--primary)',
+              background: activeFilter === f ? 'var(--primary)' : '#fff',
+              color: activeFilter === f ? '#fff' : 'var(--text-main)',
               fontSize: '13px',
-              border: 'none',
-              fontWeight: activeFilter === f ? '600' : '500'
+              border: activeFilter === f ? '1px solid var(--primary)' : '1px solid rgba(0,0,0,0.08)',
+              fontWeight: activeFilter === f ? '700' : '500',
+              boxShadow: activeFilter === f ? '0 4px 15px rgba(99, 102, 241, 0.3)' : '0 2px 5px rgba(0,0,0,0.02)',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
             }}
           >
             {f}
@@ -112,17 +181,42 @@ export default function SearchPage() {
       </div>
 
       <div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: '600' }}>
+            {loading ? 'Searching...' : `Found ${filteredColleges.length} results`}
+          </span>
+        </div>
+
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)' }}>Fetching institutions...</div>
+          <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-muted)', fontSize: '15px' }}>Fetching top institutions...</div>
         ) : filteredColleges.length > 0 ? (
-          <motion.div layout style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-            {filteredColleges.map((col, idx) => (
-              <CollegeCard key={col.name} college={col} index={idx} />
-            ))}
-          </motion.div>
+          <AnimatePresence>
+            <motion.div layout style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {filteredColleges.map((col, idx) => (
+                <motion.div
+                  key={col.name + idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                >
+                  <CollegeCard college={col} index={idx} />
+                </motion.div>
+              ))}
+            </motion.div>
+          </AnimatePresence>
         ) : (
-          <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)' }}>
-            No colleges found matching your criteria.
+          <div style={{ textAlign: 'center', padding: '60px 0', background: '#fff', borderRadius: '24px', boxShadow: 'var(--shadow-sm)' }}>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔍</div>
+            <h3 style={{ fontSize: '18px', marginBottom: '8px', color: 'var(--text-main)' }}>No results found</h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '14px', maxWidth: '80%', margin: '0 auto' }}>
+              Try adjusting your search or filters to find what you're looking for.
+            </p>
+            <button 
+              onClick={() => handleFilterClick('All')} 
+              style={{ marginTop: '24px', background: 'var(--primary-glow)', color: 'var(--primary)', padding: '10px 20px', borderRadius: 'var(--radius-full)', border: 'none', fontWeight: '700', cursor: 'pointer' }}
+            >
+              Clear Filters
+            </button>
           </div>
         )}
       </div>
