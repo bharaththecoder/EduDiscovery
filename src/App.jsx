@@ -7,6 +7,10 @@ import DetailsPage from './pages/DetailsPage';
 import WishlistPage from './pages/WishlistPage';
 import ProfilePage from './pages/ProfilePage';
 import RecommendationPage from './pages/RecommendationPage';
+import EditProfile from './pages/settings/EditProfile';
+import NotificationSettings from './pages/settings/NotificationSettings';
+import PrivacyPolicy from './pages/settings/PrivacyPolicy';
+import HelpCenter from './pages/settings/HelpCenter';
 import BottomNav from './components/BottomNav';
 import { useAuth } from './context/AuthContext';
 
@@ -30,6 +34,11 @@ function App() {
           <Route path="/college/:id" element={<PrivateRoute><DetailsPage /></PrivateRoute>} />
           <Route path="/wishlist" element={<PrivateRoute><WishlistPage /></PrivateRoute>} />
           <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+          
+          <Route path="/settings/profile" element={<PrivateRoute><EditProfile /></PrivateRoute>} />
+          <Route path="/settings/notifications" element={<PrivateRoute><NotificationSettings /></PrivateRoute>} />
+          <Route path="/settings/privacy" element={<PrivateRoute><PrivacyPolicy /></PrivateRoute>} />
+          <Route path="/settings/help" element={<PrivateRoute><HelpCenter /></PrivateRoute>} />
           
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

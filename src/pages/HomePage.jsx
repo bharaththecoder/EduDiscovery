@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { Bell, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import CollegeCard from '../components/CollegeCard';
+import { curatedColleges } from '../data/curatedColleges';
 
 export default function HomePage() {
   const { currentUser } = useAuth();
@@ -11,31 +12,11 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchFeatured = async () => {
-      try {
-        // Fetch colleges from our local stable snapshot
-        const res = await fetch('/colleges.json');
-        const data = await res.json();
-        
-        // Map and deduplicate by name
-        const unique = Array.from(new Set(data.map(a => a.name)))
-          .map(name => data.find(a => a.name === name))
-          .slice(0, 5)
-          .map(item => ({
-             name: item.name,
-             state: item['state-province'] || 'India',
-             website: item.web_pages?.[0] || '#'
-          }));
-          
-        setFeatured(unique);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchFeatured();
+    // Mimic slight network delay for UI smoothness
+    setTimeout(() => {
+      setFeatured(curatedColleges.slice(0, 5));
+      setLoading(false);
+    }, 400);
   }, []);
 
   return (

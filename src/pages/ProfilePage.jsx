@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, ChevronRight, Bell, Lock, User, LifeBuoy } from 'lucide-react';
+import { LogOut, ChevronRight, Bell, Shield, User, LifeBuoy } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 
 export default function ProfilePage() {
@@ -11,11 +11,13 @@ export default function ProfilePage() {
     logout();
   };
 
+  const navigate = useNavigate();
+
   const settingsLinks = [
-    { icon: User, label: 'Edit Profile Information' },
-    { icon: Bell, label: 'Notification Preferences' },
-    { icon: Lock, label: 'Privacy & Security' },
-    { icon: LifeBuoy, label: 'Help Center & FAQ' },
+    { icon: User, label: 'Edit Personal Information', path: '/settings/profile' },
+    { icon: Bell, label: 'Notification Preferences', path: '/settings/notifications' },
+    { icon: Shield, label: 'Privacy & Security', path: '/settings/privacy' },
+    { icon: LifeBuoy, label: "Help Center & FAQ's", path: '/settings/help' },
   ];
 
   return (
@@ -52,7 +54,7 @@ export default function ProfilePage() {
         <div className="glass-panel" style={{ padding: '8px 16px' }}>
           {settingsLinks.map((link, idx) => (
             <div key={idx} 
-                 onClick={() => alert(`Opening ${link.label} Settings...`)}
+                 onClick={() => navigate(link.path)}
                  style={{ 
               display: 'flex', 
               justifyContent: 'space-between', 

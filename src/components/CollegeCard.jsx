@@ -10,15 +10,17 @@ export default function CollegeCard({ college, index }) {
   
   const bookmarked = isBookmarked(college.name);
 
-  // Generate a random match percentage and dummy image for aesthetic purposes
+  // Generate a random match percentage and dummy image ONLY if missing
   const matchPercentage = college.match || Math.floor(Math.random() * (98 - 75 + 1) + 75);
-  const dummyImages = [
+  const fallbackImages = [
     'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
     'https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
     'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
     'https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
   ];
-  const image = dummyImages[(index || 0) % dummyImages.length];
+  const image = college.image || fallbackImages[(index || 0) % fallbackImages.length];
+
+  const displayTags = college.tags || ['Degree', 'Research', 'Campus'];
 
   const handleBookmark = (e) => {
     e.stopPropagation();
@@ -103,7 +105,7 @@ export default function CollegeCard({ college, index }) {
         </div>
 
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          {['CS', 'ECE', 'ME'].map(tag => (
+          {displayTags.map(tag => (
             <span key={tag} style={{
               background: 'var(--primary-glow)',
               color: 'var(--primary)',
