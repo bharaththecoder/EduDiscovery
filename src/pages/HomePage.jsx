@@ -3,24 +3,17 @@ import { useAuth } from '../context/AuthContext';
 import { Bell, Search, MapPin, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import CollegeCard from '../components/CollegeCard';
-import { curatedColleges } from '../data/curatedColleges';
+import { useColleges } from '../context/CollegeContext';
 
 export default function HomePage() {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
-  const [featured, setFeatured] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { colleges, loading: contextLoading } = useColleges();
   const [searchQuery, setSearchQuery] = useState('');
 
   const locations = ['Amaravati', 'Visakhapatnam', 'Vijayawada', 'Hyderabad', 'Chennai'];
 
-  useEffect(() => {
-    // Top 5 colleges for the "Featured" section
-    setTimeout(() => {
-      setFeatured(curatedColleges.slice(0, 5));
-      setLoading(false);
-    }, 400);
-  }, []);
+  const featured = colleges.slice(0, 5);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -146,7 +139,7 @@ export default function HomePage() {
           <span onClick={() => navigate('/search')} style={{ fontSize: '13px', color: 'var(--primary)', fontWeight: '700', cursor: 'pointer' }}>View All</span>
         </div>
 
-        {loading ? (
+        {contextLoading ? (
            <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)' }}>Loading top colleges...</div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>

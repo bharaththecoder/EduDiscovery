@@ -11,6 +11,7 @@ import EditProfile from './pages/settings/EditProfile';
 import NotificationSettings from './pages/settings/NotificationSettings';
 import PrivacyPolicy from './pages/settings/PrivacyPolicy';
 import HelpCenter from './pages/settings/HelpCenter';
+import AdminSeed from './pages/settings/AdminSeed';
 import BottomNav from './components/BottomNav';
 import { useAuth } from './context/AuthContext';
 
@@ -39,7 +40,8 @@ function App() {
           <Route path="/settings/notifications" element={<PrivateRoute><NotificationSettings /></PrivateRoute>} />
           <Route path="/settings/privacy" element={<PrivateRoute><PrivacyPolicy /></PrivateRoute>} />
           <Route path="/settings/help" element={<PrivateRoute><HelpCenter /></PrivateRoute>} />
-          
+          <Route path="/admin/seed-colleges" element={<PrivateRoute><AdminSeed /></PrivateRoute>} />
+
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         

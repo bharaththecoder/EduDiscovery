@@ -2,18 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Search, SlidersHorizontal, ArrowLeft } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import CollegeCard from '../components/CollegeCard';
-import { curatedColleges } from '../data/curatedColleges';
+import { useColleges } from '../context/CollegeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function SearchPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { colleges: curatedColleges, loading: contextLoading } = useColleges(); // Live Firestore Data
   
   const initialQuery = searchParams.get('q') || '';
   const initialFilter = searchParams.get('filter') || 'All';
 
   const [searchTerm, setSearchTerm] = useState(initialQuery);
   const [allColleges, setAllColleges] = useState([]);
+  const [genericColleges, setGenericColleges] = useState([]);
   const [filteredColleges, setFilteredColleges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState(initialFilter);
@@ -21,7 +23,7 @@ export default function SearchPage() {
   const filters = ['All', 'Amaravati', 'Visakhapatnam', 'Vijayawada', 'Hyderabad', 'Chennai', 'Engineering', 'Medical', 'Management'];
 
   useEffect(() => {
-    // Fetch generic colleges
+    // Fetch generic fallback colleges directory
     fetch("/colleges.json")
       .then(res => res.json())
       .then(data => {
@@ -31,24 +33,28 @@ export default function SearchPage() {
             name: item.name,
             state: item['state-province'] || 'India',
             website: item.web_pages?.[0] || '#',
-            image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
-            match: Math.floor(Math.random() * (99 - 70 + 1) + 70) // Generate random match for generic colleges
+            image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
+            // Purposely removed fake random 'match' percentages for a real-world realistic directory feel.
           };
-        }).slice(0, 150); // Give plenty of scrolling but limit performance hit
-
-        // Merge curated colleges with generic colleges, ensuring no duplicates and curated are prioritized
-        const curatedNames = new Set(curatedColleges.map(c => c.name));
-        const filteredCleaned = cleaned.filter(c => !curatedNames.has(c.name));
+        }).slice(0, 150); // Performance cap
         
-        setAllColleges([...curatedColleges, ...filteredCleaned]);
-        setLoading(false);
+        setGenericColleges(cleaned);
       })
       .catch(err => {
-        console.error(err);
-        setAllColleges(curatedColleges);
-        setLoading(false);
+        console.error("Failed to load massive generic json:", err);
       });
   }, []);
+
+  useEffect(() => {
+    if (contextLoading) return; // Wait until Firebase responds
+
+    // Merge live Firestore curated colleges with the massive generic fallback list
+    const curatedNames = new Set(curatedColleges.map(c => c.name));
+    const filteredGeneric = genericColleges.filter(c => !curatedNames.has(c.name));
+    
+    setAllColleges([...curatedColleges, ...filteredGeneric]);
+    setLoading(false);
+  }, [curatedColleges, genericColleges, contextLoading]);
 
   useEffect(() => {
     setSearchTerm(searchParams.get('q') || '');
@@ -82,7 +88,7 @@ export default function SearchPage() {
          );
       } else {
          result = result.filter(c => 
-           (c.quickInfo && c.quickInfo.location.toLowerCase().includes(filterLower)) ||
+           (c.quickInfo && c.quickInfo.location?.toLowerCase().includes(filterLower)) ||
            (c.state && c.state.toLowerCase().includes(filterLower))
          );
       }
@@ -117,19 +123,19 @@ export default function SearchPage() {
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
         <button 
           onClick={() => navigate(-1)} 
-          style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--surface-color)', border: '1px solid rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--surface-color)', border: '1px solid rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
         >
           <ArrowLeft size={20} color="var(--text-main)" />
         </button>
         <h1 style={{ fontSize: '24px', fontWeight: '800', lineHeight: 1.1 }}>
-          Explore
+          Explore Directory
         </h1>
       </div>
 
       <div style={{ position: 'relative', margin: '0 0 24px 0' }}>
         <input
           type="text"
-          placeholder="Search by college name, city, course..."
+          placeholder="Search live database & directory..."
           value={searchTerm}
           onChange={handleSearchChange}
           style={{
@@ -183,12 +189,12 @@ export default function SearchPage() {
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: '600' }}>
-            {loading ? 'Searching...' : `Found ${filteredColleges.length} results`}
+            {loading ? 'Querying database...' : `Found ${filteredColleges.length} results`}
           </span>
         </div>
 
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-muted)', fontSize: '15px' }}>Fetching top institutions...</div>
+          <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-muted)', fontSize: '15px' }}>Loading live records from Firestore...</div>
         ) : filteredColleges.length > 0 ? (
           <AnimatePresence>
             <motion.div layout style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -209,7 +215,7 @@ export default function SearchPage() {
             <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔍</div>
             <h3 style={{ fontSize: '18px', marginBottom: '8px', color: 'var(--text-main)' }}>No results found</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '14px', maxWidth: '80%', margin: '0 auto' }}>
-              Try adjusting your search or filters to find what you're looking for.
+              Try adjusting your search or filters to find what you're looking for in the directory.
             </p>
             <button 
               onClick={() => handleFilterClick('All')} 
