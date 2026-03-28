@@ -101,7 +101,7 @@ export default function CollegeCard({ college, index }) {
         </h3>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '13px', marginBottom: '12px' }}>
           <MapPin size={14} />
-          {college.state || 'India'}
+          {college.city && college.city !== "Unknown" ? `${college.city}, ${college.country || 'India'}` : (college.state || 'India')}
         </div>
 
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>

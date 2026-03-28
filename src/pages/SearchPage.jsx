@@ -5,10 +5,32 @@ import CollegeCard from '../components/CollegeCard';
 import { useColleges } from '../context/CollegeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const CITY_MAPPING = {
+  "amaravati": "Amaravati",
+  "visakhapatnam": "Visakhapatnam",
+  "vizag": "Visakhapatnam",
+  "guntur": "Guntur",
+  "vijayawada": "Vijayawada",
+  "hyderabad": "Hyderabad",
+  "chennai": "Chennai"
+};
+
+function assignCity(collegeData) {
+  // Combine all relevant potential location strings into one lowercase string to search keywords
+  const checkString = `${collegeData.name} ${collegeData['state-province'] || ''} ${(collegeData.domains || []).join(' ')}`.toLowerCase();
+  
+  for (const [key, city] of Object.entries(CITY_MAPPING)) {
+    if (checkString.includes(key)) {
+      return city;
+    }
+  }
+  return "Unknown";
+}
+
 export default function SearchPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { colleges: curatedColleges, loading: contextLoading } = useColleges(); // Live Firestore Data
+  const { colleges: curatedColleges, loading: contextLoading } = useColleges(); 
   
   const initialQuery = searchParams.get('q') || '';
   const initialFilter = searchParams.get('filter') || 'All';
@@ -18,41 +40,51 @@ export default function SearchPage() {
   const [genericColleges, setGenericColleges] = useState([]);
   const [filteredColleges, setFilteredColleges] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const [activeFilter, setActiveFilter] = useState(initialFilter);
 
   const filters = ['All', 'Amaravati', 'Visakhapatnam', 'Vijayawada', 'Hyderabad', 'Chennai', 'Engineering', 'Medical', 'Management'];
 
   useEffect(() => {
-    // Fetch generic fallback colleges directory
     fetch("/colleges.json")
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to load colleges");
+        return res.json();
+      })
       .then(data => {
         const cleaned = Array.from(new Set(data.map(a => a.name))).map(name => {
           const item = data.find(a => a.name === name);
           return {
             name: item.name,
             state: item['state-province'] || 'India',
+            country: item.country || 'India',
             website: item.web_pages?.[0] || '#',
-            image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
-            // Purposely removed fake random 'match' percentages for a real-world realistic directory feel.
+            image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+            city: assignCity(item) // New Derived Field
           };
-        }).slice(0, 150); // Performance cap
+        }).slice(0, 150); 
         
         setGenericColleges(cleaned);
       })
       .catch(err => {
-        console.error("Failed to load massive generic json:", err);
+        console.error("Failed to load generic json:", err);
+        setFetchError(true);
       });
   }, []);
 
   useEffect(() => {
-    if (contextLoading) return; // Wait until Firebase responds
+    if (contextLoading) return;
 
-    // Merge live Firestore curated colleges with the massive generic fallback list
-    const curatedNames = new Set(curatedColleges.map(c => c.name));
+    // Ensure curated colleges also have a parsed 'city' field if they don't already
+    const processedCurated = curatedColleges.map(c => ({
+       ...c,
+       city: c.city || assignCity({ name: c.name, 'state-province': c.state, domains: [c.website] })
+    }));
+
+    const curatedNames = new Set(processedCurated.map(c => c.name));
     const filteredGeneric = genericColleges.filter(c => !curatedNames.has(c.name));
     
-    setAllColleges([...curatedColleges, ...filteredGeneric]);
+    setAllColleges([...processedCurated, ...filteredGeneric]);
     setLoading(false);
   }, [curatedColleges, genericColleges, contextLoading]);
 
@@ -62,40 +94,34 @@ export default function SearchPage() {
   }, [searchParams]);
 
   useEffect(() => {
-    if (!allColleges.length) return;
+    if (!allColleges.length && !fetchError) return;
 
     let result = allColleges;
 
-    // Apply Search Term
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      result = result.filter(c =>
-        c.name.toLowerCase().includes(term) ||
-        (c.state && c.state.toLowerCase().includes(term)) ||
-        (c.tags && c.tags.some(t => t.toLowerCase().includes(term))) ||
-        (c.description && c.description.toLowerCase().includes(term))
-      );
-    }
-
-    // Apply Location/Category Filter
+    // 1. Combine Filter logic (Filter matches exactly by new 'city' field for locations)
     if (activeFilter !== 'All') {
+      const isLocationFilter = ['Amaravati', 'Visakhapatnam', 'Guntur', 'Vijayawada', 'Hyderabad', 'Chennai'].includes(activeFilter);
       const filterLower = activeFilter.toLowerCase();
       
-      if (['engineering', 'medical', 'management'].includes(filterLower)) {
+      if (isLocationFilter) {
+         result = result.filter(c => c.city === activeFilter);
+      } else {
+         // It's a category/stream filter (Engineering, Medical)
          result = result.filter(c => 
            (c.tags && c.tags.some(t => t.toLowerCase().includes(filterLower))) || 
            c.name.toLowerCase().includes(filterLower)
          );
-      } else {
-         result = result.filter(c => 
-           (c.quickInfo && c.quickInfo.location?.toLowerCase().includes(filterLower)) ||
-           (c.state && c.state.toLowerCase().includes(filterLower))
-         );
       }
     }
 
+    // 2. Combine Search logic (Both Search and Filter now work together restrictively)
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      result = result.filter(c => c.name.toLowerCase().includes(term));
+    }
+
     setFilteredColleges(result);
-  }, [searchTerm, activeFilter, allColleges]);
+  }, [searchTerm, activeFilter, allColleges, fetchError]);
 
   const handleSearchChange = (e) => {
     const val = e.target.value;
@@ -193,7 +219,9 @@ export default function SearchPage() {
           </span>
         </div>
 
-        {loading ? (
+        {fetchError ? (
+          <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--accent)', fontSize: '16px', fontWeight: '600' }}>Failed to load colleges</div>
+        ) : loading ? (
           <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-muted)', fontSize: '15px' }}>Loading live records from Firestore...</div>
         ) : filteredColleges.length > 0 ? (
           <AnimatePresence>
@@ -213,7 +241,7 @@ export default function SearchPage() {
         ) : (
           <div style={{ textAlign: 'center', padding: '60px 0', background: '#fff', borderRadius: '24px', boxShadow: 'var(--shadow-sm)' }}>
             <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔍</div>
-            <h3 style={{ fontSize: '18px', marginBottom: '8px', color: 'var(--text-main)' }}>No results found</h3>
+            <h3 style={{ fontSize: '18px', marginBottom: '8px', color: 'var(--text-main)' }}>No colleges found</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '14px', maxWidth: '80%', margin: '0 auto' }}>
               Try adjusting your search or filters to find what you're looking for in the directory.
             </p>
