@@ -1,0 +1,151 @@
+:root {
+  /* Gen-Z Aesthetics Palette */
+  --bg-color: #f8f6fb;
+  --surface-color: rgba(255, 255, 255, 0.7);
+  --surface-hover: rgba(255, 255, 255, 0.9);
+  
+  --primary: #6366f1; /* Soft neon indigo */
+  --primary-glow: rgba(99, 102, 241, 0.4);
+  --secondary: #a855f7; /* Soft neon purple */
+  --accent: #ec4899; /* Neon pink accent */
+  
+  --text-main: #1e1b4b;
+  --text-muted: #6b7280;
+  --text-inverse: #ffffff;
+  
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 32px;
+  --radius-full: 9999px;
+  
+  --shadow-sm: 0 4px 15px rgba(0,0,0,0.03);
+  --shadow-md: 0 8px 30px rgba(99, 102, 241, 0.1);
+  --shadow-glow: 0 0 20px rgba(168, 85, 247, 0.2);
+  
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --glass-blur: blur(16px);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  /* A nice subtle animated gradient background */
+  background: radial-gradient(circle at top left, #f3e8ff, #f8f6fb 40%),
+              radial-gradient(circle at bottom right, #e0e7ff, #f8f6fb 40%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+a {
+  text-decoration: none;
+  color: var(--primary);
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+/* Base Glassmorphism Container */
+.glass-panel {
+  background: var(--surface-color);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Form Elements */
+input {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0,0,0,0.05);
+  background: rgba(255,255,255,0.8);
+  font-size: 15px;
+  color: var(--text-main);
+  outline: none;
+  transition: var(--transition);
+}
+
+input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-glow);
+  background: #ffffff;
+}
+
+/* Primary Button */
+.btn-primary {
+  width: 100%;
+  padding: 16px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: var(--text-inverse);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.btn-primary:hover, .btn-primary:active {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Layout Utilities */
+.app-container {
+  max-width: 600px; /* Mobile first, centered on desktop */
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  background: inherit;
+  box-shadow: 0 0 40px rgba(0,0,0,0.03);
+}
+
+.page-content {
+  padding: 24px;
+  padding-bottom: 100px; /* Space for bottom nav */
+}
+
+/* Headings */
+h1, h2, h3, h4 {
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.title-gradient {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Hide Scrollbar but keep functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
