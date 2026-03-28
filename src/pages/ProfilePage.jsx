@@ -51,7 +51,9 @@ export default function ProfilePage() {
         <h3 style={{ fontSize: '18px', marginBottom: '16px' }}>Account Settings</h3>
         <div className="glass-panel" style={{ padding: '8px 16px' }}>
           {settingsLinks.map((link, idx) => (
-            <div key={idx} style={{ 
+            <div key={idx} 
+                 onClick={() => alert(`Opening ${link.label} Settings...`)}
+                 style={{ 
               display: 'flex', 
               justifyContent: 'space-between', 
               alignItems: 'center', 

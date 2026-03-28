@@ -14,7 +14,7 @@ export default function HomePage() {
     const fetchFeatured = async () => {
       try {
         // Fetch some arbitrary colleges to feature
-        const res = await fetch('http://universities.hipolabs.com/search?country=India&name=institute');
+        const res = await fetch('https://universities.hipolabs.com/search?country=India');
         const data = await res.json();
         
         // Map and deduplicate by name
@@ -73,6 +73,34 @@ export default function HomePage() {
         <span>Search colleges, degrees...</span>
       </div>
 
+      {/* Future Fit AI Banner */}
+      <div 
+        onClick={() => navigate('/recommend')}
+        className="glass-panel"
+        style={{
+          background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
+          padding: '24px',
+          borderRadius: 'var(--radius-lg)',
+          marginBottom: '32px',
+          color: '#fff',
+          position: 'relative',
+          overflow: 'hidden',
+          cursor: 'pointer',
+          boxShadow: '0 10px 30px rgba(99, 102, 241, 0.3)',
+          border: 'none'
+        }}
+      >
+        <div style={{ position: 'absolute', top: -20, right: -20, width: 100, height: 100, background: 'rgba(255,255,255,0.1)', borderRadius: '50%' }}></div>
+        <div style={{ position: 'absolute', bottom: -30, left: 40, width: 80, height: 80, background: 'rgba(255,255,255,0.1)', borderRadius: '50%' }}></div>
+        
+        <h2 style={{ fontSize: '22px', marginBottom: '8px', position: 'relative', zIndex: 2 }}>Not sure where to start?</h2>
+        <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.9)', marginBottom: '16px', lineHeight: 1.4, position: 'relative', zIndex: 2 }}> Take our 2-minute "Future Fit" AI quiz to get personalized college recommendations.</p>
+        
+        <button style={{ background: '#fff', color: 'var(--primary)', padding: '10px 20px', borderRadius: 'var(--radius-full)', fontSize: '14px', fontWeight: '700', border: 'none', position: 'relative', zIndex: 2 }}>
+          Start My Journey
+        </button>
+      </div>
+
       {/* Featured Section */}
       <div style={{ marginBottom: '32px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '16px' }}>
@@ -80,7 +108,7 @@ export default function HomePage() {
             <span style={{ fontSize: '10px', fontWeight: '800', letterSpacing: '1px', color: 'var(--primary)', textTransform: 'uppercase' }}>PREMIER INSTITUTES</span>
             <h2 style={{ fontSize: '20px' }}>Featured Universities</h2>
           </div>
-          <span style={{ fontSize: '12px', color: 'var(--primary)', fontWeight: '600', cursor: 'pointer' }}>View All</span>
+          <span onClick={() => navigate('/search')} style={{ fontSize: '12px', color: 'var(--primary)', fontWeight: '600', cursor: 'pointer' }}>View All</span>
         </div>
 
         {loading ? (
@@ -102,7 +130,7 @@ export default function HomePage() {
           <span style={{ background: '#ef4444', color: '#fff', fontSize: '10px', fontWeight: '800', padding: '4px 8px', borderRadius: '4px', display: 'inline-block', marginBottom: '12px' }}>FLASH UPDATE</span>
           <h3 style={{ fontSize: '18px', marginBottom: '10px', color: 'var(--text-main)', lineHeight: '1.3' }}>AP Inter Results Announced: Career Counseling Sessions Start Tomorrow</h3>
           <p style={{ fontSize: '13px', color: 'rgba(0,0,0,0.6)', marginBottom: '16px', lineHeight: '1.5' }}>Expert guidance for stream selection and top college applications available for all qualified students.</p>
-          <button style={{ background: 'var(--primary)', color: '#fff', padding: '10px 20px', borderRadius: 'var(--radius-full)', fontSize: '13px', fontWeight: '600' }}>Read More</button>
+          <button onClick={() => alert("Redirecting to Counseling Portal...")} style={{ background: 'var(--primary)', color: '#fff', padding: '10px 20px', borderRadius: 'var(--radius-full)', fontSize: '13px', fontWeight: '600' }}>Read More</button>
         </div>
       </div>
     </div>
