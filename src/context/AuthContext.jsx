@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { 
-  onAuthStateChanged, 
-  createUserWithEmailAndPassword, 
+import {
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
   const signup = async (email, password, name) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      
+
       // Update the user's display name inside Firebase
       if (userCredential.user) {
         await updateProfile(userCredential.user, { displayName: name });
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
       }
       return userCredential.user;
     } catch (error) {
-       throw error;
+      throw error;
     }
   };
 
@@ -67,9 +67,15 @@ export const AuthProvider = ({ children }) => {
 
   const loginWithGoogle = async () => {
     try {
+      // 👇 ADD THIS LINE
+      googleProvider.setCustomParameters({
+        prompt: "select_account"
+      });
+
       const result = await signInWithPopup(auth, googleProvider);
       return result.user;
     } catch (error) {
+      console.error("Google login error:", error);
       throw error;
     }
   };
