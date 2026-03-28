@@ -20,7 +20,7 @@ export default function CollegeCard({ college, index }) {
   ];
   const image = college.image || fallbackImages[(index || 0) % fallbackImages.length];
 
-  const displayTags = college.tags || ['Degree', 'Research', 'Campus'];
+  const displayTags = college.courses || college.tags || ['Degree', 'Research', 'Campus'];
 
   const handleBookmark = (e) => {
     e.stopPropagation();
@@ -99,12 +99,25 @@ export default function CollegeCard({ college, index }) {
         <h3 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '6px', color: 'var(--text-main)', lineHeight: '1.2' }}>
           {college.name}
         </h3>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '13px', marginBottom: '12px' }}>
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '13px', marginBottom: '4px' }}>
           <MapPin size={14} />
-          {college.city && college.city !== "Unknown" ? `${college.city}, ${college.country || 'India'}` : (college.state || 'India')}
+          {college.city && college.city !== "Unknown" ? `${college.city}, ${college.state}` : (college.state || 'India')}
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        {college.website && (
+           <a 
+             href={college.website} 
+             target="_blank" 
+             rel="noopener noreferrer" 
+             onClick={(e) => e.stopPropagation()}
+             style={{ display: 'inline-block', fontSize: '13px', color: 'var(--primary)', textDecoration: 'none', fontWeight: '600', marginBottom: '12px' }}
+           >
+             {new URL(college.website).hostname.replace('www.', '')}
+           </a>
+        )}
+
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: college.website ? '0' : '12px' }}>
           {displayTags.map(tag => (
             <span key={tag} style={{
               background: 'var(--primary-glow)',

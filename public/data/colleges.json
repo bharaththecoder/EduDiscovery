@@ -1,0 +1,122 @@
+[
+  {
+    "id": "1",
+    "name": "Dr. RVR Institute of Technology (Deemed to be University)",
+    "city": "Guntur",
+    "state": "Andhra Pradesh",
+    "country": "India",
+    "courses": ["B.Tech Computer Science", "B.Tech Electronics", "B.Tech AI & Data Science", "MBA"],
+    "website": "https://www.rvrjec.ac.in",
+    "image": "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "id": "2",
+    "name": "VIT-AP University",
+    "city": "Amaravati",
+    "state": "Andhra Pradesh",
+    "country": "India",
+    "courses": ["B.Tech CSE", "B.Tech Mechanical", "BBA", "B.A. LL.B"],
+    "website": "https://vitap.ac.in",
+    "image": "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "id": "3",
+    "name": "SRM University, AP",
+    "city": "Amaravati",
+    "state": "Andhra Pradesh",
+    "country": "India",
+    "courses": ["B.Tech Computer Science", "B.Sc Finance", "B.Com"],
+    "website": "https://srmap.edu.in",
+    "image": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "id": "4",
+    "name": "KLEF (KL Deemed to be University)",
+    "city": "Vijayawada",
+    "state": "Andhra Pradesh",
+    "country": "India",
+    "courses": ["B.Tech", "B.Arch", "B.Pharmacy", "BCA"],
+    "website": "https://www.kluniversity.in",
+    "image": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "id": "5",
+    "name": "Andhra University",
+    "city": "Visakhapatnam",
+    "state": "Andhra Pradesh",
+    "country": "India",
+    "courses": ["B.Tech", "M.Sc Physics", "B.A. Economics", "PhD"],
+    "website": "https://www.andhrauniversity.edu.in",
+    "image": "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "id": "6",
+    "name": "IIT Hyderabad",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "country": "India",
+    "courses": ["B.Tech CSE", "B.Tech Artificial Intelligence", "B.Design"],
+    "website": "https://iith.ac.in",
+    "image": "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "id": "7",
+    "name": "Osmania University",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "country": "India",
+    "courses": ["B.Com", "B.Sc", "MBA", "MCA"],
+    "website": "https://www.osmania.ac.in",
+    "image": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "id": "8",
+    "name": "IIT Madras",
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "country": "India",
+    "courses": ["B.Tech Aerospace", "B.Tech Electrical", "M.A. Humanities", "Data Science"],
+    "website": "https://www.iitm.ac.in",
+    "image": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "id": "9",
+    "name": "Anna University",
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "country": "India",
+    "courses": ["B.E. Mechanical", "B.Tech IT", "M.Arch"],
+    "website": "https://www.annauniv.edu",
+    "image": "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "id": "10",
+    "name": "GITAM Deemed to be University",
+    "city": "Visakhapatnam",
+    "state": "Andhra Pradesh",
+    "country": "India",
+    "courses": ["B.Tech", "B.Sc Nursing", "B.A. Mass Communication"],
+    "website": "https://www.gitam.edu",
+    "image": "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "id": "11",
+    "name": "Vignans Foundation for Science, Technology & Research",
+    "city": "Guntur",
+    "state": "Andhra Pradesh",
+    "country": "India",
+    "courses": ["B.Tech Biotech", "BBA", "B.Pharmacy"],
+    "website": "https://www.vignan.ac.in",
+    "image": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "id": "12",
+    "name": "Velagapudi Ramakrishna Siddhartha Engineering College",
+    "city": "Vijayawada",
+    "state": "Andhra Pradesh",
+    "country": "India",
+    "courses": ["B.Tech CSE", "B.Tech ECE", "M.Tech"],
+    "website": "https://www.vrsiddhartha.ac.in",
+    "image": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80"
+  }
+]

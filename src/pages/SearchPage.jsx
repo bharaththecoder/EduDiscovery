@@ -2,42 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Search, SlidersHorizontal, ArrowLeft } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import CollegeCard from '../components/CollegeCard';
-import { useColleges } from '../context/CollegeContext';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const CITY_MAPPING = {
-  "amaravati": "Amaravati",
-  "visakhapatnam": "Visakhapatnam",
-  "vizag": "Visakhapatnam",
-  "guntur": "Guntur",
-  "vijayawada": "Vijayawada",
-  "hyderabad": "Hyderabad",
-  "chennai": "Chennai"
-};
-
-function assignCity(collegeData) {
-  // Combine all relevant potential location strings into one lowercase string to search keywords
-  const checkString = `${collegeData.name} ${collegeData['state-province'] || ''} ${(collegeData.domains || []).join(' ')}`.toLowerCase();
-  
-  for (const [key, city] of Object.entries(CITY_MAPPING)) {
-    if (checkString.includes(key)) {
-      return city;
-    }
-  }
-  return "Unknown";
-}
 
 export default function SearchPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { colleges: curatedColleges, loading: contextLoading } = useColleges(); 
   
   const initialQuery = searchParams.get('q') || '';
   const initialFilter = searchParams.get('filter') || 'All';
 
   const [searchTerm, setSearchTerm] = useState(initialQuery);
   const [allColleges, setAllColleges] = useState([]);
-  const [genericColleges, setGenericColleges] = useState([]);
   const [filteredColleges, setFilteredColleges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
@@ -46,47 +21,24 @@ export default function SearchPage() {
   const filters = ['All', 'Amaravati', 'Visakhapatnam', 'Vijayawada', 'Hyderabad', 'Chennai', 'Engineering', 'Medical', 'Management'];
 
   useEffect(() => {
-    fetch("/colleges.json")
+    // 10. Performance: Use useEffect to initialize data
+    // Fetch specifically from our new rigorous local dataset instead of any external APIs
+    fetch("/data/colleges.json")
       .then(res => {
         if (!res.ok) throw new Error("Failed to load colleges");
         return res.json();
       })
       .then(data => {
-        const cleaned = Array.from(new Set(data.map(a => a.name))).map(name => {
-          const item = data.find(a => a.name === name);
-          return {
-            name: item.name,
-            state: item['state-province'] || 'India',
-            country: item.country || 'India',
-            website: item.web_pages?.[0] || '#',
-            image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
-            city: assignCity(item) // New Derived Field
-          };
-        }).slice(0, 150); 
-        
-        setGenericColleges(cleaned);
+        // 4. State Management: Store allColleges -> original dataset
+        setAllColleges(data);
+        setLoading(false);
       })
       .catch(err => {
-        console.error("Failed to load generic json:", err);
+        console.error("Dataset failure:", err);
         setFetchError(true);
+        setLoading(false);
       });
   }, []);
-
-  useEffect(() => {
-    if (contextLoading) return;
-
-    // Ensure curated colleges also have a parsed 'city' field if they don't already
-    const processedCurated = curatedColleges.map(c => ({
-       ...c,
-       city: c.city || assignCity({ name: c.name, 'state-province': c.state, domains: [c.website] })
-    }));
-
-    const curatedNames = new Set(processedCurated.map(c => c.name));
-    const filteredGeneric = genericColleges.filter(c => !curatedNames.has(c.name));
-    
-    setAllColleges([...processedCurated, ...filteredGeneric]);
-    setLoading(false);
-  }, [curatedColleges, genericColleges, contextLoading]);
 
   useEffect(() => {
     setSearchTerm(searchParams.get('q') || '');
@@ -96,28 +48,32 @@ export default function SearchPage() {
   useEffect(() => {
     if (!allColleges.length && !fetchError) return;
 
-    let result = allColleges;
+    let result = allColleges; // Do not overwrite original dataset
 
-    // 1. Combine Filter logic (Filter matches exactly by new 'city' field for locations)
+    // 6. Location Filtering & Combinator Logic
     if (activeFilter !== 'All') {
       const isLocationFilter = ['Amaravati', 'Visakhapatnam', 'Guntur', 'Vijayawada', 'Hyderabad', 'Chennai'].includes(activeFilter);
       const filterLower = activeFilter.toLowerCase();
       
       if (isLocationFilter) {
+         // Use actual `city` field from dataset
          result = result.filter(c => c.city === activeFilter);
       } else {
-         // It's a category/stream filter (Engineering, Medical)
          result = result.filter(c => 
-           (c.tags && c.tags.some(t => t.toLowerCase().includes(filterLower))) || 
+           (c.courses && c.courses.some(t => t.toLowerCase().includes(filterLower))) || 
            c.name.toLowerCase().includes(filterLower)
          );
       }
     }
 
-    // 2. Combine Search logic (Both Search and Filter now work together restrictively)
+    // 5. Search Functionality
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      result = result.filter(c => c.name.toLowerCase().includes(term));
+      result = result.filter(c => 
+        c.name.toLowerCase().includes(term) ||
+        c.city.toLowerCase().includes(term) ||
+        (c.state && c.state.toLowerCase().includes(term))
+      );
     }
 
     setFilteredColleges(result);
@@ -161,7 +117,7 @@ export default function SearchPage() {
       <div style={{ position: 'relative', margin: '0 0 24px 0' }}>
         <input
           type="text"
-          placeholder="Search live database & directory..."
+          placeholder="Search by college name, city, state..."
           value={searchTerm}
           onChange={handleSearchChange}
           style={{
@@ -182,7 +138,6 @@ export default function SearchPage() {
         <Search size={20} color="var(--primary)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
       </div>
 
-      {/* Filter Chips */}
       <div className="no-scrollbar" style={{ display: 'flex', gap: '8px', overflowX: 'auto', margin: '0 -24px 24px -24px', padding: '0 24px', paddingBottom: '8px' }}>
         <button
           style={{ background: '#000', color: '#fff', borderRadius: 'var(--radius-full)', padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: '600', border: 'none' }}
@@ -215,14 +170,14 @@ export default function SearchPage() {
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: '600' }}>
-            {loading ? 'Querying database...' : `Found ${filteredColleges.length} results`}
+            {!loading && !fetchError && `Found ${filteredColleges.length} results`}
           </span>
         </div>
 
         {fetchError ? (
           <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--accent)', fontSize: '16px', fontWeight: '600' }}>Failed to load colleges</div>
         ) : loading ? (
-          <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-muted)', fontSize: '15px' }}>Loading live records from Firestore...</div>
+          <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-muted)', fontSize: '15px' }}>Loading dataset...</div>
         ) : filteredColleges.length > 0 ? (
           <AnimatePresence>
             <motion.div layout style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
