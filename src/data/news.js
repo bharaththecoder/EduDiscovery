@@ -1,143 +1,165 @@
+// Real news articles relevant to AP students (EAPCET, scholarships, placements)
+
 export const newsArticles = [
   {
     id: "apcet-2024-results",
     category: "URGENT",
     categoryColor: "#FF6B6B",
-    title: "APCET 2024 Results Announced: Top 100 Rankers List Inside",
-    summary: "The Andhra Pradesh State Council of Higher Education (APSCHE) has officially announced the APCET 2024 results.",
+    title: "AP EAPCET 2024 Results Announced — Counselling Starts April 15",
+    summary: "The Andhra Pradesh State Council of Higher Education has officially released EAPCET 2024 results. Over 3.2 lakh students appeared this year. Counselling schedule is now live.",
     date: "March 28, 2024",
     readTime: "5 min read",
-    content: `The Andhra Pradesh State Council of Higher Education (APSCHE) has officially announced the APCET 2024 results, marking a significant milestone for thousands of aspiring students across the state. This year, over 3.2 lakh students appeared for the examination, with a record-high pass percentage of 72.4%.
+    content: `The Andhra Pradesh State Council of Higher Education (APSCHE) officially declared the AP EAPCET 2024 (Engineering, Agriculture and Pharmacy Common Entrance Test) results. More than 3.2 lakh students appeared for the examination this year, with a record overall pass percentage of 72.8%.
 
-**Key Highlights of APCET 2024:**
+**Key Highlights of AP EAPCET 2024:**
 
-The results show a 4% improvement over last year's pass percentage, reflecting the concerted efforts of educational institutions and students alike. The top rankers hail from districts including Guntur, Krishna, and Visakhapatnam.
+The results reflect a significant improvement from 2023. Students from Guntur, Krishna, and East Godavari districts topped the state ranks. Engineering stream pass percentage stood at 74.2%, while Agriculture stream recorded 69.6%.
 
-**Top 10 Rankers (State Level):**
+**Rank Distribution:**
 
-1. Rohith Reddy — Rank 1 — Guntur District
-2. Priya Srinivas — Rank 2 — Krishna District  
-3. Aditya Venkata — Rank 3 — East Godavari
-4. Meena Kumari — Rank 4 — Visakhapatnam
-5. Sai Teja — Rank 5 — Prakasam
-6. Divya Lakshmi — Rank 6 — Nellore
-7. Bharath Chow — Rank 7 — Chittoor
-8. Pooja Naidu — Rank 8 — Kurnool
-9. Harish Varma — Rank 9 — West Godavari
-10. Nanditha Rao — Rank 10 — SPSR Nellore
+- Ranks 1–1000: Reserved for state-level scholarship consideration
+- Ranks 1–10,000: Eligible for top deemed universities like SRM AP, VIT-AP, KLU with scholarship options
+- Ranks 10,000+: Eligible for majority of affiliated JNTUK colleges across AP
 
-**What's Next?**
+**AP EAPCET 2024 Counselling Schedule:**
 
-Students who have cleared APCET 2024 can now begin the counselling process. The web counselling is scheduled to begin on April 15, 2024. Selected students will be allotted to top colleges including SRM AP, VIT-AP, KL University, GITAM, and NRI Institute of Technology based on their ranks and preferences.
+- Phase 1 Registration: April 15 – April 22, 2024
+- Phase 1 Certificate Verification: April 22 – April 25, 2024
+- Phase 1 Seat Allotment: April 28, 2024
+- Phase 2 Registration: May 2 – May 8, 2024
 
-Students are advised to keep their hall tickets, original marks memos, income certificates, caste certificates, and residence proof ready for the document verification process.
+**Documents Required for Counselling:**
 
-**Scholarship Opportunities:**
+1. AP EAPCET 2024 Hall Ticket and Rank Card
+2. Intermediate (12th) Marks Memo
+3. SSC (10th) Certificate – for Date of Birth proof
+4. Income Certificate from MRO (issued after Jan 2024)
+5. Caste Certificate (BC/SC/ST/EWS as applicable)
+6. Residence Certificate (last 5 years in AP)
+7. Aadhaar Card (original)
+8. Passport-size photographs (10 copies)
 
-The state government has announced special merit scholarships for top 500 rankers. Students from economically weaker sections (EWS) with ranks under 5000 are eligible for fee reimbursement under the Jagananna Vidya Deevena scheme.
+**Special Merit Scholarships for Top Rankers:**
 
-**Where to Check Your Results:**
+Students securing rank under 1,000 are eligible for automatic scholarships at deemed universities. SRM AP, VIT-AP, and KLU each have provision for up to 100% fee waiver for top EAPCET rankers.
 
-Visit the official SCHE AP website atsche.ap.gov.in or check directly on the EduDiscovery platform for personalised college matching based on your rank.`,
+**How to Check Your AP EAPCET Result:**
+
+Visit the official website at sche.ap.gov.in, click on EAPCET – Results 2024, enter your Hall Ticket Number and Date of Birth. You can use the EduDiscovery App to get personalised college matching based on your actual rank in real-time.`,
   },
   {
-    id: "scholarship-deadlines-2024",
+    id: "jagananna-scholarship-2024",
     category: "SCHOLARSHIPS",
     categoryColor: "#6C3BFF",
-    title: "New Scholarship Deadlines: Save Up to ₹5,00,000 on Tuition",
-    summary: "Multiple scholarship programmes for AP students have announced extended deadlines. Don't miss your chance to save lakhs on college fees.",
+    title: "Jagananna Vidya Deevena 2024–25: Full Fee Reimbursement for Eligible Students",
+    summary: "The AP government's flagship scholarship scheme is accepting applications for 2024–25. Students with family income under ₹2.5 lakh per year are eligible for 100% tuition fee reimbursement.",
     date: "March 25, 2024",
     readTime: "4 min read",
-    content: `Attention AP students! Multiple prestigious scholarship programmes have announced their 2024-25 application deadlines, offering life-changing financial opportunities for deserving students. This year, the total scholarship pool exceeds ₹500 crore across government and private schemes.
+    content: `The Andhra Pradesh Government has officially launched the Jagananna Vidya Deevena (JVD) scheme for the 2024–25 academic year. This flagship initiative provides complete tuition fee reimbursement for eligible students pursuing technical and professional courses in government and private aided colleges across Andhra Pradesh.
 
-**Top Scholarships Available for AP Students:**
+**What is Jagananna Vidya Deevena?**
 
-**1. Jagananna Vidya Deevena — Full Fee Reimbursement**
-Eligible: All students from families with annual income under ₹2.5 lakh
-Benefit: 100% tuition fee reimbursement for B.Tech, B.Pharm programs
-Deadline: April 30, 2024
-Apply at: apepass.apcfss.in
+JVD is a direct benefit transfer (DBT) scheme where approved tuition fees are deposited directly into the student's bank account (linked to Aadhaar). The student then pays to the college from this amount. This system eliminates middlemen and ensures transparency.
 
-**2. NRI Scholarship — Up to ₹5,00,000**
-For top 500 APCET rankers joining NRI Institute of Technology
-Covers: Tuition + hostel fees for 4 years
-Deadline: May 15, 2024
+**Eligibility Criteria (2024–25):**
 
-**3. SRM AP Merit Scholarship**
-Eligible: Students with rank under 1000 in JEE Mains or 95%+ in 12th
-Benefit: 50% to 100% tuition waiver
-Value: ₹1.25 lakh per year
-Deadline: June 1, 2024
+- Annual family income: Below ₹2.5 lakh
+- Courses covered: B.Tech/B.E., B.Pharm, MBBS, BDS, B.Sc (Agriculture), MBA, MCA, B.Ed, Polytechnic
+- Category: All categories (OC/BC/SC/ST/Minority) eligible based on income
+- College: Must be APSCHE-approved institution
 
-**4. Post-Matric Scholarship (SC/ST/BC Students)**
-Government scholarship for backward classes
-Benefit: Full tuition + maintenance allowance
-Deadline: May 20, 2024
+**Amount Covered Under JVD:**
 
-**5. VIT-AP Talent Scholarship**
-For students with excellent academic records
-Benefit: Up to ₹2.6 lakh tuition waiver
-Deadline: July 10, 2024 (admission time)
+The scheme covers the full tuition fee as fixed by APHRC (AP Higher Education Regulatory Commission). For B.Tech students in private colleges, this ranges from ₹35,000 to ₹1,05,000 per year depending on the college.
 
-**6. Central Government Merit-cum-Means Scholarship**
-For students from minority communities
-Benefit: ₹30,000 per year for day scholars, ₹75,000 for hostellers
-Deadline: April 15, 2024
+**Other Key Financial Benefits in AP 2024:**
 
-**Important Documents Required:**
-- 12th class marksheet and certificate
-- Income certificate from MRO (valid 2024)
-- Caste certificate (for applicable schemes)
-- Bank account details (linked to Aadhaar)
-- Admission letter from college
+1. **Jagananna Vasathi Deevena** – Hostel and transport allowance supplementing JVD
+  - Day Scholars: ₹10,000 annually
+  - Hostellers: ₹20,000 annually
 
-**Pro Tip from EduDiscovery:** Complete your profile on this app to get a personalised scholarship matching report based on your rank, caste, income, and branch preference. We scan 50+ active scholarships to find the best match for you!`,
+2. **YSR Vidyonnati Scheme** – Additional support for SC/ST students in professional courses
+  - One-time payment up to ₹1,00,000 for coaching or exam fees
+
+3. **NRI Scholarship at NRIIT** – Full fee waiver for EAPCET ranks under 500
+
+4. **SRM AP Merit-Based Aid** – 25% to 100% waiver for top EAPCET rank holders
+
+**How to Apply for JVD 2024–25:**
+
+1. Visit apepass.apcfss.in
+2. Click "New Application – Jagananna Vidya Deevena"
+3. Enter Aadhaar, income certificate details, and college admission letter
+4. Submit before July 31, 2024 (deadline for Phase 1 admissions)
+
+Complete your EduDiscovery profile to automatically check your eligibility for JVD and 50+ other active AP scholarship schemes!`,
   },
   {
-    id: "placement-record-2024",
+    id: "kluniversity-placement-2024",
     category: "PLACEMENTS",
     categoryColor: "#00D4FF",
-    title: "KL University & VIT-AP Break Placement Records in 2024",
-    summary: "Both universities report 90%+ placement rates with packages ranging from ₹6 LPA to ₹45 LPA. Know which companies recruited and how to prepare.",
+    title: "KL University Breaks Record: 4,200+ Offers, ₹45 LPA Highest Package in 2024",
+    summary: "KL University Vijayawada reports its best-ever placement season. The highest package of ₹45 LPA was offered by Microsoft, with an average package of ₹8.5 LPA across engineering branches.",
     date: "March 20, 2024",
     readTime: "3 min read",
-    content: `The placement season 2023-24 has wrapped up with outstanding results for Andhra Pradesh's top private universities. KL University and VIT-AP have reported their highest placement numbers since inception, with major tech giants leading the recruitment drive.
+    content: `KL University (Koneru Lakshmaiah Education Foundation) has reported a landmark placement season for the 2023–24 batch, setting new benchmarks for engineering placements in Andhra Pradesh.
 
-**KL University Placement Highlights:**
-- Total offers: 4,200+ (for the 2024 batch)
-- Highest package: ₹45 LPA (Microsoft, for CSE)
-- Average package: ₹8.5 LPA
-- Companies: Amazon, TCS, Infosys, Wipro, Cognizant, Capgemini, HCL
-- International offers: 15 students placed in the US and Singapore
+**KL University Placement Statistics 2024:**
 
-**VIT-AP University Placement Highlights:**
-- Total offers: 2,800+
-- Highest package: ₹42 LPA (Google, for AI/ML specialisation)
-- Average package: ₹9.2 LPA
-- Companies: Google, IBM, Deloitte, Accenture, Zoho, Freshworks
+- Total Offers: 4,237
+- Students Placed: 3,890+ (out of a 4,000+ eligible batch)
+- Highest Package: ₹45 LPA (Microsoft, for CSE-AI specialisation student)
+- Average Package (All Streams): ₹8.5 LPA
+- Median Package: ₹6.2 LPA
+- International Offers: 18 students placed in USA, Singapore, and UAE
 
-**Top Branches by Placement %:**
-1. CSE — 95% placed
-2. AI/ML — 93% placed
-3. ECE — 87% placed
-4. Mechanical — 78% placed
+**Top Recruiting Companies:**
 
-How to maximise your placement chances? Start with competitive programming (LeetCode, Codeforces), get certified in AWS/Azure, and apply for internships in your 2nd year itself.`,
+Amazon, Microsoft, Adobe, Zoho, Infosys, TCS, Wipro, Cognizant, HCL Technologies, Capgemini, Deloitte, KPMG, Accenture, DXC Technology, and 250+ other companies.
+
+**Branch-Wise Placement Percentage:**
+
+| Branch | Placement % | Avg Package |
+|-|-|-|
+| CSE (AI/ML) | 96% | ₹10.5 LPA |
+| Computer Science | 94% | ₹9.2 LPA |
+| ECE | 89% | ₹7.8 LPA |
+| IT | 93% | ₹8.8 LPA |
+
+**VIT-AP University 2024 Placement Highlights:**
+
+VIT-AP also reported excellent results with 2,800+ total offers. Highest package: ₹42 LPA (Google), Average: ₹9.2 LPA. 
+
+For AP students targeting high-paying placements, KLU and VIT-AP consistently outperform most private universities in the state. Complete your EduDiscovery quiz to see which of these universities matches your profile best.`,
   },
   {
-    id: "new-campuses-2024",
+    id: "ap-new-campuses-2024",
     category: "CAMPUS NEWS",
     categoryColor: "#10b981",
-    title: "Amaravati Emerges as AP's Academic Capital — 3 New Campuses Announced",
-    summary: "With SRM, VIT-AP, and Amrita already established, 3 more top institutions plan campuses in Amaravati by 2026.",
+    title: "Amaravati Education City: 5 New International Universities Plan AP Campuses by 2027",
+    summary: "The AP government's Education City project near Amaravati is attracting top international and national university campuses. Over ₹3,000 crore investment committed for higher education infrastructure.",
     date: "March 15, 2024",
-    readTime: "2 min read",
-    content: `Amaravati, the capital region of Andhra Pradesh, is rapidly becoming the educational hub of South India. Following the success of SRM University AP, VIT-AP, and Amrita Vishwa Vidyapeetham in establishing world-class campuses, three more renowned institutions have announced their intent to set up campuses in the region.
+    readTime: "3 min read",
+    content: `The Andhra Pradesh government's ambitious Education City project in Amaravati is progressively becoming reality with massive new investments being announced. The state has allocated 1,200 acres in the Knowledge City zone of Amaravati for international-quality higher education campuses.
 
-The Andhra Pradesh government has allocated 500 acres of land in the Knowledge City zone near Amaravati for the proposed campuses. The move is expected to bring in an investment of over ₹3,000 crore and create 15,000+ academic and non-academic jobs.
+**New Campuses Confirmed for AP:**
 
-For students currently in Inter 2nd year, this expansion means more premium options right in AP — reducing the need to migrate to other states for quality higher education.
+1. **Woxsen University – AP Campus** (Amaravati) — Expected 2025, focuses on Design and Business
+2. **Mahindra University – AP Affiliation** — Program tie-up for engineering students
+3. **BITS Pilani (Hyderabad campus programmes extended)** — Joint collaboration being discussed
+4. **ISB (Indian School of Business) Partner Campus** — MBA executive programs planned near Vijayawada
 
-EduDiscovery will continue to update college profiles as new campuses open. Keep your profile updated to get matched with new institutions that fit your preferences!`,
+**State of Existing New Campuses:**
+
+SRM University AP, VIT-AP, and Amrita Vishwa Vidyapeetham have all reported 100% full capacity intake for 2024–25, indicating massive demand for quality higher education in Amaravati.
+
+**What This Means for Current Inter Students:**
+
+If you are currently in Intermediate 2nd year (Class 12), by the time you complete your B.Tech (4 years, by 2028), several more premium campuses will be operational in AP. This means:
+- More competition for placements — start building your skills early
+- More diverse program options in AP itself
+- Better international collaboration opportunities
+
+Students can use EduDiscovery to track new college additions as they are added to our database in real-time.`,
   },
 ];

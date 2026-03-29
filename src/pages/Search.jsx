@@ -4,8 +4,8 @@ import { universities } from '../data/universities';
 import UniversityCard from '../components/UniversityCard';
 import BottomNav from '../components/BottomNav';
 
-const CITIES = ['Amaravati', 'Visakhapatnam', 'Vijayawada', 'Guntur'];
-const BRANCHES = ['Engineering', 'Medical', 'Arts', 'Law', 'Business'];
+const CITIES = ['Amaravati', 'Visakhapatnam', 'Vijayawada', 'Guntur', 'Kakinada', 'Tirupati'];
+const BRANCHES = ['Engineering', 'Medical', 'Arts', 'Law', 'Business', 'Sciences', 'Pharmacy'];
 
 export default function SearchPage() {
   const [query, setQuery] = useState('');
