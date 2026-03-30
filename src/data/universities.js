@@ -38,9 +38,9 @@ export const universities = [
       { name: "M.Tech Computer Science", duration: "2 Years", fees: "₹35,000" },
     ],
     faculty: [
-      { name: "Dr. B. Chandra Mohan Reddy", designation: "Principal", avatar: "BC" },
-      { name: "Dr. K. Srinivasa Rao", designation: "Head, CSE Department", avatar: "KS" },
-      { name: "Prof. G. Naga Raju", designation: "Head, ECE Department", avatar: "GN" },
+      { name: "Dr. D. Suneetha", designation: "Professor & Head of CSE Department", avatar: "S" },
+      { name: "Dr. K. Ramanjaneyulu", designation: "Professor & Head of ECE Department", avatar: "R" },
+      { name: "Dr. N. Sambasiva Rao", designation: "Head of EEE Department", avatar: "SR" },
     ],
     facilities: [
       { icon: "🏟️", name: "Sports Ground", desc: "Cricket ground, volleyball courts, and indoor badminton facilities." },
@@ -284,7 +284,7 @@ export const universities = [
     match: 86,
     branches: ["Engineering", "Sciences", "Business", "Pharmacy"],
     tags: ["Engineering", "Pharma", "MBA", "Biotech", "CSE"],
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/A_building_of_Vignan_University.jpg/1280px-A_building_of_Vignan_University.jpg",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj78Q035s8YqMaO-aWK7Z6qZllTaebbpFoKw&s",
     website: "https://www.vignan.ac.in",
     about: "Vignan's Foundation for Science, Technology & Research (Vignan University) is a Deemed-to-be University located at Vadlamudi, near Guntur, established in 2007. It holds NAAC A+ grade and is ranked #91 in Engineering by NIRF 2024. Vignan University collaborates with pharmaceutical giants including Dr. Reddy's and Sun Pharma for research. It is known for its pharmacy, biotech, and engineering programs with strong practical training facilities and affordable fee structure for AP students.",
     programs: [
