@@ -17,7 +17,7 @@ export const universities = [
     shortName: "NRIIT",
     city: "Vijayawada",
     state: "Andhra Pradesh",
-    established: 2001,
+    established: 2008,
     acres: 20,
     ratio: "1:15",
     naac: "A",
@@ -26,7 +26,7 @@ export const universities = [
     branches: ["Engineering"],
     tags: ["CSE", "AI & DS", "IT", "ECE", "EEE"],
     // Official campus image from nriit.edu.in website
-    image: "https://nriit.edu.in/wp-content/uploads/2024/08/NRI-Campus-1.jpg",
+    image: "https://content3.jdmagicbox.com/v2/comp/vijayawada/j8/0866px866.x866.170720144742.w4j8/catalogue/nri-institute-of-technology-vijayawada-civil-court-vijayawada-colleges-gr13tqtbo2.jpg",
     website: "https://www.nriit.edu.in",
     about: "NRI Institute of Technology (NRIIT) is an autonomous engineering institution established in 2001, located at Pothavarappadu, Agiripalli Mandal, Eluru District, Andhra Pradesh. Affiliated with JNTUK and approved by AICTE, the institute holds NAAC 'A' Grade accreditation. NRIIT offers undergraduate and postgraduate programs in engineering. Recently upgraded with Deemed University status, it is one of the fastest-growing technical institutions in AP and is well known for its disciplined campus culture and industry-focused curriculum.",
     programs: [
@@ -69,7 +69,7 @@ export const universities = [
     match: 96,
     branches: ["Engineering", "Business", "Sciences", "Arts"],
     tags: ["CSE", "AI/ML", "Biotech", "BBA", "B.Sc"],
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/SRM_University_board_and_Entry_of_SRM_University_Amaravati.jpg/1280px-SRM_University_board_and_Entry_of_SRM_University_Amaravati.jpg",
+    image: "https://www.deccanchronicle.com/h-upload/2024/08/03/1828565-9.webp",
     website: "https://srmap.edu.in",
     about: "SRM University-AP, Amaravati is a state private university established under the SRM Group in 2017, located in Neerukonda village, Guntur District. It holds an NAAC A++ grade and is ranked #12 among Universities in India (NIRF 2024). The university offers 39 undergraduate programs and 24 postgraduate programs. SRM AP is known for its research-driven culture with over 1,000 research publications annually, partnerships with international universities, and excellent placement records with companies like Google, Microsoft, and Amazon.",
     programs: [
@@ -112,7 +112,7 @@ export const universities = [
     match: 89,
     branches: ["Engineering", "Medical", "Sciences", "Arts", "Law"],
     tags: ["Marine Eng", "Medicine", "Law", "Physics", "B.Tech"],
-    image: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Andhra_University.jpg",
+    image: "https://www.andhrauniversity.edu.in/img/slider/AU-InGate.jpg",
     website: "https://www.andhrauniversity.edu.in",
     about: "Andhra University, established in 1926 in Visakhapatnam, is one of the oldest and most prestigious universities in South India. It is a State University covering over 600 acres with 55+ PG Departments, 6 constituent colleges, and 900+ affiliated colleges. The University has produced Nobel laureates, IAS/IPS officers, and renowned scientists. Its College of Engineering is consistently ranked among the top engineering colleges in India by NIRF. The Marine Engineering department is one of the finest in Asia.",
     programs: [
@@ -155,7 +155,7 @@ export const universities = [
     match: 94,
     branches: ["Engineering", "Business", "Sciences"],
     tags: ["CSE", "BBA", "VLSI", "ECE", "AI/ML"],
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/VIT_AP_university.jpg/1280px-VIT_AP_university.jpg",
+    image: "https://www.collegeadmission.in/uploads/university/banner_image/vit-ap-vitap-amaravati-86.jpg",
     website: "https://vitap.ac.in",
     about: "VIT-AP University is part of the prestigious VIT Group, established in Amaravati in 2017. It holds NAAC A+ grade and is ranked #54 in Engineering by NIRF 2024. The university follows VIT Vellore's legacy with student-centric education, innovation-focused curriculum, and strong industry tie-ups with IBM, Microsoft, Intel, and SAP. With 100% industry-integrated programs and an excellent placement record averaging ₹7.5 LPA, VIT-AP is one of the fastest-growing private universities in South India.",
     programs: [
@@ -198,7 +198,7 @@ export const universities = [
     match: 87,
     branches: ["Engineering", "Law", "Sciences", "Business", "Pharmacy"],
     tags: ["Law", "Engineering", "Pharmacy", "MBA", "Science"],
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Gitam_university.jpg/1280px-Gitam_university.jpg",
+    image: "https://www.yovizag.com/wp-content/uploads/2017/06/Fulbright-Fellowship-GITAM-Professor.webp",
     website: "https://www.gitam.edu",
     about: "GITAM (Gandhi Institute of Technology and Management), a Deemed-to-be University established in 1980 in Visakhapatnam, holds NAAC A+ grade. With campuses in Visakhapatnam, Hyderabad, and Bengaluru, GITAM offers 150+ programs across engineering, law, pharmacy, management, and sciences. It has 30,000+ students and an alumni base of 1 lakh+ across 60 countries. GITAM's law school and pharmacy colleges are nationally recognised with top industry placements.",
     programs: [
@@ -241,7 +241,7 @@ export const universities = [
     match: 92,
     branches: ["Engineering", "Business", "Sciences", "Law"],
     tags: ["CSE", "ECE", "MBA", "B.Arch", "BCA"],
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Library_in_KL_University%2C_Vijayawada.jpg/1280px-Library_in_KL_University%2C_Vijayawada.jpg",
+    image: "https://timess3spore.s3.amazonaws.com/ndata/media/Counsellor/CollegeImage/2023/04/03/1680509750.jpg",
     website: "https://www.kluniversity.in",
     about: "Koneru Lakshmaiah Education Foundation University (KL University/KLEF), located in Vaddeswaram near Vijayawada, is a Deemed-to-be University established in 1980. It holds an NAAC A++ grade and is ranked #35 in Engineering by NIRF 2024. KL University is known for exceptional placement records — 4,200+ offers in 2024 with the highest package of ₹45 LPA (Microsoft). Amazon, TCS, Infosys, and Wipro are among 250+ recruiting companies. It has 15 international tie-ups for students exchanges.",
     programs: [
@@ -327,7 +327,7 @@ export const universities = [
     match: 91,
     branches: ["Engineering", "Sciences", "Arts"],
     tags: ["Engineering", "AI & ML", "Computing", "Research"],
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Amrita_vishwa_vidyapeetham.jpg/1280px-Amrita_vishwa_vidyapeetham.jpg",
+    image: "https://www.diginerve.com/blogs/wp-content/uploads/2023/06/Amrita-Vishwa-Vidyapeetham-Courses-Admission-Process-_-Fee-Structure.webp",
     website: "https://www.amrita.edu/campus/amaravati",
     about: "Amrita Vishwa Vidyapeetham, Amaravati is a campus of India's top-ranked private university — ranked #7 Overall in NIRF 2024 and holding the prestigious NAAC A++ grade. The parent institution, Amrita University, has campuses across 7 cities in India. The Amaravati campus focuses on research-driven education with strong emphasis on AI, robotics, and engineering. Amrita combines world-class academics with spiritual values, producing graduates who are technically excellent and ethically grounded.",
     programs: [
@@ -370,7 +370,7 @@ export const universities = [
     match: 83,
     branches: ["Engineering", "Sciences", "Business"],
     tags: ["B.Tech", "M.Tech", "MBA", "MCA", "Ph.D"],
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/JNTUK.jpg/1280px-JNTUK.jpg",
+    image: "https://content3.jdmagicbox.com/comp/kakinada/z6/9999px884.x884.101005202631.s9z6/catalogue/jawaharlal-nehru-technological-university-kakinada-ho-kakinada-universities-4sbvvtk.jpg",
     website: "https://www.jntuk.edu.in",
     about: "Jawaharlal Nehru Technological University Kakinada (JNTUK), founded in 1946, is a premier state university in East Godavari district of Andhra Pradesh. It oversees over 354 affiliated engineering colleges across Andhra Pradesh, making it the largest affiliating technical university in the state. JNTUK has 18 departments offering programmes from B.Tech to Ph.D. The university is a pioneer in technical education in AP with its constituent college offering direct admissions at very affordable government fee rates.",
     programs: [
@@ -412,7 +412,7 @@ export const universities = [
     match: 80,
     branches: ["Sciences", "Arts", "Engineering", "Law", "Business"],
     tags: ["B.Sc", "B.Com", "B.A.", "LL.B", "MBA"],
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Acharya_Nagarjuna_University.jpg/1280px-Acharya_Nagarjuna_University.jpg",
+    image: "https://www.nagarjunauniversity-ac.in/imagesnew/bg1.jpg",
     website: "https://www.nagarjunauniversity.ac.in",
     about: "Acharya Nagarjuna University (ANU), established in 1976 at Nagarjuna Nagar near Guntur, is a state university with NAAC 'A' grade and ranked among India's top 100 universities (NIRF 2024, #97 Overall). ANU serves over 3 lakh students through 7 regular colleges and 420+ affiliated colleges spread across Guntur, Krishna, Prakasam, and Palnadu districts. It is a major hub for affordable higher education in Andhra Pradesh, particularly for BA, B.Sc, and B.Com students.",
     programs: [
@@ -455,7 +455,7 @@ export const universities = [
     match: 88,
     branches: ["Engineering", "Sciences"],
     tags: ["CSE", "ECE", "Civil", "Mechanical", "B.Tech"],
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Vr_siddhartha_college.jpg/1280px-Vr_siddhartha_college.jpg",
+    image: "https://cache.careers360.mobi/media/article_images/2024/6/25/vrsec-vijayawada-management-quota.jpg",
     website: "https://www.vrsiddhartha.ac.in",
     about: "Velagapudi Ramakrishna Siddhartha Engineering College (VRSEC), established in 1961 in Vijayawada, is one of the oldest and most respected engineering colleges in Andhra Pradesh. It holds NAAC A+ grade and is an autonomous institution affiliated to JNTUK. VRSEC is consistently ranked among the top engineering colleges in AP for placements and academics. It has produced thousands of engineers who are now leading in top MNCs globally. The Government category fee makes it one of the most sought-after colleges for middle-class families.",
     programs: [
@@ -497,7 +497,7 @@ export const universities = [
     match: 81,
     branches: ["Sciences", "Arts", "Engineering", "Education", "Law"],
     tags: ["B.Sc", "B.A.", "B.Tech", "M.Sc", "Ph.D"],
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/SVU-Tirupati.jpg/1280px-SVU-Tirupati.jpg",
+    image: "https://content.jdmagicbox.com/v2/comp/tirupati/q4/9999px877.x877.221116223648.u4q4/catalogue/sv-university-prakasam-nagar-colony-tirupati-universities-pozcx8ptji.jpg",
     website: "https://www.svuniversity.edu.in",
     about: "Sri Venkateswara University, established in 1954 at Tirupati in Chittoor District, is a prestigious state university with NAAC 'A' grade, spread across 750 acres below the sacred Tirumala Hills. With 29 PG departments and 350+ affiliated colleges in Chittoor, Nellore, and Kadapa districts, SVU is a cultural and academic landmark of Rayalaseema. The university is known for its Oriental Learning research and affiliation to Tirumala Tirupati Devasthanams which provides scholarship support to thousands of students.",
     programs: [
