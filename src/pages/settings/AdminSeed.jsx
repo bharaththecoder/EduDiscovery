@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { db } from '../../firebase';
 import { doc, setDoc } from 'firebase/firestore';
-import { curatedColleges } from '../../data/curatedColleges';
+import { universities } from '../../data/universities';
 
 export default function AdminSeed() {
   const [loading, setLoading] = useState(false);
@@ -9,12 +9,12 @@ export default function AdminSeed() {
 
   const seedDatabase = async () => {
     setLoading(true);
-    setLogs(['Starting database seed...']);
+    setLogs(['Starting database seed (37 universities)...']);
     
     try {
-      for (const college of curatedColleges) {
-        // Create an idiosyncratic slug for document ID from the name
-        const docId = college.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+      for (const college of universities) {
+        // Use the hardcoded ID from universities.js
+        const docId = college.id;
         
         await setDoc(doc(db, 'colleges', docId), college);
         
@@ -35,8 +35,8 @@ export default function AdminSeed() {
         Database Seeding
       </h1>
       <p style={{ color: 'var(--text-muted)', marginBottom: '32px', fontSize: '15px' }}>
-        This utility pushes the local `curatedColleges.js` data into your live Firebase Firestore `colleges` collection. 
-        It uses an idempotent setDoc operation based on the college name, so it will update existing records rather than duplicating them.
+        This utility pushes the local `universities.js` data (37 real colleges) into your live Firebase Firestore `colleges` collection. 
+        It uses an idempotent setDoc operation based on the unique college ID.
       </p>
 
       <button
