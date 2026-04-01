@@ -13,7 +13,7 @@
 ## ✨ Features
 
 - 🔐 **Google Sign-In** via Firebase Authentication
-- 🏛️ **12 curated Andhra Pradesh universities** with NAAC grades, NIRF rankings, fees, and official imagery
+- 🏛️ **37 curated Andhra Pradesh universities** with NAAC grades, NIRF rankings, fees, and official imagery
 - 🔍 **Smart Search** — filter by college name, city, or branch in real time
 - 🎯 **College Finder** — answer 3 questions (stream, location, budget) to get filtered college matches
 - ⚡ **Future Fit Quiz** — short quiz to narrow down your ideal college type
