@@ -1,29 +1,51 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { db } from '../firebase';
+import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { useAuth } from './AuthContext';
 
 const WishlistContext = createContext();
 export const useWishlist = () => useContext(WishlistContext);
 
-const STORAGE_KEY = 'edudiscovery_wishlist';
-
 export function WishlistProvider({ children }) {
-  const [wishlist, setWishlist] = useState(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? JSON.parse(stored) : [];
-    } catch {
-      return [];
-    }
-  });
+  const { currentUser } = useAuth();
+  const [wishlist, setWishlist] = useState([]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(wishlist));
-  }, [wishlist]);
+    if (!currentUser) {
+      setWishlist([]);
+      return;
+    }
 
-  const toggleWishlist = (university) => {
-    setWishlist(prev => {
-      const exists = prev.find(u => u.id === university.id);
-      return exists ? prev.filter(u => u.id !== university.id) : [...prev, university];
+    // Listen for wishlist updates from user doc
+    const userRef = doc(db, 'users', currentUser.id);
+    const unsubscribe = onSnapshot(userRef, (doc) => {
+      if (doc.exists()) {
+        setWishlist(doc.data().wishlist || []);
+      }
     });
+
+    return () => unsubscribe();
+  }, [currentUser]);
+
+  const toggleWishlist = async (university) => {
+    if (!currentUser) return;
+    
+    const userRef = doc(db, 'users', currentUser.id);
+    const isSaved = wishlist.some(u => u.id === university.id);
+
+    try {
+      if (isSaved) {
+        await updateDoc(userRef, {
+          wishlist: arrayRemove(university)
+        });
+      } else {
+        await updateDoc(userRef, {
+          wishlist: arrayUnion(university)
+        });
+      }
+    } catch (error) {
+      console.error("Wishlist sync error:", error);
+    }
   };
 
   const isWishlisted = (id) => wishlist.some(u => u.id === id);

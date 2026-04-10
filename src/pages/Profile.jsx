@@ -1,55 +1,120 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useToast } from '../context/ToastContext';
-import { ChevronDown, ChevronUp, Bell, Shield, HelpCircle, Edit3, LogOut } from 'lucide-react';
+import { ChevronDown, ChevronUp, Bell, Shield, HelpCircle, Edit3, LogOut, Camera } from 'lucide-react';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '../firebase';
 import UniversityCard from '../components/UniversityCard';
 import BottomNav from '../components/BottomNav';
 
 const FAQS = [
-  { q: 'How does the match score work?', a: 'Our algorithm analyses your rank, preferred branch, city, and budget against each university\'s admission criteria and program offerings to calculate a personalised match percentage.' },
+  { q: 'How does the completion score work?', a: 'Your profile score is calculated based on how much information you have shared. A complete profile (Photo, Bio, Tags, and Base Info) helps us provide better college recommendations.' },
   { q: 'Can I apply to multiple universities?', a: 'Yes! You can apply to as many universities as you like from the EduDiscovery app. We recommend shortlisting 3-5 colleges and applying to all simultaneously.' },
   { q: 'How do I check scholarship eligibility?', a: 'Complete your profile with income, caste, and rank details. The app will automatically match you to applicable scholarships in the Scholarship Hub section.' },
-  { q: 'Is the college data on this app accurate?', a: 'Yes, all university data is verified from official NAAC records, university websites, and SCHE-AP announcements. Fee structures are approximate and subject to change.' },
-  { q: 'How do I contact a counselor?', a: 'Click "Contact Counselors" on any university detail page. Our trained counselors will call you within 24 hours to guide you through the admission process.' },
+  { q: 'Is the college data on this app accurate?', a: 'Yes, all university data is verified from official NAAC records, university websites, and SCHE-AP announcements.' },
+  { q: 'How do I contact a counselor?', a: 'Click "Contact Counselors" on any university detail page or use the "Help Center" for general guidance.' },
+];
+
+const AVAILABLE_TAGS = [
+  'Early Action', 'Stem Scholar', 'Sports Quota', 'First Gen', 
+  'Merit Student', 'Research Focused', 'Entrepreneurial', 'AP EAPCET 2024'
 ];
 
 function EditModal({ currentUser, onClose }) {
+  const { updateUserDoc } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     name: currentUser?.name || '',
-    bio: localStorage.getItem('edu_bio') || '',
-    branch: localStorage.getItem('edu_branch') || '',
-    city: localStorage.getItem('edu_city') || '',
+    bio: currentUser?.bio || '',
+    city: currentUser?.city || '',
   });
+  const [selectedTags, setSelectedTags] = useState(currentUser?.tags || []);
+  
   const { showToast } = useToast();
 
-  const handleSave = (e) => {
+  const toggleTag = (tag) => {
+    setSelectedTags(prev => 
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+    );
+  };
+
+  const handleSave = async (e) => {
     e.preventDefault();
-    localStorage.setItem('edu_bio', form.bio);
-    localStorage.setItem('edu_branch', form.branch);
-    localStorage.setItem('edu_city', form.city);
-    showToast('Profile saved! ✅', 'success');
-    onClose();
+    setLoading(true);
+    try {
+      await updateUserDoc({
+        name: form.name,
+        bio: form.bio,
+        city: form.city,
+        tags: selectedTags
+      });
+      showToast('Profile updated in cloud! ☁️', 'success');
+      onClose();
+    } catch (err) {
+      showToast('Failed to sync profile', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="overlay" onClick={onClose}>
-      <div className="modal-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
-        <button onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>×</button>
+      <div className="modal-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
+        <button onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', zIndex: 10 }}>×</button>
         <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '20px' }}>Edit Profile</h2>
-        <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-          {[
-            { placeholder: 'Your Name', key: 'name', type: 'text' },
-            { placeholder: 'Bio (e.g. Aspiring Engineer from AP)', key: 'bio', type: 'text' },
-            { placeholder: 'Preferred Branch (e.g. CSE)', key: 'branch', type: 'text' },
-            { placeholder: 'Home City (e.g. Guntur)', key: 'city', type: 'text' },
-          ].map(({ placeholder, key, type }) => (
-            <div key={key} className="input-wrap">
-              <input type={type} placeholder={placeholder} value={form[key]} onChange={e => setForm({ ...form, [key]: e.target.value })} />
+        
+        <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div>
+            <label style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '6px', display: 'block' }}>Basic Information</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {[
+                { placeholder: 'Display Name', key: 'name', type: 'text' },
+                { placeholder: 'Bio (e.g. Aspiring Engineer)', key: 'bio', type: 'text' },
+                { placeholder: 'Current City', key: 'city', type: 'text' },
+              ].map(({ placeholder, key, type }) => (
+                <div key={key} className="input-wrap">
+                  <input 
+                    type={type} 
+                    placeholder={placeholder} 
+                    value={form[key]} 
+                    onChange={e => setForm({ ...form, [key]: e.target.value })}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-          <button type="submit" className="btn btn-primary btn-full" style={{ padding: '15px', marginTop: '8px' }}>Save Profile</button>
+          </div>
+
+          <div>
+            <label style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '8px', display: 'block' }}>Professional Tags</label>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              {AVAILABLE_TAGS.map(tag => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() => toggleTag(tag)}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '999px',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    border: '1px solid var(--primary)',
+                    background: selectedTags.includes(tag) ? 'var(--primary)' : 'transparent',
+                    color: selectedTags.includes(tag) ? '#fff' : 'var(--primary)',
+                    transition: 'all 0.2s',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <button type="submit" disabled={loading} className="btn btn-primary btn-full" style={{ padding: '15px', marginTop: '10px' }}>
+            {loading ? 'Syncing...' : 'Save to Cloud'}
+          </button>
         </form>
       </div>
     </div>
@@ -58,20 +123,21 @@ function EditModal({ currentUser, onClose }) {
 
 function NotificationsModal({ onClose }) {
   const notifications = [
-    { icon: '🔔', text: 'APCET 2024 counselling starts April 15', time: '2 hours ago', color: 'var(--accent)' },
-    { icon: '🎓', text: 'New scholarship: SRM AP merit award deadline approaching', time: 'Yesterday', color: 'var(--primary)' },
+    { icon: '📢', text: 'AP EAPCET 2024: Final phase allotment results are out. Check your status now.', time: 'Just now', color: 'var(--primary)' },
+    { icon: '📜', text: 'Jnanabhumi Portal open for 2024-25 Fee Reimbursement applications.', time: '3 hours ago', color: 'var(--accent)' },
+    { icon: '🎓', text: 'Vidyadhan Scholarship: Meritorious students (10th/Inter) can apply via Sarojini Damodaran Foundation.', time: 'Yesterday', color: '#8b5cf6' },
   ];
   return (
     <div className="overlay" onClick={onClose}>
       <div className="modal-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
         <button onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>×</button>
-        <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '20px' }}>Notifications</h2>
+        <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '20px' }}>Educational Updates</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           {notifications.map((n, i) => (
-            <div key={i} style={{ display: 'flex', gap: '14px', alignItems: 'flex-start', padding: '16px', background: 'var(--bg)', borderRadius: 'var(--radius-md)', border: `1px solid ${n.color}22` }}>
+            <div key={i} style={{ display: 'flex', gap: '14px', alignItems: 'flex-start', padding: '16px', background: 'var(--bg)', borderRadius: 'var(--radius-md)', border: `1px solid ${n.color}44` }}>
               <div style={{ fontSize: '24px' }}>{n.icon}</div>
               <div>
-                <p style={{ fontWeight: '600', fontSize: '14px', marginBottom: '4px' }}>{n.text}</p>
+                <p style={{ fontWeight: '600', fontSize: '14px', marginBottom: '4px', lineHeight: '1.4' }}>{n.text}</p>
                 <p style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{n.time}</p>
               </div>
             </div>
@@ -135,24 +201,52 @@ function HelpModal({ onClose }) {
 
 export default function Profile() {
   const navigate = useNavigate();
-  const { currentUser, logout } = useAuth();
+  const fileInputRef = useRef(null);
+  const { currentUser, logout, updateUserDoc, profileStrength: completionScore } = useAuth();
   const { wishlist } = useWishlist();
   const { showToast } = useToast();
 
   const [modal, setModal] = useState(null); // 'edit' | 'notifications' | 'privacy' | 'help'
+  const [uploading, setUploading] = useState(false);
+  
+  const profile = {
+    name: currentUser?.name || 'Scholar',
+    bio: currentUser?.bio || 'Aspiring Engineer • AP Student',
+    avatar: currentUser?.photoURL || null,
+    tags: currentUser?.tags || ["Early Action", "Stem Scholar"],
+    city: currentUser?.city || ''
+  };
 
-  const name = currentUser?.name || 'Scholar';
-  const bio = localStorage.getItem('edu_bio') || 'Aspiring Engineer • AP Student';
-  const branch = localStorage.getItem('edu_branch') || 'Engineering';
-  const appliedCount = parseInt(localStorage.getItem('edu_applied') || '0', 10);
-  const matchScore = 87;
+  const appliedCount = currentUser?.appliedCount || 0;
+  
+
+  const handleAvatarClick = () => fileInputRef.current?.click();
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (file && currentUser) {
+      if (file.size > 2 * 1024 * 1024) {
+        showToast('Image too large (max 2MB)', 'error');
+        return;
+      }
+      setUploading(true);
+      try {
+        const fileRef = ref(storage, `profile_pictures/${currentUser.id}`);
+        await uploadBytes(fileRef, file);
+        const url = await getDownloadURL(fileRef);
+        await updateUserDoc({ photoURL: url });
+        showToast('Profile picture synced to cloud! ☁️', 'success');
+      } catch (err) {
+        showToast('Upload failed', 'error');
+      } finally {
+        setUploading(false);
+      }
+    }
+  };
 
   const handleSignOut = async () => {
     await logout();
-    localStorage.removeItem('edu_bio');
-    localStorage.removeItem('edu_branch');
-    localStorage.removeItem('edu_city');
-    showToast('Signed out successfully. See you soon!', 'info');
+    showToast('Signed out from cloud. See you soon!', 'info');
     navigate('/');
   };
 
@@ -165,59 +259,114 @@ export default function Profile() {
 
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh', paddingBottom: '100px' }}>
+      <input 
+        type="file" 
+        ref={fileInputRef} 
+        style={{ display: 'none' }} 
+        accept="image/*" 
+        onChange={handleFileChange} 
+      />
+
       {/* Profile Header */}
       <div style={{ background: 'var(--gradient)', padding: '48px 24px 32px', textAlign: 'center', position: 'relative' }}>
-        <div style={{
-          width: '88px', height: '88px', borderRadius: '50%',
-          background: '#fff', margin: '0 auto 16px',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '36px', fontWeight: '900', color: 'var(--primary)',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-        }}>
-          {name[0]?.toUpperCase()}
+        <div 
+          onClick={handleAvatarClick}
+          style={{
+            width: '100px', height: '100px', borderRadius: '50%',
+            background: '#fff', margin: '0 auto 16px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '36px', fontWeight: '900', color: 'var(--primary)',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+            cursor: 'pointer', position: 'relative', overflow: 'hidden',
+            border: '4px solid rgba(255,255,255,0.3)',
+            opacity: uploading ? 0.6 : 1
+          }}
+        >
+          {profile.avatar ? (
+            <img src={profile.avatar} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ) : (
+            profile.name[0]?.toUpperCase()
+          )}
+          <div style={{
+            position: 'absolute', bottom: 0, width: '100%', height: '30%',
+            background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }}>
+            <Camera size={14} color="#fff" />
+          </div>
+          {uploading && (
+            <div className="spinner" style={{ position: 'absolute', width: '20px', height: '20px', border: '2px solid #fff', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+          )}
         </div>
-        <h1 style={{ color: '#fff', fontSize: '22px', fontWeight: '900', marginBottom: '4px' }}>{name}</h1>
-        <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '13px', marginBottom: '16px' }}>{bio}</p>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
-          <span style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', fontSize: '11px', fontWeight: '700', padding: '4px 12px', borderRadius: '999px', border: '1px solid rgba(255,255,255,0.3)' }}>
-            ⚡ EARLY ACTION
-          </span>
-          <span style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', fontSize: '11px', fontWeight: '700', padding: '4px 12px', borderRadius: '999px', border: '1px solid rgba(255,255,255,0.3)' }}>
-            🔬 STEM SCHOLAR
-          </span>
+        
+        <h1 style={{ color: '#fff', fontSize: '24px', fontWeight: '900', marginBottom: '6px' }}>{profile.name}</h1>
+        <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '14px', marginBottom: '20px', maxWidth: '280px', margin: '0 auto 20px' }}>
+          {profile.bio}
+        </p>
+        
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          {profile.tags.map(tag => (
+            <span key={tag} style={{ 
+              background: 'rgba(255,255,255,0.15)', color: '#fff', fontSize: '10px', 
+              fontWeight: '800', padding: '5px 12px', borderRadius: '999px', 
+              border: '1px solid rgba(255,255,255,0.3)', textTransform: 'uppercase',
+              letterSpacing: '0.5px'
+            }}>
+              {tag}
+            </span>
+          ))}
         </div>
       </div>
 
       <div className="page" style={{ paddingTop: '24px' }}>
+        {/* Profile Completion Score */}
+        <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-lg)', padding: '24px', marginBottom: '24px', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+            <div>
+              <span style={{ fontWeight: '800', fontSize: '15px', color: 'var(--text-main)', display: 'block' }}>Profile Strength</span>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{completionScore === 100 ? 'Excellent! Profile is complete' : 'Add more details to reach 100%'}</span>
+            </div>
+            <div style={{ 
+              background: completionScore === 100 ? '#dcfce7' : 'var(--primary-light)', 
+              color: completionScore === 100 ? '#166534' : 'var(--primary)',
+              padding: '6px 12px', borderRadius: '12px', fontWeight: '900', fontSize: '16px'
+            }}>
+              {completionScore}%
+            </div>
+          </div>
+          <div style={{ height: '10px', background: 'var(--bg)', borderRadius: '5px', overflow: 'hidden' }}>
+            <div 
+              style={{ 
+                width: `${completionScore}%`, 
+                height: '100%', 
+                background: completionScore === 100 ? '#22c55e' : 'var(--gradient)',
+                borderRadius: '5px',
+                transition: 'width 1s ease-out'
+              }} 
+            />
+          </div>
+        </div>
+
         {/* Stats */}
         <div className="stats-grid" style={{ marginBottom: '24px' }}>
           {[
-            { label: 'Colleges Applied', value: appliedCount, icon: '🏛️' },
+            { label: 'Applications', value: appliedCount, icon: '📜' },
             { label: 'Wishlist', value: wishlist.length, icon: '❤️' },
           ].map((s, i) => (
-            <div key={i} className="stat-card">
-              <div style={{ fontSize: '28px', marginBottom: '8px' }}>{s.icon}</div>
+            <div key={i} className="stat-card" style={{ padding: '20px' }}>
+              <div style={{ fontSize: '24px', marginBottom: '8px' }}>{s.icon}</div>
               <div style={{ fontSize: '32px', fontWeight: '900', color: 'var(--primary)', marginBottom: '2px' }}>{s.value}</div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>{s.label}</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase' }}>{s.label}</div>
             </div>
           ))}
         </div>
 
-        {/* Match Score */}
-        <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-md)', padding: '20px', marginBottom: '24px', boxShadow: 'var(--shadow-sm)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-            <span style={{ fontWeight: '700', fontSize: '14px' }}>Profile Match Score</span>
-            <span style={{ fontWeight: '800', color: 'var(--primary)', fontSize: '16px' }}>{matchScore}%</span>
-          </div>
-          <div className="progress-bar">
-            <div className="progress-fill" style={{ width: `${matchScore}%` }} />
-          </div>
-        </div>
-
-        {/* Wishlist */}
+        {/* Wishlist Excerpt */}
         {wishlist.length > 0 && (
           <div style={{ marginBottom: '24px' }}>
-            <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '14px' }}>❤️ My Wishlist</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: '900' }}>❤️ My Wishlist</h2>
+              <span style={{ fontSize: '13px', color: 'var(--primary)', fontWeight: '700' }}>See All</span>
+            </div>
             <div className="scroll-row">
               {wishlist.map(uni => (
                 <UniversityCard key={uni.id} university={uni} compact />
@@ -227,26 +376,28 @@ export default function Profile() {
         )}
 
         {/* Quick Actions */}
-        <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '14px' }}>Quick Actions</h2>
-        <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-md)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)', marginBottom: '24px' }}>
+        <h2 style={{ fontSize: '18px', fontWeight: '900', marginBottom: '14px' }}>Account Settings</h2>
+        <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)', marginBottom: '24px', border: '1px solid var(--border)' }}>
           {quickActions.map((action, i) => (
             <button
               key={i}
               onClick={() => setModal(action.modal)}
               style={{
                 width: '100%', display: 'flex', alignItems: 'center', gap: '14px',
-                padding: '18px 20px', borderBottom: i < quickActions.length - 1 ? '1px solid var(--border)' : 'none',
+                padding: '18px 24px', borderBottom: i < quickActions.length - 1 ? '1px solid var(--border)' : 'none',
                 textAlign: 'left', background: 'none', cursor: 'pointer',
-                transition: 'background 0.15s', fontFamily: 'inherit',
+                transition: 'background 0.2s', fontFamily: 'inherit',
               }}
               onMouseOver={e => e.currentTarget.style.background = 'var(--bg)'}
               onMouseOut={e => e.currentTarget.style.background = 'none'}
             >
-              <div style={{ background: action.bg, color: action.color, width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ background: action.bg, color: action.color, width: '42px', height: '42px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {action.icon}
               </div>
-              <span style={{ fontWeight: '600', fontSize: '15px' }}>{action.label}</span>
-              <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: '18px' }}>›</span>
+              <div style={{ flex: 1 }}>
+                <span style={{ fontWeight: '700', fontSize: '15px', color: 'var(--text-main)', display: 'block' }}>{action.label}</span>
+              </div>
+              <span style={{ color: 'var(--text-muted)', fontSize: '20px' }}>›</span>
             </button>
           ))}
         </div>
@@ -255,13 +406,16 @@ export default function Profile() {
         <button
           onClick={handleSignOut}
           style={{
-            width: '100%', padding: '16px', background: '#fef2f2', color: 'var(--accent)',
-            borderRadius: 'var(--radius-md)', border: '1.5px solid #fecaca',
-            fontWeight: '800', fontSize: '15px', display: 'flex', alignItems: 'center',
-            justifyContent: 'center', gap: '8px', cursor: 'pointer',
+            width: '100%', padding: '18px', background: '#fff1f2', color: '#e11d48',
+            borderRadius: 'var(--radius-lg)', border: '1.5px solid #fecdd3',
+            fontWeight: '900', fontSize: '15px', display: 'flex', alignItems: 'center',
+            justifyContent: 'center', gap: '10px', cursor: 'pointer',
+            transition: 'all 0.2s'
           }}
+          onMouseOver={e => e.currentTarget.style.background = '#ffe4e6'}
+          onMouseOut={e => e.currentTarget.style.background = '#fff1f2'}
         >
-          <LogOut size={18} /> Sign Out
+          <LogOut size={20} /> Sign Out
         </button>
       </div>
 

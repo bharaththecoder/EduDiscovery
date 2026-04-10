@@ -4,24 +4,29 @@ import { ArrowLeft } from 'lucide-react';
 
 const QUESTIONS = [
   {
-    q: "What's your preferred branch?",
-    options: ['Engineering', 'Medical', 'Business', 'Arts'],
+    q: "Which branch of learning excites you most?",
+    options: ['Computer Science & AI', 'Mechanical & Robotics', 'Civil & Architecture', 'Electrical & Electronics'],
+    key: 'branch'
   },
   {
-    q: 'Preferred city in Andhra Pradesh?',
-    options: ['Amaravati', 'Visakhapatnam', 'Vijayawada', 'Guntur'],
+    q: "What is your primary goal after graduation?",
+    options: ['High-Paying Placement', 'Research & Innovation', 'Entrepreneurship', 'Government Service'],
+    key: 'goal'
   },
   {
-    q: 'What matters most to you?',
-    options: ['Placements', 'Research', 'Campus Life', 'Fees'],
+    q: "Preferred campus environment?",
+    options: ['High-Tech Metro City', 'Peaceful Academic Town', 'Lush Green Mega-Campus', 'Coastal/Beach Side'],
+    key: 'env'
   },
   {
-    q: 'What is your budget per year?',
-    options: ['Under ₹1L', '₹1–2L', '₹2–4L', '₹4L+'],
+    q: "What's your estimated annual budget?",
+    options: ['Under ₹1L (Budget Friendly)', '₹1L - ₹2.5L (Mid Range)', '₹2.5L - ₹5L (Premium)', '₹5L+ (Global Standard)'],
+    key: 'budget'
   },
   {
-    q: 'Your EAMCET/APCET rank range?',
-    options: ['Top 1000', '1000–5000', '5000–10000', '10000+'],
+    q: "Your current or expected EAPCET rank?",
+    options: ['Top 2000', '2000 - 10000', '10000 - 30000', '30000+'],
+    key: 'rank'
   },
 ];
 

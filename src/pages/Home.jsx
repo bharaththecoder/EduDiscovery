@@ -45,12 +45,32 @@ function NewsModal({ article, onClose }) {
 
 export default function Home() {
   const navigate = useNavigate();
-  const { currentUser } = useAuth();
+  const { currentUser, profileStrength } = useAuth();
   const [activeNews, setActiveNews] = useState(null);
 
   const firstName = currentUser?.name?.split(' ')[0] || 'Scholar';
   const avatarLetter = firstName[0]?.toUpperCase() || 'S';
-  const topUniversities = universities.sort((a, b) => b.match - a.match).slice(0, 5);
+  
+  // Use cloud-synced quiz results if available, otherwise default to match-sorted list
+  let topUniversities = [];
+  if (currentUser?.quizResults?.topMatches) {
+    topUniversities = currentUser.quizResults.topMatches.map(match => {
+      const uni = universities.find(u => u.id === match.id);
+      return uni ? { ...uni, match: match.match } : null;
+    }).filter(Boolean);
+  }
+
+  // Backup or default
+  if (topUniversities.length === 0) {
+    topUniversities = universities.sort((a, b) => b.match - a.match).slice(0, 5);
+  }
+
+  const getStatusMessage = (score) => {
+    if (score >= 100) return 'Excellent! Profile is complete';
+    if (score >= 75) return 'Great start! Just a few more details';
+    if (score >= 50) return 'Almost there! Add a bio or tags';
+    return 'Complete for more accurate matches';
+  };
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
@@ -70,9 +90,11 @@ export default function Home() {
             width: '38px', height: '38px', borderRadius: '50%',
             background: 'var(--gradient)', display: 'flex', alignItems: 'center',
             justifyContent: 'center', color: '#fff', fontWeight: '800', fontSize: '16px',
-            cursor: 'pointer',
+            cursor: 'pointer', overflow: 'hidden'
           }} onClick={() => navigate('/profile')}>
-            {avatarLetter}
+            {currentUser?.photoURL ? (
+              <img src={currentUser.photoURL} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : avatarLetter}
           </div>
         </div>
       </div>
@@ -95,17 +117,17 @@ export default function Home() {
           <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '13px', fontWeight: '600', marginBottom: '4px' }}>
             👤 Scholar Profile
           </p>
-          <h2 style={{ color: '#fff', fontSize: '20px', fontWeight: '800', marginBottom: '4px' }}>85% Complete</h2>
-          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '13px', marginBottom: '16px' }}>Almost there! Complete for accurate matches</p>
+          <h2 style={{ color: '#fff', fontSize: '20px', fontWeight: '800', marginBottom: '4px' }}>{profileStrength}% Complete</h2>
+          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '13px', marginBottom: '16px' }}>{getStatusMessage(profileStrength)}</p>
           <div style={{ height: '6px', background: 'rgba(255,255,255,0.25)', borderRadius: '999px', marginBottom: '16px', overflow: 'hidden' }}>
-            <div style={{ width: '85%', height: '100%', background: '#fff', borderRadius: '999px' }} />
+            <div style={{ width: `${profileStrength}%`, height: '100%', background: '#fff', borderRadius: '999px', transition: 'width 0.5s ease-out' }} />
           </div>
           <button onClick={() => navigate('/profile')} style={{
             background: '#fff', color: 'var(--primary)', border: 'none',
             borderRadius: '999px', padding: '10px 20px', fontWeight: '700',
             fontSize: '13px', cursor: 'pointer',
           }}>
-            Complete Profile →
+            {profileStrength < 100 ? 'Manage Profile →' : 'View Profile →'}
           </button>
         </div>
 

@@ -7,7 +7,8 @@ import {
   signOut,
   updateProfile
 } from 'firebase/auth';
-import { auth, googleProvider } from '../firebase';
+import { doc, onSnapshot, setDoc, getDoc } from 'firebase/firestore';
+import { auth, googleProvider, db } from '../firebase';
 
 const AuthContext = createContext();
 
@@ -19,36 +20,62 @@ export const AuthProvider = ({ children }) => {
 
   // Listen to Firebase auth state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    let unsubscribeFirestore = () => {};
+
+    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
       if (user) {
         // Map Firebase user object to our expected shape
-        setCurrentUser({
+        const baseUser = {
           id: user.uid,
           email: user.email,
           name: user.displayName || user.email.split('@')[0],
+          photoURL: user.photoURL || null,
+        };
+
+        // Listen for Firestore profile data
+        const userDocRef = doc(db, 'users', user.uid);
+        
+        // Initial set if doesn't exist
+        const snap = await getDoc(userDocRef);
+        if (!snap.exists()) {
+          await setDoc(userDocRef, {
+            name: baseUser.name,
+            email: baseUser.email,
+            bio: 'Aspiring Engineer • AP Student',
+            tags: ["Early Action", "Stem Scholar"],
+            updatedAt: new Date().toISOString()
+          }, { merge: true });
+        }
+
+        unsubscribeFirestore = onSnapshot(userDocRef, (doc) => {
+          if (doc.exists()) {
+            setCurrentUser({
+              ...baseUser,
+              ...doc.data(),
+            });
+          } else {
+            setCurrentUser(baseUser);
+          }
+          setLoading(false);
         });
       } else {
         setCurrentUser(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribeAuth();
+      unsubscribeFirestore();
+    };
   }, []);
 
   const signup = async (email, password, name) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-
-      // Update the user's display name inside Firebase
       if (userCredential.user) {
         await updateProfile(userCredential.user, { displayName: name });
-        // Force an update to our state with the new name
-        setCurrentUser({
-          id: userCredential.user.uid,
-          email: userCredential.user.email,
-          name: name
-        });
+        // Firestore update is handled by the useEffect listener when it detects no doc
       }
       return userCredential.user;
     } catch (error) {
@@ -67,7 +94,6 @@ export const AuthProvider = ({ children }) => {
 
   const loginWithGoogle = async () => {
     try {
-      // 👇 ADD THIS LINE
       googleProvider.setCustomParameters({
         prompt: "select_account"
       });
@@ -88,12 +114,36 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateUserDoc = async (data) => {
+    if (!currentUser) return;
+    try {
+      const userDocRef = doc(db, 'users', currentUser.id);
+      await setDoc(userDocRef, { ...data, updatedAt: new Date().toISOString() }, { merge: true });
+    } catch (error) {
+      console.error("Error updating user doc:", error);
+      throw error;
+    }
+  };
+
+  const calculateProfileStrength = (user) => {
+    if (!user) return 0;
+    let score = 30; // Start with 30% base
+    if (user.photoURL) score += 20;
+    if (user.bio && user.bio !== 'Aspiring Engineer • AP Student') score += 15;
+    if (user.city) score += 10;
+    if (user.tags && user.tags.length > 2) score += 10;
+    if (user.quizResults) score += 15; // Bonus for taking the quiz
+    return Math.min(score, 100);
+  };
+
   const value = {
     currentUser,
     signup,
     login,
     logout,
-    loginWithGoogle
+    loginWithGoogle,
+    updateUserDoc,
+    profileStrength: calculateProfileStrength(currentUser)
   };
 
   return (

@@ -6,14 +6,52 @@ import { useWishlist } from '../context/WishlistContext';
 import { useToast } from '../context/ToastContext';
 import BottomNav from '../components/BottomNav';
 
-function ApplyModal({ university, onClose, onSuccess }) {
-  const [form, setForm] = useState({ name: '', email: '', branch: '' });
-  const [submitted, setSubmitted] = useState(false);
+import { db } from '../firebase';
+import { collection, addDoc, doc, increment, updateDoc } from 'firebase/firestore';
+import { useAuth } from '../context/AuthContext';
 
-  const handleSubmit = (e) => {
+function ApplyModal({ university, onClose, onSuccess }) {
+  const { currentUser } = useAuth();
+  const [form, setForm] = useState({ 
+    name: currentUser?.name || '', 
+    email: currentUser?.email || '', 
+    branch: '' 
+  });
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => { onClose(); onSuccess(); }, 1500);
+    if (!currentUser) return;
+    
+    setLoading(true);
+    try {
+      // 1. Save application record
+      await addDoc(collection(db, 'applications'), {
+        userId: currentUser.id,
+        universityId: university.id,
+        universityName: university.name,
+        userName: form.name,
+        userEmail: form.email,
+        branch: form.branch,
+        status: 'pending',
+        appliedAt: new Date().toISOString()
+      });
+
+      // 2. Increment application count in user profile
+      const userRef = doc(db, 'users', currentUser.id);
+      await updateDoc(userRef, {
+        appliedCount: increment(1)
+      });
+
+      setSubmitted(true);
+      onSuccess();
+      setTimeout(() => { onClose(); }, 2000);
+    } catch (error) {
+      console.error("Application error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -31,7 +69,7 @@ function ApplyModal({ university, onClose, onSuccess }) {
             <div style={{ fontSize: '56px', marginBottom: '16px' }}>🎉</div>
             <h2 style={{ fontWeight: '800', marginBottom: '8px' }}>Application Sent!</h2>
             <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>
-              Your application to {university.name} has been submitted successfully.
+              Your application to {university.name} has been submitted successfully to our cloud records.
             </p>
           </div>
         ) : (
@@ -58,8 +96,8 @@ function ApplyModal({ university, onClose, onSuccess }) {
                   ))}
                 </select>
               </div>
-              <button type="submit" className="btn btn-primary btn-full" style={{ padding: '16px', marginTop: '8px' }}>
-                Submit Application
+              <button type="submit" disabled={loading} className="btn btn-primary btn-full" style={{ padding: '16px', marginTop: '8px' }}>
+                {loading ? 'Submitting...' : 'Submit Cloud Application'}
               </button>
             </form>
           </>
