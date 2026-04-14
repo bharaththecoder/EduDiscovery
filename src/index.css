@@ -157,7 +157,7 @@ input, textarea, select {
    LAYOUT
 ════════════════════════════════════════ */
 .app-container {
-  max-width: 480px;
+  width: 100%;
   margin: 0 auto;
   min-height: 100vh;
   background: var(--bg);
@@ -169,12 +169,22 @@ input, textarea, select {
   padding: 0 20px 100px;
   min-height: 100vh;
   animation: fadeIn 0.25s ease;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .page {
+    padding: 24px 32px 40px;
+  }
 }
 
 .page-no-pad {
   padding: 0;
   min-height: 100vh;
   animation: fadeIn 0.25s ease;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 @keyframes fadeIn {
@@ -456,16 +466,20 @@ h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.3px; }
 .bottom-nav {
   position: fixed;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
   width: 100%;
-  max-width: 480px;
   background: rgba(255,255,255,0.95);
   backdrop-filter: blur(12px);
   border-top: 1px solid var(--border);
   z-index: 50;
   display: flex;
   padding: 8px 0;
+}
+
+@media (min-width: 768px) {
+  .bottom-nav {
+    display: none;
+  }
 }
 
 .nav-item {
@@ -502,6 +516,11 @@ h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.3px; }
 .scroll-row::-webkit-scrollbar { display: none; }
 .scroll-row { -ms-overflow-style: none; scrollbar-width: none; }
 .scroll-row > * { scroll-snap-align: start; flex-shrink: 0; }
+
+@media (min-width: 768px) {
+  /* scroll-row stays horizontal; desktop grids use Tailwind classes */
+  .scroll-row > * { flex-shrink: 0; }
+}
 
 /* ════════════════════════════════════════
    HERO SECTION (Landing)
@@ -550,10 +569,10 @@ h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.3px; }
   border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
-  transition: var(--transition);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
   cursor: pointer;
 }
-.uni-card:hover { transform: scale(1.02); box-shadow: var(--shadow-md); }
+.uni-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
 
 .uni-card-image { position: relative; height: 160px; overflow: hidden; }
 .uni-card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }

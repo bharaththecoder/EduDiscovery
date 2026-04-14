@@ -4,7 +4,6 @@ import { ArrowLeft, Heart, Download, ExternalLink, Users, Building2, Award, Book
 import { getUniversityById } from '../data/universities';
 import { useWishlist } from '../context/WishlistContext';
 import { useToast } from '../context/ToastContext';
-import BottomNav from '../components/BottomNav';
 
 import { db } from '../firebase';
 import { collection, addDoc, doc, increment, updateDoc, query, where, orderBy, onSnapshot, serverTimestamp } from 'firebase/firestore';
@@ -241,9 +240,9 @@ export default function UniversityDetail() {
   const handleBrochure = () => showToast('📄 Brochure downloaded!', 'success');
 
   return (
-    <div style={{ background: 'var(--bg)', minHeight: '100vh', paddingBottom: '100px' }}>
+    <div style={{ background: 'var(--bg)', minHeight: '100vh', paddingBottom: '40px' }}>
       {/* Hero */}
-      <div style={{ position: 'relative', height: '280px' }}>
+      <div className="relative h-[280px] md:h-[400px]">
         <img
           src={university.image}
           alt={university.name}
@@ -290,17 +289,20 @@ export default function UniversityDetail() {
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div style={{ padding: '20px 20px 0', display: 'flex', gap: '10px' }}>
-        <button onClick={() => setShowApply(true)} className="btn btn-primary" style={{ flex: 1, padding: '14px' }}>
-          Apply Now
-        </button>
-        <button onClick={handleBrochure} className="btn btn-ghost" style={{ flex: 1, padding: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-          <Download size={16} /> Brochure
-        </button>
-      </div>
-
-      <div style={{ padding: '20px' }}>
+      <div className="page" style={{ paddingTop: '24px' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Sidebar (Right on Desktop, Top on Mobile) */}
+          <div className="lg:col-span-1 order-1 lg:order-2 flex flex-col gap-6">
+            {/* Action Buttons */}
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button onClick={() => setShowApply(true)} className="btn btn-primary" style={{ flex: 1, padding: '14px' }}>
+                Apply Now
+              </button>
+              <button onClick={handleBrochure} className="btn btn-ghost" style={{ flex: 1, padding: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                <Download size={16} /> Brochure
+              </button>
+            </div>
         {/* Stats Row */}
         <div style={{
           display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
@@ -338,37 +340,41 @@ export default function UniversityDetail() {
           )}
         </div>
 
-        {/* Location / Google Maps */}
-        <div
-          onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(university.name + ', ' + university.city + ', Andhra Pradesh')}`, '_blank')}
-          style={{
-            background: 'var(--gradient)',
-            borderRadius: 'var(--radius-md)',
-            padding: '20px',
-            marginBottom: '20px',
-            cursor: 'pointer',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            boxShadow: 'var(--shadow-md)',
-            transition: 'transform 0.2s',
-          }}
-          onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-          onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <div style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', width: '46px', height: '46px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}>
-              <Navigation size={22} fill="currentColor" />
+            {/* Location / Google Maps */}
+            <div
+              onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(university.name + ', ' + university.city + ', Andhra Pradesh')}`, '_blank')}
+              style={{
+                background: 'var(--gradient)', borderRadius: 'var(--radius-md)', padding: '20px',
+                cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                boxShadow: 'var(--shadow-md)', transition: 'transform 0.2s',
+              }}
+              onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+              onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                <div style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', width: '46px', height: '46px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}>
+                  <Navigation size={22} fill="currentColor" />
+                </div>
+                <div>
+                  <div style={{ fontWeight: '800', color: '#fff', fontSize: '16px', marginBottom: '2px' }}>Navigate to Campus</div>
+                  <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '13px', fontWeight: '500' }}>Open in Google Maps</div>
+                </div>
+              </div>
             </div>
-            <div>
-              <div style={{ fontWeight: '800', color: '#fff', fontSize: '16px', marginBottom: '2px' }}>Navigate to Campus</div>
-              <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '13px', fontWeight: '500' }}>Open in Google Maps</div>
+
+            {/* Bottom CTA */}
+            <div style={{ background: 'var(--dark-card)', borderRadius: 'var(--radius-lg)', padding: '28px 20px', textAlign: 'center' }}>
+              <h2 style={{ color: '#fff', fontSize: '20px', fontWeight: '800', marginBottom: '8px' }}>Ready to Ignite Your Future?</h2>
+              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', marginBottom: '20px' }}>Over 2,000 students joined {university.shortName} last year.</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <button onClick={() => setShowApply2(true)} className="btn btn-primary btn-full">Apply for Admission</button>
+                <button onClick={() => showToast('📞 Counselor will call you within 24 hours!', 'success')} style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '999px', padding: '14px', fontWeight: '600', fontSize: '15px', cursor: 'pointer', width: '100%' }}>Contact Counselors</button>
+              </div>
             </div>
           </div>
-          <div style={{ background: '#fff', color: 'var(--primary)', padding: '10px 18px', borderRadius: '999px', fontSize: '13px', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-            Let's Go 🚀
-          </div>
-        </div>
+
+          {/* Main Content (Left on Desktop, Bottom on Mobile) */}
+          <div className="lg:col-span-2 order-2 lg:order-1 flex flex-col gap-6">
 
         {/* Academic Programs */}
         <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-md)', overflow: 'hidden', marginBottom: '20px', boxShadow: 'var(--shadow-sm)' }}>
@@ -444,36 +450,10 @@ export default function UniversityDetail() {
           <ReviewsSection universityId={university.id} />
         </div>
 
-        {/* Bottom CTA */}
-        <div style={{
-          background: 'var(--dark-card)', borderRadius: 'var(--radius-lg)',
-          padding: '28px 20px', textAlign: 'center',
-        }}>
-          <h2 style={{ color: '#fff', fontSize: '20px', fontWeight: '800', marginBottom: '8px' }}>
-            Ready to Ignite Your Future?
-          </h2>
-          <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', marginBottom: '20px' }}>
-            Over 2,000 students joined {university.shortName} last year.
-          </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <button onClick={() => setShowApply2(true)} className="btn btn-primary btn-full">
-              Apply for Admission
-            </button>
-            <button
-              onClick={() => showToast('📞 Counselor will call you within 24 hours!', 'success')}
-              style={{
-                background: 'rgba(255,255,255,0.1)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)',
-                borderRadius: '999px', padding: '14px', fontWeight: '600', fontSize: '15px', cursor: 'pointer',
-                width: '100%',
-              }}
-            >
-              Contact Counselors
-            </button>
-          </div>
         </div>
       </div>
+      </div>
 
-      <BottomNav />
       {showApply && <ApplyModal university={university} onClose={() => setShowApply(false)} onSuccess={() => showToast('✅ Application submitted successfully!', 'success')} />}
       {showApply2 && <ApplyModal university={university} onClose={() => setShowApply2(false)} onSuccess={() => showToast('✅ Application submitted successfully!', 'success')} />}
     </div>

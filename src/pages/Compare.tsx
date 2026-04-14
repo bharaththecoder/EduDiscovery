@@ -3,7 +3,6 @@ import { useColleges } from '../context/CollegeContext';
 import { University } from '../types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import BottomNav from '../components/BottomNav';
 import { Search, MapPin, Award, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -35,12 +34,12 @@ export default function ComparePage() {
   };
 
   return (
-    <div className="page" style={{ paddingBottom: '100px' }}>
-      <div className="top-nav" style={{ justifyContent: 'center' }}>
-        <h1 style={{ fontSize: '18px', fontWeight: '800', margin: 0 }}>Compare Colleges</h1>
+    <div className="page" style={{ paddingBottom: '40px' }}>
+      <div className="pt-6 pb-2 md:pt-10 mb-4 border-b border-border text-center md:text-left">
+        <h1 style={{ fontSize: '24px', fontWeight: '900', margin: 0, color: 'var(--primary)' }}>Compare Colleges</h1>
       </div>
 
-      <div style={{ padding: '24px 0' }}>
+      <div style={{ padding: '0 0 24px 0' }}>
         <p style={{ color: 'var(--text-muted)', marginBottom: '24px', fontSize: '15px' }}>
           Select up to 3 colleges to compare their features side-by-side.
         </p>
@@ -147,8 +146,6 @@ export default function ComparePage() {
           </div>
         )}
       </div>
-
-      <BottomNav />
     </div>
   );
 }

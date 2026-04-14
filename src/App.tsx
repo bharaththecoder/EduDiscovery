@@ -12,6 +12,7 @@ import QuizResult from './pages/QuizResult';
 import RecommendationPage from './pages/RecommendationPage';
 import ComparePage from './pages/Compare';
 import AdminSeed from './pages/settings/AdminSeed';
+import Layout from './components/Layout';
 
 const Guard = ({ children }) => {
   const { currentUser } = useAuth();
@@ -28,18 +29,18 @@ function App() {
           {/* Public */}
           <Route path="/" element={currentUser ? <Navigate to="/home" replace /> : <Landing />} />
 
-          {/* Protected */}
-          <Route path="/home" element={<Guard><Home /></Guard>} />
-          <Route path="/search" element={<Guard><SearchPage /></Guard>} />
-          <Route path="/compare" element={<Guard><ComparePage /></Guard>} />
-          <Route path="/university/:id" element={<Guard><UniversityDetail /></Guard>} />
-          <Route path="/profile" element={<Guard><Profile /></Guard>} />
-          <Route path="/recommend" element={<Guard><RecommendationPage /></Guard>} />
-          <Route path="/quiz" element={<Guard><Quiz /></Guard>} />
-          <Route path="/quiz-result" element={<Guard><QuizResult /></Guard>} />
-
-          {/* Admin utility */}
-          <Route path="/admin/seed-colleges" element={<Guard><AdminSeed /></Guard>} />
+          {/* Protected Area Setup: Wrapped with Guard and Layout */}
+          <Route element={<Guard><Layout /></Guard>}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/compare" element={<ComparePage />} />
+            <Route path="/university/:id" element={<UniversityDetail />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/recommend" element={<RecommendationPage />} />
+            <Route path="/quiz" element={<Quiz />} />
+            <Route path="/quiz-result" element={<QuizResult />} />
+            <Route path="/admin/seed-colleges" element={<AdminSeed />} />
+          </Route>
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />

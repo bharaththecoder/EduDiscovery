@@ -258,7 +258,7 @@ export default function Profile() {
   ];
 
   return (
-    <div style={{ background: 'var(--bg)', minHeight: '100vh', paddingBottom: '100px' }}>
+    <div style={{ background: 'var(--bg)', minHeight: '100vh', paddingBottom: '40px' }}>
       <input 
         type="file" 
         ref={fileInputRef} 
@@ -318,10 +318,12 @@ export default function Profile() {
       </div>
 
       <div className="page" style={{ paddingTop: '24px' }}>
-
-
-        {/* Stats */}
-        <div className="stats-grid" style={{ marginBottom: '24px' }}>
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_360px] gap-8">
+          
+          {/* Left Column: Stats and Info */}
+          <div>
+            {/* Stats */}
+            <div className="stats-grid" style={{ marginBottom: '24px' }}>
           {[
             { label: 'Applications', value: appliedCount, icon: '📜' },
             { label: 'Wishlist', value: wishlist.length, icon: '❤️' },
@@ -334,23 +336,25 @@ export default function Profile() {
           ))}
         </div>
 
-        {/* Wishlist Excerpt */}
-        {wishlist.length > 0 && (
-          <div style={{ marginBottom: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-              <h2 style={{ fontSize: '18px', fontWeight: '900' }}>❤️ My Wishlist</h2>
-              <span style={{ fontSize: '13px', color: 'var(--primary)', fontWeight: '700' }}>See All</span>
-            </div>
-            <div className="scroll-row">
-              {wishlist.map(uni => (
-                <UniversityCard key={uni.id} university={uni} compact />
-              ))}
-            </div>
+            {wishlist.length > 0 && (
+              <div style={{ marginBottom: '24px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                  <h2 style={{ fontSize: '18px', fontWeight: '900' }}>❤️ My Wishlist</h2>
+                  <span style={{ fontSize: '13px', color: 'var(--primary)', fontWeight: '700' }}>See All</span>
+                </div>
+                <div className="scroll-row">
+                  {wishlist.map(uni => (
+                    <UniversityCard key={uni.id} university={uni} compact />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-        )}
 
-        {/* Quick Actions */}
-        <h2 style={{ fontSize: '18px', fontWeight: '900', marginBottom: '14px' }}>Account Settings</h2>
+          {/* Right Column: Settings and Actions */}
+          <div>
+            {/* Quick Actions */}
+            <h2 style={{ fontSize: '18px', fontWeight: '900', marginBottom: '14px' }}>Account Settings</h2>
         <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)', marginBottom: '24px', border: '1px solid var(--border)' }}>
           {quickActions.map((action, i) => (
             <button
@@ -376,24 +380,24 @@ export default function Profile() {
           ))}
         </div>
 
-        {/* Sign Out */}
-        <button
-          onClick={handleSignOut}
-          style={{
-            width: '100%', padding: '18px', background: '#fff1f2', color: '#e11d48',
-            borderRadius: 'var(--radius-lg)', border: '1.5px solid #fecdd3',
-            fontWeight: '900', fontSize: '15px', display: 'flex', alignItems: 'center',
-            justifyContent: 'center', gap: '10px', cursor: 'pointer',
-            transition: 'all 0.2s'
-          }}
-          onMouseOver={e => e.currentTarget.style.background = '#ffe4e6'}
-          onMouseOut={e => e.currentTarget.style.background = '#fff1f2'}
-        >
-          <LogOut size={20} /> Sign Out
-        </button>
+            {/* Sign Out */}
+            <button
+              onClick={handleSignOut}
+              style={{
+                width: '100%', padding: '18px', background: '#fff1f2', color: '#e11d48',
+                borderRadius: 'var(--radius-lg)', border: '1.5px solid #fecdd3',
+                fontWeight: '900', fontSize: '15px', display: 'flex', alignItems: 'center',
+                justifyContent: 'center', gap: '10px', cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={e => e.currentTarget.style.background = '#ffe4e6'}
+              onMouseOut={e => e.currentTarget.style.background = '#fff1f2'}
+            >
+              <LogOut size={20} /> Sign Out
+            </button>
+          </div>
+        </div>
       </div>
-
-      <BottomNav />
 
       {modal === 'edit' && <EditModal currentUser={currentUser} onClose={() => setModal(null)} />}
       {modal === 'notifications' && <NotificationsModal onClose={() => setModal(null)} />}

@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import { universities } from '../data/universities';
 import UniversityCard from '../components/UniversityCard';
-import BottomNav from '../components/BottomNav';
 
 const CITIES = ['Amaravati', 'Visakhapatnam', 'Vijayawada', 'Guntur', 'Kakinada', 'Tirupati'];
 const BRANCHES = ['Engineering', 'Medical', 'Arts', 'Law', 'Business', 'Sciences', 'Pharmacy'];
@@ -106,7 +105,7 @@ export default function SearchPage() {
 
         {/* Cards */}
         {filtered.length > 0 ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filtered.map(uni => (
               <UniversityCard key={uni.id} university={uni} />
             ))}
@@ -126,8 +125,6 @@ export default function SearchPage() {
           </div>
         )}
       </div>
-
-      <BottomNav />
     </div>
   );
 }
