@@ -108,28 +108,6 @@ export default function Home() {
           </h1>
         </div>
 
-        {/* Profile Completion Card */}
-        <div style={{
-          background: 'var(--gradient)', borderRadius: 'var(--radius-lg)',
-          padding: '24px', marginBottom: '28px', position: 'relative', overflow: 'hidden',
-        }}>
-          <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100px', height: '100px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%' }} />
-          <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '13px', fontWeight: '600', marginBottom: '4px' }}>
-            👤 Scholar Profile
-          </p>
-          <h2 style={{ color: '#fff', fontSize: '20px', fontWeight: '800', marginBottom: '4px' }}>{profileStrength}% Complete</h2>
-          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '13px', marginBottom: '16px' }}>{getStatusMessage(profileStrength)}</p>
-          <div style={{ height: '6px', background: 'rgba(255,255,255,0.25)', borderRadius: '999px', marginBottom: '16px', overflow: 'hidden' }}>
-            <div style={{ width: `${profileStrength}%`, height: '100%', background: '#fff', borderRadius: '999px', transition: 'width 0.5s ease-out' }} />
-          </div>
-          <button onClick={() => navigate('/profile')} style={{
-            background: '#fff', color: 'var(--primary)', border: 'none',
-            borderRadius: '999px', padding: '10px 20px', fontWeight: '700',
-            fontSize: '13px', cursor: 'pointer',
-          }}>
-            {profileStrength < 100 ? 'Manage Profile →' : 'View Profile →'}
-          </button>
-        </div>
 
         {/* Top Matches */}
         <div style={{ marginBottom: '28px' }}>
@@ -168,6 +146,32 @@ export default function Home() {
             </div>
           </div>
           <div style={{ fontSize: '48px' }}>🎯</div>
+        </div>
+
+        {/* Compare Banner */}
+        <div
+          onClick={() => navigate('/compare')}
+          style={{
+            background: 'var(--gradient-warm)', borderRadius: 'var(--radius-lg)',
+            padding: '24px', marginBottom: '28px', cursor: 'pointer',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            boxShadow: '0 8px 24px rgba(168, 85, 247, 0.3)',
+          }}
+        >
+          <div>
+            <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '13px', marginBottom: '4px' }}>Make the right choice</p>
+            <h3 style={{ color: '#fff', fontSize: '16px', fontWeight: '800', marginBottom: '12px' }}>
+              Compare Colleges<br />Side-by-Side ⚖️
+            </h3>
+            <div style={{
+              background: '#fff', color: 'var(--primary)',
+              padding: '8px 18px', borderRadius: '999px',
+              fontSize: '13px', fontWeight: '700', display: 'inline-block',
+            }}>
+              Compare
+            </div>
+          </div>
+          <div style={{ fontSize: '48px' }}>📊</div>
         </div>
 
         {/* Latest News */}

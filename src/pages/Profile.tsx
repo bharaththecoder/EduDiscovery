@@ -318,33 +318,7 @@ export default function Profile() {
       </div>
 
       <div className="page" style={{ paddingTop: '24px' }}>
-        {/* Profile Completion Score */}
-        <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-lg)', padding: '24px', marginBottom: '24px', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <div>
-              <span style={{ fontWeight: '800', fontSize: '15px', color: 'var(--text-main)', display: 'block' }}>Profile Strength</span>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{completionScore === 100 ? 'Excellent! Profile is complete' : 'Add more details to reach 100%'}</span>
-            </div>
-            <div style={{ 
-              background: completionScore === 100 ? '#dcfce7' : 'var(--primary-light)', 
-              color: completionScore === 100 ? '#166534' : 'var(--primary)',
-              padding: '6px 12px', borderRadius: '12px', fontWeight: '900', fontSize: '16px'
-            }}>
-              {completionScore}%
-            </div>
-          </div>
-          <div style={{ height: '10px', background: 'var(--bg)', borderRadius: '5px', overflow: 'hidden' }}>
-            <div 
-              style={{ 
-                width: `${completionScore}%`, 
-                height: '100%', 
-                background: completionScore === 100 ? '#22c55e' : 'var(--gradient)',
-                borderRadius: '5px',
-                transition: 'width 1s ease-out'
-              }} 
-            />
-          </div>
-        </div>
+
 
         {/* Stats */}
         <div className="stats-grid" style={{ marginBottom: '24px' }}>

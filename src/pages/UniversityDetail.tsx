@@ -1,29 +1,134 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, Download, ExternalLink, Users, Building2, Award, BookOpen } from 'lucide-react';
+import { ArrowLeft, Heart, Download, ExternalLink, Users, Building2, Award, BookOpen, Navigation } from 'lucide-react';
 import { getUniversityById } from '../data/universities';
 import { useWishlist } from '../context/WishlistContext';
 import { useToast } from '../context/ToastContext';
 import BottomNav from '../components/BottomNav';
 
 import { db } from '../firebase';
-import { collection, addDoc, doc, increment, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, increment, updateDoc, query, where, orderBy, onSnapshot, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Review, University, UserProfile } from '../types';
 
-function ApplyModal({ university, onClose, onSuccess }) {
-  const { currentUser } = useAuth();
-  const [form, setForm] = useState({ 
-    name: currentUser?.name || '', 
-    email: currentUser?.email || '', 
-    branch: '' 
+function ReviewsSection({ universityId }: { universityId: string }) {
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [text, setText] = useState('');
+  const [rating, setRating] = useState(5);
+  const [loading, setLoading] = useState(true);
+  const { currentUser } = useAuth() as { currentUser: UserProfile | null };
+  const { showToast } = useToast() as { showToast: (msg: string, type: string) => void };
+
+  React.useEffect(() => {
+    const q = query(
+      collection(db, 'reviews'),
+      where('universityId', '==', universityId) // Removing orderBy('createdAt', 'desc') temporarily unless index exists
+    );
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Review[];
+      // Client side sort if missing index
+      data.sort((a, b) => {
+        const t1 = (a.createdAt as any)?.seconds || 0;
+        const t2 = (b.createdAt as any)?.seconds || 0;
+        return t2 - t1;
+      });
+      setReviews(data);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, [universityId]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentUser || !text.trim()) return;
+    try {
+      await addDoc(collection(db, 'reviews'), {
+        universityId,
+        userId: currentUser.id,
+        userName: currentUser.name,
+        userPhoto: currentUser.photoURL || null,
+        text,
+        rating,
+        createdAt: serverTimestamp(),
+        isVerified: true
+      });
+      setText('');
+      setRating(5);
+      showToast('Review posted!', 'success');
+    } catch (err) {
+      console.error(err);
+      showToast('Error posting review', 'error');
+    }
+  };
+
+  return (
+    <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-md)', padding: '20px', boxShadow: 'var(--shadow-sm)' }}>
+      <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '16px' }}>💬 Student Reviews</h2>
+
+      {loading ? <p>Loading reviews...</p> : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
+          {reviews.length === 0 ? <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>No reviews yet. Be the first!</p> : null}
+          {reviews.map(r => (
+            <div key={r.id} style={{ borderBottom: '1px solid var(--border)', paddingBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                  {r.userPhoto ? <img src={r.userPhoto} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{r.userName?.[0]}</span>}
+                </div>
+                <div>
+                  <div style={{ fontWeight: '600', fontSize: '13px' }}>{r.userName}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--primary)' }}>{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</div>
+                </div>
+              </div>
+              <p style={{ fontSize: '14px', color: 'var(--text-main)', lineHeight: 1.5 }}>{r.text}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {currentUser ? (
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ fontSize: '13px', fontWeight: 600 }}>Leave a review</div>
+          <select value={rating} onChange={e => setRating(Number(e.target.value))} style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--border)', background: 'transparent' }}>
+            <option value={5}>5 Stars - Excellent</option>
+            <option value={4}>4 Stars - Good</option>
+            <option value={3}>3 Stars - Average</option>
+            <option value={2}>2 Stars - Poor</option>
+            <option value={1}>1 Star - Terrible</option>
+          </select>
+          <textarea
+            value={text}
+            onChange={e => setText(e.target.value)}
+            placeholder="Share your experience..."
+            rows={3}
+            style={{ padding: '12px', borderRadius: '12px', border: '1px solid var(--border)', fontSize: '14px', width: '100%', resize: 'none' }}
+          />
+          <Button type="submit" style={{ width: '100%', fontWeight: 700 }}>Post Review</Button>
+        </form>
+      ) : (
+        <div style={{ textAlign: 'center', padding: '16px', background: 'var(--bg)', borderRadius: '12px' }}>
+          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Login to leave a review</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ApplyModal({ university, onClose, onSuccess }: { university: University, onClose: () => void, onSuccess: () => void }) {
+  const { currentUser } = useAuth() as { currentUser: UserProfile | null };
+  const [form, setForm] = useState({
+    name: currentUser?.name || '',
+    email: currentUser?.email || '',
+    branch: ''
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentUser) return;
-    
+
     setLoading(true);
     try {
       // 1. Save application record
@@ -91,7 +196,7 @@ function ApplyModal({ university, onClose, onSuccess }) {
                   style={{ flex: 1, padding: '14px 16px', fontSize: '15px', color: form.branch ? 'var(--text-main)' : 'var(--text-muted)', background: 'transparent', border: 'none', outline: 'none', appearance: 'none' }}
                 >
                   <option value="">Select Branch Preference</option>
-                  {university.programs.map(p => (
+                  {university.programs.map((p: any) => (
                     <option key={p.name} value={p.name}>{p.name}</option>
                   ))}
                 </select>
@@ -110,8 +215,8 @@ function ApplyModal({ university, onClose, onSuccess }) {
 export default function UniversityDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { showToast } = useToast();
-  const { toggleWishlist, isWishlisted } = useWishlist();
+  const { showToast } = useToast() as { showToast: (msg: string, type: string) => void };
+  const { toggleWishlist, isWishlisted } = useWishlist() as { toggleWishlist: (u: University) => void, isWishlisted: (id: string) => boolean };
   const [showApply, setShowApply] = useState(false);
   const [showApply2, setShowApply2] = useState(false);
 
@@ -233,6 +338,38 @@ export default function UniversityDetail() {
           )}
         </div>
 
+        {/* Location / Google Maps */}
+        <div
+          onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(university.name + ', ' + university.city + ', Andhra Pradesh')}`, '_blank')}
+          style={{
+            background: 'var(--gradient)',
+            borderRadius: 'var(--radius-md)',
+            padding: '20px',
+            marginBottom: '20px',
+            cursor: 'pointer',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            boxShadow: 'var(--shadow-md)',
+            transition: 'transform 0.2s',
+          }}
+          onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+          onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', width: '46px', height: '46px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}>
+              <Navigation size={22} fill="currentColor" />
+            </div>
+            <div>
+              <div style={{ fontWeight: '800', color: '#fff', fontSize: '16px', marginBottom: '2px' }}>Navigate to Campus</div>
+              <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '13px', fontWeight: '500' }}>Open in Google Maps</div>
+            </div>
+          </div>
+          <div style={{ background: '#fff', color: 'var(--primary)', padding: '10px 18px', borderRadius: '999px', fontSize: '13px', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+            Let's Go 🚀
+          </div>
+        </div>
+
         {/* Academic Programs */}
         <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-md)', overflow: 'hidden', marginBottom: '20px', boxShadow: 'var(--shadow-sm)' }}>
           <div style={{ padding: '20px 20px 12px', borderBottom: '1px solid var(--border)' }}>
@@ -300,6 +437,11 @@ export default function UniversityDetail() {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Community Reviews */}
+        <div style={{ marginBottom: '24px' }}>
+          <ReviewsSection universityId={university.id} />
         </div>
 
         {/* Bottom CTA */}

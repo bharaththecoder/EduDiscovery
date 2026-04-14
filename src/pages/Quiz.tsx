@@ -10,12 +10,12 @@ const QUESTIONS = [
   },
   {
     q: "What is your primary goal after graduation?",
-    options: ['High-Paying Placement', 'Research & Innovation', 'Entrepreneurship', 'Government Service'],
+    options: ['Top MNC Placements', 'Higher Studies & Research', 'Startup & Entrepreneurship', 'Core Engineering & PSUs'],
     key: 'goal'
   },
   {
     q: "Preferred campus environment?",
-    options: ['High-Tech Metro City', 'Peaceful Academic Town', 'Lush Green Mega-Campus', 'Coastal/Beach Side'],
+    options: ['Bustling Metro City (IT Hub)', 'Serene Green Campus', 'Coastal / Beach City', 'Historic & Cultural Town'],
     key: 'env'
   },
   {

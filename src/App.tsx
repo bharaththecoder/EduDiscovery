@@ -10,6 +10,7 @@ import Profile from './pages/Profile';
 import Quiz from './pages/Quiz';
 import QuizResult from './pages/QuizResult';
 import RecommendationPage from './pages/RecommendationPage';
+import ComparePage from './pages/Compare';
 import AdminSeed from './pages/settings/AdminSeed';
 
 const Guard = ({ children }) => {
@@ -30,6 +31,7 @@ function App() {
           {/* Protected */}
           <Route path="/home" element={<Guard><Home /></Guard>} />
           <Route path="/search" element={<Guard><SearchPage /></Guard>} />
+          <Route path="/compare" element={<Guard><ComparePage /></Guard>} />
           <Route path="/university/:id" element={<Guard><UniversityDetail /></Guard>} />
           <Route path="/profile" element={<Guard><Profile /></Guard>} />
           <Route path="/recommend" element={<Guard><RecommendationPage /></Guard>} />

@@ -7,58 +7,75 @@ import { Trophy, RotateCcw, Cloud } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 function calculateMatch(university, answers) {
-  let score = 50; // Performance baseline
+  let score = 30; // Performance baseline
 
-  // 1. Branch Match (Weight: 25)
+  // 1. Branch Match (Weight: 15)
   const prefBranch = answers[0]; // key: 'branch'
   if (prefBranch) {
-    if (university.branches.some(b => prefBranch.includes(b))) score += 15;
-    if (university.tags.some(t => prefBranch.includes(t))) score += 10;
+    if (university.branches.some(b => prefBranch.includes(b))) score += 5;
+    const branchWord = prefBranch.split(' ')[0];
+    if (university.tags.some(t => t.includes(branchWord) || prefBranch.includes(t))) score += 10;
+    else if (university.programs.some(p => p.name.includes(branchWord))) score += 10;
   }
 
-  // 2. Goal Match (Weight: 20)
+  // 2. Goal Match (Weight: 15)
   const prefGoal = answers[1]; // key: 'goal'
-  if (prefGoal === 'High-Paying Placement') {
-    if (['A++', 'A+'].includes(university.naac)) score += 10;
-    if (university.nirf !== '—') score += 10;
-  } else if (prefGoal === 'Research & Innovation') {
-    if (university.facilities.some(f => f.name.toLowerCase().includes('research') || f.name.toLowerCase().includes('innovation'))) score += 20;
-  } else if (prefGoal === 'Entrepreneurship') {
-    if (university.facilities.some(f => f.name.toLowerCase().includes('hub') || f.name.toLowerCase().includes('startup'))) score += 20;
+  if (prefGoal === 'Top MNC Placements') {
+    if (['A++', 'A+'].includes(university.naac)) score += 8;
+    if (university.nirf !== '—') score += 7;
+  } else if (prefGoal === 'Higher Studies & Research') {
+    const research = university.facilities.some(f => f.name.toLowerCase().includes('research') || f.desc.toLowerCase().includes('research'));
+    if (research) score += 10;
+    if (['A++', 'A+'].includes(university.naac)) score += 5;
+  } else if (prefGoal === 'Startup & Entrepreneurship') {
+    const innovation = university.facilities.some(f => f.name.toLowerCase().includes('hub') || f.name.toLowerCase().includes('innovation') || f.desc.toLowerCase().includes('startup'));
+    if (innovation) score += 15;
+  } else if (prefGoal === 'Core Engineering & PSUs') {
+    if (university.established < 2000) score += 10;
+    if (['jntuk', 'andhra-university', 'sv-university', 'acharya-nagarjuna-university'].includes(university.id)) score += 5;
   }
 
   // 3. Environment Match (Weight: 15)
   const prefEnv = answers[2]; // key: 'env'
-  if (prefEnv === 'High-Tech Metro City') {
+  if (prefEnv === 'Bustling Metro City (IT Hub)') {
     if (['Visakhapatnam', 'Amaravati', 'Vijayawada'].includes(university.city)) score += 15;
-  } else if (prefEnv === 'Lush Green Mega-Campus') {
-    if (university.acres >= 100) score += 15;
-  } else if (prefEnv === 'Peaceful Academic Town') {
-    if (university.acres < 100 && university.acres > 20) score += 15;
+  } else if (prefEnv === 'Serene Green Campus') {
+    if (university.acres >= 150) score += 15;
+  } else if (prefEnv === 'Coastal / Beach City') {
+    if (['Visakhapatnam', 'Kakinada', 'Bapatla'].includes(university.city)) score += 15;
+  } else if (prefEnv === 'Historic & Cultural Town') {
+    if (['Tirupati', 'Guntur', 'Rajamahendravaram'].includes(university.city)) score += 15;
   }
 
-  // 4. Budget Match (Weight: 20)
+  // 4. Budget Match (Weight: 10)
   const prefBudget = answers[3]; // key: 'budget'
-  const minFee = Math.min(...university.programs.map(p => {
+  let minFee = 999999;
+  university.programs.forEach(p => {
     const n = parseInt(p.fees.replace(/[^\d]/g, ''));
-    return n;
-  }));
+    if (n && n < minFee) minFee = n;
+  });
 
-  if (prefBudget?.includes('Under ₹1L') && minFee < 100000) score += 20;
-  else if (prefBudget?.includes('₹1L - ₹2.5L') && minFee >= 100000 && minFee <= 250000) score += 20;
-  else if (prefBudget?.includes('₹2.5L - ₹5L') && minFee >= 250000) score += 20;
+  if (prefBudget?.includes('Under ₹1L') && minFee <= 100000) score += 10;
+  else if (prefBudget?.includes('₹1L - ₹2.5L') && minFee > 100000 && minFee <= 250000) score += 10;
+  else if (prefBudget?.includes('₹2.5L - ₹5L') && minFee > 250000) score += 10;
 
-  // 5. Rank Match (Weight: 20)
+  // 5. Rank Match (Weight: 15)
   const prefRank = answers[4]; // key: 'rank'
   if (prefRank === 'Top 2000') {
-    if (['srm-ap', 'vit-ap', 'andhra-university', 'amrita-ap'].includes(university.id)) score += 20;
+    if (['A++', 'A+'].includes(university.naac)) score += 10;
+    if (university.nirf !== '—') score += 5;
   } else if (prefRank === '2000 - 10000') {
-    if (['kl-university', 'vr-siddhartha', 'gmrit-rajam', 'nri-institute'].includes(university.id)) score += 20;
+    if (['A', 'A+'].includes(university.naac)) score += 10;
+    if (university.match > 85) score += 5;
+  } else if (prefRank === '10000 - 30000') {
+    if (['B+', 'B', 'A'].includes(university.naac) || university.match <= 85) score += 15;
   } else {
-    score += 10; // General match for higher ranks
+    score += 15;
   }
 
-  return Math.min(score, 99);
+  // Add random tie-breaker based on university id to have stable but varied sorts
+  const uniqueBoost = (university.id.charCodeAt(0) % 5);
+  return Math.min(Math.floor(score) + uniqueBoost, 99);
 }
 
 export default function QuizResult() {

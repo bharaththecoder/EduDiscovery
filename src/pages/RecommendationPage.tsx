@@ -26,7 +26,7 @@ const BUDGET_RANGES = {
   '> ₹10 Lakhs (Premium/Private)': { min: 1000000, max: Infinity },
 };
 
-// Map quiz choices to branches array values in universities.js
+// Map quiz choices to branches array values in universities
 const COURSE_BRANCHES = {
   'Engineering & Tech': 'Engineering',
   'Medical & Science': 'Medical',

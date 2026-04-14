@@ -13,7 +13,7 @@ export default function AdminSeed() {
     
     try {
       for (const college of universities) {
-        // Use the hardcoded ID from universities.js
+        // Use the hardcoded ID from universities
         const docId = college.id;
         
         await setDoc(doc(db, 'colleges', docId), college);
@@ -35,7 +35,7 @@ export default function AdminSeed() {
         Database Seeding
       </h1>
       <p style={{ color: 'var(--text-muted)', marginBottom: '32px', fontSize: '15px' }}>
-        This utility pushes the local `universities.js` data (37 real colleges) into your live Firebase Firestore `colleges` collection. 
+        This utility pushes the local `universities` data (37 real colleges) into your live Firebase Firestore `colleges` collection. 
         It uses an idempotent setDoc operation based on the unique college ID.
       </p>
 
