@@ -97,69 +97,7 @@ function BreakdownBar({ label, icon, pct, color }: { label: string; icon: React.
   );
 }
 
-// ─── Why This College + Breakdown ────────────────────────────
-function MatchDetails({ uni }: { uni: any }) {
-  const [open, setOpen] = useState(false);
-  const hasReasons = uni.reasons && uni.reasons.length > 0;
-  const hasBreakdown = uni.breakdown && typeof uni.breakdown.branchPct === 'number';
 
-  if (!hasReasons && !hasBreakdown) return null;
-
-  return (
-    <div style={{ marginTop: '10px' }}>
-      <button
-        onClick={() => setOpen(!open)}
-        style={{
-          display: 'flex', alignItems: 'center', gap: '6px',
-          background: open ? 'var(--primary-light)' : 'rgba(108,59,255,0.06)',
-          color: 'var(--primary)', padding: '7px 14px', borderRadius: '99px',
-          fontSize: '12px', fontWeight: '700',
-          border: '1px solid rgba(108,59,255,0.18)', cursor: 'pointer',
-          transition: 'all 0.2s',
-        }}
-      >
-        <Sparkles size={12} />
-        Why this college?
-        {open ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-      </button>
-
-      {open && (
-        <div style={{
-          marginTop: '10px', padding: '14px 16px', borderRadius: '12px',
-          background: 'rgba(108,59,255,0.04)', border: '1px solid rgba(108,59,255,0.12)',
-          animation: 'fadeIn 0.2s ease',
-        }}>
-          {/* Reason bullets */}
-          {hasReasons && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', marginBottom: hasBreakdown ? '14px' : 0 }}>
-              {(uni.reasons as string[]).map((r, i) => (
-                <div key={i} style={{ display: 'flex', gap: '7px', fontSize: '12px', color: 'var(--text-main)' }}>
-                  <span style={{ color: '#10b981', fontWeight: '800', flexShrink: 0 }}>✓</span>
-                  {r}
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Score breakdown bars */}
-          {hasBreakdown && (
-            <>
-              <div style={{ height: '1px', background: 'var(--border)', marginBottom: '12px' }} />
-              <p style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Match Breakdown</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <BreakdownBar label="Course"   icon={<BookOpen   size={12} />} pct={uni.breakdown.branchPct}   color="#6C3BFF" />
-                <BreakdownBar label="Budget"   icon={<Wallet     size={12} />} pct={uni.breakdown.budgetPct}   color="#10b981" />
-                <BreakdownBar label="Location" icon={<MapPin     size={12} />} pct={uni.breakdown.locationPct} color="#f59e0b" />
-                <BreakdownBar label="Type"     icon={<Award      size={12} />} pct={uni.breakdown.typePct}     color="#8b5cf6" />
-                <BreakdownBar label="Rank Fit" icon={<GraduationCap size={12} />} pct={uni.breakdown.rankPct}  color="#06b6d4" />
-              </div>
-            </>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
 
 // ─── Category Badge ───────────────────────────────────────────
 function CategoryBadge({ category }: { category: string }) {
@@ -297,9 +235,9 @@ function ResultCard({ uni, rank }: { uni: any; rank: number }) {
           {uni.matchPercent}% Match
         </div>
       </div>
-      <UniversityCard university={uni} />
-      <MatchDetails uni={uni} />
+      <UniversityCard university={uni} reasons={uni.reasons} />
     </div>
+
   );
 }
 

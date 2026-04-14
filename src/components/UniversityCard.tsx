@@ -9,14 +9,19 @@ const FALLBACK = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQ4
 interface Props {
   university: any;
   compact?: boolean;
+  reasons?: string[];
 }
 
-export default function UniversityCard({ university, compact = false }: Props) {
+
+export default function UniversityCard({ university, compact = false, reasons = [] }: Props) {
+
   const navigate  = useNavigate();
   const { toggleWishlist, isWishlisted } = useWishlist();
   const { showToast } = useToast();
   const saved      = isWishlisted(university.id);
   const [imgSrc, setImgSrc] = useState(university.image || FALLBACK);
+  const [showAllReasons, setShowAllReasons] = useState(false);
+
 
   const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -161,6 +166,47 @@ export default function UniversityCard({ university, compact = false }: Props) {
             <span key={tag} className="tag" style={{ fontSize: '10px', padding: '2px 8px' }}>{tag}</span>
           ))}
         </div>
+
+        {/* Reasons / Explanation */}
+        {reasons && reasons.length > 0 && (
+          <div style={{
+            marginTop: '12px',
+            paddingTop: '12px',
+            borderTop: '1px solid var(--border)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '6px'
+          }}>
+            <p style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>
+              Why this college?
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {(showAllReasons ? reasons : reasons.slice(0, 2)).map((reason, idx) => (
+                <div key={idx} style={{ display: 'flex', gap: '8px', fontSize: '13px', color: 'var(--text-main)', alignItems: 'flex-start' }}>
+                  <span style={{ color: '#10b981', fontWeight: '900', fontSize: '14px', flexShrink: 0 }}>✓</span>
+                  <span style={{ lineHeight: 1.4 }}>{reason}</span>
+                </div>
+              ))}
+            </div>
+            {reasons.length > 2 && (
+              <button
+                onClick={(e) => { e.stopPropagation(); setShowAllReasons(!showAllReasons); }}
+                style={{
+                  fontSize: '12px',
+                  fontWeight: '700',
+                  color: 'var(--primary)',
+                  marginTop: '4px',
+                  textAlign: 'left',
+                  padding: 0,
+                  width: 'fit-content'
+                }}
+              >
+                {showAllReasons ? 'Show less ↑' : `View ${reasons.length - 2} more reasons ↓`}
+              </button>
+            )}
+          </div>
+        )}
+
 
         {/* Spacer */}
         <div style={{ flex: 1 }} />

@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import { useColleges } from '../context/CollegeContext';
-import { University } from '../types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Search, MapPin, Award, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { universities } from "../data/universities";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+
+
 
 export default function ComparePage() {
-  const { colleges, loading } = useColleges();
-  const [selectedColleges, setSelectedColleges] = useState<(University | null)[]>([null, null]);
+  console.log('Universities loaded:', universities);
+  const [selectedColleges, setSelectedColleges] = useState<(any | null)[]>([null, null]);
 
   const handleSelect = (index: number, universityId: string) => {
-    const uni = colleges.find(c => c.id === universityId) || null;
+    const uni = universities.find(c => c.id === universityId) || null;
+
     const newSelected = [...selectedColleges];
     newSelected[index] = uni;
     setSelectedColleges(newSelected);
@@ -44,7 +46,7 @@ export default function ComparePage() {
           Select up to 3 colleges to compare their features side-by-side.
         </p>
 
-        {loading ? (
+        {false ? (
           <p>Loading colleges...</p>
         ) : (
           <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '16px' }}>
@@ -56,22 +58,23 @@ export default function ComparePage() {
                     <button onClick={() => removeCollegeSlot(idx)} style={{ color: 'var(--accent)', fontSize: '12px', fontWeight: '600' }}>Remove</button>
                   )}
                 </div>
-                
+
                 <div className="input-wrap" style={{ padding: '0 12px' }}>
                   <Search size={16} color="var(--text-muted)" />
-                  <select 
-                    value={selected?.id || ''} 
+                  <select
+                    value={selected?.id || ''}
                     onChange={(e) => handleSelect(idx, e.target.value)}
                     style={{ flex: 1, padding: '12px 8px', fontSize: '14px', width: '100%', background: 'transparent' }}
                   >
                     <option value="">Select a college...</option>
-                    {colleges.map(c => (
+                    {universities.map(c => (
                       <option key={c.id} value={c.id} disabled={selectedColleges.some((sc, sIdx) => sIdx !== idx && sc?.id === c.id)}>
                         {c.name}
                       </option>
                     ))}
                   </select>
                 </div>
+
 
                 {selected ? (
                   <Card style={{ flex: 1, marginTop: '12px', borderRadius: '16px', border: '1px solid var(--border)' }}>
@@ -85,7 +88,7 @@ export default function ComparePage() {
                       </div>
                     </CardHeader>
                     <CardContent style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                      
+
                       <div>
                         <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '4px' }}>Rating</div>
                         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
@@ -107,8 +110,9 @@ export default function ComparePage() {
                       <div>
                         <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '8px' }}>Top Facilities</div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                          {(selected.facilities || []).slice(0, 3).map((f, i) => (
+                          {(selected.facilities || []).slice(0, 3).map((f: any, i: number) => (
                             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+
                               <CheckCircle2 size={14} color="var(--primary)" />
                               <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{f.name}</span>
                             </div>
@@ -132,7 +136,7 @@ export default function ComparePage() {
 
             {selectedColleges.length < 3 && (
               <div style={{ minWidth: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <button 
+                <button
                   onClick={addCollegeSlot}
                   style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 600 }}
                 >
