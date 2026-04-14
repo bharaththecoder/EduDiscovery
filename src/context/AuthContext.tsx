@@ -10,12 +10,43 @@ import {
 import { doc, onSnapshot, setDoc, getDoc } from 'firebase/firestore';
 import { auth, googleProvider, db } from '../firebase';
 
-const AuthContext = createContext();
+// ─── Types ────────────────────────────────────────────────────
+export interface AppUser {
+  id: string;
+  email: string | null;
+  name: string;
+  photoURL: string | null;
+  bio?: string;
+  city?: string;
+  tags?: string[];
+  quizResults?: {
+    answers: Record<string, string>;
+    topMatches: { id: string; name: string; match: number }[];
+    completedAt: string;
+  };
+  [key: string]: unknown;
+}
 
-export const useAuth = () => useContext(AuthContext);
+interface AuthContextType {
+  currentUser: AppUser | null;
+  signup: (email: string, password: string, name: string) => Promise<unknown>;
+  login: (email: string, password: string) => Promise<unknown>;
+  logout: () => Promise<void>;
+  loginWithGoogle: () => Promise<unknown>;
+  updateUserDoc: (data: Record<string, unknown>) => Promise<void>;
+  profileStrength: number;
+}
 
-export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
+const AuthContext = createContext<AuthContextType | null>(null);
+
+export const useAuth = (): AuthContextType => {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+  return ctx;
+};
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [currentUser, setCurrentUser] = useState<AppUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Listen to Firebase auth state changes
@@ -25,10 +56,10 @@ export const AuthProvider = ({ children }) => {
     const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
       if (user) {
         // Map Firebase user object to our expected shape
-        const baseUser = {
+        const baseUser: AppUser = {
           id: user.uid,
           email: user.email,
-          name: user.displayName || user.email.split('@')[0],
+          name: user.displayName || (user.email?.split('@')[0] ?? 'Scholar'),
           photoURL: user.photoURL || null,
         };
 
@@ -47,12 +78,12 @@ export const AuthProvider = ({ children }) => {
           }, { merge: true });
         }
 
-        unsubscribeFirestore = onSnapshot(userDocRef, (doc) => {
-          if (doc.exists()) {
+        unsubscribeFirestore = onSnapshot(userDocRef, (docSnap) => {
+          if (docSnap.exists()) {
             setCurrentUser({
               ...baseUser,
-              ...doc.data(),
-            });
+              ...docSnap.data(),
+            } as AppUser);
           } else {
             setCurrentUser(baseUser);
           }
@@ -70,12 +101,11 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
-  const signup = async (email, password, name) => {
+  const signup = async (email: string, password: string, name: string) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       if (userCredential.user) {
         await updateProfile(userCredential.user, { displayName: name });
-        // Firestore update is handled by the useEffect listener when it detects no doc
       }
       return userCredential.user;
     } catch (error) {
@@ -83,7 +113,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const login = async (email, password) => {
+  const login = async (email: string, password: string) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       return userCredential.user;
@@ -97,7 +127,6 @@ export const AuthProvider = ({ children }) => {
       googleProvider.setCustomParameters({
         prompt: "select_account"
       });
-
       const result = await signInWithPopup(auth, googleProvider);
       return result.user;
     } catch (error) {
@@ -114,7 +143,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const updateUserDoc = async (data) => {
+  const updateUserDoc = async (data: Record<string, unknown>) => {
     if (!currentUser) return;
     try {
       const userDocRef = doc(db, 'users', currentUser.id);
@@ -125,25 +154,25 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const calculateProfileStrength = (user) => {
+  const calculateProfileStrength = (user: AppUser | null) => {
     if (!user) return 0;
-    let score = 30; // Start with 30% base
+    let score = 30;
     if (user.photoURL) score += 20;
     if (user.bio && user.bio !== 'Aspiring Engineer • AP Student') score += 15;
     if (user.city) score += 10;
     if (user.tags && user.tags.length > 2) score += 10;
-    if (user.quizResults) score += 15; // Bonus for taking the quiz
+    if (user.quizResults) score += 15;
     return Math.min(score, 100);
   };
 
-  const value = {
+  const value: AuthContextType = {
     currentUser,
     signup,
     login,
     logout,
     loginWithGoogle,
     updateUserDoc,
-    profileStrength: calculateProfileStrength(currentUser)
+    profileStrength: calculateProfileStrength(currentUser),
   };
 
   return (

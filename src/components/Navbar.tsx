@@ -21,7 +21,7 @@ export default function Navbar() {
     { label: 'Home', path: '/home' },
     { label: 'Search', path: '/search' },
     { label: 'Compare', path: '/compare' },
-    { label: 'Finder', path: '/recommend' }
+    { label: 'Quiz', path: '/quiz' },
   ];
 
   return (

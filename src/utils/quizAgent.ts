@@ -79,9 +79,9 @@ export function scoreBranch(university: any, branch: string, maxW: number): { sc
 
   const keywords = branchMap[branch.toLowerCase()] || [branch.toLowerCase()];
 
-  const tagMatch  = keywords.some(k => tags.some(t => t.includes(k)));
-  const progMatch = keywords.some(k => programs.some(p => p.includes(k)));
-  const brMatch   = keywords.some(k => branches.some(br => br.includes(k)));
+  const tagMatch  = keywords.some(k => tags.some((t: string) => t.includes(k)));
+  const progMatch = keywords.some(k => programs.some((p: string) => p.includes(k)));
+  const brMatch   = keywords.some(k => branches.some((br: string) => br.includes(k)));
 
   // Hard filter: if NO branch match at all → score 0 (strict exclusion)
   if (!tagMatch && !progMatch && !brMatch) return { score: 0, reason: '' };

@@ -9,14 +9,13 @@ import UniversityDetail from './pages/UniversityDetail';
 import Profile from './pages/Profile';
 import Quiz from './pages/Quiz';
 import QuizResult from './pages/QuizResult';
-import RecommendationPage from './pages/RecommendationPage';
 import ComparePage from './pages/Compare';
 import AdminSeed from './pages/settings/AdminSeed';
 import Layout from './components/Layout';
 
-const Guard = ({ children }) => {
+const Guard = ({ children }: { children: React.ReactNode }) => {
   const { currentUser } = useAuth();
-  return currentUser ? children : <Navigate to="/" replace />;
+  return currentUser ? <>{children}</> : <Navigate to="/" replace />;
 };
 
 function App() {
@@ -36,7 +35,7 @@ function App() {
             <Route path="/compare" element={<ComparePage />} />
             <Route path="/university/:id" element={<UniversityDetail />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/recommend" element={<RecommendationPage />} />
+            <Route path="/recommend" element={<Navigate to="/quiz" replace />} />
             <Route path="/quiz" element={<Quiz />} />
             <Route path="/quiz-result" element={<QuizResult />} />
             <Route path="/admin/seed-colleges" element={<AdminSeed />} />

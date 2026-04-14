@@ -3,12 +3,22 @@ import { db } from '../firebase';
 import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { useAuth } from './AuthContext';
 
-const WishlistContext = createContext();
-export const useWishlist = () => useContext(WishlistContext);
+interface WishlistContextType {
+  wishlist: any[];
+  toggleWishlist: (university: any) => Promise<void>;
+  isWishlisted: (id: string) => boolean;
+}
 
-export function WishlistProvider({ children }) {
+const WishlistContext = createContext<WishlistContextType | null>(null);
+export const useWishlist = (): WishlistContextType => {
+  const ctx = useContext(WishlistContext);
+  if (!ctx) throw new Error('useWishlist must be used within WishlistProvider');
+  return ctx;
+};
+
+export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const { currentUser } = useAuth();
-  const [wishlist, setWishlist] = useState([]);
+  const [wishlist, setWishlist] = useState<any[]>([]);
 
   useEffect(() => {
     if (!currentUser) {
@@ -27,7 +37,7 @@ export function WishlistProvider({ children }) {
     return () => unsubscribe();
   }, [currentUser]);
 
-  const toggleWishlist = async (university) => {
+  const toggleWishlist = async (university: any) => {
     if (!currentUser) return;
     
     const userRef = doc(db, 'users', currentUser.id);
@@ -48,7 +58,7 @@ export function WishlistProvider({ children }) {
     }
   };
 
-  const isWishlisted = (id) => wishlist.some(u => u.id === id);
+  const isWishlisted = (id: string) => wishlist.some((u: any) => u.id === id);
 
   return (
     <WishlistContext.Provider value={{ wishlist, toggleWishlist, isWishlisted }}>
