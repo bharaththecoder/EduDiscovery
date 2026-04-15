@@ -235,7 +235,7 @@ function ResultCard({ uni, rank }: { uni: any; rank: number }) {
           {uni.matchPercent}% Match
         </div>
       </div>
-      <UniversityCard university={uni} reasons={uni.reasons} />
+      <UniversityCard university={uni} reasons={uni.reasons} breakdown={uni.breakdown} />
     </div>
 
   );

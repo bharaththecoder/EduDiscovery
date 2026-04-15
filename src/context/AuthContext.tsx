@@ -55,7 +55,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // Map Firebase user object to our expected shape
         const baseUser: AppUser = {
           id: user.uid,
           email: user.email,
@@ -63,32 +62,58 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           photoURL: user.photoURL || null,
         };
 
-        // Listen for Firestore profile data
+        // Immediately set base user so UI can start rendering if needed
+        // but keep loading true if we want to wait for Firestore
+        setCurrentUser(baseUser);
+
         const userDocRef = doc(db, 'users', user.uid);
         
-        // Initial set if doesn't exist
-        const snap = await getDoc(userDocRef);
-        if (!snap.exists()) {
-          await setDoc(userDocRef, {
-            name: baseUser.name,
-            email: baseUser.email,
-            bio: 'Aspiring Engineer • AP Student',
-            tags: ["Early Action", "Stem Scholar"],
-            updatedAt: new Date().toISOString()
-          }, { merge: true });
+        try {
+          const snap = await getDoc(userDocRef);
+          if (!snap.exists()) {
+            await setDoc(userDocRef, {
+              name: baseUser.name,
+              email: baseUser.email,
+              bio: 'Aspiring Engineer • AP Student',
+              tags: ["Early Action", "Stem Scholar"],
+              updatedAt: new Date().toISOString()
+            }, { merge: true });
+          }
+        } catch (error) {
+          console.error("Error checking/seeding user doc:", error);
+          // Don't block app initialization on Firestore errors
+          setLoading(false);
+          return;
         }
 
-        unsubscribeFirestore = onSnapshot(userDocRef, (docSnap) => {
-          if (docSnap.exists()) {
-            setCurrentUser({
-              ...baseUser,
-              ...docSnap.data(),
-            } as AppUser);
-          } else {
-            setCurrentUser(baseUser);
+        unsubscribeFirestore = onSnapshot(userDocRef, {
+          next: (docSnap) => {
+            if (docSnap.exists()) {
+              setCurrentUser({
+                ...baseUser,
+                ...docSnap.data(),
+              } as AppUser);
+            } else {
+              setCurrentUser(baseUser);
+            }
+            setLoading(false);
+          },
+          error: (err) => {
+            console.error("Firestore onSnapshot error:", err);
+            setLoading(false);
           }
-          setLoading(false);
         });
+
+        // Fail-safe: if Firestore hasn't responded in 3 seconds, stop loading
+        const timeout = setTimeout(() => {
+          setLoading(false);
+        }, 3000);
+        
+        return () => {
+          clearTimeout(timeout);
+          unsubscribeFirestore();
+        };
+
       } else {
         setCurrentUser(null);
         setLoading(false);
@@ -177,7 +202,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {loading ? (
+        <div style={{
+          height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center', background: 'var(--bg)', gap: '16px'
+        }}>
+          <div style={{
+            width: '40px', height: '40px', border: '3px solid var(--primary-light)',
+            borderTopColor: 'var(--primary)', borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }} />
+          <p style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-muted)' }}>Initializing EduDiscovery...</p>
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        </div>
+      ) : children}
     </AuthContext.Provider>
   );
 };

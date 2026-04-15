@@ -411,7 +411,7 @@ export const universities = [
     match: 80,
     branches: ["Sciences", "Arts", "Engineering", "Law", "Business"],
     tags: ["B.Sc", "B.Com", "B.A.", "LL.B", "MBA"],
-    image: "https://www.nagarjunauniversity-ac.in/imagesnew/bg1.jpg",
+    image: "https://www.deccanchronicle.com/h-upload/2024/11/12/1862069-acharyanagarjunauniversity.jpg",
     website: "https://www.nagarjunauniversity.ac.in",
     about: "Acharya Nagarjuna University (ANU), established in 1976 at Nagarjuna Nagar near Guntur, is a state university with NAAC 'A' grade and ranked among India's top 100 universities (NIRF 2024, #97 Overall). ANU serves over 3 lakh students through 7 regular colleges and 420+ affiliated colleges spread across Guntur, Krishna, Prakasam, and Palnadu districts. It is a major hub for affordable higher education in Andhra Pradesh, particularly for BA, B.Sc, and B.Com students.",
     programs: [
@@ -1612,7 +1612,7 @@ export const universities = [
     match: 83,
     branches: ["Engineering", "Business"],
     tags: ["CSE", "ECE", "EEE", "Mechanical", "Civil", "Chemical"],
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwjJmWd-ghgC4rRnN69K0VuwHdPvEQKBiY1g&s",
+    image: "https://content.jdmagicbox.com/comp/vizianagaram/52/9999pmulhydstd80152/catalogue/maharaj-vijayaram-gajapathi-raj-college-of-engineering-chintalavalasa-vizianagaram-colleges-b0tnarx.jpg",
     website: "https://www.mvgrce.edu.in",
     about: "Maharaj Vijayaram Gajapathi Raj College of Engineering (MVGRCE), established in 1997 by the MANSAS Educational Trust in Vizianagaram, is a private autonomous engineering college affiliated with JNTUK and approved by AICTE. MVGRCE holds NAAC 'A' grade and offers a rare combination of Chemical Engineering along with traditional disciplines. Vizianagaram, historically part of North Andhra's princely tradition under the Vizianagaram Raja, provides a rich cultural backdrop. MVGRCE is known for its quality faculty (including PhD holders from IITs), steady TCS and Infosys placements, and an active student innovation cell. It is a primary engineering destination for students from Vizianagaram, Srikakulam, and border districts.",
     programs: [
@@ -1655,7 +1655,7 @@ export const universities = [
     match: 82,
     branches: ["Engineering"],
     tags: ["CSE", "ECE", "EEE", "Mechanical", "Civil", "IT"],
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGBnFhS-p3-EEOkbzC4o7cxFzqVo8JD_TGgw&s",
+    image: "https://www.lendi.edu.in/cloud/lendi-institute.jpg",
     website: "https://www.lendi.edu.in",
     about: "Lendi Institute of Engineering and Technology (LIET), established in 2008 by the Sai Dhamam Educational Trust in Jonnada near Rajam, Srikakulam District, is a well-regarded autonomous private engineering college affiliated with JNTUK and approved by AICTE. LIET holds NAAC A+ grade and is known for its green campus, modern infrastructure, and dedicated student support systems. It is the top-rated engineering college in Srikakulam District and serves students from across the Uttarandhra region. With a strong focus on placement preparation, LIET consistently secures placement offers in TCS, Wipro, and Infosys for its graduates.",
     programs: [
@@ -1698,7 +1698,7 @@ export const universities = [
     match: 83,
     branches: ["Agriculture", "Sciences", "Engineering"],
     tags: ["B.Sc Agriculture", "B.Tech Agri Engg.", "M.Sc", "Ph.D", "Food Technology", "Horticulture"],
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXZLiRF78YJSdONmxr3SJqCMxK8j8E0CMOHA&s",
+    image: "https://ik.imagekit.io/syustaging/SYU_PREPROD/COVER-IMAGE_8Zp7RHI-_.webp?tr=w-3840",
     website: "https://angrau.ac.in",
     about: "Acharya N.G. Ranga Agricultural University (ANGRAU), established in 1964 in Guntur and renamed in 1996 after the eminent farmer leader Acharya N.G. Ranga, is the premier state agricultural university in Andhra Pradesh. Operating across a vast 1,750-acre main campus, ANGRAU has 9 constituent colleges and 50+ research stations across AP. It holds ICAR Grade 'B' accreditation and UGC recognition, and specializes in B.Sc (Hons) Agriculture, B.Tech (Agricultural Engineering and Food Technology), and M.Sc / Ph.D programs. ANGRAU drives agricultural research, rural development, and crop improvement across AP, contributing significantly to India's food security. VC Dr. R. Sarada Jayalakshmi Devi leads the institution.",
     programs: [
@@ -1741,7 +1741,7 @@ export const universities = [
     match: 84,
     branches: ["Medicine", "Pharmacy", "Nursing", "Allied Health Sciences"],
     tags: ["MBBS", "MD", "MS", "BDS", "BAMS", "B.Sc Nursing"],
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjaqBB9V1iOdTHi9Zh5jjj9z1l10bFWLt7BA&s",
+    image: "https://media.newindianexpress.com/TNIE%2Fimport%2F2023%2F9%2F9%2Foriginal%2FNew_Project_9.jpg",
     website: "https://www.ntruhs.ac.in",
     about: "Dr. NTR University of Health Sciences (NTRUHS), established in 1986 and inaugurated by the late Padmashree Dr. N.T. Rama Rao (the then Chief Minister of Andhra Pradesh), is the primary medical affiliating university in the state. Based in Vijayawada, NTRUHS is NAAC 'A' grade accredited and regulates 400+ affiliated medical, dental, nursing, pharmacy, and allied health sciences colleges across AP. The university offers MBBS, MD, MS, BDS, MDS, BAMS, BHMS, BUMS, B.Sc Nursing, BPT, B.Pharm, and numerous super-specialty DM/M.Ch programs. Under the leadership of VC Dr. Pulala Chandrasekhar, NTRUHS plays a pivotal role in maintaining healthcare education standards across Andhra Pradesh.",
     programs: [
@@ -1784,7 +1784,7 @@ export const universities = [
     match: 81,
     branches: ["Engineering", "Sciences", "Business", "Pharmacy"],
     tags: ["B.Tech", "M.Tech", "MBA", "M.Pharm", "CSE", "AI & ML"],
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUEq4fJ3QynnzlCbERGX-ZLrLGjH3Mw-tDfA&s",
+    image: "https://image-static.collegedunia.com/public/college_data/images/appImage/28390_an2.jpg",
     website: "https://annamacharyauniversity.edu.in",
     about: "Annamacharya University, situated in Rajampet, Annamayya District, was established as a private university in 2024, evolving from the legacy of Annamacharya Institute of Technology and Sciences (AITS) founded in 1998. Named after the legendary 15th-century Telugu composer-saint Sri Annamacharya, the university reflects the region's deep cultural heritage. AITS Rajampet was awarded NAAC 'A' grade and the institution continues this academic tradition under university status. With programs in engineering, sciences, pharmacy, and management, the university serves students from Kadapa, Kurnool, and neighbouring districts. VC Prof. E. Saibaba Reddy spearheads its academic vision.",
     programs: [
@@ -1827,7 +1827,7 @@ export const universities = [
     match: 88,
     branches: ["Arts", "Sciences", "Business"],
     tags: ["Liberal Arts", "Economics", "Psychology", "Data Science", "MBA", "IFMR"],
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIwDqPRCkPJaZe19EzjcTBaARJqBDl4sCXnQ&s",
+    image: "https://www-cdn.krea.edu.in/main/2022/09/KREA_Day-267-scaled.jpg",
     website: "https://www.krea.edu.in",
     about: "Krea University, established in 2018 at Sri City — a world-class integrated city and industrial hub near Chittoor — is a pioneering liberal arts and sciences private university in Andhra Pradesh. NAAC 'A' grade accredited, Krea is renowned for its innovative 'Interwoven Learning' pedagogy, blending arts, sciences, and technology. It operates through two schools: the School of Interwoven Arts and Sciences (SIAS) and the prestigious IFMR Graduate School of Business. Krea is led by Prof. Nirmala Rao as Vice-Chancellor. It ranks among India's most innovative new-generation universities, attracting global faculty and producing graduates who pursue careers at Goldman Sachs, McKinsey, Harvard, and leading global institutions.",
     programs: [
@@ -1870,7 +1870,7 @@ export const universities = [
     match: 83,
     branches: ["Engineering", "Business", "Computer Applications"],
     tags: ["CSE", "ECE", "EEE", "Civil", "Mechanical", "MBA"],
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJaFZZO1KnBBFbkQdRQRvfHPUasHe8sdDINA&s",
+    image: "https://assets.allegiance-educare.com/colleges/1480311185Capture.JPG",
     website: "https://www.qiscet.edu.in",
     about: "QIS College of Engineering and Technology (QISCET), established in 1998 by the Sri Nidamanuri Educational Society in Ongole, Prakasam District, is a reputed autonomous private engineering institution affiliated with JNTUK and approved by AICTE. QISCET holds NAAC A+ grade and is the premier engineering college serving the Prakasam and South Andhra region. The college is known for its experienced faculty, disciplined academic environment, and placement consistency with TCS, Wipro, and Infosys. QISCET's 45-acre campus, green environment, and focus on practical engineering make it a preferred choice for students from Prakasam and Nellore districts.",
     programs: [
@@ -1913,7 +1913,7 @@ export const universities = [
     match: 87,
     branches: ["Medicine"],
     tags: ["MBBS", "MD", "MS", "DM", "M.Ch", "Super Specialty"],
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMHIedkpJZlhfW8NjXHN_mMzN5kvIbONMQ6w&s",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTofkQtrYzGlhpusGYZwvIDxzo8lg7oD5nY7g&s",
     website: "https://amc.edu.in",
     about: "Andhra Medical College (AMC), Visakhapatnam, established on July 19, 1923, is the oldest medical college in Andhra Pradesh and one of the oldest in India. Affiliated with Dr. NTR University of Health Sciences and administered by the Government of AP, AMC is a cornerstone of public medical education in North Andhra. The college is attached to King George Hospital (KGH), one of the largest government hospitals in India, giving students unmatched clinical exposure. AMC offers MBBS (650+ seats per year), MD, MS, DM, M.Ch and super-specialty programs in Cardiology, Nephrology, Neurosurgery, and more. Principal Dr. K.V.S.M. Sandhya Devi leads the institution's century-old legacy of public healthcare education.",
     programs: [
@@ -1956,7 +1956,7 @@ export const universities = [
     match: 79,
     branches: ["Engineering", "Business", "Computer Applications"],
     tags: ["CSE", "ECE", "EEE", "Mechanical", "Civil", "AI & ML"],
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHTGm2xFbsxCdNO37ZpNHPIPfNImFHW7a3gg&s",
+    image: "https://www.agarum.com/photos/1/4/80/1109/c/l/c9825cb82c10718899c24e9e57decdff.jpg",
     website: "https://kietgroup.com",
     about: "Kakinada Institute of Engineering and Technology (KIET), established in 2001 by Dr. P.V. Viswam's educational group in Kakinada (East Godavari District), is a leading engineering institution affiliated with JNTUK and approved by AICTE. The KIET Group operates multiple campuses (KIET, KIET-II, and KIET for Women), holding NAAC B++ grade across its institutions. KIET is known for its modern infrastructure, student-centric teaching methods, and diverse engineering specializations including emerging fields like AI & ML and Cyber Security. Its Kakinada location places it at the heart of East Godavari's thriving education and petroleum industry corridor.",
     programs: [
@@ -1999,7 +1999,7 @@ export const universities = [
     match: 82,
     branches: ["Veterinary Sciences", "Dairy Sciences", "Fishery Sciences"],
     tags: ["B.V.Sc", "B.Tech Dairy", "B.F.Sc", "M.V.Sc", "Ph.D", "Animal Husbandry"],
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpJLhsFy3DFT8SyJD94f5Cn-5CJRGmvtl5Jg&s",
+    image: "https://www.shikshahub.com/uploads/blogs/1708580094.jpg",
     website: "https://svvu.edu.in",
     about: "Sri Venkateswara Veterinary University (SVVU), established in 2005 under the AP Government Act and located in Tirupati, Chittoor District, is the only dedicated state veterinary university in Andhra Pradesh. SVVU evolved from the College of Veterinary Science (est. 1955 at Bapatla), which shifted to Tirupati in 1957. SVVU holds NAAC 'A' grade and is recognized by UGC, ICAR, and the Veterinary Council of India (VCI). It operates constituent colleges across Tirupati, Gannavaram, Proddatur, and Garividi, along with a College of Dairy Technology and College of Fishery Science. SVVU plays a critical role in AP's livestock and aquaculture economy, with the Godavari and Krishna deltas providing unmatched field research opportunities.",
     programs: [
@@ -2026,14 +2026,14 @@ export const universities = [
   },
 ];
 
-export function getUniversityById(id) {
+export function getUniversityById(id: string) {
   return universities.find(u => u.id === id);
 }
 
-export function getUniversitiesByCity(city) {
+export function getUniversitiesByCity(city: string) {
   return universities.filter(u => u.city === city);
 }
 
-export function getUniversitiesByBranch(branch) {
+export function getUniversitiesByBranch(branch: string) {
   return universities.filter(u => u.branches.includes(branch));
 }

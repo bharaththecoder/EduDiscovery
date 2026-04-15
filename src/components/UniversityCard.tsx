@@ -10,10 +10,17 @@ interface Props {
   university: any;
   compact?: boolean;
   reasons?: string[];
+  breakdown?: {
+    branchPct: number;
+    budgetPct: number;
+    locationPct: number;
+    typePct: number;
+    rankPct: number;
+  };
 }
 
 
-export default function UniversityCard({ university, compact = false, reasons = [] }: Props) {
+export default function UniversityCard({ university, compact = false, reasons = [], breakdown }: Props) {
 
   const navigate  = useNavigate();
   const { toggleWishlist, isWishlisted } = useWishlist();
@@ -207,6 +214,30 @@ export default function UniversityCard({ university, compact = false, reasons = 
           </div>
         )}
 
+        {/* Match Breakdown Section */}
+        {breakdown && (
+          <div style={{
+            marginTop: '12px',
+            paddingTop: '12px',
+            borderTop: '1px solid var(--border)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px'
+          }}>
+            <p style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              Match Breakdown
+            </p>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <BreakdownRow label="Course Match" value={breakdown.branchPct} color="#a855f7" />
+              <BreakdownRow label="Budget Fit" value={breakdown.budgetPct} color="#10b981" />
+              <BreakdownRow label="Location Match" value={breakdown.locationPct} color="#f59e0b" />
+              <BreakdownRow label="College Type" value={breakdown.typePct} color="#3b82f6" />
+              <BreakdownRow label="Rank Fit" value={breakdown.rankPct} color="#06b6d4" />
+            </div>
+          </div>
+        )}
+
 
         {/* Spacer */}
         <div style={{ flex: 1 }} />
@@ -218,6 +249,28 @@ export default function UniversityCard({ university, compact = false, reasons = 
         >
           View Details
         </button>
+      </div>
+    </div>
+  );
+}
+
+function BreakdownRow({ label, value, color }: { label: string; value: number; color: string }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)' }}>{label}</span>
+        <span style={{ fontSize: '11px', fontWeight: '800', color: color }}>{value}%</span>
+      </div>
+      <div style={{ width: '100%', height: '5px', background: '#f3f4f6', borderRadius: '999px', overflow: 'hidden' }}>
+        <div 
+          style={{ 
+            width: `${value}%`, 
+            height: '100%', 
+            background: color, 
+            borderRadius: '999px',
+            transition: 'width 0.8s ease-out'
+          }} 
+        />
       </div>
     </div>
   );
