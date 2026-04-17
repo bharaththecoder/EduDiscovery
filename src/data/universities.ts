@@ -49,6 +49,13 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "Well-stocked technical library with 50,000+ books and e-resources." },
       { icon: "🍽️", name: "Canteen", desc: "Student canteen offering affordable home-style meals." },
     ],
+    branchFees: {
+      "CSE": 75000,
+      "AI & DS": 85000,
+      "IT": 75000,
+      "ECE": 75000,
+      "EEE": 65000
+    }
   },
 
   // ─────────────────────────────────────────────────────────
@@ -92,6 +99,13 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "1.5 lakh+ books, IEEE, Springer, Elsevier digital journal access." },
       { icon: "🍽️", name: "Multi-Cuisine Cafeteria", desc: "Multiple food courts with South Indian, North Indian and continental food." },
     ],
+    branchFees: {
+      "CSE": 250000,
+      "AI & ML": 275000,
+      "Biotechnology": 225000,
+      "BBA": 150000,
+      "B.Sc Physics": 110000
+    }
   },
 
   // ─────────────────────────────────────────────────────────
@@ -135,6 +149,13 @@ export const universities = [
       { icon: "📚", name: "AU Library", desc: "Historic library with 5 lakh+ volumes, rare manuscripts, and digital resources." },
       { icon: "🍽️", name: "Cafeterias", desc: "Multiple affordable student canteens across the 600-acre campus." },
     ],
+    branchFees: {
+      "Marine": 110000,
+      "MBBS": 80000,
+      "LL.B": 20000,
+      "B.Sc Physics": 12000,
+      "CSE": 95000
+    }
   },
 
   // ─────────────────────────────────────────────────────────
@@ -178,6 +199,13 @@ export const universities = [
       { icon: "📚", name: "Digital Library", desc: "Fully digitised library with IEEE Xplore, Springer, and ACM access." },
       { icon: "🍽️", name: "Food Courts", desc: "Multiple food courts with South Indian, North Indian breakfast choices." },
     ],
+    branchFees: {
+      "CSE": 260000,
+      "AI & ML": 280000,
+      "VLSI": 245000,
+      "BBA": 150000,
+      "ECE": 220000
+    }
   },
 
   // ─────────────────────────────────────────────────────────
@@ -221,6 +249,13 @@ export const universities = [
       { icon: "📚", name: "Law & Science Library", desc: "Specialised law library with moot court, and a central science library." },
       { icon: "🍽️", name: "Cafeteria", desc: "Multiple affordable canteens serving 5,000+ students daily." },
     ],
+    branchFees: {
+      "LL.B": 165000,
+      "CSE": 190000,
+      "B.Pharm": 95000,
+      "BBA": 120000,
+      "Nursing": 100000
+    }
   },
 
   // ─────────────────────────────────────────────────────────
@@ -264,6 +299,14 @@ export const universities = [
       { icon: "📚", name: "Smart Library", desc: "2 lakh+ books, 24/7 reading room, IEEE, Springer, ScienceDirect access." },
       { icon: "🍽️", name: "Food Hub", desc: "Multiple dining halls with world cuisines and 24-hour canteen facility." },
     ],
+    branchFees: {
+      "CSE": 185000,
+      "ECE": 175000,
+      "B.Arch": 150000,
+      "BCA": 90000,
+      "MBA": 160000,
+      "B.Pharm": 80000
+    }
   },
 
   // ─────────────────────────────────────────────────────────
@@ -307,6 +350,13 @@ export const universities = [
       { icon: "📚", name: "Technical Library", desc: "Specialized pharmacy and engineering library with online journal access." },
       { icon: "🍽️", name: "Mess & Cafeteria", desc: "Affordable vegetarian and non-veg options with monthly mess plan." },
     ],
+    branchFees: {
+      "CSE": 120000,
+      "B.Pharm": 75000,
+      "MBA": 110000,
+      "Biotech": 60000,
+      "Mechanical": 110000
+    }
   },
 
   // ─────────────────────────────────────────────────────────
@@ -350,6 +400,13 @@ export const universities = [
       { icon: "📚", name: "e-Library", desc: "Fully digital library with IEEE Xplore, Scopus, and PubMed access." },
       { icon: "🍽️", name: "Sattvic Cafeteria", desc: "Pure vegetarian, nutritious meals prepared in traditional Amrita style." },
     ],
+    branchFees: {
+      "CSE": 210000,
+      "AI & ML": 230000,
+      "Electronics": 200000,
+      "Applied Sci": 90000,
+      "Robotics": 225000
+    }
   },
 
   // ─────────────────────────────────────────────────────────
@@ -392,6 +449,12 @@ export const universities = [
       { icon: "📚", name: "University Library", desc: "Large technical library with 1 lakh+ volumes and journal subscriptions." },
       { icon: "🍽️", name: "University Mess", desc: "Subsidised mess serving affordable meals to resident students." },
     ],
+    branchFees: {
+      "CSE": 50000,
+      "ECE": 50000,
+      "MBA": 45000,
+      "MCA": 35000
+    }
   },
 
   // ─────────────────────────────────────────────────────────
@@ -435,6 +498,13 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "Sprawling library with 3 lakh+ books and rare manuscripts." },
       { icon: "🍽️", name: "University Canteen", desc: "Budget-friendly canteen serving thousands of students daily." },
     ],
+    branchFees: {
+      "B.Sc": 8000,
+      "B.Com": 7000,
+      "B.A.": 6000,
+      "LL.B": 18000,
+      "MBA": 40000
+    }
   },
 
   // ─────────────────────────────────────────────────────────

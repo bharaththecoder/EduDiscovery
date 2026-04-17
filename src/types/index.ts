@@ -40,6 +40,7 @@ export interface University {
   programs: Program[];
   faculty: Faculty[];
   facilities: Facility[];
+  branchFees?: Record<string, number>;
 }
 
 export interface NewsArticle {
