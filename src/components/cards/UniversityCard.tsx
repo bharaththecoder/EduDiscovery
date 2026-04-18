@@ -43,20 +43,15 @@ export default function UniversityCard({ university, compact = false, reasons = 
     return (
       <div
         onClick={handleClick}
-        className="compact-card"
-        style={{
-          borderRadius: 'var(--radius-md)', overflow: 'hidden',
-          background: 'var(--surface)', boxShadow: 'var(--shadow-sm)',
-          cursor: 'pointer', transition: 'all 0.2s ease',
-          display: 'flex', flexDirection: 'column',
-          flex: '0 0 auto', width: '200px',   // mobile horizontal scroll
-        }}
+        className="compact-card glow-up"
+        style={{}}
       >
-        <div style={{ position: 'relative', height: '120px', flexShrink: 0 }}>
+        <div style={{ position: 'relative', height: '120px', flexShrink: 0, overflow: 'hidden', borderTopLeftRadius: 'var(--radius-md)', borderTopRightRadius: 'var(--radius-md)' }}>
           <img
             src={imgSrc} alt={university.name}
             onError={() => setImgSrc(FALLBACK)}
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            loading="lazy"
           />
           <div className="match-badge" style={{ position: 'absolute', top: '8px', left: '8px', fontSize: '10px' }}>
             {university.match}% MATCH
@@ -91,28 +86,21 @@ export default function UniversityCard({ university, compact = false, reasons = 
   return (
     <div
       onClick={handleClick}
+      className="glow-up"
       style={{
-        borderRadius: 'var(--radius-lg)', overflow: 'hidden',
-        background: 'var(--surface)', boxShadow: 'var(--shadow-sm)',
-        border: '1px solid var(--border)', cursor: 'pointer',
-        transition: 'all 0.22s ease',
+        borderRadius: 'var(--radius-lg)', 
+        background: 'var(--surface)', 
+        cursor: 'pointer',
         display: 'flex', flexDirection: 'column', height: '100%',
-      }}
-      onMouseOver={e => {
-        (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)';
-        (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-lg)';
-      }}
-      onMouseOut={e => {
-        (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
-        (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-sm)';
       }}
     >
       {/* Image */}
-      <div style={{ position: 'relative', aspectRatio: '16/9', overflow: 'hidden', flexShrink: 0 }}>
+      <div style={{ position: 'relative', aspectRatio: '16/9', overflow: 'hidden', flexShrink: 0, borderTopLeftRadius: 'var(--radius-lg)', borderTopRightRadius: 'var(--radius-lg)' }}>
         <img
           src={imgSrc} alt={university.name}
           onError={() => setImgSrc(FALLBACK)}
           style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
+          loading="lazy"
         />
         {/* Gradient overlay */}
         <div style={{

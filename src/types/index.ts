@@ -40,7 +40,7 @@ export interface University {
   programs: Program[];
   faculty: Faculty[];
   facilities: Facility[];
-  branchFees?: Record<string, number>;
+  branchFees?: Record<string, number | undefined>;
   // V3 Intelligence fields
   avgPackage?: number;      // Average placement package in ₹ (e.g. 1200000 = ₹12 LPA)
   placementRate?: number;   // 0-100 percentage

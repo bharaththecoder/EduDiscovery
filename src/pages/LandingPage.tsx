@@ -88,9 +88,9 @@ export default function Landing() {
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <button onClick={handleGoogle} disabled={loading} style={{
+            <button onClick={handleGoogle} disabled={loading} className="btn glow-up" style={{
               background: '#fff', color: 'var(--text-main)', border: 'none',
-              borderRadius: '999px', padding: '15px 24px', fontWeight: '700',
+              padding: '15px 24px', fontWeight: '700',
               fontSize: '15px', display: 'flex', alignItems: 'center',
               justifyContent: 'center', gap: '10px', cursor: 'pointer',
               boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
@@ -98,10 +98,10 @@ export default function Landing() {
               <Globe size={18} color="#4285F4" />
               Continue with Google
             </button>
-            <button onClick={() => { setShowEmailModal(true); setIsSignup(false); }} style={{
+            <button onClick={() => { setShowEmailModal(true); setIsSignup(false); }} className="btn glow-up" style={{
               background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)',
               color: '#fff', border: '1px solid rgba(255,255,255,0.4)',
-              borderRadius: '999px', padding: '15px 24px', fontWeight: '700',
+              padding: '15px 24px', fontWeight: '700',
               fontSize: '15px', display: 'flex', alignItems: 'center',
               justifyContent: 'center', gap: '10px', cursor: 'pointer',
             }}>
@@ -119,7 +119,7 @@ export default function Landing() {
           Redefining Discovery
         </h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div className="card" style={{ padding: '24px', display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+          <div className="card glow-up" style={{ padding: '24px', display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
             <div style={{ fontSize: '28px' }}>📈</div>
             <div>
               <h3 style={{ fontWeight: '800', marginBottom: '6px' }}>Predictive Success Engine</h3>
@@ -128,7 +128,7 @@ export default function Landing() {
               </p>
             </div>
           </div>
-          <div className="card" style={{ padding: '24px', display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+          <div className="card glow-up" style={{ padding: '24px', display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
             <div style={{ fontSize: '28px' }}>🌐</div>
             <div>
               <h3 style={{ fontWeight: '800', marginBottom: '6px' }}>Global Network</h3>
@@ -137,9 +137,10 @@ export default function Landing() {
               </p>
             </div>
           </div>
-          <div style={{
+          <div className="glow-up" style={{
             background: 'var(--dark-card)', borderRadius: 'var(--radius-md)',
             padding: '24px', display: 'flex', gap: '16px', alignItems: 'flex-start',
+            border: '1px solid rgba(255,255,255,0.1)'
           }}>
             <div style={{ fontSize: '28px' }}>🎓</div>
             <div>
@@ -152,7 +153,7 @@ export default function Landing() {
         </div>
 
         {/* Testimonial */}
-        <div style={{ marginTop: '32px', background: 'var(--surface)', borderRadius: 'var(--radius-md)', padding: '24px', boxShadow: 'var(--shadow-sm)' }}>
+        <div className="glow-up" style={{ marginTop: '32px', background: 'var(--surface)', borderRadius: 'var(--radius-md)', padding: '24px', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' }}>
           <div style={{ fontSize: '24px', color: 'var(--primary)', fontWeight: '900', marginBottom: '12px' }}>❝</div>
           <p style={{ fontSize: '15px', lineHeight: 1.7, color: 'var(--text-main)', fontStyle: 'italic', marginBottom: '16px' }}>
             "EduDiscovery helped me discover VIT-AP when I thought I could only afford a local college. Got a merit scholarship worth ₹2.5 Lakhs thanks to the app's counselling guide!"

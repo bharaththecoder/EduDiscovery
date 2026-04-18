@@ -264,7 +264,13 @@ export default function SearchPage() {
 
         {/* AI Reasoning Block */}
         {!isLoading && isAiSearch && aiReasoning && (
-          <div className="bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-100/50 p-5 rounded-3xl mb-8 shadow-sm">
+          <div className="glow-up" style={{
+            background: 'linear-gradient(to br, #f5f3ff, #eef2ff)',
+            border: '1px solid rgba(124, 58, 237, 0.1)',
+            padding: '20px',
+            borderRadius: '24px',
+            marginBottom: '32px',
+          }}>
             <div className="flex items-center gap-2 mb-2">
               <Sparkles size={16} className="text-purple-600" />
               <span className="font-bold text-purple-900 text-sm">AI Insights</span>

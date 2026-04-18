@@ -25,14 +25,15 @@ function CollegeFitScore({ university }: { university: University }) {
   if (!answers) return null;
 
   return (
-    <div style={{ 
+    <div className="glow-up" style={{ 
       background: 'white', 
       borderRadius: 'var(--radius-lg)', 
       padding: '24px', 
       border: `2px solid ${fit.color}20`,
       boxShadow: 'var(--shadow-md)',
       position: 'relative',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      cursor: 'default'
     }}>
       <div style={{ position: 'absolute', top: '-10px', right: '-10px', opacity: 0.1 }}>
         <SparklesIcon size={80} color={fit.color} />
@@ -294,7 +295,7 @@ export default function UniversityDetail() {
   const [showApply, setShowApply] = useState(false);
   const [showApply2, setShowApply2] = useState(false);
 
-  const university = getUniversityById(id || "");
+  const university = getUniversityById(id || "") as University | undefined;
   if (!university) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '16px' }}>
@@ -313,6 +314,9 @@ export default function UniversityDetail() {
   };
 
   useEffect(() => {
+    if (university) {
+      window.scrollTo(0, 0);
+    }
     if (currentUser?.id && university) {
       trackView(currentUser.id, {
         id: university.id,
@@ -432,13 +436,12 @@ export default function UniversityDetail() {
             {/* Location / Google Maps */}
             <div
               onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(university.name + ', ' + university.city + ', Andhra Pradesh')}`, '_blank')}
+              className="glow-up"
               style={{
                 background: 'var(--gradient)', borderRadius: 'var(--radius-md)', padding: '20px',
                 cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                boxShadow: 'var(--shadow-md)', transition: 'transform 0.2s',
+                boxShadow: 'var(--shadow-md)',
               }}
-              onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-              onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                 <div style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', width: '46px', height: '46px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}>

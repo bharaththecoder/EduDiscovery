@@ -206,15 +206,12 @@ export default function Home() {
             {/* Quiz Banner */}
             <div
               onClick={() => navigate('/quiz')}
+              className="glow-up"
               style={{
                 background: 'var(--dark-card)', borderRadius: 'var(--radius-lg)',
                 padding: '28px 24px', cursor: 'pointer',
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                boxShadow: '0 8px 32px rgba(30,27,75,0.35)',
-                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
               }}
-              onMouseOver={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 16px 40px rgba(30,27,75,0.45)'; }}
-              onMouseOut={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 32px rgba(30,27,75,0.35)'; }}
             >
               <div>
                 <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: '700' }}>Not sure where to start?</p>
@@ -231,15 +228,12 @@ export default function Home() {
             {/* Compare Banner */}
             <div
               onClick={() => navigate('/compare')}
+              className="glow-up"
               style={{
                 background: 'var(--gradient-warm)', borderRadius: 'var(--radius-lg)',
                 padding: '28px 24px', cursor: 'pointer',
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                boxShadow: '0 8px 32px rgba(168,85,247,0.3)',
-                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
               }}
-              onMouseOver={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 16px 40px rgba(168,85,247,0.45)'; }}
-              onMouseOut={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 32px rgba(168,85,247,0.3)'; }}
             >
               <div>
                 <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '12px', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: '700' }}>Make the right choice</p>
@@ -264,14 +258,12 @@ export default function Home() {
               <div
                 key={article.id}
                 onClick={() => setActiveNews(article)}
+                className="glow-up"
                 style={{
                   background: 'var(--surface)', borderRadius: 'var(--radius-md)',
                   padding: '20px', cursor: 'pointer', boxShadow: 'var(--shadow-sm)',
                   border: '1px solid var(--border)', display: 'flex', flexDirection: 'column',
-                  transition: 'all 0.22s ease',
                 }}
-                onMouseOver={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)'; (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-md)'; }}
-                onMouseOut={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-sm)'; }}
               >
                 <div style={{ display: 'inline-block', padding: '4px 10px', borderRadius: '999px', background: article.categoryColor + '18', color: article.categoryColor, fontSize: '11px', fontWeight: '800', marginBottom: '12px', letterSpacing: '0.5px', alignSelf: 'flex-start' }}>
                   {article.category}

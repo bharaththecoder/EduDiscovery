@@ -246,8 +246,35 @@ export default function QuizResult() {
 
   const rawAnswers = state?.answers || JSON.parse(localStorage.getItem('edu_quiz_answers') || '{}');
   const answers: QuizAnswers = rawAnswers;
+  const { all, dream, match, safe } = React.useMemo(() => 
+    getRecommendations(universities, answers, 10),
+    [answers]
+  );
 
-  const { all, dream, match, safe } = getRecommendations(universities, answers, 10);
+  // Typing effect logic
+  const [typedReasoning, setTypedReasoning] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+
+  useEffect(() => {
+    if (aiReasoning) {
+      setIsTyping(true);
+      setTypedReasoning("");
+      let index = 0;
+      const words = aiReasoning.split(" ");
+      
+      const timer = setInterval(() => {
+        if (index < words.length) {
+          setTypedReasoning(prev => prev + (prev ? " " : "") + words[index]);
+          index++;
+        } else {
+          clearInterval(timer);
+          setIsTyping(false);
+        }
+      }, 40); // 40ms per word is a good "syncing" speed
+      
+      return () => clearInterval(timer);
+    }
+  }, [aiReasoning]);
 
   useEffect(() => { setTimeout(() => setShowAnalyzing(false), 2700); }, []);
 
@@ -341,28 +368,33 @@ export default function QuizResult() {
         </div>
 
         {/* AI Personalized Summary Block */}
-        <div className="min-h-[160px] w-full transition-all duration-300">
+        <div className="w-full transition-all duration-500 ease-in-out">
           {(isGeneratingAi || aiReasoning) && (
-            <div className="bg-gradient-to-br from-purple-50 to-indigo-50/50 border border-purple-200/60 p-6 rounded-[24px] mb-8 shadow-sm relative overflow-hidden animate-fade-in-up">
+            <div className={`bg-gradient-to-br from-purple-50 to-indigo-50/50 border border-purple-200/60 p-6 rounded-[24px] mb-8 shadow-sm relative overflow-hidden animate-fade-in-up ${!aiReasoning ? 'min-h-[160px]' : 'min-h-[220px]'}`}>
                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-purple-200/40 to-transparent rounded-bl-full pointer-events-none" />
-               <div className="flex items-center gap-2 mb-3">
-                 <div className="bg-purple-100 p-1.5 rounded-full">
-                   <Sparkles size={16} className="text-purple-600" />
+               <div className="flex items-center gap-2 mb-4">
+                 <div className="bg-purple-100 p-2 rounded-full shadow-inner">
+                   <Sparkles size={16} className="text-purple-600 animate-pulse" />
                  </div>
-                 <span className="font-bold text-slate-800 text-sm">AI Counselor's Verdict</span>
+                 <div className="flex flex-col">
+                   <span className="font-extrabold text-slate-800 text-sm tracking-tight">AI Counselor's Verdict</span>
+                   {isTyping && <span className="text-[10px] text-purple-500 font-bold animate-pulse">SYNCING WORDS...</span>}
+                 </div>
                </div>
                
-               {isGeneratingAi ? (
-                 <div className="space-y-3 animate-pulse">
-                   <div className="h-4 bg-purple-200/50 rounded w-[90%]"></div>
-                   <div className="h-4 bg-purple-200/50 rounded w-[80%]"></div>
-                   <div className="h-4 bg-purple-200/50 rounded w-[60%]"></div>
+               {isGeneratingAi && !aiReasoning ? (
+                 <div className="space-y-4 animate-pulse">
+                   <div className="h-4 bg-purple-200/40 rounded-full w-[95%]"></div>
+                   <div className="h-4 bg-purple-200/40 rounded-full w-[85%]"></div>
+                   <div className="h-4 bg-purple-200/40 rounded-full w-[90%]"></div>
+                   <div className="h-4 bg-purple-200/40 rounded-full w-[60%]"></div>
                  </div>
-               ) : (
-                  <div className="text-slate-700 text-[14.5px] leading-relaxed font-medium whitespace-pre-line">
-                    {aiReasoning}
+                ) : (
+                  <div className="text-slate-700 text-[15px] leading-relaxed font-medium whitespace-pre-line">
+                    {typedReasoning}
+                    {isTyping && <span className="inline-block w-1.5 h-4 bg-purple-400 ml-1 animate-bounce" />}
                   </div>
-               )}
+                )}
             </div>
           )}
         </div>
