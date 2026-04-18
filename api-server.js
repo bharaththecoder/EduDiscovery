@@ -1,27 +1,39 @@
 import express from 'express';
 import cors from 'cors';
 import chatHandler from './api/chat.js';
+import seedHandler from './api/seed.js';
+import searchHandler from './api/search.js';
+import quizReasoningHandler from './api/quizReasoning.js';
 
 const app = express();
 const PORT = 3001;
 
+// Increase generic payload limit for seeding large arrays
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 
-// Proxy route for local development
+// Development routes proxy
 app.post('/api/chat', async (req, res) => {
-  console.log('--- Development API Server ---');
-  console.log(`Request received: ${req.method} ${req.url}`);
-  
-  try {
-    await chatHandler(req, res);
-  } catch (error) {
-    console.error('Error in local API handler:', error);
-    res.status(500).json({ reply: 'Development server error: ' + error.message });
-  }
+  console.log(`[POST /api/chat]`);
+  await chatHandler(req, res);
+});
+
+app.post('/api/seed', async (req, res) => {
+  console.log(`[POST /api/seed]`);
+  await seedHandler(req, res);
+});
+
+app.post('/api/search', async (req, res) => {
+  console.log(`[POST /api/search]`);
+  await searchHandler(req, res);
+});
+
+app.post('/api/quiz-reasoning', async (req, res) => {
+  console.log(`[POST /api/quiz-reasoning]`);
+  await quizReasoningHandler(req, res);
 });
 
 app.listen(PORT, () => {
   console.log(`✅ API Development Server running on http://localhost:${PORT}`);
-  console.log(`👉 Proxies /api/chat to the handler in api/chat.js`);
+  console.log(`👉 Serving: /api/chat, /api/seed, /api/search, /api/quiz-reasoning`);
 });

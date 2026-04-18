@@ -104,10 +104,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           }
         });
 
-        // Fail-safe: if Firestore hasn't responded in 3 seconds, stop loading
+        // Fail-safe: if Firestore hasn't responded in 1.5 seconds, stop loading
         const timeout = setTimeout(() => {
           setLoading(false);
-        }, 3000);
+        }, 1500);
         
         return () => {
           clearTimeout(timeout);

@@ -1,27 +1,29 @@
 import React, { useState } from 'react';
-import { doc, setDoc } from 'firebase/firestore';
 import { universities } from '@/data/universities';
-import { db } from '@/services/firebase';
 
 export default function AdminSeed() {
   const [loading, setLoading] = useState(false);
-  const [logs, setLogs] = useState([]);
+  const [logs, setLogs] = useState<string[]>([]);
 
   const seedDatabase = async () => {
     setLoading(true);
-    setLogs(['Starting database seed (37 universities)...']);
+    setLogs(['Starting database seed and vector embedding generation...']);
     
     try {
-      for (const college of universities) {
-        // Use the hardcoded ID from universities
-        const docId = college.id;
-        
-        await setDoc(doc(db, 'colleges', docId), college);
-        
-        setLogs(prev => [...prev, `✅ Added: ${college.name}`]);
+      const response = await fetch('http://localhost:3001/api/seed', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ colleges: universities })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to seed database');
       }
-      setLogs(prev => [...prev, '🎉 Seeding complete!']);
-    } catch (err) {
+      
+      setLogs(prev => [...prev, `🎉 Seeding complete! Generated embeddings for ${data.seeded || universities.length} colleges.`]);
+    } catch (err: any) {
       console.error(err);
       setLogs(prev => [...prev, `❌ Error: ${err.message}`]);
     } finally {
@@ -35,8 +37,7 @@ export default function AdminSeed() {
         Database Seeding
       </h1>
       <p style={{ color: 'var(--text-muted)', marginBottom: '32px', fontSize: '15px' }}>
-        This utility pushes the local `universities` data (37 real colleges) into your live Firebase Firestore `colleges` collection. 
-        It uses an idempotent setDoc operation based on the unique college ID.
+        This utility pushes the local `universities` data into your live Firebase Firestore `colleges` collection AND generates AI Semantic embeddings for each one via the backend.
       </p>
 
       <button
@@ -55,7 +56,7 @@ export default function AdminSeed() {
           marginBottom: '32px'
         }}
       >
-        {loading ? 'Seeding Database...' : 'Run Seed Script'}
+        {loading ? 'Embedding Colleges...' : 'Run Vector Seed Script'}
       </button>
 
       <div style={{ background: '#f8fafc', padding: '24px', borderRadius: '16px', border: '1px solid #e2e8f0', fontFamily: 'monospace', fontSize: '13px', color: '#334155' }}>

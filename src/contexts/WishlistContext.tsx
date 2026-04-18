@@ -22,16 +22,16 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const [wishlist, setWishlist] = useState<University[]>([]);
 
   useEffect(() => {
-    if (!currentUser) {
+    if (!db || !currentUser || !db.app) {
       setWishlist([]);
       return;
     }
 
     // Listen for wishlist updates from user doc
     const userRef = doc(db, 'users', currentUser.id);
-    const unsubscribe = onSnapshot(userRef, (doc) => {
-      if (doc.exists()) {
-        setWishlist(doc.data().wishlist || []);
+    const unsubscribe = onSnapshot(userRef, (docSnap) => {
+      if (docSnap.exists()) {
+        setWishlist(docSnap.data().wishlist || []);
       }
     });
 
@@ -39,7 +39,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
   }, [currentUser]);
 
   const toggleWishlist = async (university: University) => {
-    if (!currentUser) return;
+    if (!currentUser || !db || !db.app) return;
     
     const userRef = doc(db, 'users', currentUser.id);
     const isSaved = wishlist.some(u => u.id === university.id);

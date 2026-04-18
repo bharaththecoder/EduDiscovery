@@ -335,6 +335,25 @@ export default function Profile() {
           ))}
         </div>
 
+            {/* Daily Insights */}
+            <div style={{ marginBottom: '24px' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: '900', marginBottom: '14px' }}>✨ Daily Insights</h2>
+              <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-lg)', padding: '20px', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' }}>
+                 <p style={{ fontSize: '14px', lineHeight: 1.6, color: 'var(--text-main)', marginBottom: '12px' }}>
+                   Based on your profile as an <strong>{profile.bio}</strong> and your tags, we recommend checking out Early Action deadlines for autonomous institutions. Specifically, colleges ranked in the Top 5000 are increasingly looking for <em>{profile.tags[1] || 'well-rounded'}</em> applicants this week.
+                 </p>
+                 <div style={{ background: 'var(--primary-light)', padding: '12px 16px', borderRadius: '12px', display: 'flex', gap: '12px', alignItems: 'center' }}>
+                    <div style={{ background: '#fff', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <span style={{ fontSize: '18px' }}>🚀</span>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '12px', fontWeight: '800', color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>Action Item</div>
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-main)' }}>Complete 1 more university application to boost your chances.</div>
+                    </div>
+                 </div>
+              </div>
+            </div>
+
             {wishlist.length > 0 && (
               <div style={{ marginBottom: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>

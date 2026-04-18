@@ -62,22 +62,16 @@ export default function ChatWindow() {
       const response = await sendChatMessage({
         message: userMessage,
         context: quizContext,
-        history: messages.map(m => ({ sender: m.sender, text: m.text }))
+        history: messages.map(m => ({ sender: m.sender, text: m.text })),
+        onChunk: (chunk: string) => {
+          setIsLoading(false); // Stop the bouncing loader as soon as stream starts
+          setStreamingText(chunk);
+        }
       });
 
       if (response && response.reply) {
-        setIsLoading(false); // Stop thinking indicator
-        
-        // Character-by-character streaming simulation
-        const reply = response.reply;
-        let currentText = '';
-        for (let i = 0; i < reply.length; i++) {
-          currentText += reply[i];
-          setStreamingText(currentText);
-          await new Promise(resolve => setTimeout(resolve, 15)); // 15ms delay
-        }
-        
-        addMessage(reply, 'ai');
+        setIsLoading(false);
+        addMessage(response.reply, 'ai');
         setStreamingText('');
       } else {
         throw new Error('Empty response from AI Counselor');

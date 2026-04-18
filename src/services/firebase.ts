@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -13,9 +14,19 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-const app = initializeApp(firebaseConfig);
+// Safety check: Don't initialize if API Key is placeholder or missing
+const isConfigValid = firebaseConfig.apiKey && 
+                     firebaseConfig.apiKey !== 'placeholder_key' && 
+                     !firebaseConfig.apiKey.includes('your_api_key');
 
-export const auth = getAuth(app);
+if (!isConfigValid) {
+  console.warn("Firebase configuration is missing or invalid. Please check your .env file.");
+}
+
+const app = isConfigValid ? initializeApp(firebaseConfig) : null;
+
+export const auth = app ? getAuth(app) : ({} as any);
 export const googleProvider = new GoogleAuthProvider();
-export const db = getFirestore(app);
-export const storage = getStorage(app);
+export const db = app ? getFirestore(app) : ({} as any);
+export const storage = app ? getStorage(app) : ({} as any);
+export const analytics = (app && typeof window !== 'undefined') ? getAnalytics(app) : null;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Search, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -27,8 +27,9 @@ export default function Navbar() {
   return (
     <div style={{
       position: 'sticky', top: 0, zIndex: 100,
-      background: 'rgba(255, 255, 255, 0.95)',
-      backdropFilter: 'blur(12px)',
+      background: 'var(--surface-glass)',
+      backdropFilter: 'blur(16px)',
+      WebkitBackdropFilter: 'blur(16px)',
       borderBottom: '1px solid var(--border)',
     }}>
       <div style={{
@@ -37,27 +38,28 @@ export default function Navbar() {
       }}>
         
         {/* Logo */}
-        <div 
-          onClick={() => navigate('/home')}
-          style={{ fontWeight: '900', fontSize: '20px', letterSpacing: '-1px', color: 'var(--primary)', cursor: 'pointer' }}
+        <NavLink 
+          to="/home"
+          style={{ fontWeight: '900', fontSize: '20px', letterSpacing: '-1px', color: 'var(--primary)', textDecoration: 'none' }}
         >
           EduDiscovery
-        </div>
+        </NavLink>
 
         {/* Desktop Nav Links */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
-            <button
+            <NavLink
               key={link.path}
-              onClick={() => navigate(link.path)}
-              style={{
+              to={link.path}
+              style={({ isActive }) => ({
                 fontSize: '15px', fontWeight: '600',
-                color: location.pathname === link.path ? 'var(--primary)' : 'var(--text-muted)',
-                transition: 'var(--transition)'
-              }}
+                color: isActive ? 'var(--primary)' : 'var(--text-muted)',
+                transition: 'var(--transition)',
+                textDecoration: 'none'
+              })}
             >
               {link.label}
-            </button>
+            </NavLink>
           ))}
         </div>
 

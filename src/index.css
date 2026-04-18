@@ -92,30 +92,58 @@
 }
 
 :root {
-  --primary: #6C3BFF;
-  --primary-light: rgba(108, 59, 255, 0.12);
-  --primary-glow: rgba(108, 59, 255, 0.3);
-  --secondary: #00D4FF;
-  --secondary-light: rgba(0, 212, 255, 0.12);
-  --accent: #FF6B6B;
-  --accent-light: rgba(255, 107, 107, 0.12);
-  --dark-card: #1E1B4B;
-  --bg: #F4F3FF;
+  /* Core Brand Colors */
+  --primary: #7C3AED;      /* Vibrant Violet */
+  --primary-light: rgba(124, 58, 237, 0.08);
+  --primary-glow: rgba(124, 58, 237, 0.25);
+  --secondary: #0ea5e9;    /* Bright Sky Blue */
+  --secondary-light: rgba(14, 165, 233, 0.08);
+  --accent: #F43F5E;       /* Modern Rose */
+  --accent-light: rgba(244, 63, 94, 0.08);
+  --dark-card: #0F172A;    /* Slate 900 */
+  
+  /* Backgrounds & Surfaces */
+  --bg: #F8FAFC;           /* Slate 50 - Cleaner backdrop */
   --surface: #FFFFFF;
-  --text-main: #1A1A2E;
-  --text-muted: #6B7280;
+  --surface-glass: rgba(255, 255, 255, 0.85); /* For blur effects */
+  
+  /* Typography */
+  --text-main: #0F172A;    /* Slate 900 */
+  --text-muted: #64748B;   /* Slate 500 */
   --text-inverse: #FFFFFF;
-  --border: rgba(108, 59, 255, 0.1);
-  --gradient: linear-gradient(135deg, #6C3BFF, #00D4FF);
-  --gradient-warm: linear-gradient(135deg, #6C3BFF, #a855f7);
-  --radius-sm: 10px;
+  
+  /* Borders */
+  --border: #E2E8F0;       /* Slate 200 */
+  --border-focus: rgba(124, 58, 237, 0.4);
+  
+  /* Gradients */
+  --gradient: linear-gradient(135deg, #7C3AED 0%, #3B82F6 100%);
+  --gradient-warm: linear-gradient(135deg, #7C3AED 0%, #D946EF 100%);
+  
+  /* Spacing Scale (8px system) */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 40px;
+  --space-6: 48px;
+
+  /* Border Radii */
+  --radius-sm: 8px;
   --radius-md: 16px;
   --radius-lg: 24px;
+  --radius-xl: 32px;
   --radius-full: 9999px;
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
-  --shadow-md: 0 8px 24px rgba(108, 59, 255, 0.12);
-  --shadow-lg: 0 16px 48px rgba(108, 59, 255, 0.18);
-  --transition: all 0.2s ease;
+  
+  /* Cinematic Shadows */
+  --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.03);
+  --shadow-md: 0 12px 32px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 24px 48px rgba(124, 58, 237, 0.12);
+  --shadow-glow: 0 0 24px var(--primary-glow);
+  
+  /* Transitions */
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 *, *::before, *::after {

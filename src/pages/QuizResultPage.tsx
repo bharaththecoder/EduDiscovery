@@ -97,23 +97,21 @@ function BreakdownBar({ label, icon, pct, color }: { label: string; icon: React.
   );
 }
 
-
-
 // ─── Category Badge ───────────────────────────────────────────
 function CategoryBadge({ category }: { category: string }) {
   if (category === 'dream') return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: '#fef3c7', color: '#d97706', padding: '3px 10px', borderRadius: '99px', fontSize: '11px', fontWeight: '800' }}>
-      <Star size={10} fill="#d97706" /> Dream Pick
+    <span className="inline-flex items-center gap-1 bg-amber-100/80 text-amber-600 px-2.5 py-1 rounded-full text-[11px] font-bold">
+      <Star size={10} className="fill-amber-500" /> Dream Pick
     </span>
   );
   if (category === 'match') return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: '#ede9fe', color: '#7c3aed', padding: '3px 10px', borderRadius: '99px', fontSize: '11px', fontWeight: '800' }}>
-      <Zap size={10} /> Great Match
+    <span className="inline-flex items-center gap-1 bg-purple-100/80 text-purple-600 px-2.5 py-1 rounded-full text-[11px] font-bold">
+      <Zap size={10} className="fill-purple-500" /> Great Match
     </span>
   );
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: '#d1fae5', color: '#059669', padding: '3px 10px', borderRadius: '99px', fontSize: '11px', fontWeight: '800' }}>
-      <Shield size={10} /> Safe Option
+    <span className="inline-flex items-center gap-1 bg-emerald-100/80 text-emerald-600 px-2.5 py-1 rounded-full text-[11px] font-bold">
+      <Shield size={10} className="fill-emerald-500" /> Safe Option
     </span>
   );
 }
@@ -160,22 +158,13 @@ function FilterPanel({ source, onFilter }: { source: any[]; onFilter: (f: any[])
     <div style={{ marginBottom: '28px' }}>
       <button
         onClick={() => setOpen(!open)}
-        style={{
-          display: 'inline-flex', alignItems: 'center', gap: '8px',
-          background: 'var(--surface)', border: `1.5px solid ${open ? 'var(--primary)' : 'var(--border)'}`,
-          borderRadius: '99px', padding: '9px 18px', fontSize: '13px', fontWeight: '700',
-          color: open ? 'var(--primary)' : 'var(--text-main)', cursor: 'pointer', transition: 'all 0.2s',
-        }}
+        className="inline-flex items-center gap-2 bg-white border border-slate-200 rounded-full px-5 py-2 text-[13px] font-bold text-slate-700 hover:border-purple-500 hover:text-purple-600 transition-all shadow-sm"
       >
         <Filter size={14} /> Refine Results {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
       </button>
 
       {open && (
-        <div style={{
-          marginTop: '12px', padding: '20px', borderRadius: 'var(--radius-md)',
-          background: 'var(--surface)', border: '1.5px solid var(--border)',
-          boxShadow: 'var(--shadow-md)', animation: 'fadeIn 0.2s ease',
-        }}>
+        <div className="mt-3 p-5 rounded-2xl bg-white border border-slate-200 shadow-md animate-fade-in-up">
           <div style={{ marginBottom: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
               <span style={{ fontSize: '13px', fontWeight: '700' }}>Max Annual Fee</span>
@@ -250,6 +239,10 @@ export default function QuizResult() {
   const [isSynced, setIsSynced] = useState(false);
   const [showAnalyzing, setShowAnalyzing] = useState(true);
   const [filtered, setFiltered] = useState<any[] | null>(null);
+  
+  // AI Personalization State
+  const [aiReasoning, setAiReasoning] = useState<string | null>(null);
+  const [isGeneratingAi, setIsGeneratingAi] = useState(false);
 
   const rawAnswers = state?.answers || JSON.parse(localStorage.getItem('edu_quiz_answers') || '{}');
   const answers: QuizAnswers = rawAnswers;
@@ -258,8 +251,11 @@ export default function QuizResult() {
 
   useEffect(() => { setTimeout(() => setShowAnalyzing(false), 2700); }, []);
 
+  // Sync to Firebase and fetch AI personalized reasoning
   useEffect(() => {
     if (currentUser && Object.keys(answers).length && !showAnalyzing) {
+      
+      // 1. Sync data
       (async () => {
         setIsSyncing(true);
         try {
@@ -275,6 +271,25 @@ export default function QuizResult() {
         } catch { /* silent */ }
         finally { setIsSyncing(false); }
       })();
+      
+      // 2. Fetch AI Reasoning for top matches
+      if (all.length > 0) {
+        setIsGeneratingAi(true);
+        fetch('/api/quiz-reasoning', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            answers, 
+            topColleges: all.slice(0, 3) 
+          })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.reasoning) setAiReasoning(data.reasoning);
+        })
+        .catch(console.error)
+        .finally(() => setIsGeneratingAi(false));
+      }
     }
   }, [currentUser, showAnalyzing]);
 
@@ -298,19 +313,20 @@ export default function QuizResult() {
         textAlign: 'center', position: 'relative', overflow: 'hidden',
       }}>
         <div style={{ position: 'absolute', width: '250px', height: '250px', borderRadius: '50%', background: 'rgba(255,255,255,0.06)', top: '-80px', right: '-60px' }} />
-        <Trophy size={44} color="#fff" style={{ marginBottom: '14px' }} />
+        <Trophy size={44} color="#fff" style={{ marginBottom: '14px' }} className="mx-auto" />
         <h1 style={{ color: '#fff', fontSize: '28px', fontWeight: '900', marginBottom: '8px', lineHeight: 1.2 }}>
           Your Personalised Matches
         </h1>
         <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '14px', maxWidth: '340px', margin: '0 auto 20px', lineHeight: 1.5 }}>
           Smart agent analyzed {universities.length} colleges using your priorities &amp; adaptive weights.
         </p>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'rgba(255,255,255,0.75)', fontWeight: '600', background: 'rgba(255,255,255,0.12)', padding: '6px 14px', borderRadius: '99px' }}>
-          {isSyncing ? <><Cloud size={13} />Syncing...</> : isSynced ? <><CloudCheck size={13} />Synced to profile</> : <><Cloud size={13} />Saving results...</>}
+        <div style={{ display: 'inline-flex', justifyContent: 'center', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'rgba(255,255,255,0.75)', fontWeight: '600', background: 'rgba(255,255,255,0.12)', padding: '6px 14px', borderRadius: '99px', width: '150px' }}>
+          {isSyncing ? <><Cloud size={13} />Syncing...</> : isSynced ? <><CloudCheck size={13} />Synced safely</> : <><Cloud size={13} />Saving...</>}
         </div>
       </div>
 
       <div style={{ padding: '28px 20px 0', maxWidth: '1100px', margin: '0 auto' }}>
+        
         {/* Preference tags */}
         <div style={{ marginBottom: '24px' }}>
           <p style={{ fontSize: '12px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '10px' }}>Based on your answers</p>
@@ -322,6 +338,33 @@ export default function QuizResult() {
               </span>
             ))}
           </div>
+        </div>
+
+        {/* AI Personalized Summary Block */}
+        <div className="min-h-[160px] w-full transition-all duration-300">
+          {(isGeneratingAi || aiReasoning) && (
+            <div className="bg-gradient-to-br from-purple-50 to-indigo-50/50 border border-purple-200/60 p-6 rounded-[24px] mb-8 shadow-sm relative overflow-hidden animate-fade-in-up">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-purple-200/40 to-transparent rounded-bl-full pointer-events-none" />
+               <div className="flex items-center gap-2 mb-3">
+                 <div className="bg-purple-100 p-1.5 rounded-full">
+                   <Sparkles size={16} className="text-purple-600" />
+                 </div>
+                 <span className="font-bold text-slate-800 text-sm">AI Counselor's Verdict</span>
+               </div>
+               
+               {isGeneratingAi ? (
+                 <div className="space-y-3 animate-pulse">
+                   <div className="h-4 bg-purple-200/50 rounded w-[90%]"></div>
+                   <div className="h-4 bg-purple-200/50 rounded w-[80%]"></div>
+                   <div className="h-4 bg-purple-200/50 rounded w-[60%]"></div>
+                 </div>
+               ) : (
+                  <div className="text-slate-700 text-[14.5px] leading-relaxed font-medium whitespace-pre-line">
+                    {aiReasoning}
+                  </div>
+               )}
+            </div>
+          )}
         </div>
 
         {/* Filter Panel */}
