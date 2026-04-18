@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import Layout from '@/components/layout/Layout';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 // Lazy loading route components for performance
 const LandingPage = lazy(() => import('@/pages/LandingPage'));
@@ -36,6 +37,7 @@ function App() {
     <ErrorBoundary>
       <BrowserRouter>
         <AnalyticsTracker />
+        <SpeedInsights />
         <div className="app-container">
           <Suspense fallback={<LoadingScreen />}>
             <Routes>
