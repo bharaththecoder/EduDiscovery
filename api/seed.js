@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps } from "firebase/app";
 import { getFirestore, collection, doc, setDoc } from "firebase/firestore";
 import dotenv from "dotenv";
 import fs from "fs";
@@ -25,9 +25,9 @@ export default async function seedHandler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const app = initializeApp(firebaseConfig);
+    const app = getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
+    const model = genAI.getGenerativeModel({ model: "gemini-embedding-001" });
 
     // Dynamic import of the universities dataset
     // We import it as a standard TS/JS module, but since it's TS, it might be tricky in pure node.
@@ -66,6 +66,8 @@ export default async function seedHandler(req, res) {
         console.log(`Successfully embedded: ${college.name}`);
       } catch (embErr) {
         console.error(`Failed to embed ${college.name}:`, embErr);
+        // On first failure, throw to let the response catch it so we can see the error in the UI/terminal
+        if (embeddedCount === 0) throw embErr;
       }
     }
 

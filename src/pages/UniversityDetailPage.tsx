@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Heart, Download, ExternalLink, Users, Building2, Award, BookOpen, Navigation } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -10,6 +10,81 @@ import { Review, University, UserProfile } from '@/types';
 import { collection, addDoc, doc, increment, updateDoc, query, where, orderBy, onSnapshot, serverTimestamp } from 'firebase/firestore';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { trackView } from '@/services/activityTracker';
+import { computeFitScore } from '@/utils/intelligenceEngine';
+import { Sparkles as SparklesIcon, TrendingUp, CheckCircle2 } from 'lucide-react';
+
+function CollegeFitScore({ university }: { university: University }) {
+  const { currentUser } = useAuth();
+  const answers = currentUser?.quizResults?.answers;
+  
+  const fit = React.useMemo(() => {
+    return computeFitScore(university, answers?.rank as string, answers?.budget as string);
+  }, [university, answers]);
+
+  if (!answers) return null;
+
+  return (
+    <div style={{ 
+      background: 'white', 
+      borderRadius: 'var(--radius-lg)', 
+      padding: '24px', 
+      border: `2px solid ${fit.color}20`,
+      boxShadow: 'var(--shadow-md)',
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
+      <div style={{ position: 'absolute', top: '-10px', right: '-10px', opacity: 0.1 }}>
+        <SparklesIcon size={80} color={fit.color} />
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+        <div style={{ 
+          background: `${fit.color}15`, 
+          color: fit.color, 
+          padding: '6px 12px', 
+          borderRadius: '99px', 
+          fontSize: '12px', 
+          fontWeight: '800',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px'
+        }}>
+          <SparklesIcon size={14} /> ADMISSION PROBABILITY
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px', marginBottom: '16px' }}>
+        <div style={{ fontSize: '48px', fontWeight: '900', color: 'var(--text-main)', lineHeight: 1 }}>
+          {fit.probability}%
+        </div>
+        <div style={{ paddingBottom: '4px' }}>
+          <div style={{ color: fit.color, fontWeight: '800', fontSize: '16px' }}>{fit.label} Fit</div>
+          <div style={{ color: 'var(--text-muted)', fontSize: '11px', fontWeight: '600' }}>AI ESTIMATE</div>
+        </div>
+      </div>
+
+      <div style={{ height: '8px', background: '#F1F5F9', borderRadius: '4px', marginBottom: '20px', overflow: 'hidden' }}>
+        <div style={{ 
+          height: '100%', 
+          width: `${fit.probability}%`, 
+          background: `linear-gradient(to right, ${fit.color}80, ${fit.color})`,
+          borderRadius: '4px',
+          transition: 'width 1s ease-out'
+        }} />
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        {fit.reasons.map((reason, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '13px', color: 'var(--text-muted)' }}>
+            <CheckCircle2 size={14} style={{ marginTop: '2px', color: '#10B981', flexShrink: 0 }} />
+            <span>{reason}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function ReviewsSection({ universityId }: { universityId: string }) {
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -211,14 +286,15 @@ function ApplyModal({ university, onClose, onSuccess }: { university: University
 }
 
 export default function UniversityDetail() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const { showToast } = useToast() as { showToast: (msg: string, type: string) => void };
   const { toggleWishlist, isWishlisted } = useWishlist() as { toggleWishlist: (u: University) => void, isWishlisted: (id: string) => boolean };
   const [showApply, setShowApply] = useState(false);
   const [showApply2, setShowApply2] = useState(false);
 
-  const university = getUniversityById(id);
+  const university = getUniversityById(id || "");
   if (!university) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '16px' }}>
@@ -235,6 +311,17 @@ export default function UniversityDetail() {
     toggleWishlist(university);
     showToast(saved ? 'Removed from wishlist' : 'Saved to wishlist! ❤️', saved ? 'info' : 'success');
   };
+
+  useEffect(() => {
+    if (currentUser?.id && university) {
+      trackView(currentUser.id, {
+        id: university.id,
+        name: university.name,
+        image: university.image,
+        city: university.city
+      });
+    }
+  }, [currentUser?.id, university]);
 
   const handleBrochure = () => showToast('📄 Brochure downloaded!', 'success');
 
@@ -302,6 +389,9 @@ export default function UniversityDetail() {
                 <Download size={16} /> Brochure
               </button>
             </div>
+
+            {/* AI Fit Score */}
+            <CollegeFitScore university={university} />
         {/* Stats Row */}
         <div style={{
           display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',

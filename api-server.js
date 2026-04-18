@@ -4,6 +4,7 @@ import chatHandler from './api/chat.js';
 import seedHandler from './api/seed.js';
 import searchHandler from './api/search.js';
 import quizReasoningHandler from './api/quizReasoning.js';
+import recommendHandler from './api/recommend.js';
 
 const app = express();
 const PORT = 3001;
@@ -31,6 +32,11 @@ app.post('/api/search', async (req, res) => {
 app.post('/api/quiz-reasoning', async (req, res) => {
   console.log(`[POST /api/quiz-reasoning]`);
   await quizReasoningHandler(req, res);
+});
+
+app.post('/api/recommend', async (req, res) => {
+  console.log(`[POST /api/recommend]`);
+  await recommendHandler(req, res);
 });
 
 app.listen(PORT, () => {

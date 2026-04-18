@@ -5,6 +5,87 @@ import { universities } from '@/data/universities';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { computeROI, computeValueScore } from '@/utils/intelligenceEngine';
+import { Sparkles, TrendingUp, DollarSign, Trophy } from 'lucide-react';
+
+function ScoreBar({ label, value, color, icon }: { label: string, value: number, color: string, icon: React.ReactNode }) {
+  return (
+    <div style={{ marginBottom: '12px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+          {icon} {label}
+        </div>
+        <div style={{ fontSize: '12px', fontWeight: 800, color: color }}>{value.toFixed(1)}/10</div>
+      </div>
+      <div style={{ height: '6px', background: '#f1f5f9', borderRadius: '3px', overflow: 'hidden' }}>
+        <div style={{ height: '100%', width: `${value * 10}%`, background: color, borderRadius: '3px' }} />
+      </div>
+    </div>
+  );
+}
+
+function AIVerdict({ colleges }: { colleges: any[] }) {
+  if (colleges.length < 2) return null;
+
+  const verdict = React.useMemo(() => {
+    // Decision logic: Highest average of ROI + ValueScore
+    const scores = colleges.map(c => ({
+      id: c.id,
+      name: c.shortName || c.name,
+      avg: (computeROI(c) + computeValueScore(c)) / 2
+    }));
+    scores.sort((a, b) => b.avg - a.avg);
+    
+    const winner = scores[0];
+    const runnerUp = scores[1];
+    const gap = winner.avg - runnerUp.avg;
+
+    let text = "";
+    if (gap < 0.5) {
+      text = `It's a very close call between ${winner.name} and ${runnerUp.name}. ${winner.name} marginally leads in overall value-for-money.`;
+    } else {
+      text = `${winner.name} is the clear winner for students prioritizing a balance of placements and ROI.`;
+    }
+
+    return { winner, text };
+  }, [colleges]);
+
+  return (
+    <div style={{ 
+      marginTop: '40px', 
+      background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)', 
+      borderRadius: '24px', 
+      padding: '32px',
+      color: '#fff',
+      boxShadow: '0 20px 40px rgba(30,27,75,0.3)',
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
+      <div style={{ position: 'absolute', top: '-20px', right: '-20px', opacity: 0.1 }}>
+        <Sparkles size={120} />
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+        <div style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', padding: '6px 14px', borderRadius: '99px', fontSize: '12px', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Sparkles size={14} /> AI COUNSEL VERDICT
+        </div>
+      </div>
+
+      <h2 style={{ fontSize: '24px', fontWeight: '900', marginBottom: '12px' }}>
+        The Verdict: Go for <span style={{ color: '#818cf8' }}>{verdict.winner.name}</span>
+      </h2>
+      <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '15px', lineHeight: 1.6, maxWidth: '600px' }}>
+        {verdict.text} Our intelligence engine analyzed the package-to-fee ratio and historical placement rates across all branches.
+      </p>
+
+      <div style={{ display: 'flex', gap: '16px', marginTop: '24px' }}>
+        <button className="btn btn-primary" style={{ background: '#fff', color: 'var(--primary)', border: 'none' }}>View Detailed Analysis</button>
+        <button style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', padding: '12px 24px', borderRadius: '99px', fontWeight: '700', fontSize: '14px' }}>Talk to a Mentor</button>
+      </div>
+    </div>
+  );
+}
+
 
 export default function ComparePage() {
   const [selectedColleges, setSelectedColleges] = useState<(any | null)[]>([null, null]);
@@ -130,10 +211,23 @@ export default function ComparePage() {
                     
                     <div>
                       <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '0.5px' }}>Match Score</div>
-                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '20px' }}>
                         <Badge style={{ background: 'var(--primary)', color: 'white', fontWeight: 800, padding: '4px 10px' }}>{selected.match || 70}% Match</Badge>
                         <Badge variant="outline" style={{ fontWeight: 600 }}>NAAC {selected.naac}</Badge>
                       </div>
+
+                      <ScoreBar 
+                        label="ROI Score" 
+                        value={computeROI(selected)} 
+                        color="#10b981" 
+                        icon={<DollarSign size={12} />} 
+                      />
+                      <ScoreBar 
+                        label="Value Score" 
+                        value={computeValueScore(selected)} 
+                        color="#7C3AED" 
+                        icon={<Trophy size={11} />} 
+                      />
                     </div>
 
                     {/* Branch-wise Fees Section */}
@@ -215,39 +309,43 @@ export default function ComparePage() {
 
       {/* Advanced Chart Comparison */}
       {validColleges.length > 1 && (
-        <Card className="mt-8 border-slate-200 overflow-hidden shadow-md rounded-[24px]">
-          <CardHeader className="bg-slate-50/50 border-b border-slate-100 px-6 py-5">
-             <CardTitle className="text-lg font-black text-slate-800">Visual Performance Analysis</CardTitle>
-             <p className="text-sm font-medium text-slate-500 mt-1">Multi-dimensional comparison matrix generated via Recharts data.</p>
-          </CardHeader>
-          <CardContent className="p-6">
-             <div className="w-full h-[400px]">
-               <ResponsiveContainer width="100%" height="100%">
-                 <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
-                   <PolarGrid stroke="#e2e8f0" />
-                   <PolarAngleAxis dataKey="subject" tick={{ fill: '#475569', fontSize: 13, fontWeight: 700 }} />
-                   <PolarRadiusAxis angle={30} domain={[0, 10]} tick={false} axisLine={false} />
-                   <Tooltip 
-                     contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)', padding: '12px' }}
-                     itemStyle={{ fontWeight: 700 }}
-                   />
-                   <Legend wrapperStyle={{ paddingTop: '20px' }} />
-                   
-                   {validColleges.map((c, i) => (
-                     <Radar 
-                       key={c.id} 
-                       name={c.shortName || c.name} 
-                       dataKey={c.shortName || c.name.slice(0, 10)} 
-                       stroke={chartColors[i]} 
-                       fill={chartColors[i]} 
-                       fillOpacity={0.3} 
+        <>
+          <Card className="mt-8 border-slate-200 overflow-hidden shadow-md rounded-[24px]">
+            <CardHeader className="bg-slate-50/50 border-b border-slate-100 px-6 py-5">
+               <CardTitle className="text-lg font-black text-slate-800">Visual Performance Analysis</CardTitle>
+               <p className="text-sm font-medium text-slate-500 mt-1">Multi-dimensional comparison matrix generated via Recharts data.</p>
+            </CardHeader>
+            <CardContent className="p-6">
+               <div className="w-full h-[400px]">
+                 <ResponsiveContainer width="100%" height="100%">
+                   <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
+                     <PolarGrid stroke="#e2e8f0" />
+                     <PolarAngleAxis dataKey="subject" tick={{ fill: '#475569', fontSize: 13, fontWeight: 700 }} />
+                     <PolarRadiusAxis angle={30} domain={[0, 10]} tick={false} axisLine={false} />
+                     <Tooltip 
+                       contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)', padding: '12px' }}
+                       itemStyle={{ fontWeight: 700 }}
                      />
-                   ))}
-                 </RadarChart>
-               </ResponsiveContainer>
-             </div>
-          </CardContent>
-        </Card>
+                     <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                     
+                     {validColleges.map((c, i) => (
+                       <Radar 
+                         key={c.id} 
+                         name={c.shortName || c.name} 
+                         dataKey={c.shortName || c.name.slice(0, 10)} 
+                         stroke={chartColors[i]} 
+                         fill={chartColors[i]} 
+                         fillOpacity={0.3} 
+                       />
+                     ))}
+                   </RadarChart>
+                 </ResponsiveContainer>
+               </div>
+            </CardContent>
+          </Card>
+
+          <AIVerdict colleges={validColleges} />
+        </>
       )}
 
     </div>

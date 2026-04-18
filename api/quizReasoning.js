@@ -14,7 +14,7 @@ export default async function quizReasoningHandler(req, res) {
       return res.status(400).json({ error: "Answers and topColleges are required" });
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
     
     // Construct prompt
     const prompt = `

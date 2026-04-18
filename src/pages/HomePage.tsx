@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronRight, Sparkles, LayoutGrid, Newspaper } from 'lucide-react';
+import { ChevronRight, Sparkles, LayoutGrid, Newspaper, Clock, Zap } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { newsArticles } from '@/data/news';
 import { universities } from '@/data/universities';
 import UniversityCard from '@/components/cards/UniversityCard';
+import { getActivity } from '@/services/activityTracker';
+import { ActivityEvent, University } from '@/types';
 
 // ─── News Modal ───────────────────────────────────────────────
 function NewsModal({ article, onClose }: { article: any; onClose: () => void }) {
@@ -75,8 +77,38 @@ export default function Home() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const [activeNews, setActiveNews] = useState<any>(null);
+  const [recentViews, setRecentViews] = useState<ActivityEvent[]>([]);
+  const [recommendations, setRecommendations] = useState<University[]>([]);
+  const [loadingRecs, setLoadingRecs] = useState(false);
 
-  const firstName    = currentUser?.name?.split(' ')[0] || 'Scholar';
+  const firstName = currentUser?.name?.split(' ')[0] || 'Scholar';
+
+  useEffect(() => {
+    async function fetchData() {
+      if (!currentUser?.id) return;
+      
+      // 1. Get recent views
+      const activity = await getActivity(currentUser.id);
+      setRecentViews(activity.recentViews || []);
+
+      // 2. Get recommendations
+      setLoadingRecs(true);
+      try {
+        const response = await fetch('/api/recommend', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: currentUser.id, universities })
+        });
+        const data = await response.json();
+        setRecommendations(data.recommendations || []);
+      } catch (err) {
+        console.error('Failed to fetch recommendations:', err);
+      } finally {
+        setLoadingRecs(false);
+      }
+    }
+    fetchData();
+  }, [currentUser?.id]);
 
   // Pull cloud-synced quiz results, fall back to best-match sort
   let topUniversities: any[] = [];
@@ -107,6 +139,41 @@ export default function Home() {
           </p>
         </div>
 
+        {/* ── Recently Viewed (Phase 3) ── */}
+        {recentViews.length > 0 && (
+          <div style={{ marginBottom: '48px' }}>
+            <SectionRow icon={<Clock size={18} />} title="Recently Viewed" />
+            <div className="scroll-row">
+              {recentViews.map((item) => {
+                const uni = universities.find(u => u.id === item.collegeId);
+                return uni ? (
+                  <UniversityCard key={item.collegeId} university={uni} compact />
+                ) : null;
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ── Personalized Recommendations (Phase 3) ── */}
+        {(loadingRecs || recommendations.length > 0) && (
+          <div style={{ marginBottom: '48px' }}>
+            <SectionRow icon={<Zap size={18} />} title="Recommended for You" />
+            {loadingRecs ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {[1, 2, 3, 4].map(i => (
+                  <div key={i} className="animate-pulse bg-white rounded-3xl h-64 shadow-sm border border-slate-100" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {recommendations.map((uni) => (
+                  <UniversityCard key={uni.id} university={uni} />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* ── Top Matches ── */}
         <div style={{ marginBottom: '48px' }}>
           <SectionRow
@@ -116,16 +183,13 @@ export default function Home() {
             onAction={() => navigate('/search')}
           />
 
-          {/* Mobile: horizontal scroll | Desktop: responsive grid */}
           <div className="top-matches-container">
-            {/* Horizontal scroll (mobile only) */}
             <div className="scroll-row md:hidden">
               {topUniversities.map((uni: any) => (
                 <UniversityCard key={uni.id} university={uni} compact />
               ))}
             </div>
 
-            {/* Grid (md and up) */}
             <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {topUniversities.map((uni: any) => (
                 <UniversityCard key={uni.id} university={uni} />
@@ -229,3 +293,4 @@ export default function Home() {
     </div>
   );
 }
+

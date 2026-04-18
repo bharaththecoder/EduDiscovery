@@ -41,6 +41,9 @@ export interface University {
   faculty: Faculty[];
   facilities: Facility[];
   branchFees?: Record<string, number>;
+  // V3 Intelligence fields
+  avgPackage?: number;      // Average placement package in ₹ (e.g. 1200000 = ₹12 LPA)
+  placementRate?: number;   // 0-100 percentage
 }
 
 export interface NewsArticle {
@@ -107,4 +110,18 @@ export interface Toast {
   id: number;
   message: string;
   type: ToastType;
+}
+
+// V3: User activity tracking
+export interface ActivityEvent {
+  collegeId: string;
+  name: string;
+  image?: string;
+  city?: string;
+  timestamp: number;
+}
+
+export interface UserActivity {
+  recentViews: ActivityEvent[];
+  recentSearches: { query: string; timestamp: number }[];
 }

@@ -8,7 +8,7 @@ export default function ChatButton() {
   const { isOpen, setIsOpen } = useCounselor();
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4">
+    <div className="fixed bottom-20 md:bottom-6 right-6 z-50 flex flex-col items-end gap-4">
       <AnimatePresence>
         {!isOpen && (
           <motion.div

@@ -88,7 +88,7 @@ export default function ChatWindow() {
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95, y: 30 }}
       transition={{ type: 'spring', damping: 20, stiffness: 200 }}
-      className="fixed bottom-6 right-6 w-[380px] h-[640px] bg-white rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] flex flex-col overflow-hidden z-50 border border-slate-200/60"
+      className="fixed bottom-0 md:bottom-6 right-0 md:right-6 w-full md:w-[400px] h-[calc(100vh-80px)] md:h-[640px] max-h-[85vh] md:max-h-[700px] bg-white rounded-t-[2.5rem] md:rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] flex flex-col overflow-hidden z-50 border border-slate-200/60"
     >
       {/* Header (Minimalist) */}
       <div className="px-5 py-4 flex items-center justify-between shrink-0 border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-10">

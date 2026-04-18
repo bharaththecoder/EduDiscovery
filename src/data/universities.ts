@@ -55,7 +55,9 @@ export const universities = [
       "IT": 75000,
       "ECE": 75000,
       "EEE": 65000
-    }
+    },
+    avgPackage: 600000,
+    placementRate: 72
   },
 
   // ─────────────────────────────────────────────────────────
@@ -105,7 +107,9 @@ export const universities = [
       "Biotechnology": 225000,
       "BBA": 150000,
       "B.Sc Physics": 110000
-    }
+    },
+    avgPackage: 1200000,
+    placementRate: 91
   },
 
   // ─────────────────────────────────────────────────────────
@@ -155,7 +159,9 @@ export const universities = [
       "LL.B": 20000,
       "B.Sc Physics": 12000,
       "CSE": 95000
-    }
+    },
+    avgPackage: 600000,
+    placementRate: 68
   },
 
   // ─────────────────────────────────────────────────────────
@@ -205,7 +211,9 @@ export const universities = [
       "VLSI": 245000,
       "BBA": 150000,
       "ECE": 220000
-    }
+    },
+    avgPackage: 900000,
+    placementRate: 86
   },
 
   // ─────────────────────────────────────────────────────────
@@ -255,7 +263,9 @@ export const universities = [
       "B.Pharm": 95000,
       "BBA": 120000,
       "Nursing": 100000
-    }
+    },
+    avgPackage: 900000,
+    placementRate: 84
   },
 
   // ─────────────────────────────────────────────────────────
@@ -306,7 +316,9 @@ export const universities = [
       "BCA": 90000,
       "MBA": 160000,
       "B.Pharm": 80000
-    }
+    },
+    avgPackage: 850000,
+    placementRate: 87
   },
 
   // ─────────────────────────────────────────────────────────
@@ -356,7 +368,9 @@ export const universities = [
       "MBA": 110000,
       "Biotech": 60000,
       "Mechanical": 110000
-    }
+    },
+    avgPackage: 650000,
+    placementRate: 75
   },
 
   // ─────────────────────────────────────────────────────────
@@ -406,7 +420,9 @@ export const universities = [
       "Electronics": 200000,
       "Applied Sci": 90000,
       "Robotics": 225000
-    }
+    },
+    avgPackage: 1100000,
+    placementRate: 89
   },
 
   // ─────────────────────────────────────────────────────────
@@ -454,7 +470,9 @@ export const universities = [
       "ECE": 50000,
       "MBA": 45000,
       "MCA": 35000
-    }
+    },
+    avgPackage: 500000,
+    placementRate: 65
   },
 
   // ─────────────────────────────────────────────────────────
@@ -504,7 +522,9 @@ export const universities = [
       "B.A.": 6000,
       "LL.B": 18000,
       "MBA": 40000
-    }
+    },
+    avgPackage: 450000,
+    placementRate: 60
   },
 
   // ─────────────────────────────────────────────────────────
@@ -547,6 +567,10 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "60,000+ books, digital resources, and e-journal subscriptions." },
       { icon: "🍽️", name: "Canteen", desc: "Hygienic subsidised canteen with variety of meals." },
     ],
+    avgPackage: 550000,
+    placementRate: 70,
+    avgPackage: 550000,
+    placementRate: 70
   },
 
   // ─────────────────────────────────────────────────────────
@@ -589,6 +613,10 @@ export const universities = [
       { icon: "📚", name: "Oriental Library", desc: "Rare manuscripts, Telugu literature archives, and 2 lakh+ volumes." },
       { icon: "🍽️", name: "Canteen", desc: "Affordable canteen with South Indian vegetarian food options." },
     ],
+    avgPackage: 500000,
+    placementRate: 64,
+    avgPackage: 500000,
+    placementRate: 64
   },
 
   // ─────────────────────────────────────────────────────────
@@ -632,6 +660,10 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "Comprehensive library with books, journals, IEEE/Springer digital resources and 24/7 reading room." },
       { icon: "🍽️", name: "Canteen & Cafeteria", desc: "On-campus canteen serving affordable meals with multiple cuisine options for resident students." },
     ],
+    avgPackage: 480000,
+    placementRate: 68,
+    avgPackage: 480000,
+    placementRate: 68
   },
 
   // ─────────────────────────────────────────────────────────
@@ -675,6 +707,10 @@ export const universities = [
       { icon: "📚", name: "Smart Library", desc: "Extensive collection of technical books, IEEE Xplore and ScienceDirect access, 24-hour reading room." },
       { icon: "🍽️", name: "Mess & Canteen", desc: "Subsidised mess facility with vegetarian and non-vegetarian meal options for hostel students." },
     ],
+    avgPackage: 420000,
+    placementRate: 63,
+    avgPackage: 420000,
+    placementRate: 63
   },
 
   // ─────────────────────────────────────────────────────────
@@ -718,6 +754,10 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "Well-stocked technical library with electronic books, internet databases, and journal access." },
       { icon: "🍽️", name: "Canteen", desc: "Subsidised campus canteen with hygienic vegetarian and non-vegetarian meal options." },
     ],
+    avgPackage: 430000,
+    placementRate: 64,
+    avgPackage: 430000,
+    placementRate: 64
   },
 
   // ─────────────────────────────────────────────────────────
@@ -761,6 +801,10 @@ export const universities = [
       { icon: "📚", name: "Dr. B.R. Ambedkar Central Library", desc: "3-floor central library with 1 lakh+ books, 50 journals, 12 newspapers, and e-resources." },
       { icon: "🍽️", name: "University Canteen", desc: "Affordable canteen serving vegetarian meals for the student community." },
     ],
+    avgPackage: 380000,
+    placementRate: 58,
+    avgPackage: 380000,
+    placementRate: 58
   },
 
   // ─────────────────────────────────────────────────────────
@@ -804,6 +848,10 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "1 lakh+ volumes, 185+ periodicals, 110+ magazines, INFLIBNET, e-books, and thesis archives." },
       { icon: "🍽️", name: "University Canteen", desc: "Budget-friendly canteen serving affordable meals across the 482-acre campus." },
     ],
+    avgPackage: 370000,
+    placementRate: 56,
+    avgPackage: 370000,
+    placementRate: 56
   },
 
   // ─────────────────────────────────────────────────────────
@@ -847,6 +895,10 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "80,000+ books, IEEE Xplore, Springer, and ScienceDirect digital journal access." },
       { icon: "🍽️", name: "Canteen", desc: "Subsidised student canteen serving fresh South Indian meals daily." },
     ],
+    avgPackage: 550000,
+    placementRate: 70,
+    avgPackage: 550000,
+    placementRate: 70
   },
 
   // ─────────────────────────────────────────────────────────
@@ -890,6 +942,10 @@ export const universities = [
       { icon: "📚", name: "Digital Library", desc: "1 lakh+ technical volumes, IEEE Xplore, Springer, and NPTEL video resource access." },
       { icon: "🍽️", name: "Canteen & Mess", desc: "On-campus canteen and mess serving nutritional vegetarian and non-vegetarian meals." },
     ],
+    avgPackage: 400000,
+    placementRate: 62,
+    avgPackage: 400000,
+    placementRate: 62
   },
 
   // ─────────────────────────────────────────────────────────
@@ -933,6 +989,10 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "Technical library with 75,000+ books, e-journals, and IEEE/Elsevier digital access." },
       { icon: "🍽️", name: "Cafeteria & Mess", desc: "Affordable multi-cuisine canteen and residential mess for hostel students." },
     ],
+    avgPackage: 500000,
+    placementRate: 69,
+    avgPackage: 500000,
+    placementRate: 69
   },
 
   // ─────────────────────────────────────────────────────────
@@ -976,6 +1036,10 @@ export const universities = [
       { icon: "📚", name: "Digital Library", desc: "60,000+ books, NPTEL resources, IEEE Xplore, and 24-hour reading facilities." },
       { icon: "🍽️", name: "Canteen", desc: "Student canteen serving South Indian vegetarian and non-vegetarian meals daily." },
     ],
+    avgPackage: 430000,
+    placementRate: 63,
+    avgPackage: 430000,
+    placementRate: 63
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1019,6 +1083,10 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "55,000+ books, e-journals, INFLIBNET N-LIST, and digital reading resources." },
       { icon: "🍽️", name: "Canteen", desc: "Subsidised campus canteen with vegetarian and non-vegetarian food options daily." },
     ],
+    avgPackage: 410000,
+    placementRate: 61,
+    avgPackage: 410000,
+    placementRate: 61
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1062,6 +1130,10 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "Technical library with 70,000+ books, CDs, journals, and INFLIBNET e-resources." },
       { icon: "🍽️", name: "Canteen", desc: "On-campus canteen providing affordable and hygienic meals for all students." },
     ],
+    avgPackage: 450000,
+    placementRate: 65,
+    avgPackage: 450000,
+    placementRate: 65
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1105,6 +1177,10 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "2 lakh+ books, rare geology manuscripts, INFLIBNET, and e-journal subscriptions." },
       { icon: "🍽️", name: "University Canteen", desc: "Budget-friendly canteen serving affordable regional meals on the 430-acre campus." },
     ],
+    avgPackage: 350000,
+    placementRate: 52,
+    avgPackage: 350000,
+    placementRate: 52
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1148,6 +1224,10 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "1.5 lakh+ volumes, journals, e-books, INFLIBNET access, and rare coastal ecology resources." },
       { icon: "🍽️", name: "University Canteen", desc: "Budget-friendly canteen with affordable South Indian vegetarian and non-veg options." },
     ],
+    avgPackage: 360000,
+    placementRate: 54,
+    avgPackage: 360000,
+    placementRate: 54
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1191,6 +1271,10 @@ export const universities = [
       { icon: "📚", name: "University Library", desc: "1.2 lakh+ books, pharma journals, INFLIBNET, IEEE Xplore access, and thesis database." },
       { icon: "🍽️", name: "Subsidised Mess", desc: "Government-rate mess serving affordable meals to residential engineering students." },
     ],
+    avgPackage: 450000,
+    placementRate: 62,
+    avgPackage: 450000,
+    placementRate: 62
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1234,6 +1318,10 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "80,000+ books, 100+ journals, newspapers, INFLIBNET N-LIST, and research databases." },
       { icon: "🍽️", name: "University Canteen", desc: "Subsidised canteen serving affordable meals to thousands of students daily." },
     ],
+    avgPackage: 340000,
+    placementRate: 50,
+    avgPackage: 340000,
+    placementRate: 50
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1277,6 +1365,10 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "80,000+ books, IEEE Xplore, Springer, and ScienceDirect digital library access." },
       { icon: "🍽️", name: "Canteen & Mess", desc: "Subsidised campus canteen with vegetarian and non-vegetarian meal options." },
     ],
+    avgPackage: 420000,
+    placementRate: 63,
+    avgPackage: 420000,
+    placementRate: 63
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1320,6 +1412,10 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "Technical library with 70,000+ books, digital journals, and INFLIBNET access." },
       { icon: "🍽️", name: "Canteen & Mess", desc: "Hygienic canteen with vegetarian and non-vegetarian options for all students." },
     ],
+    avgPackage: 410000,
+    placementRate: 61,
+    avgPackage: 410000,
+    placementRate: 61
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1363,6 +1459,10 @@ export const universities = [
       { icon: "📚", name: "Digital Library", desc: "60,000+ books, IEEE, Springer digital access, and a dedicated women's reading hall." },
       { icon: "🍽️", name: "Mess & Cafeteria", desc: "Hygienic mess with home-style nutritious vegetarian and non-vegetarian meals." },
     ],
+    avgPackage: 400000,
+    placementRate: 60,
+    avgPackage: 400000,
+    placementRate: 60
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1406,6 +1506,10 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "65,000+ books, digital journals, INFLIBNET N-LIST, and 24-hour reading room." },
       { icon: "🍽️", name: "Canteen", desc: "Affordable student canteen with vegetarian and non-vegetarian food options." },
     ],
+    avgPackage: 380000,
+    placementRate: 58,
+    avgPackage: 380000,
+    placementRate: 58
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1449,6 +1553,10 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "65,000+ technical books, NPTEL, DELNET, and digital journal subscriptions." },
       { icon: "🍽️", name: "Canteen & Mess", desc: "Hygienic subsidised canteen with variety of vegetarian and non-vegetarian meals." },
     ],
+    avgPackage: 360000,
+    placementRate: 55,
+    avgPackage: 360000,
+    placementRate: 55
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1492,6 +1600,10 @@ export const universities = [
       { icon: "📚", name: "Loyola Library", desc: "Well-stocked technical library with books, journals, and IEEE digital resources." },
       { icon: "🍽️", name: "Cafeteria", desc: "Affordable college canteen serving home-style multicultural meals to students." },
     ],
+    avgPackage: 450000,
+    placementRate: 64,
+    avgPackage: 450000,
+    placementRate: 64
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1535,6 +1647,10 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "2 lakh+ books, rare women's studies resources, INFLIBNET, DELNET, and e-journals." },
       { icon: "🍽️", name: "University Mess", desc: "Nutritious and hygienic residential mess serving home-style meals to all women students." },
     ],
+    avgPackage: 400000,
+    placementRate: 60,
+    avgPackage: 400000,
+    placementRate: 60
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1577,6 +1693,10 @@ export const universities = [
       { icon: "📚", name: "Law Library", desc: "Comprehensive law library with 50,000+ volumes, rare judgments, and legal e-databases." },
       { icon: "🍽️", name: "University Cafeteria", desc: "Campus dining hall serving affordable meals with South Indian and continental options." },
     ],
+    avgPackage: 600000,
+    placementRate: 68,
+    avgPackage: 600000,
+    placementRate: 68
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1620,6 +1740,10 @@ export const universities = [
       { icon: "📚", name: "Sri Sathya Sai Library", desc: "Rare spiritual and academic collection — 1 lakh+ volumes, IEEE, Elsevier digital access." },
       { icon: "🍽️", name: "Free Sattvic Dining", desc: "Pure vegetarian, free meals provided to all students as part of the free-education model." },
     ],
+    avgPackage: 700000,
+    placementRate: 75,
+    avgPackage: 700000,
+    placementRate: 75
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1663,6 +1787,10 @@ export const universities = [
       { icon: "📚", name: "Campus Library", desc: "Technical library with 60,000+ books, INFLIBNET access, and reading rooms." },
       { icon: "🍽️", name: "Subsidised Mess", desc: "Government-subsidised residential mess providing affordable nutritious meals to all students." },
     ],
+    avgPackage: 600000,
+    placementRate: 72,
+    avgPackage: 600000,
+    placementRate: 72
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1706,6 +1834,10 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "64,000+ books, digital journals, INFLIBNET N-LIST, and a 24-hour reading room." },
       { icon: "🍽️", name: "Canteen", desc: "Campus canteen with affordable South Indian vegetarian and non-vegetarian meal options." },
     ],
+    avgPackage: 380000,
+    placementRate: 58,
+    avgPackage: 380000,
+    placementRate: 58
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1749,6 +1881,10 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "50,000+ books, IEEE Xplore access, and INFLIBNET N-LIST digital database subscriptions." },
       { icon: "🍽️", name: "Canteen & Mess", desc: "Campus canteen offering hygienic, home-style vegetarian and non-vegetarian meals." },
     ],
+    avgPackage: 370000,
+    placementRate: 56,
+    avgPackage: 370000,
+    placementRate: 56
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1792,6 +1928,10 @@ export const universities = [
       { icon: "📚", name: "Agricultural Library", desc: "Specialised agricultural library with 1.5 lakh volumes, rare research journals, and CABI databases." },
       { icon: "🍽️", name: "University Mess", desc: "Campus mess serving affordable meals using ingredients from the university's own farms." },
     ],
+    avgPackage: 450000,
+    placementRate: 62,
+    avgPackage: 450000,
+    placementRate: 62
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1835,6 +1975,10 @@ export const universities = [
       { icon: "📚", name: "Medical Library", desc: "Comprehensive medical library with Harrison, Robbins, Gray's Anatomy, and e-medical journal access." },
       { icon: "🍽️", name: "Cafeteria", desc: "Hygienic university cafeteria serving nutritious meals to medical students and staff." },
     ],
+    avgPackage: 800000,
+    placementRate: 80,
+    avgPackage: 800000,
+    placementRate: 80
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1878,6 +2022,10 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "70,000+ books, digital journals, INFLIBNET access, and Annamacharya cultural archives." },
       { icon: "🍽️", name: "Canteen & Mess", desc: "Subsidised student canteen with South Indian vegetarian and non-vegetarian food." },
     ],
+    avgPackage: 400000,
+    placementRate: 60,
+    avgPackage: 400000,
+    placementRate: 60
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1921,6 +2069,10 @@ export const universities = [
       { icon: "📚", name: "Krea Library", desc: "Curated interdisciplinary library with JSTOR, Elsevier, EBSCO, and social science research access." },
       { icon: "🍽️", name: "International Dining", desc: "Multi-cuisine campus dining hall with South Indian, North Indian, and international food options." },
     ],
+    avgPackage: 1000000,
+    placementRate: 88,
+    avgPackage: 1000000,
+    placementRate: 88
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1964,6 +2116,10 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "60,000+ technical books, INFLIBNET N-LIST, and 24-hour reading room facility." },
       { icon: "🍽️", name: "Canteen", desc: "Subsidised student canteen with hygienic vegetarian and non-vegetarian food options." },
     ],
+    avgPackage: 380000,
+    placementRate: 57,
+    avgPackage: 380000,
+    placementRate: 57
   },
 
   // ─────────────────────────────────────────────────────────
@@ -2007,6 +2163,10 @@ export const universities = [
       { icon: "📚", name: "AMC Medical Library", desc: "Historical medical library with 1 lakh+ volumes — rare early-20th century medical texts and e-journals." },
       { icon: "🍽️", name: "Hospital Canteen", desc: "Campus canteen and hospital cafeteria serving affordable meals for students and hospital staff." },
     ],
+    avgPackage: 700000,
+    placementRate: 74,
+    avgPackage: 700000,
+    placementRate: 74
   },
 
   // ─────────────────────────────────────────────────────────
@@ -2050,6 +2210,10 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "55,000+ books, digital journal access, NPTEL video resources, and 24-hour reading facility." },
       { icon: "🍽️", name: "Canteen & Mess", desc: "Campus canteen offering affordable South Indian vegetarian and non-vegetarian meals daily." },
     ],
+    avgPackage: 420000,
+    placementRate: 62,
+    avgPackage: 420000,
+    placementRate: 62
   },
 
   // ─────────────────────────────────────────────────────────
@@ -2093,6 +2257,10 @@ export const universities = [
       { icon: "📚", name: "Veterinary Library", desc: "Specialised library with veterinary textbooks, ICAR journals, and CAB Abstracts digital access." },
       { icon: "🍽️", name: "Campus Mess", desc: "University mess serving nutritious meals; dairy products from the university farm available for students." },
     ],
+    avgPackage: 480000,
+    placementRate: 65,
+    avgPackage: 480000,
+    placementRate: 65
   },
 ];
 
