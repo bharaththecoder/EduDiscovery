@@ -3,7 +3,7 @@
 > **The smartest way to find your college in Andhra Pradesh.**  
 > AI-powered search, instant recommendations, and a personal counselor — all in one place.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-edudiscovery.vercel.app-black?style=for-the-badge&logo=vercel)](https://edudiscovery.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-edudiscovery.vercel.app-black?style=for-the-badge&logo=vercel)](https://edu-discovery.vercel.app)
 &nbsp;
 [![React](https://img.shields.io/badge/React%2019-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite%208-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
