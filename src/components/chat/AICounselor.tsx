@@ -7,8 +7,8 @@ import { AnimatePresence } from 'framer-motion';
 export default function AICounselor() {
   const { isOpen, quizContext } = useCounselor();
 
-  // Only show the counselor if the user has completed the quiz
-  if (!quizContext) return null;
+  // The counselor is now always visible to provide a better user experience
+  // Even if quiz results are missing, users can interact with it.
 
   return (
     <AnimatePresence mode="wait">

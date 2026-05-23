@@ -236,6 +236,7 @@ export default function ComparePage() {
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         {selected.branchFees ? (
                           Object.entries(selected.branchFees).map(([branch, fee]: [string, any]) => {
+                            if (fee === undefined || fee === null) return null;
                             const lowest = getLowestFeeForBranch(branch);
                             const isLowest = lowest !== null && fee === lowest;
                             return (
@@ -249,7 +250,7 @@ export default function ComparePage() {
                                   background: isLowest ? '#f0fdf4' : 'transparent',
                                   borderRadius: '6px'
                                 }}>
-                                  ₹{fee.toLocaleString()}
+                                  ₹{Number(fee).toLocaleString()}
                                   {isLowest && <span style={{ fontSize: '9px', marginLeft: '4px', textTransform: 'uppercase' }}>Best</span>}
                                 </span>
                               </div>
@@ -260,7 +261,6 @@ export default function ComparePage() {
                         )}
                       </div>
                     </div>
-
                     <div>
                       <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '0.5px' }}>Campus & Facilities</div>
                       <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '10px' }}>{selected.acres || 'N/A'} Acres</div>

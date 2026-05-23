@@ -1,5 +1,4 @@
 import React from 'react';
-import { Sparkles, CheckCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface MessageBubbleProps {
@@ -12,18 +11,33 @@ export default function MessageBubble({ text, sender }: MessageBubbleProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+      initial={{ opacity: 0, y: 8, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      className={`flex ${isUser ? 'justify-end' : 'justify-start'} w-full mb-1`}
+      transition={{ type: 'spring', damping: 25, stiffness: 400 }}
+      className={`flex ${isUser ? 'justify-end' : 'justify-start'} w-full mb-2.5 px-3`}
     >
       <div
-        className={`px-4 py-3 rounded-[20px] text-[14.5px] leading-relaxed transition-all duration-200 max-w-[85%] shadow-sm ${
-          isUser
-            ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-br-sm ml-12'
-            : 'bg-white text-slate-800 border border-slate-100 rounded-bl-sm mr-12'
-        }`}
+        style={{
+          maxWidth: '82%',
+          padding: isUser ? '10px 16px' : '12px 16px',
+          fontSize: '14.5px',
+          fontWeight: '550',
+          lineHeight: '1.45',
+          borderRadius: isUser ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
+          background: isUser 
+            ? 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 50%, #D946EF 100%)' 
+            : '#FFFFFF',
+          color: isUser ? '#FFFFFF' : '#1E293B',
+          border: isUser ? 'none' : '1.5px solid rgba(124, 58, 237, 0.1)',
+          boxShadow: isUser 
+            ? '0 6px 16px rgba(139, 92, 246, 0.18)' 
+            : '0 4px 16px rgba(15, 23, 42, 0.04)',
+          transition: 'all 0.2s ease',
+          whiteSpace: 'pre-wrap',
+          wordBreak: 'break-word'
+        }}
       >
-        <div className="font-medium whitespace-pre-wrap">{text}</div>
+        <div>{text}</div>
       </div>
     </motion.div>
   );

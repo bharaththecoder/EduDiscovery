@@ -1,15 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useCounselor } from '@/contexts/CounselorContext';
 import { sendChatMessage } from '@/services/api/chatApi';
-import { Send, X, Bot, Sparkles, AlertCircle, Trash2, Paperclip, Smile, Image as ImageIcon, Plus } from 'lucide-react';
+import { Send, X, Sparkles, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import MessageBubble from './MessageBubble';
-import ChatLogo from './ChatLogo';
 
 const SUGGESTED_QUESTIONS = [
-  "Why these colleges?",
-  "Better options?",
-  "Low budget colleges?",
+  "💡 Why these colleges?",
+  "⭐ Better options?",
+  "💰 Low budget colleges?",
 ];
 
 const cleanText = (text: string) => {
@@ -87,45 +86,103 @@ export default function ChatWindow() {
       initial={{ opacity: 0, scale: 0.95, y: 30 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95, y: 30 }}
-      transition={{ type: 'spring', damping: 20, stiffness: 200 }}
-      className="fixed bottom-0 md:bottom-6 right-0 md:right-6 w-full md:w-[400px] h-[calc(100vh-80px)] md:h-[640px] max-h-[85vh] md:max-h-[700px] bg-white rounded-t-[2.5rem] md:rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] flex flex-col overflow-hidden z-50 border border-slate-200/60"
+      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+      className="fixed bottom-0 md:bottom-6 right-0 md:right-6 w-full md:w-[380px] h-[calc(100vh-100px)] md:h-[calc(100vh-140px)] max-h-[620px] bg-slate-50 md:bg-white/95 md:backdrop-blur-xl rounded-t-[2.2rem] md:rounded-t-[2.2rem] md:rounded-b-[1.5rem] shadow-[0_24px_80px_-15px_rgba(124,58,237,0.18)] flex flex-col overflow-hidden z-50 border border-slate-100/80"
     >
-      {/* Header (Minimalist) */}
-      <div className="px-5 py-4 flex items-center justify-between shrink-0 border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-10">
+      {/* Concept 3: Premium Insta-Style Header */}
+      <div 
+        className="px-5 py-4 flex items-center justify-between shrink-0 border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-10"
+        style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}
+      >
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white text-[10px] font-bold">
-            AI
+          {/* Circular Glowing Gradient Avatar */}
+          <div className="relative">
+            <div className="w-11 h-11 rounded-full p-[2.5px] bg-gradient-to-tr from-[#4F46E5] via-[#9333EA] to-[#EC4899] flex items-center justify-center shadow-sm">
+              <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-purple-600">
+                <Sparkles size={18} className="text-purple-600 filter drop-shadow(0 0 2px rgba(124,58,237,0.2))" />
+              </div>
+            </div>
+            {/* Pulsing Active Beacon */}
+            <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white shadow-sm flex items-center justify-center">
+              <span className="w-1.5 h-1.5 bg-white rounded-full animate-ping opacity-75"></span>
+            </div>
           </div>
           <div>
-            <h2 className="font-bold text-slate-800 text-[15px]">AI Counselor</h2>
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-              <span className="text-[11px] font-semibold text-slate-400">Online</span>
+            <h2 className="font-bold text-slate-800 text-[15px] leading-tight flex items-center gap-1">
+              AI Counselor
+            </h2>
+            <div className="flex items-center gap-1 mt-0.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Active Now</p>
             </div>
           </div>
         </div>
-        <button 
-          onClick={() => setIsOpen(false)}
-          className="p-2 hover:bg-slate-50 rounded-full text-slate-400 hover:text-slate-800 transition-all"
-        >
-          <X size={20} />
-        </button>
+        <div className="flex items-center gap-1">
+          {/* Action buttons */}
+          <button 
+            onClick={clearMessages}
+            className="p-2 hover:bg-purple-50 rounded-full text-slate-400 hover:text-purple-600 transition-all"
+            title="Clear Chat"
+          >
+            <Trash2 size={16} />
+          </button>
+          <button 
+            onClick={() => setIsOpen(false)}
+            className="p-2 hover:bg-slate-100 rounded-full text-slate-400 hover:text-slate-700 transition-all"
+          >
+            <X size={18} />
+          </button>
+        </div>
       </div>
 
       {/* Messages Area */}
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto px-4 py-6 space-y-4 bg-[#FAFAFA]"
+        className="flex-1 overflow-y-auto px-3 py-4 space-y-2"
+        style={{
+          background: 'linear-gradient(180deg, #FAFAFF 0%, #F4F0FF 100%)',
+        }}
       >
         {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-16 text-center opacity-40">
-            <ChatLogo size={70} />
-            <p className="text-[15px] font-bold mt-5 text-slate-600">How can I help you?</p>
-            <p className="text-[12px] text-slate-400 mt-1 max-w-[200px]">Ask about colleges, budgets, or your career path.</p>
+          <div className="flex flex-col items-center justify-center py-20 text-center px-8 animate-fade-in">
+            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-5 shadow-sm border border-slate-100">
+              <Sparkles size={30} className="text-purple-500 animate-pulse" />
+            </div>
+            <p className="text-[16px] font-extrabold text-slate-800">
+              {quizContext ? "Personal Admission Assistant" : "Get Professional Advice"}
+            </p>
+            <p className="text-[13px] text-slate-400 mt-2 leading-relaxed">
+              {quizContext 
+                ? "Ask anything about your matching colleges, convener fees, and ROI placements." 
+                : "Unlock the full AI advisor experience by completing our discovery preferences quiz."}
+            </p>
+            {!quizContext && (
+              <button 
+                onClick={() => { setIsOpen(false); window.location.href = '/quiz'; }}
+                className="mt-6 px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[13px] font-extrabold rounded-full hover:shadow-[0_8px_20px_rgba(124,58,237,0.3)] transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+              >
+                Start Preference Quiz
+              </button>
+            )}
           </div>
         )}
 
         <div className="flex flex-col gap-1">
+          {/* Suggested Pill Tags (Concept 3) */}
+          {messages.length < 4 && quizContext && (
+            <div className="flex flex-wrap gap-2 px-3 mb-4 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+              {SUGGESTED_QUESTIONS.map((q, i) => (
+                <button
+                  key={i}
+                  onClick={() => handleSend(q.replace(/[💡⭐💰]\s*/, ''))}
+                  className="px-4 py-1.5 bg-white border border-slate-200/80 rounded-full text-[12px] font-bold text-purple-600 shadow-sm hover:border-purple-400 hover:text-purple-700 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+          )}
+
           <AnimatePresence initial={false}>
             {messages.map((msg) => (
               <MessageBubble 
@@ -144,27 +201,43 @@ export default function ChatWindow() {
           </AnimatePresence>
         </div>
 
+        {/* Loading message typing indicator */}
         {isLoading && (
-          <div className="flex gap-1.5 px-6 py-3 bg-white w-fit rounded-full shadow-sm border border-slate-100 animate-fade-in-up">
-            <span className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce [animation-duration:0.6s]"></span>
-            <span className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce [animation-duration:0.6s] [animation-delay:150ms]"></span>
-            <span className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce [animation-duration:0.6s] [animation-delay:300ms]"></span>
+          <div className="flex gap-1.5 px-4 py-3 ml-3 bg-[#FAFAFF] border border-slate-200/40 w-fit rounded-2xl shadow-sm">
+            <span className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce [animation-duration:0.6s]"></span>
+            <span className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce [animation-duration:0.6s] [animation-delay:150ms]"></span>
+            <span className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce [animation-duration:0.6s] [animation-delay:300ms]"></span>
           </div>
         )}
 
         {error && (
-          <div className="bg-rose-50 text-rose-600 text-[12px] p-4 rounded-2xl flex items-center gap-3 border border-rose-100 animate-fade-in-up mx-2">
-            <AlertCircle size={16} className="shrink-0" />
-            <span className="font-bold">{cleanText(error)}</span>
+          <div className="text-rose-500 text-[11px] font-bold px-6 py-2 text-center italic">
+            {cleanText(error)}
           </div>
         )}
         
         <div ref={chatEndRef} />
       </div>
 
-      {/* Input Area (Pill Style) */}
-      <div className="px-4 py-4 bg-white border-t border-slate-100">
-        <div className="bg-slate-50 border border-slate-200 rounded-[1.8rem] px-5 py-2 flex items-center transition-all focus-within:border-purple-400 focus-within:bg-white focus-within:shadow-sm">
+      {/* Clean Pill Input Area (Concept 3) */}
+      <div className="px-5 pt-4 pb-7 bg-white border-t border-slate-100 shrink-0">
+        <div 
+          className="rounded-full px-5 py-1.5 flex items-center border transition-all duration-200"
+          style={{
+            background: '#F8FAFC',
+            borderColor: '#E2E8F0',
+          }}
+          onFocusCapture={(e) => {
+            e.currentTarget.style.background = '#fff';
+            e.currentTarget.style.borderColor = 'var(--primary)';
+            e.currentTarget.style.boxShadow = '0 0 0 3px var(--primary-light)';
+          }}
+          onBlurCapture={(e) => {
+            e.currentTarget.style.background = '#F8FAFC';
+            e.currentTarget.style.borderColor = '#E2E8F0';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        >
           <textarea
             ref={textareaRef}
             rows={1}
@@ -176,22 +249,29 @@ export default function ChatWindow() {
                 handleSend(input);
               }
             }}
-            placeholder="Message..."
-            className="flex-1 bg-transparent outline-none resize-none text-[14.5px] py-2 font-medium text-slate-700 placeholder:text-slate-400"
+            placeholder="Ask a question..."
+            className="flex-1 bg-transparent outline-none resize-none text-[14px] py-2 font-medium text-slate-700 placeholder:text-slate-400 max-h-[100px] no-scrollbar"
             disabled={isLoading}
           />
 
-          <button
+          <motion.button
             onClick={() => handleSend(input)}
             disabled={!input.trim() || isLoading}
-            className={`font-bold text-[14px] px-2 transition-all ${
-              !input.trim() || isLoading
-                ? 'text-purple-300 cursor-not-allowed'
-                : 'text-purple-600 hover:text-purple-800'
-            }`}
+            className="w-8 h-8 rounded-full flex items-center justify-center text-white transition-all duration-300 shadow-sm shrink-0"
+            style={{
+              background: input.trim() 
+                ? 'linear-gradient(135deg, #4F46E5 0%, #9333EA 50%, #EC4899 100%)'
+                : 'rgba(226, 232, 240, 0.9)',
+              color: input.trim() ? '#fff' : '#94A3B8',
+              cursor: input.trim() ? 'pointer' : 'not-allowed',
+              opacity: input.trim() ? 1 : 0.7,
+              marginLeft: '8px'
+            }}
+            whileHover={input.trim() ? { scale: 1.06 } : {}}
+            whileTap={input.trim() ? { scale: 0.94 } : {}}
           >
-            Send
-          </button>
+            <Send size={12} className={input.trim() ? "ml-[1px] text-white" : "ml-[1px] text-slate-400"} />
+          </motion.button>
         </div>
       </div>
     </motion.div>

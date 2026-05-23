@@ -1,6 +1,5 @@
+import admin from "firebase-admin";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { initializeApp, getApps } from "firebase/app";
-import { getFirestore, collection, doc, setDoc } from "firebase/firestore";
 import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
@@ -11,12 +10,14 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Firebase Setup (Using client SDK in node for simplicity as long as it handles writes)
-const firebaseConfig = {
-  apiKey: process.env.VITE_FIREBASE_API_KEY,
-  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.VITE_FIREBASE_PROJECT_ID,
-};
+// Firebase Admin Setup
+const serviceAccountPath = path.join(__dirname, '..', 'serviceAccountKey.json');
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8')))
+  });
+}
+const db = admin.firestore();
 
 // Gemini Setup
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -25,8 +26,6 @@ export default async function seedHandler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const app = getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig);
-    const db = getFirestore(app);
     const model = genAI.getGenerativeModel({ model: "gemini-embedding-001" });
 
     // Dynamic import of the universities dataset
@@ -57,8 +56,8 @@ export default async function seedHandler(req, res) {
         const result = await model.embedContent(contentToEmbed);
         const embedding = result.embedding.values;
 
-        // Store into Firestore
-        await setDoc(doc(db, "colleges", college.id), {
+        // Store into Firestore using Admin SDK
+        await db.collection("colleges").doc(college.id).set({
           ...college,
           embedding
         });

@@ -1,15 +1,23 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { initializeApp, getApps } from "firebase/app";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { streamChat } from "./aiHelper.js";
+import admin from "firebase-admin";
 import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
-const firebaseConfig = {
-  apiKey: process.env.VITE_FIREBASE_API_KEY,
-  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.VITE_FIREBASE_PROJECT_ID,
-};
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Firebase Admin Setup
+const serviceAccountPath = path.join(__dirname, '..', 'serviceAccountKey.json');
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8')))
+  });
+}
+const db = admin.firestore();
 
 // ─── In-memory college cache (reused from search.js pattern) ──
 let cachedColleges = null;
@@ -18,9 +26,7 @@ const CACHE_TTL = 1000 * 60 * 60; // 1 hour
 
 async function getCollegesFromFirestore() {
   if (cachedColleges && Date.now() - cacheTime < CACHE_TTL) return cachedColleges;
-  const app = getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const snap = await getDocs(collection(db, 'colleges'));
+  const snap = await db.collection('colleges').get();
   cachedColleges = snap.docs.map(d => {
     const data = d.data();
     // Strip embedding to save memory
@@ -91,8 +97,9 @@ async function fetchRelevantCollegeFacts(message) {
 
   // Format as structured fact block
   const facts = scored.map(c => {
-    const minFee = c.branchFees ? Math.min(...Object.values(c.branchFees)) : null;
-    const feeStr = minFee ? `₹${(minFee / 1000).toFixed(0)}K/yr` : 'Contact institution';
+    const feeValues = c.branchFees ? Object.values(c.branchFees).filter(v => typeof v === 'number' && !isNaN(v)) : [];
+    const minFee = feeValues.length > 0 ? Math.min(...feeValues) : null;
+    const feeStr = minFee && isFinite(minFee) ? `₹${(minFee / 1000).toFixed(0)}K/yr` : 'Contact institution';
     const avgPkg = c.avgPackage ? `₹${(c.avgPackage / 100000).toFixed(1)} LPA` : 'N/A';
     const placement = c.placementRate ? `${c.placementRate}%` : 'N/A';
     return `
@@ -121,11 +128,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ reply: "Message is required" });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey || apiKey === 'your_actual_key_here') {
-      return res.status(500).json({ reply: "🔑 AI Error: Please add your Gemini API Key to the .env file." });
-    }
-
     // ── RAG: Fetch relevant college facts ─────────────────────
     const collegeFacts = await fetchRelevantCollegeFacts(message);
 
@@ -149,42 +151,14 @@ Instructions:
 - Keep a professional but friendly tone.
 - If asked about fees, placements, or admission — cite the numbers from the data above.`;
 
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-flash-latest",
-      systemInstruction: systemInstruction
-    });
-
-    let formattedHistory = history.map(msg => ({
-      role: msg.role === 'user' ? 'user' : 'model',
-      parts: [{ text: msg.content }]
-    }));
-
-    // Gemini requires history to start with a 'user' message.
-    // If the first message is from the 'model' (like the initial greeting), we skip it in the history.
-    if (formattedHistory.length > 0 && formattedHistory[0].role === 'model') {
-      formattedHistory = formattedHistory.slice(1);
-    }
-
-    const chat = model.startChat({ history: formattedHistory, generationConfig: { maxOutputTokens: 1200 } });
-    const result = await chat.sendMessageStream(message);
-
-    for await (const chunk of result.stream) {
-      const chunkText = chunk.text();
-      if (chunkText) {
-        res.write(`data: ${JSON.stringify({ text: chunkText })}\n\n`);
-      }
-    }
-
-    res.write('data: [DONE]\n\n');
-    res.end();
+    await streamChat(message, systemInstruction, history, res);
 
   } catch (error) {
-    console.error("Gemini API Error:", error);
+    console.error("Chat API Error:", error);
     let errorMessage = "Sorry, I'm having trouble connecting to the AI service.";
     const isQuotaError = error.status === 429 || error.message?.toLowerCase().includes("quota");
     if (isQuotaError) errorMessage = "⏳ Daily Limit Reached: Please wait for the daily reset or try again later.";
-    else if (error.status === 404) errorMessage = "🚫 Model Error: This API key does not have access to the Gemini models.";
+    else if (error.status === 404) errorMessage = "🚫 Model Error: This API key does not have access to the models.";
 
     if (!res.headersSent) return res.status(500).json({ reply: errorMessage });
     res.write(`data: ${JSON.stringify({ error: errorMessage })}\n\n`);

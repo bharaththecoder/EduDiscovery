@@ -87,6 +87,7 @@ function CollegeFitScore({ university }: { university: University }) {
   );
 }
 
+
 function ReviewsSection({ universityId }: { universityId: string }) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [text, setText] = useState('');
@@ -100,16 +101,22 @@ function ReviewsSection({ universityId }: { universityId: string }) {
       collection(db, 'reviews'),
       where('universityId', '==', universityId) // Removing orderBy('createdAt', 'desc') temporarily unless index exists
     );
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Review[];
-      // Client side sort if missing index
-      data.sort((a, b) => {
-        const t1 = (a.createdAt as any)?.seconds || 0;
-        const t2 = (b.createdAt as any)?.seconds || 0;
-        return t2 - t1;
-      });
-      setReviews(data);
-      setLoading(false);
+    const unsubscribe = onSnapshot(q, {
+      next: (snapshot) => {
+        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Review[];
+        // Client side sort if missing index
+        data.sort((a, b) => {
+          const t1 = (a.createdAt as any)?.seconds || 0;
+          const t2 = (b.createdAt as any)?.seconds || 0;
+          return t2 - t1;
+        });
+        setReviews(data);
+        setLoading(false);
+      },
+      error: (err) => {
+        console.error("Firestore reviews error:", err);
+        setLoading(false);
+      }
     });
     return () => unsubscribe();
   }, [universityId]);
@@ -296,7 +303,11 @@ export default function UniversityDetail() {
   const [showApply2, setShowApply2] = useState(false);
 
   const university = getUniversityById(id || "") as University | undefined;
-  if (!university) {
+
+  // Fallback: If not found, try replacing %20 or spaces with hyphens (common URL mismatch)
+  const resolvedUniversity = university || (id ? getUniversityById(id.replace(/[\s%20]+/g, '-')) : undefined);
+
+  if (!resolvedUniversity) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '16px' }}>
         <div style={{ fontSize: '48px' }}>😕</div>
@@ -306,26 +317,26 @@ export default function UniversityDetail() {
     );
   }
 
-  const saved = isWishlisted(university.id);
+  const saved = isWishlisted(resolvedUniversity.id);
 
   const handleWishlist = () => {
-    toggleWishlist(university);
+    toggleWishlist(resolvedUniversity);
     showToast(saved ? 'Removed from wishlist' : 'Saved to wishlist! ❤️', saved ? 'info' : 'success');
   };
 
   useEffect(() => {
-    if (university) {
+    if (resolvedUniversity) {
       window.scrollTo(0, 0);
     }
-    if (currentUser?.id && university) {
+    if (currentUser?.id && resolvedUniversity) {
       trackView(currentUser.id, {
-        id: university.id,
-        name: university.name,
-        image: university.image,
-        city: university.city
+        id: resolvedUniversity.id,
+        name: resolvedUniversity.name,
+        image: resolvedUniversity.image,
+        city: resolvedUniversity.city
       });
     }
-  }, [currentUser?.id, university]);
+  }, [currentUser?.id, resolvedUniversity]);
 
   const handleBrochure = () => showToast('📄 Brochure downloaded!', 'success');
 
@@ -334,8 +345,8 @@ export default function UniversityDetail() {
       {/* Hero */}
       <div className="relative h-[280px] md:h-[400px]">
         <img
-          src={university.image}
-          alt={university.name}
+          src={resolvedUniversity.image}
+          alt={resolvedUniversity.name}
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
         <div style={{
@@ -368,13 +379,13 @@ export default function UniversityDetail() {
         {/* Name overlay */}
         <div style={{ position: 'absolute', bottom: '16px', left: '16px', right: '16px' }}>
           <div className="match-badge" style={{ marginBottom: '8px', display: 'inline-flex' }}>
-            {university.match}% MATCH
+            {resolvedUniversity.match}% MATCH
           </div>
           <h1 style={{ color: '#fff', fontSize: '22px', fontWeight: '900', lineHeight: 1.2, textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}>
-            {university.name}
+            {resolvedUniversity.name}
           </h1>
           <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '13px', marginTop: '4px' }}>
-            📍 {university.city}, {university.state}
+            📍 {resolvedUniversity.city}, {resolvedUniversity.state}
           </p>
         </div>
       </div>
@@ -395,7 +406,8 @@ export default function UniversityDetail() {
             </div>
 
             {/* AI Fit Score */}
-            <CollegeFitScore university={university} />
+            <CollegeFitScore university={resolvedUniversity} />
+
         {/* Stats Row */}
         <div style={{
           display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
@@ -404,10 +416,10 @@ export default function UniversityDetail() {
           padding: '16px', boxShadow: 'var(--shadow-sm)',
         }}>
           {[
-            { icon: <Building2 size={20} color="var(--primary)" />, value: university.established, label: 'Founded' },
-            { icon: '🌿', value: university.acres, label: 'Acres' },
-            { icon: <Users size={20} color="var(--primary)" />, value: university.ratio, label: 'S:F Ratio' },
-            { icon: <Award size={20} color="var(--primary)" />, value: university.naac, label: 'NAAC' },
+            { icon: <Building2 size={20} color="var(--primary)" />, value: resolvedUniversity.established, label: 'Founded' },
+            { icon: '🌿', value: resolvedUniversity.acres, label: 'Acres' },
+            { icon: <Users size={20} color="var(--primary)" />, value: resolvedUniversity.ratio, label: 'S:F Ratio' },
+            { icon: <Award size={20} color="var(--primary)" />, value: resolvedUniversity.naac, label: 'NAAC' },
           ].map((stat, i) => (
             <div key={i} style={{ textAlign: 'center' }}>
               <div style={{ marginBottom: '4px', display: 'flex', justifyContent: 'center' }}>
@@ -422,9 +434,9 @@ export default function UniversityDetail() {
         {/* About */}
         <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-md)', padding: '20px', marginBottom: '20px', boxShadow: 'var(--shadow-sm)' }}>
           <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '12px' }}>About</h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.7 }}>{university.about}</p>
-          {university.website && (
-            <a href={university.website} target="_blank" rel="noopener noreferrer" style={{
+          <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.7 }}>{resolvedUniversity.about}</p>
+          {resolvedUniversity.website && (
+            <a href={resolvedUniversity.website} target="_blank" rel="noopener noreferrer" style={{
               display: 'inline-flex', alignItems: 'center', gap: '6px',
               marginTop: '12px', color: 'var(--primary)', fontWeight: '600', fontSize: '13px',
             }}>
@@ -435,7 +447,7 @@ export default function UniversityDetail() {
 
             {/* Location / Google Maps */}
             <div
-              onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(university.name + ', ' + university.city + ', Andhra Pradesh')}`, '_blank')}
+              onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(resolvedUniversity.name + ', ' + resolvedUniversity.city + ', Andhra Pradesh')}`, '_blank')}
               className="glow-up"
               style={{
                 background: 'var(--gradient)', borderRadius: 'var(--radius-md)', padding: '20px',
@@ -457,7 +469,7 @@ export default function UniversityDetail() {
             {/* Bottom CTA */}
             <div style={{ background: 'var(--dark-card)', borderRadius: 'var(--radius-lg)', padding: '28px 20px', textAlign: 'center' }}>
               <h2 style={{ color: '#fff', fontSize: '20px', fontWeight: '800', marginBottom: '8px' }}>Ready to Ignite Your Future?</h2>
-              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', marginBottom: '20px' }}>Over 2,000 students joined {university.shortName} last year.</p>
+              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', marginBottom: '20px' }}>Over 2,000 students joined {resolvedUniversity.shortName} last year.</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <button onClick={() => setShowApply2(true)} className="btn btn-primary btn-full">Apply for Admission</button>
                 <button onClick={() => showToast('📞 Counselor will call you within 24 hours!', 'success')} style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '999px', padding: '14px', fontWeight: '600', fontSize: '15px', cursor: 'pointer', width: '100%' }}>Contact Counselors</button>
@@ -472,6 +484,7 @@ export default function UniversityDetail() {
         <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-md)', overflow: 'hidden', marginBottom: '20px', boxShadow: 'var(--shadow-sm)' }}>
           <div style={{ padding: '20px 20px 12px', borderBottom: '1px solid var(--border)' }}>
             <h2 style={{ fontSize: '18px', fontWeight: '800' }}>🎓 Academic Programs</h2>
+            <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}> All fees listed below are per academic year</p>
           </div>
           <div style={{ overflowX: 'auto' }}>
             <table className="programs-table">
@@ -479,15 +492,17 @@ export default function UniversityDetail() {
                 <tr>
                   <th>Program</th>
                   <th>Duration</th>
-                  <th>Fees/Year</th>
+                  <th>Convener Fee</th>
+                  <th>Management Fee</th>
                 </tr>
               </thead>
               <tbody>
-                {university.programs.map((p, i) => (
+                {resolvedUniversity.programs.map((p, i) => (
                   <tr key={i}>
                     <td style={{ fontWeight: '600' }}>{p.name}</td>
                     <td style={{ color: 'var(--text-muted)' }}>{p.duration}</td>
                     <td style={{ color: 'var(--primary)', fontWeight: '700' }}>{p.fees}</td>
+                    <td style={{ color: 'var(--accent)', fontWeight: '700' }}>{p.mgmtFees || '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -499,7 +514,7 @@ export default function UniversityDetail() {
         <div style={{ marginBottom: '20px' }}>
           <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '14px' }}>🏛️ Guided by Pioneers</h2>
           <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', scrollbarWidth: 'none' }}>
-            {university.faculty.map((f, i) => (
+            {resolvedUniversity.faculty.map((f, i) => (
               <div key={i} style={{
                 background: 'var(--surface)', borderRadius: 'var(--radius-md)',
                 padding: '20px 16px', textAlign: 'center', flexShrink: 0, width: '160px',
@@ -524,7 +539,7 @@ export default function UniversityDetail() {
         <div style={{ marginBottom: '24px' }}>
           <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '14px' }}>🌳 The Living Ecosystem</h2>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-            {university.facilities.map((f, i) => (
+            {resolvedUniversity.facilities.map((f, i) => (
               <div key={i} style={{
                 background: 'var(--surface)', borderRadius: 'var(--radius-md)',
                 padding: '16px', boxShadow: 'var(--shadow-sm)',
@@ -539,15 +554,15 @@ export default function UniversityDetail() {
 
         {/* Community Reviews */}
         <div style={{ marginBottom: '24px' }}>
-          <ReviewsSection universityId={university.id} />
+          <ReviewsSection universityId={resolvedUniversity.id} />
         </div>
 
         </div>
       </div>
       </div>
 
-      {showApply && <ApplyModal university={university} onClose={() => setShowApply(false)} onSuccess={() => showToast('✅ Application submitted successfully!', 'success')} />}
-      {showApply2 && <ApplyModal university={university} onClose={() => setShowApply2(false)} onSuccess={() => showToast('✅ Application submitted successfully!', 'success')} />}
+      {showApply && <ApplyModal university={resolvedUniversity} onClose={() => setShowApply(false)} onSuccess={() => showToast('✅ Application submitted successfully!', 'success')} />}
+      {showApply2 && <ApplyModal university={resolvedUniversity} onClose={() => setShowApply2(false)} onSuccess={() => showToast('✅ Application submitted successfully!', 'success')} />}
     </div>
   );
 }

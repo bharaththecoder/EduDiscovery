@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { initializeFirestore, memoryLocalCache } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
 
@@ -27,6 +27,12 @@ const app = isConfigValid ? initializeApp(firebaseConfig) : null;
 
 export const auth = app ? getAuth(app) : ({} as any);
 export const googleProvider = new GoogleAuthProvider();
-export const db = app ? getFirestore(app) : ({} as any);
+
+// Use initializeFirestore instead of getFirestore for more control over persistence/cache
+export const db = app 
+  ? initializeFirestore(app, {
+      localCache: memoryLocalCache() // Using memory cache to avoid IndexedDB "INTERNAL ASSERTION FAILED" errors
+    })
+  : ({} as any);
 export const storage = app ? getStorage(app) : ({} as any);
 export const analytics = (app && typeof window !== 'undefined') ? getAnalytics(app) : null;

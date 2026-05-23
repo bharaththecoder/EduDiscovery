@@ -6,6 +6,7 @@ export interface Program {
   name: string;
   duration: string;
   fees: string;
+  mgmtFees?: string;
 }
 
 export interface Faculty {
@@ -41,9 +42,20 @@ export interface University {
   faculty: Faculty[];
   facilities: Facility[];
   branchFees?: Record<string, number | undefined>;
-  // V3 Intelligence fields
   avgPackage?: number;      // Average placement package in ₹ (e.g. 1200000 = ₹12 LPA)
   placementRate?: number;   // 0-100 percentage
+  feeIntelligence?: FeeIntelligence;
+}
+
+export interface FeeIntelligence {
+  category: 'Affordable' | 'Moderate' | 'Expensive' | 'Premium';
+  convenerQuotaFee: number;
+  mgmtQuotaFee: number;
+  mgmtMultiple: number;
+  isMgmtAbove2x: boolean;
+  trends: Record<string, number>;
+  hiddenDonationNotes: string;
+  sources: string[];
 }
 
 export interface NewsArticle {

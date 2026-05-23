@@ -51,9 +51,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Listen to Firebase auth state changes
   useEffect(() => {
-    let unsubscribeFirestore = () => {};
+    let unsubscribeFirestore: (() => void) | null = null;
+    let timeout: NodeJS.Timeout | null = null;
 
     const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+      if (unsubscribeFirestore) {
+        unsubscribeFirestore();
+        unsubscribeFirestore = null;
+      }
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+      }
+
       if (user) {
         const baseUser: AppUser = {
           id: user.uid,
@@ -99,20 +109,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setLoading(false);
           },
           error: (err) => {
-            console.error("Firestore onSnapshot error:", err);
+            console.error("Firestore user doc error:", err);
             setLoading(false);
           }
         });
 
         // Fail-safe: if Firestore hasn't responded in 1.5 seconds, stop loading
-        const timeout = setTimeout(() => {
+        timeout = setTimeout(() => {
           setLoading(false);
         }, 1500);
-        
-        return () => {
-          clearTimeout(timeout);
-          unsubscribeFirestore();
-        };
 
       } else {
         setCurrentUser(null);
@@ -122,7 +127,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     return () => {
       unsubscribeAuth();
-      unsubscribeFirestore();
+      if (unsubscribeFirestore) {
+        (unsubscribeFirestore as () => void)();
+      }
+      if (timeout) {
+        clearTimeout(timeout);
+      }
     };
   }, []);
 

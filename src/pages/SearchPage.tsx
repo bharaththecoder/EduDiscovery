@@ -143,113 +143,382 @@ export default function SearchPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)' }} onClick={() => setShowSuggestions(false)}>
-      {/* Sticky Header */}
-      <div style={{
-        position: 'sticky', top: 0, zIndex: 40,
-        background: 'rgba(244,243,255,0.95)', backdropFilter: 'blur(12px)',
-        padding: '20px 20px 0', borderBottom: '1px solid var(--border)',
-      }}>
-        <h1 style={{ fontSize: '22px', fontWeight: '900', marginBottom: '14px', lineHeight: 1.2 }}>
-          Discover Premier<br />Education in AP 🎓
-        </h1>
-
-        {/* AI Semantic Search Bar with Suggestions */}
-        <div style={{ position: 'relative', marginBottom: '14px' }} onClick={e => e.stopPropagation()}>
-          <form onSubmit={handleSubmit} className="input-wrap flex items-center bg-white border border-purple-200 rounded-2xl shadow-sm focus-within:border-purple-500 focus-within:ring-4 focus-within:ring-purple-50 transition-all overflow-hidden">
-            <div className="pl-4 pr-2 text-purple-500">
-              <Sparkles size={18} />
+      {/* Redesigned Premium Sticky Header */}
+      <div 
+        className="w-full"
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 40,
+          background: 'linear-gradient(180deg, rgba(248, 250, 252, 0.98) 0%, rgba(248, 250, 252, 0.95) 85%, rgba(248, 250, 252, 0) 100%)',
+          backdropFilter: 'blur(16px)',
+          padding: '24px 20px 16px',
+          borderBottom: '1px solid rgba(226, 232, 240, 0.8)',
+        }}
+      >
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          
+          {/* Top Row: Title, Subtitle, and AI Search Indicator */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+              <h1 style={{ fontSize: '26px', fontWeight: '900', letterSpacing: '-0.5px', color: 'var(--text-main)', lineHeight: 1.15 }}>
+                Discover Premier <span className="gradient-text" style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #4F46E5 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Education in AP</span> 🎓
+              </h1>
+              <div style={{ 
+                background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(79, 70, 229, 0.1) 100%)', 
+                border: '1px solid rgba(124, 58, 237, 0.2)',
+                borderRadius: '99px',
+                padding: '6px 14px',
+                fontSize: '11px',
+                fontWeight: '800',
+                color: 'var(--primary)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                boxShadow: '0 2px 10px rgba(124, 58, 237, 0.05)'
+              }}>
+                <Sparkles size={12} className="animate-pulse" />
+                <span>AI-POWERED SEARCH</span>
+              </div>
             </div>
-            <input
-              ref={inputRef}
-              type="text"
-              placeholder="Try: Top CSE colleges under 5 lakh with good placements..."
-              value={query}
-              onChange={e => {
-                setQuery(e.target.value);
-                setShowSuggestions(true);
-                if (!e.target.value) { setIsAiSearch(false); setShowSuggestions(false); }
+            <p style={{ color: 'var(--text-muted)', fontSize: '13.5px', fontWeight: '500', maxWidth: '600px', lineHeight: 1.4 }}>
+              Enter natural questions (e.g. <i>"Top CSE colleges under 5 lakh"</i>) or use the smart tags below to filter instantly.
+            </p>
+          </div>
+
+          {/* AI Semantic Search Bar with Suggestions */}
+          <div style={{ position: 'relative', marginBottom: '20px' }} onClick={e => e.stopPropagation()}>
+            <form 
+              onSubmit={handleSubmit} 
+              style={{
+                background: 'rgba(255, 255, 255, 0.95)',
+                border: '2px solid rgba(124, 58, 237, 0.12)',
+                borderRadius: '20px',
+                padding: '4px',
+                display: 'flex',
+                alignItems: 'center',
+                boxShadow: '0 8px 30px rgba(124, 58, 237, 0.06)',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               }}
-              onFocus={() => query.length >= 2 && setShowSuggestions(true)}
-              className="flex-1 py-4 text-[15px] outline-none text-slate-800 placeholder-slate-400 bg-transparent font-medium"
-            />
-            {query && (
-              <button type="button" onClick={() => { setQuery(''); setIsAiSearch(false); setShowSuggestions(false); }} className="px-2 text-slate-400 hover:text-slate-600 text-xl font-light">×</button>
-            )}
-            <button
-              type="submit"
-              disabled={!query.trim() || isLoading}
-              className="mx-2 my-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl text-sm shadow-sm disabled:opacity-50"
+              onFocus={e => {
+                e.currentTarget.style.borderColor = 'var(--primary)';
+                e.currentTarget.style.boxShadow = '0 10px 30px rgba(124, 58, 237, 0.15), 0 0 0 4px rgba(124, 58, 237, 0.1)';
+              }}
+              onBlur={e => {
+                e.currentTarget.style.borderColor = 'rgba(124, 58, 237, 0.12)';
+                e.currentTarget.style.boxShadow = '0 8px 30px rgba(124, 58, 237, 0.06)';
+              }}
             >
-              {isLoading ? '...' : 'Search'}
-            </button>
-          </form>
+              {/* Sparkles Glowing Icon */}
+              <div style={{ 
+                padding: '0 12px 0 16px', 
+                color: 'var(--primary)', 
+                display: 'flex', 
+                alignItems: 'center',
+                borderRight: '1px solid rgba(226, 232, 240, 0.8)',
+                marginRight: '12px',
+                height: '24px'
+              }}>
+                <Sparkles size={18} style={{ filter: 'drop-shadow(0 0 4px var(--primary-glow))' }} />
+              </div>
 
-          {/* Suggestions Dropdown */}
-          {showSuggestions && suggestions.length > 0 && (
-            <div style={{
-              position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0,
-              background: '#fff', borderRadius: '16px', border: '1px solid var(--border)',
-              boxShadow: 'var(--shadow-md)', zIndex: 100, overflow: 'hidden',
-            }}>
-              {suggestions.map((s, i) => (
-                <div
-                  key={i}
-                  onClick={() => { setQuery(s.split(' · ')[0].split(' — ')[0]); setShowSuggestions(false); }}
+              {/* Main Input */}
+              <input
+                ref={inputRef}
+                type="text"
+                placeholder="Try: Top CSE colleges under 5 lakh with good placements..."
+                value={query}
+                onChange={e => {
+                  setQuery(e.target.value);
+                  setShowSuggestions(true);
+                  if (!e.target.value) { setIsAiSearch(false); setShowSuggestions(false); }
+                }}
+                onFocus={() => query.length >= 2 && setShowSuggestions(true)}
+                style={{
+                  flex: 1,
+                  padding: '12px 8px',
+                  fontSize: '15px',
+                  outline: 'none',
+                  color: 'var(--text-main)',
+                  fontWeight: '600',
+                  background: 'transparent',
+                }}
+              />
+
+              {/* Clear button */}
+              {query && (
+                <button 
+                  type="button" 
+                  onClick={() => { setQuery(''); setIsAiSearch(false); setShowSuggestions(false); }} 
                   style={{
-                    padding: '12px 16px', cursor: 'pointer', fontSize: '14px',
-                    fontWeight: '500', borderBottom: i < suggestions.length - 1 ? '1px solid var(--border)' : 'none',
-                    display: 'flex', alignItems: 'center', gap: '10px',
-                    transition: 'background 0.15s',
+                    padding: '8px',
+                    marginRight: '6px',
+                    color: 'var(--text-muted)',
+                    fontSize: '18px',
+                    fontWeight: '300',
+                    borderRadius: '50%',
+                    width: '30px',
+                    height: '30px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'rgba(241, 245, 249, 0.8)',
+                    transition: 'all 0.2s',
                   }}
-                  onMouseOver={e => (e.currentTarget.style.background = 'var(--primary-light)')}
-                  onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
+                  onMouseOver={e => (e.currentTarget.style.background = 'rgba(226, 232, 240, 1)')}
+                  onMouseOut={e => (e.currentTarget.style.background = 'rgba(241, 245, 249, 0.8)')}
                 >
-                  <Search size={14} style={{ color: 'var(--primary)', flexShrink: 0 }} />
-                  {s}
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Parsed Intent Badge */}
-          {query && (parsedBudget || parsedBranch) && (
-            <div style={{ display: 'flex', gap: '6px', marginTop: '8px', flexWrap: 'wrap' }}>
-              {parsedBranch && (
-                <span style={{ background: 'var(--primary-light)', color: 'var(--primary)', padding: '3px 10px', borderRadius: '999px', fontSize: '11px', fontWeight: '700' }}>
-                  🎓 Branch: {parsedBranch}
-                </span>
+                  ×
+                </button>
               )}
-              {parsedBudget && (
-                <span style={{ background: 'rgba(16,185,129,0.1)', color: '#059669', padding: '3px 10px', borderRadius: '999px', fontSize: '11px', fontWeight: '700' }}>
-                  💰 Budget: under ₹{parsedBudget.replace('l', ' Lakh').replace('k', 'K')}
-                </span>
-              )}
+
+              {/* Action Button */}
+              <button
+                type="submit"
+                disabled={!query.trim() || isLoading}
+                style={{
+                  background: 'linear-gradient(135deg, var(--primary) 0%, #4F46E5 100%)',
+                  color: '#fff',
+                  fontWeight: '800',
+                  borderRadius: '16px',
+                  padding: '12px 24px',
+                  fontSize: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  boxShadow: '0 4px 14px rgba(124, 58, 237, 0.3)',
+                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                  opacity: (!query.trim() || isLoading) ? 0.6 : 1,
+                  cursor: (!query.trim() || isLoading) ? 'not-allowed' : 'pointer'
+                }}
+                onMouseOver={e => {
+                  if (query.trim() && !isLoading) {
+                    e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
+                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(124, 58, 237, 0.4)';
+                  }
+                }}
+                onMouseOut={e => {
+                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  e.currentTarget.style.boxShadow = '0 4px 14px rgba(124, 58, 237, 0.3)';
+                }}
+              >
+                {isLoading ? (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span className="animate-spin" style={{ width: '12px', height: '12px', border: '2px solid #fff', borderTopColor: 'transparent', borderRadius: '50%', display: 'inline-block' }} />
+                    Searching...
+                  </span>
+                ) : (
+                  <>
+                    <Search size={14} />
+                    <span>Search</span>
+                  </>
+                )}
+              </button>
+            </form>
+
+            {/* Suggestions Dropdown */}
+            {showSuggestions && suggestions.length > 0 && (
+              <div style={{
+                position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0,
+                background: '#fff', borderRadius: '20px', border: '1px solid rgba(124, 58, 237, 0.1)',
+                boxShadow: '0 20px 40px rgba(15, 23, 42, 0.12)', zIndex: 100, overflow: 'hidden',
+                padding: '6px'
+              }}>
+                {suggestions.map((s, i) => (
+                  <div
+                    key={i}
+                    onClick={() => { setQuery(s.split(' · ')[0].split(' — ')[0]); setShowSuggestions(false); }}
+                    style={{
+                      padding: '12px 16px', cursor: 'pointer', fontSize: '14px',
+                      fontWeight: '600', borderRadius: '12px',
+                      display: 'flex', alignItems: 'center', gap: '10px',
+                      transition: 'background 0.15s, color 0.15s',
+                      color: 'var(--text-main)'
+                    }}
+                    onMouseOver={e => {
+                      e.currentTarget.style.background = 'var(--primary-light)';
+                      e.currentTarget.style.color = 'var(--primary)';
+                    }}
+                    onMouseOut={e => {
+                      e.currentTarget.style.background = 'transparent';
+                      e.currentTarget.style.color = 'var(--text-main)';
+                    }}
+                  >
+                    <Search size={14} style={{ color: 'var(--primary)', flexShrink: 0 }} />
+                    {s}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Parsed Intent Badge */}
+            {query && (parsedBudget || parsedBranch) && (
+              <div style={{ display: 'flex', gap: '8px', marginTop: '10px', flexWrap: 'wrap' }}>
+                {parsedBranch && (
+                  <span style={{ 
+                    background: 'rgba(124, 58, 237, 0.08)', 
+                    color: 'var(--primary)', 
+                    border: '1.5px solid rgba(124, 58, 237, 0.15)',
+                    padding: '4px 12px', 
+                    borderRadius: '999px', 
+                    fontSize: '11px', 
+                    fontWeight: '800',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}>
+                    🎓 Branch: {parsedBranch}
+                  </span>
+                )}
+                {parsedBudget && (
+                  <span style={{ 
+                    background: 'rgba(16, 185, 129, 0.08)', 
+                    color: '#059669', 
+                    border: '1.5px solid rgba(16, 185, 129, 0.15)',
+                    padding: '4px 12px', 
+                    borderRadius: '999px', 
+                    fontSize: '11px', 
+                    fontWeight: '800',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}>
+                    💰 Budget: under ₹{parsedBudget.replace('l', ' Lakh').replace('k', 'K')}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Filter Container with beautiful dividers */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingBottom: '4px' }}>
+            
+            {/* Filter Row — Cities */}
+            <div className="no-scrollbar" style={{ overflowX: 'auto', display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '4px', scrollbarWidth: 'none' }}>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '6px', 
+                color: 'var(--text-muted)', 
+                fontSize: '11px', 
+                fontWeight: '800', 
+                textTransform: 'uppercase', 
+                letterSpacing: '0.5px',
+                marginRight: '4px',
+                flexShrink: 0 
+              }}>
+                <SlidersHorizontal size={12} className="text-purple-500" />
+                <span>Cities:</span>
+              </div>
+              {CITIES.map(city => {
+                const isActive = activeCities.includes(city);
+                return (
+                  <button 
+                    key={city} 
+                    className="chip"
+                    onClick={() => toggleCity(city)}
+                    style={{
+                      padding: '6px 14px',
+                      borderRadius: '99px',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      background: isActive ? 'var(--primary)' : 'rgba(255, 255, 255, 0.9)',
+                      color: isActive ? '#fff' : 'var(--text-muted)',
+                      border: isActive ? '1.5px solid transparent' : '1.5px solid rgba(226, 232, 240, 0.8)',
+                      boxShadow: isActive ? '0 4px 12px rgba(124, 58, 237, 0.25)' : 'none',
+                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                    onMouseOver={e => {
+                      if (!isActive) {
+                        e.currentTarget.style.borderColor = 'var(--primary)';
+                        e.currentTarget.style.color = 'var(--primary)';
+                        e.currentTarget.style.background = 'rgba(124, 58, 237, 0.04)';
+                        e.currentTarget.style.transform = 'translateY(-1px)';
+                      }
+                    }}
+                    onMouseOut={e => {
+                      if (!isActive) {
+                        e.currentTarget.style.borderColor = 'rgba(226, 232, 240, 0.8)';
+                        e.currentTarget.style.color = 'var(--text-muted)';
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.9)';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      }
+                    }}
+                  >
+                    {isActive && <span style={{ width: '5px', height: '5px', background: '#fff', borderRadius: '50%', display: 'inline-block' }} />}
+                    <span>{city}</span>
+                  </button>
+                );
+              })}
             </div>
-          )}
-        </div>
 
-        {/* Filter Row — Cities */}
-        <div style={{ overflowX: 'auto', display: 'flex', gap: '8px', paddingBottom: '12px', scrollbarWidth: 'none' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '12px', fontWeight: '700', flexShrink: 0 }}>
-            <SlidersHorizontal size={14} /> CITY:
-          </div>
-          {CITIES.map(city => (
-            <button key={city} className={`chip ${activeCities.includes(city) ? 'active' : ''}`} onClick={() => toggleCity(city)}>
-              {city}
-            </button>
-          ))}
-        </div>
+            {/* Filter Row — Branches */}
+            <div className="no-scrollbar" style={{ overflowX: 'auto', display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '8px', scrollbarWidth: 'none' }}>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '6px', 
+                color: 'var(--text-muted)', 
+                fontSize: '11px', 
+                fontWeight: '800', 
+                textTransform: 'uppercase', 
+                letterSpacing: '0.5px',
+                marginRight: '4px',
+                flexShrink: 0 
+              }}>
+                <span style={{ width: '12px', height: '12px', background: 'rgba(124, 58, 237, 0.1)', borderRadius: '3px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px', color: 'var(--primary)', fontWeight: 'bold' }}>🎓</span>
+                <span>Branches:</span>
+              </div>
+              {BRANCHES.map(b => {
+                const isActive = activeBranches.includes(b);
+                return (
+                  <button 
+                    key={b} 
+                    className="chip"
+                    onClick={() => toggleBranch(b)}
+                    style={{
+                      padding: '6px 14px',
+                      borderRadius: '99px',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      background: isActive ? 'var(--primary)' : 'rgba(255, 255, 255, 0.9)',
+                      color: isActive ? '#fff' : 'var(--text-muted)',
+                      border: isActive ? '1.5px solid transparent' : '1.5px solid rgba(226, 232, 240, 0.8)',
+                      boxShadow: isActive ? '0 4px 12px rgba(124, 58, 237, 0.25)' : 'none',
+                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                    onMouseOver={e => {
+                      if (!isActive) {
+                        e.currentTarget.style.borderColor = 'var(--primary)';
+                        e.currentTarget.style.color = 'var(--primary)';
+                        e.currentTarget.style.background = 'rgba(124, 58, 237, 0.04)';
+                        e.currentTarget.style.transform = 'translateY(-1px)';
+                      }
+                    }}
+                    onMouseOut={e => {
+                      if (!isActive) {
+                        e.currentTarget.style.borderColor = 'rgba(226, 232, 240, 0.8)';
+                        e.currentTarget.style.color = 'var(--text-muted)';
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.9)';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      }
+                    }}
+                  >
+                    {isActive && <span style={{ width: '5px', height: '5px', background: '#fff', borderRadius: '50%', display: 'inline-block' }} />}
+                    <span>{b}</span>
+                  </button>
+                );
+              })}
+            </div>
 
-        {/* Filter Row — Branches */}
-        <div style={{ overflowX: 'auto', display: 'flex', gap: '8px', paddingBottom: '14px', scrollbarWidth: 'none' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '12px', fontWeight: '700', flexShrink: 0 }}>
-            BRANCH:
           </div>
-          {BRANCHES.map(b => (
-            <button key={b} className={`chip ${activeBranches.includes(b) ? 'active' : ''}`} onClick={() => toggleBranch(b)}>
-              {b}
-            </button>
-          ))}
+
         </div>
       </div>
 

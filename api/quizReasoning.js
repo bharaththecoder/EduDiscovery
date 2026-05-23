@@ -1,9 +1,7 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { generateText } from "./aiHelper.js";
 import dotenv from "dotenv";
 
 dotenv.config();
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 export default async function quizReasoningHandler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -14,8 +12,6 @@ export default async function quizReasoningHandler(req, res) {
       return res.status(400).json({ error: "Answers and topColleges are required" });
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
-    
     // Construct prompt
     const prompt = `
       You are an expert college admissions counselor for Indian universities (specifically Andhra Pradesh).
@@ -30,8 +26,7 @@ export default async function quizReasoningHandler(req, res) {
       Highlight one standout feature from their #1 match. Do not use robotic language. Be enthusiastic.
     `;
 
-    const result = await model.generateContent(prompt);
-    const reasoningText = result.response.text();
+    const reasoningText = await generateText(prompt);
 
     return res.status(200).json({ reasoning: reasoningText });
 

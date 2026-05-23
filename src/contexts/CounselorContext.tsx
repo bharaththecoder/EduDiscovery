@@ -3,6 +3,8 @@ import { universities } from '@/data/universities';
 import { getRecommendations } from '@/utils/quizAgent';
 import type { QuizAnswers } from '@/utils/quizAgent';
 
+import { useAuth } from './AuthContext';
+
 interface Message {
   id: string;
   text: string;
@@ -26,6 +28,7 @@ interface CounselorContextType {
 const CounselorContext = createContext<CounselorContextType | undefined>(undefined);
 
 export function CounselorProvider({ children }: { children: React.ReactNode }) {
+  const { currentUser } = useAuth();
   const initialMessage: Message = {
     id: '1',
     text: "Hi! I'm your AI College Counselor. Based on your quiz results, I can help you decide which college is best for you. What's on your mind?",
@@ -42,20 +45,30 @@ export function CounselorProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  // Get quiz data from localStorage
+  // Get quiz data from localStorage or currentUser profile
   const [quizContext, setQuizContext] = useState<any>(null);
 
   useEffect(() => {
     const loadContext = () => {
+      // Priority 1: localStorage (most recent/immediate)
       const savedAnswers = localStorage.getItem('edu_quiz_answers');
+      let answers: QuizAnswers | null = null;
+      
       if (savedAnswers) {
-        const answers: QuizAnswers = JSON.parse(savedAnswers);
+        answers = JSON.parse(savedAnswers);
+      } 
+      // Priority 2: currentUser profile results (persisted across devices)
+      else if (currentUser?.quizResults?.answers) {
+        answers = currentUser.quizResults.answers as unknown as QuizAnswers;
+      }
+
+      if (answers) {
         const { all } = getRecommendations(universities, answers, 8);
         
         // Calculate averages for breakdown
-        const branchAvg = Math.round(all.reduce((acc, u) => acc + u.breakdown.branchPct, 0) / all.length);
-        const budgetAvg = Math.round(all.reduce((acc, u) => acc + u.breakdown.budgetPct, 0) / all.length);
-        const locationAvg = Math.round(all.reduce((acc, u) => acc + u.breakdown.locationPct, 0) / all.length);
+        const branchAvg = Math.round(all.reduce((acc, u) => acc + u.breakdown.branchPct, 0) / (all.length || 1));
+        const budgetAvg = Math.round(all.reduce((acc, u) => acc + u.breakdown.budgetPct, 0) / (all.length || 1));
+        const locationAvg = Math.round(all.reduce((acc, u) => acc + u.breakdown.locationPct, 0) / (all.length || 1));
 
         setQuizContext({
           userPreferences: answers,
@@ -78,7 +91,7 @@ export function CounselorProvider({ children }: { children: React.ReactNode }) {
     // Also listen for storage changes in case quiz is retaken
     window.addEventListener('storage', loadContext);
     return () => window.removeEventListener('storage', loadContext);
-  }, []);
+  }, [currentUser]);
 
   const addMessage = (text: string, sender: 'user' | 'ai') => {
     setMessages((prev) => [

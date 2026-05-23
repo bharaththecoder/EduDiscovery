@@ -3,21 +3,24 @@
 // Reads user activity from Firestore and returns ranked colleges
 // ============================================================
 import dotenv from 'dotenv';
-import { initializeApp, getApps } from 'firebase/app';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import admin from 'firebase-admin';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
-const firebaseConfig = {
-  apiKey: process.env.VITE_FIREBASE_API_KEY,
-  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.VITE_FIREBASE_PROJECT_ID,
-};
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-function getDB() {
-  const app = getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig);
-  return getFirestore(app);
+// Firebase Admin Setup
+const serviceAccountPath = path.join(__dirname, '..', 'serviceAccountKey.json');
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8')))
+  });
 }
+const db = admin.firestore();
 
 export default async function recommendHandler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -35,10 +38,8 @@ export default async function recommendHandler(req, res) {
 
     if (userId) {
       try {
-        const db = getDB();
-        const activityRef = doc(db, 'user_activity', userId);
-        const snap = await getDoc(activityRef);
-        if (snap.exists()) {
+        const snap = await db.collection('user_activity').doc(userId).get();
+        if (snap.exists) {
           const data = snap.data();
           recentViews = data.recentViews || [];
           recentSearches = data.recentSearches || [];
@@ -84,11 +85,12 @@ export default async function recommendHandler(req, res) {
       score += naacBonus[uni.naac] || 0;
 
       // ROI bonus (inline compute)
-      const minFee = uni.branchFees
-        ? Math.min(...Object.values(uni.branchFees))
+      const feeValues = uni.branchFees ? Object.values(uni.branchFees).filter(v => typeof v === 'number' && !isNaN(v)) : [];
+      const minFee = feeValues.length > 0
+        ? Math.min(...feeValues)
         : 100000;
       const avgPackage = uni.avgPackage || 500000;
-      const roi = minFee > 0 ? avgPackage / (minFee * 4) : 1;
+      const roi = minFee > 0 && isFinite(minFee) ? avgPackage / (minFee * 4) : 1;
       score += Math.min(15, Math.round(roi * 5));
 
       // Exclude already viewed unless affinity is very high

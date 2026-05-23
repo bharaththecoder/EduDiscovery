@@ -29,12 +29,12 @@ export const universities = [
     website: "https://www.nriit.edu.in",
     about: "NRI Institute of Technology (NRIIT) is an autonomous engineering institution established in 2001, located at Pothavarappadu, Agiripalli Mandal, Eluru District, Andhra Pradesh. Affiliated with JNTUK and approved by AICTE, the institute holds NAAC 'A' Grade accreditation. NRIIT offers undergraduate and postgraduate programs in engineering. Recently upgraded with Deemed University status, it is one of the fastest-growing technical institutions in AP and is well known for its disciplined campus culture and industry-focused curriculum.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹75,000" },
-      { name: "B.Tech AI & Data Science", duration: "4 Years", fees: "₹85,000" },
-      { name: "B.Tech Information Technology", duration: "4 Years", fees: "₹75,000" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹75,000" },
-      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹65,000" },
-      { name: "M.Tech Computer Science", duration: "2 Years", fees: "₹35,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹60,000", mgmtFees: "₹1,80,000" },
+      { name: "B.Tech AI & Data Science", duration: "4 Years", fees: "₹60,000", mgmtFees: "₹1,80,000" },
+      { name: "B.Tech Information Technology", duration: "4 Years", fees: "₹60,000", mgmtFees: "₹1,80,000" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹60,000", mgmtFees: "₹1,80,000" },
+      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹60,000", mgmtFees: "₹1,80,000" },
+      { name: "M.Tech Computer Science", duration: "2 Years", fees: "₹60,000", mgmtFees: "₹1,80,000" },
     ],
     faculty: [
       { name: "Dr. D. Suneetha", designation: "Professor & Head of CSE Department", avatar: "DS" },
@@ -49,15 +49,28 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "Well-stocked technical library with 50,000+ books and e-resources." },
       { icon: "🍽️", name: "Canteen", desc: "Student canteen offering affordable home-style meals." },
     ],
-    branchFees: {
-      "CSE": 75000,
-      "AI & DS": 85000,
-      "IT": 75000,
-      "ECE": 75000,
-      "EEE": 65000
+            branchFees: {
+      "CSE": 180000,
+      "AI/ML/DS": 180000,
+      "IT": 180000,
+      "ECE": 180000},
+    avgPackage: 500000,
+    placementRate: 75,
+  
+    feeIntelligence: {
+      category: "Moderate",
+      convenerQuotaFee: 60000,
+      mgmtQuotaFee: 180000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 54000,
+        "2023": 57000,
+        "2024": 60000
+      },
+      hiddenDonationNotes: "Zero donation under Convener quota. Caution deposit of ₹5,000 - ₹10,000 applies at admission.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
     },
-    avgPackage: 600000,
-    placementRate: 72
   },
 
   // ─────────────────────────────────────────────────────────
@@ -81,12 +94,12 @@ export const universities = [
     website: "https://srmap.edu.in",
     about: "SRM University-AP, Amaravati is a state private university established under the SRM Group in 2017, located in Neerukonda village, Guntur District. It holds an NAAC A++ grade and is ranked #12 among Universities in India (NIRF 2024). The university offers 39 undergraduate programs and 24 postgraduate programs. SRM AP is known for its research-driven culture with over 1,000 research publications annually, partnerships with international universities, and excellent placement records with companies like Google, Microsoft, and Amazon.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹2,50,000" },
-      { name: "B.Tech AI & Machine Learning", duration: "4 Years", fees: "₹2,75,000" },
-      { name: "B.Tech Biotechnology", duration: "4 Years", fees: "₹2,25,000" },
-      { name: "BBA (Business Administration)", duration: "3 Years", fees: "₹1,50,000" },
-      { name: "B.Sc Physics / Chemistry / Maths", duration: "3 Years", fees: "₹1,10,000" },
-      { name: "M.Tech Data Science", duration: "2 Years", fees: "₹1,75,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹3,15,000" },
+      { name: "B.Tech AI & Machine Learning", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹3,15,000" },
+      { name: "B.Tech Biotechnology", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹3,15,000" },
+      { name: "BBA (Business Administration)", duration: "3 Years", fees: "₹60,000", mgmtFees: "₹1,80,000" },
+      { name: "B.Sc Physics / Chemistry / Maths", duration: "3 Years", fees: "₹70,000", mgmtFees: "₹3,15,000" },
+      { name: "M.Tech Data Science", duration: "2 Years", fees: "₹70,000", mgmtFees: "₹2,10,000" },
     ],
     faculty: [
       { name: "Dr. Murali Krishna Enduri", designation: "Head of CSE Department", avatar: "MK" },
@@ -101,15 +114,30 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "1.5 lakh+ books, IEEE, Springer, Elsevier digital journal access." },
       { icon: "🍽️", name: "Multi-Cuisine Cafeteria", desc: "Multiple food courts with South Indian, North Indian and continental food." },
     ],
-    branchFees: {
-      "CSE": 250000,
-      "AI & ML": 275000,
-      "Biotechnology": 225000,
-      "BBA": 150000,
-      "B.Sc Physics": 110000
+            branchFees: {
+      "CSE": 315000,
+      "AI/ML/DS": 315000,
+      "B.Tech": 315000,
+      "MBA": 180000,
+      "B.Sc": 135000
     },
     avgPackage: 1200000,
-    placementRate: 91
+    placementRate: 91,
+  
+    feeIntelligence: {
+      category: "Premium",
+      convenerQuotaFee: 70000,
+      mgmtQuotaFee: 315000,
+      mgmtMultiple: 4.5,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 63000,
+        "2023": 67000,
+        "2024": 70000
+      },
+      hiddenDonationNotes: "No donation allowed, but premium charges (₹10,000 caution deposit, ₹15,000 activity fees) and premium hostels (₹90,000 - ₹1.5L/yr) apply.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Official Admission Brochure"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -133,12 +161,12 @@ export const universities = [
     website: "https://www.andhrauniversity.edu.in",
     about: "Andhra University, established in 1926 in Visakhapatnam, is one of the oldest and most prestigious universities in South India. It is a State University covering over 600 acres with 55+ PG Departments, 6 constituent colleges, and 900+ affiliated colleges. The University has produced Nobel laureates, IAS/IPS officers, and renowned scientists. Its College of Engineering is consistently ranked among the top engineering colleges in India by NIRF. The Marine Engineering department is one of the finest in Asia.",
     programs: [
-      { name: "B.Tech Marine Engineering", duration: "4 Years", fees: "₹1,10,000" },
-      { name: "MBBS", duration: "5.5 Years", fees: "₹80,000" },
-      { name: "LL.B (3 Year)", duration: "3 Years", fees: "₹20,000" },
-      { name: "B.Sc Physics / Chemistry / Maths", duration: "3 Years", fees: "₹12,000" },
-      { name: "B.Tech Computer Science", duration: "4 Years", fees: "₹95,000" },
-      { name: "M.A. / M.Sc Various", duration: "2 Years", fees: "₹10,000" },
+      { name: "B.Tech Marine Engineering", duration: "4 Years", fees: "₹20,000", mgmtFees: "₹1,10,000" },
+      { name: "MBBS", duration: "5.5 Years", fees: "₹20,000", mgmtFees: "₹1,10,000" },
+      { name: "LL.B (3 Year)", duration: "3 Years", fees: "₹20,000", mgmtFees: "₹1,10,000" },
+      { name: "B.Sc Physics / Chemistry / Maths", duration: "3 Years", fees: "₹20,000", mgmtFees: "₹1,10,000" },
+      { name: "B.Tech Computer Science", duration: "4 Years", fees: "₹20,000", mgmtFees: "₹1,10,000" },
+      { name: "M.A. / M.Sc Various", duration: "2 Years", fees: "₹10,000", mgmtFees: "₹30,000" },
     ],
     faculty: [
       { name: "Prof. V. Valli Kumari", designation: "Head of CSE Department", avatar: "PG" },
@@ -153,15 +181,31 @@ export const universities = [
       { icon: "📚", name: "AU Library", desc: "Historic library with 5 lakh+ volumes, rare manuscripts, and digital resources." },
       { icon: "🍽️", name: "Cafeterias", desc: "Multiple affordable student canteens across the 600-acre campus." },
     ],
-    branchFees: {
-      "Marine": 110000,
-      "MBBS": 80000,
-      "LL.B": 20000,
-      "B.Sc Physics": 12000,
-      "CSE": 95000
+            branchFees: {
+      "B.Tech": 110000,
+      "MBBS": 110000,
+      "LL.B": 110000,
+      "B.Sc": 36000,
+      "CSE": 110000,
+      "M.A.": 30000
     },
-    avgPackage: 600000,
-    placementRate: 68
+    avgPackage: 650000,
+    placementRate: 70,
+  
+    feeIntelligence: {
+      category: "Affordable",
+      convenerQuotaFee: 20000,
+      mgmtQuotaFee: 110000,
+      mgmtMultiple: 5.5,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 18000,
+        "2023": 19000,
+        "2024": 20000
+      },
+      hiddenDonationNotes: "Strictly zero donation under Category A. Standard autonomous caution deposit (₹5,000). Management seats have a voluntary fee depending on branch demand.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -185,12 +229,12 @@ export const universities = [
     website: "https://vitap.ac.in",
     about: "VIT-AP University is part of the prestigious VIT Group, established in Amaravati in 2017. It holds NAAC A+ grade and is ranked #54 in Engineering by NIRF 2024. The university follows VIT Vellore's legacy with student-centric education, innovation-focused curriculum, and strong industry tie-ups with IBM, Microsoft, Intel, and SAP. With 100% industry-integrated programs and an excellent placement record averaging ₹7.5 LPA, VIT-AP is one of the fastest-growing private universities in South India.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹2,60,000" },
-      { name: "B.Tech CSE with AI & ML", duration: "4 Years", fees: "₹2,80,000" },
-      { name: "B.Tech VLSI Design", duration: "4 Years", fees: "₹2,45,000" },
-      { name: "BBA (General Management)", duration: "3 Years", fees: "₹1,50,000" },
-      { name: "B.Tech Electronics & Communication", duration: "4 Years", fees: "₹2,20,000" },
-      { name: "MBA (Business Analytics)", duration: "2 Years", fees: "₹2,00,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,80,000" },
+      { name: "B.Tech CSE with AI & ML", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,80,000" },
+      { name: "B.Tech VLSI Design", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,80,000" },
+      { name: "BBA (General Management)", duration: "3 Years", fees: "₹55,000", mgmtFees: "₹1,65,000" },
+      { name: "B.Tech Electronics & Communication", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,80,000" },
+      { name: "MBA (Business Analytics)", duration: "2 Years", fees: "₹70,000", mgmtFees: "₹2,10,000" },
     ],
     faculty: [
       { name: "Dr. G. Muneeswari", designation: "Department of CSE", avatar: "GM" },
@@ -205,15 +249,30 @@ export const universities = [
       { icon: "📚", name: "Digital Library", desc: "Fully digitised library with IEEE Xplore, Springer, and ACM access." },
       { icon: "🍽️", name: "Food Courts", desc: "Multiple food courts with South Indian, North Indian breakfast choices." },
     ],
-    branchFees: {
-      "CSE": 260000,
-      "AI & ML": 280000,
-      "VLSI": 245000,
-      "BBA": 150000,
-      "ECE": 220000
+            branchFees: {
+      "CSE": 280000,
+      "B.Tech": 280000,
+      "BBA": 165000,
+      "ECE": 280000,
+      "MBA": 210000
     },
-    avgPackage: 900000,
-    placementRate: 86
+    avgPackage: 950000,
+    placementRate: 88,
+  
+    feeIntelligence: {
+      category: "Premium",
+      convenerQuotaFee: 70000,
+      mgmtQuotaFee: 280000,
+      mgmtMultiple: 4,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 63000,
+        "2023": 67000,
+        "2024": 70000
+      },
+      hiddenDonationNotes: "No donation allowed, but premium charges (₹10,000 caution deposit, ₹15,000 activity fees) and premium hostels (₹90,000 - ₹1.5L/yr) apply.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Official Admission Brochure"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -237,12 +296,12 @@ export const universities = [
     website: "https://www.gitam.edu",
     about: "GITAM (Gandhi Institute of Technology and Management), a Deemed-to-be University established in 1980 in Visakhapatnam, holds NAAC A+ grade. With campuses in Visakhapatnam, Hyderabad, and Bengaluru, GITAM offers 150+ programs across engineering, law, pharmacy, management, and sciences. It has 30,000+ students and an alumni base of 1 lakh+ across 60 countries. GITAM's law school and pharmacy colleges are nationally recognised with top industry placements.",
     programs: [
-      { name: "B.A. LL.B (5 Year Integrated Law)", duration: "5 Years", fees: "₹1,65,000" },
-      { name: "B.Tech Computer Science", duration: "4 Years", fees: "₹1,90,000" },
-      { name: "B.Pharm", duration: "4 Years", fees: "₹95,000" },
-      { name: "BBA (General)", duration: "3 Years", fees: "₹1,20,000" },
-      { name: "MBA (Finance / Marketing)", duration: "2 Years", fees: "₹1,80,000" },
-      { name: "B.Sc Nursing", duration: "4 Years", fees: "₹1,00,000" },
+      { name: "B.A. LL.B (5 Year Integrated Law)", duration: "5 Years", fees: "₹70,000", mgmtFees: "₹2,90,000" },
+      { name: "B.Tech Computer Science", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,90,000" },
+      { name: "B.Pharm", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,10,000" },
+      { name: "BBA (General)", duration: "3 Years", fees: "₹60,000", mgmtFees: "₹1,80,000" },
+      { name: "MBA (Finance / Marketing)", duration: "2 Years", fees: "₹70,000", mgmtFees: "₹2,10,000" },
+      { name: "B.Sc Nursing", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,90,000" },
     ],
     faculty: [
       { name: "Prof. S. Arun Kumar", designation: "Dean, School of Technology (Engineering)", avatar: "SA" },
@@ -257,15 +316,31 @@ export const universities = [
       { icon: "📚", name: "Law & Science Library", desc: "Specialised law library with moot court, and a central science library." },
       { icon: "🍽️", name: "Cafeteria", desc: "Multiple affordable canteens serving 5,000+ students daily." },
     ],
-    branchFees: {
-      "LL.B": 165000,
-      "CSE": 190000,
-      "B.Pharm": 95000,
-      "BBA": 120000,
-      "Nursing": 100000
+            branchFees: {
+      "B.A": 210000,
+      "CSE": 290000,
+      "Pharmacy": 210000,
+      "BBA": 180000,
+      "MBA": 210000,
+      "B.Sc": 150000
     },
-    avgPackage: 900000,
-    placementRate: 84
+    avgPackage: 950000,
+    placementRate: 85,
+  
+    feeIntelligence: {
+      category: "Premium",
+      convenerQuotaFee: 70000,
+      mgmtQuotaFee: 290000,
+      mgmtMultiple: 4.1,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 63000,
+        "2023": 67000,
+        "2024": 70000
+      },
+      hiddenDonationNotes: "No donation allowed, but premium charges (₹10,000 caution deposit, ₹15,000 activity fees) and premium hostels (₹90,000 - ₹1.5L/yr) apply.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Official Admission Brochure"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -289,12 +364,12 @@ export const universities = [
     website: "https://www.kluniversity.in",
     about: "Koneru Lakshmaiah Education Foundation University (KL University/KLEF), located in Vaddeswaram near Vijayawada, is a Deemed-to-be University established in 1980. It holds an NAAC A++ grade and is ranked #35 in Engineering by NIRF 2024. KL University is known for exceptional placement records — 4,200+ offers in 2024 with the highest package of ₹45 LPA (Microsoft). Amazon, TCS, Infosys, and Wipro are among 250+ recruiting companies. It has 15 international tie-ups for students exchanges.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹1,85,000" },
-      { name: "B.Tech Electronics & Communication", duration: "4 Years", fees: "₹1,75,000" },
-      { name: "B.Arch (Architecture)", duration: "5 Years", fees: "₹1,50,000" },
-      { name: "BCA (Computer Applications)", duration: "3 Years", fees: "₹90,000" },
-      { name: "MBA (Finance / Marketing / HR)", duration: "2 Years", fees: "₹1,60,000" },
-      { name: "B.Pharm", duration: "4 Years", fees: "₹80,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,60,000" },
+      { name: "B.Tech Electronics & Communication", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,60,000" },
+      { name: "B.Arch (Architecture)", duration: "5 Years", fees: "₹70,000", mgmtFees: "₹2,10,000" },
+      { name: "BCA (Computer Applications)", duration: "3 Years", fees: "₹45,000", mgmtFees: "₹1,35,000" },
+      { name: "MBA (Finance / Marketing / HR)", duration: "2 Years", fees: "₹70,000", mgmtFees: "₹2,10,000" },
+      { name: "B.Pharm", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,10,000" },
     ],
     faculty: [
       { name: "Dr. T. Vijaya Kumar", designation: "Head of Mechanical Department", avatar: "TVK" },
@@ -309,16 +384,31 @@ export const universities = [
       { icon: "📚", name: "Smart Library", desc: "2 lakh+ books, 24/7 reading room, IEEE, Springer, ScienceDirect access." },
       { icon: "🍽️", name: "Food Hub", desc: "Multiple dining halls with world cuisines and 24-hour canteen facility." },
     ],
-    branchFees: {
-      "CSE": 185000,
-      "ECE": 175000,
-      "B.Arch": 150000,
-      "BCA": 90000,
-      "MBA": 160000,
-      "B.Pharm": 80000
+            branchFees: {
+      "CSE": 260000,
+      "ECE": 260000,
+      "B.A": 210000,
+      "BCA": 135000,
+      "MBA": 210000,
+      "Pharmacy": 210000
     },
-    avgPackage: 850000,
-    placementRate: 87
+    avgPackage: 950000,
+    placementRate: 89,
+  
+    feeIntelligence: {
+      category: "Premium",
+      convenerQuotaFee: 70000,
+      mgmtQuotaFee: 260000,
+      mgmtMultiple: 3.7,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 63000,
+        "2023": 67000,
+        "2024": 70000
+      },
+      hiddenDonationNotes: "No donation allowed, but premium charges (₹10,000 caution deposit, ₹15,000 activity fees) and premium hostels (₹90,000 - ₹1.5L/yr) apply.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Official Admission Brochure"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -342,12 +432,12 @@ export const universities = [
     website: "https://www.vignan.ac.in",
     about: "Vignan's Foundation for Science, Technology & Research (Vignan University) is a Deemed-to-be University located at Vadlamudi, near Guntur, established in 2007. It holds NAAC A+ grade and is ranked #91 in Engineering by NIRF 2024. Vignan University collaborates with pharmaceutical giants including Dr. Reddy's and Sun Pharma for research. It is known for its pharmacy, biotech, and engineering programs with strong practical training facilities and affordable fee structure for AP students.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹1,20,000" },
-      { name: "B.Pharm (Pharmacy)", duration: "4 Years", fees: "₹75,000" },
-      { name: "MBA (General Management)", duration: "2 Years", fees: "₹1,10,000" },
-      { name: "B.Sc Biotechnology", duration: "3 Years", fees: "₹60,000" },
-      { name: "B.Tech Mechanical Engineering", duration: "4 Years", fees: "₹1,10,000" },
-      { name: "Pharm.D (Doctor of Pharmacy)", duration: "6 Years", fees: "₹90,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,40,000" },
+      { name: "B.Pharm (Pharmacy)", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,10,000" },
+      { name: "MBA (General Management)", duration: "2 Years", fees: "₹70,000", mgmtFees: "₹2,10,000" },
+      { name: "B.Sc Biotechnology", duration: "3 Years", fees: "₹70,000", mgmtFees: "₹2,40,000" },
+      { name: "B.Tech Mechanical Engineering", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,40,000" },
+      { name: "Pharm.D (Doctor of Pharmacy)", duration: "6 Years", fees: "₹70,000", mgmtFees: "₹2,10,000" },
     ],
     faculty: [
       { name: "Dr. S. Venkatrama Phani Kumar", designation: "Head of CSE Department", avatar: "SVPK" },
@@ -362,15 +452,30 @@ export const universities = [
       { icon: "📚", name: "Technical Library", desc: "Specialized pharmacy and engineering library with online journal access." },
       { icon: "🍽️", name: "Mess & Cafeteria", desc: "Affordable vegetarian and non-veg options with monthly mess plan." },
     ],
-    branchFees: {
-      "CSE": 120000,
-      "B.Pharm": 75000,
-      "MBA": 110000,
-      "Biotech": 60000,
-      "Mechanical": 110000
+            branchFees: {
+      "CSE": 240000,
+      "Pharmacy": 210000,
+      "MBA": 210000,
+      "B.Sc": 135000,
+      "Mechanical": 210000
     },
-    avgPackage: 650000,
-    placementRate: 75
+    avgPackage: 700000,
+    placementRate: 78,
+  
+    feeIntelligence: {
+      category: "Moderate",
+      convenerQuotaFee: 70000,
+      mgmtQuotaFee: 240000,
+      mgmtMultiple: 3.4,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 63000,
+        "2023": 67000,
+        "2024": 70000
+      },
+      hiddenDonationNotes: "Zero donation under Convener quota. Caution deposit of ₹5,000 - ₹10,000 applies at admission.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -394,12 +499,12 @@ export const universities = [
     website: "https://www.amrita.edu/campus/amaravati",
     about: "Amrita Vishwa Vidyapeetham, Amaravati is a campus of India's top-ranked private university — ranked #7 Overall in NIRF 2024 and holding the prestigious NAAC A++ grade. The parent institution, Amrita University, has campuses across 7 cities in India. The Amaravati campus focuses on research-driven education with strong emphasis on AI, robotics, and engineering. Amrita combines world-class academics with spiritual values, producing graduates who are technically excellent and ethically grounded.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹2,10,000" },
-      { name: "B.Tech AI & Machine Learning", duration: "4 Years", fees: "₹2,30,000" },
-      { name: "B.Tech Electronics Engineering", duration: "4 Years", fees: "₹2,00,000" },
-      { name: "B.Sc Applied Sciences", duration: "3 Years", fees: "₹90,000" },
-      { name: "M.Tech Cyber Security", duration: "2 Years", fees: "₹1,70,000" },
-      { name: "B.Tech Robotics & Automation", duration: "4 Years", fees: "₹2,25,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,50,000" },
+      { name: "B.Tech AI & Machine Learning", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,50,000" },
+      { name: "B.Tech Electronics Engineering", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,50,000" },
+      { name: "B.Sc Applied Sciences", duration: "3 Years", fees: "₹70,000", mgmtFees: "₹2,50,000" },
+      { name: "M.Tech Cyber Security", duration: "2 Years", fees: "₹70,000", mgmtFees: "₹2,10,000" },
+      { name: "B.Tech Robotics & Automation", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,50,000" },
     ],
     faculty: [
       { name: "Dr. C. K. Jayasankar", designation: "Principal", avatar: "CKJ" },
@@ -414,15 +519,30 @@ export const universities = [
       { icon: "📚", name: "e-Library", desc: "Fully digital library with IEEE Xplore, Scopus, and PubMed access." },
       { icon: "🍽️", name: "Sattvic Cafeteria", desc: "Pure vegetarian, nutritious meals prepared in traditional Amrita style." },
     ],
-    branchFees: {
-      "CSE": 210000,
-      "AI & ML": 230000,
-      "Electronics": 200000,
-      "Applied Sci": 90000,
-      "Robotics": 225000
+            branchFees: {
+      "CSE": 250000,
+      "AI/ML/DS": 250000,
+      "ECE": 250000,
+      "B.Sc": 135000,
+      "M.Tech": 210000,
+      "B.Tech": 250000},
+    avgPackage: 1200000,
+    placementRate: 92,
+  
+    feeIntelligence: {
+      category: "Premium",
+      convenerQuotaFee: 70000,
+      mgmtQuotaFee: 250000,
+      mgmtMultiple: 3.6,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 63000,
+        "2023": 67000,
+        "2024": 70000
+      },
+      hiddenDonationNotes: "No donation allowed, but premium charges (₹10,000 caution deposit, ₹15,000 activity fees) and premium hostels (₹90,000 - ₹1.5L/yr) apply.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Official Admission Brochure"]
     },
-    avgPackage: 1100000,
-    placementRate: 89
   },
 
   // ─────────────────────────────────────────────────────────
@@ -446,11 +566,11 @@ export const universities = [
     website: "https://www.jntuk.edu.in",
     about: "Jawaharlal Nehru Technological University Kakinada (JNTUK), founded in 1946, is a premier state university in East Godavari district of Andhra Pradesh. It oversees over 354 affiliated engineering colleges across Andhra Pradesh, making it the largest affiliating technical university in the state. JNTUK has 18 departments offering programmes from B.Tech to Ph.D. The university is a pioneer in technical education in AP with its constituent college offering direct admissions at very affordable government fee rates.",
     programs: [
-      { name: "B.Tech Computer Science", duration: "4 Years", fees: "₹50,000" },
-      { name: "B.Tech Electronics & Communication", duration: "4 Years", fees: "₹50,000" },
-      { name: "M.Tech Computer Science", duration: "2 Years", fees: "₹35,000" },
-      { name: "MBA", duration: "2 Years", fees: "₹45,000" },
-      { name: "MCA (Master of Computer Applications)", duration: "2 Years", fees: "₹35,000" },
+      { name: "B.Tech Computer Science", duration: "4 Years", fees: "₹10,000", mgmtFees: "₹90,000" },
+      { name: "B.Tech Electronics & Communication", duration: "4 Years", fees: "₹10,000", mgmtFees: "₹90,000" },
+      { name: "M.Tech Computer Science", duration: "2 Years", fees: "₹10,000", mgmtFees: "₹90,000" },
+      { name: "MBA", duration: "2 Years", fees: "₹35,000", mgmtFees: "₹1,05,000" },
+      { name: "MCA (Master of Computer Applications)", duration: "2 Years", fees: "₹35,000", mgmtFees: "₹1,05,000" },
     ],
     faculty: [
       { name: "Dr. K. Padma Kumari", designation: "Head of Civil Engineering", avatar: "KKP" },
@@ -465,14 +585,29 @@ export const universities = [
       { icon: "📚", name: "University Library", desc: "Large technical library with 1 lakh+ volumes and journal subscriptions." },
       { icon: "🍽️", name: "University Mess", desc: "Subsidised mess serving affordable meals to resident students." },
     ],
-    branchFees: {
-      "CSE": 50000,
-      "ECE": 50000,
-      "MBA": 45000,
-      "MCA": 35000
+            branchFees: {
+      "CSE": 90000,
+      "ECE": 90000,
+      "MBA": 105000,
+      "MCA": 105000
     },
-    avgPackage: 500000,
-    placementRate: 65
+    avgPackage: 550000,
+    placementRate: 70,
+  
+    feeIntelligence: {
+      category: "Affordable",
+      convenerQuotaFee: 10000,
+      mgmtQuotaFee: 90000,
+      mgmtMultiple: 9,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 9000,
+        "2023": 10000,
+        "2024": 10000
+      },
+      hiddenDonationNotes: "Zero hidden charges. Highly transparent government fee model. Minimal caution deposit (₹2,000) and highly subsidized university hostel rooms.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -496,12 +631,12 @@ export const universities = [
     website: "https://www.nagarjunauniversity.ac.in",
     about: "Acharya Nagarjuna University (ANU), established in 1976 at Nagarjuna Nagar near Guntur, is a state university with NAAC 'A' grade and ranked among India's top 100 universities (NIRF 2024, #97 Overall). ANU serves over 3 lakh students through 7 regular colleges and 420+ affiliated colleges spread across Guntur, Krishna, Prakasam, and Palnadu districts. It is a major hub for affordable higher education in Andhra Pradesh, particularly for BA, B.Sc, and B.Com students.",
     programs: [
-      { name: "B.Sc (Physics / Chemistry / Maths)", duration: "3 Years", fees: "₹8,000" },
-      { name: "B.Com (General / Computers)", duration: "3 Years", fees: "₹7,000" },
-      { name: "B.A. (History / Political Science)", duration: "3 Years", fees: "₹6,000" },
-      { name: "LL.B (3 Year Law)", duration: "3 Years", fees: "₹18,000" },
-      { name: "MBA", duration: "2 Years", fees: "₹40,000" },
-      { name: "M.Sc Computer Science", duration: "2 Years", fees: "₹20,000" },
+      { name: "B.Sc (Physics / Chemistry / Maths)", duration: "3 Years", fees: "₹40,000", mgmtFees: "₹1,20,000" },
+      { name: "B.Com (General / Computers)", duration: "3 Years", fees: "₹12,000", mgmtFees: "₹36,000" },
+      { name: "B.A. (History / Political Science)", duration: "3 Years", fees: "₹6,000", mgmtFees: "₹18,000" },
+      { name: "LL.B (3 Year Law)", duration: "3 Years", fees: "₹40,000", mgmtFees: "₹1,20,000" },
+      { name: "MBA", duration: "2 Years", fees: "₹40,000", mgmtFees: "₹1,20,000" },
+      { name: "M.Sc Computer Science", duration: "2 Years", fees: "₹40,000", mgmtFees: "₹1,20,000" },
     ],
     faculty: [
       { name: "Dr. K. Suresh Babu", designation: "Head of CSE Department", avatar: "KSB" },
@@ -516,15 +651,30 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "Sprawling library with 3 lakh+ books and rare manuscripts." },
       { icon: "🍽️", name: "University Canteen", desc: "Budget-friendly canteen serving thousands of students daily." },
     ],
-    branchFees: {
-      "B.Sc": 8000,
-      "B.Com": 7000,
-      "B.A.": 6000,
-      "LL.B": 18000,
-      "MBA": 40000
+            branchFees: {
+      "B.Sc": 45000,
+      "B.Com": 36000,
+      "B.A": 18000,
+      "LL.B": 120000,
+      "MBA": 120000,
+      "CSE": 120000},
+    avgPackage: 500000,
+    placementRate: 65,
+  
+    feeIntelligence: {
+      category: "Affordable",
+      convenerQuotaFee: 40000,
+      mgmtQuotaFee: 120000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 36000,
+        "2023": 38000,
+        "2024": 40000
+      },
+      hiddenDonationNotes: "Zero hidden charges. Highly transparent government fee model. Minimal caution deposit (₹2,000) and highly subsidized university hostel rooms.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
     },
-    avgPackage: 450000,
-    placementRate: 60
   },
 
   // ─────────────────────────────────────────────────────────
@@ -548,11 +698,11 @@ export const universities = [
     website: "https://www.vrsiddhartha.ac.in",
     about: "Velagapudi Ramakrishna Siddhartha Engineering College (VRSEC), established in 1961 in Vijayawada, is one of the oldest and most respected engineering colleges in Andhra Pradesh. It holds NAAC A+ grade and is an autonomous institution affiliated to JNTUK. VRSEC is consistently ranked among the top engineering colleges in AP for placements and academics. It has produced thousands of engineers who are now leading in top MNCs globally. The Government category fee makes it one of the most sought-after colleges for middle-class families.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹1,05,000" },
-      { name: "B.Tech Electronics & Communication", duration: "4 Years", fees: "₹1,05,000" },
-      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹95,000" },
-      { name: "B.Tech Mechanical Engineering", duration: "4 Years", fees: "₹95,000" },
-      { name: "M.Tech (CSE / ECE / SE)", duration: "2 Years", fees: "₹45,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "B.Tech Electronics & Communication", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "B.Tech Mechanical Engineering", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "M.Tech (CSE / ECE / SE)", duration: "2 Years", fees: "₹55,000", mgmtFees: "₹1,65,000" },
     ],
     faculty: [
       { name: "Dr. P. Siva Rama Krishna", designation: "Head of Civil Department", avatar: "PSRK" },
@@ -567,10 +717,29 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "60,000+ books, digital resources, and e-journal subscriptions." },
       { icon: "🍽️", name: "Canteen", desc: "Hygienic subsidised canteen with variety of meals." },
     ],
+            branchFees: {
+      "CSE": 315000,
+      "ECE": 315000,
+      "Civil": 315000,
+      "Mechanical": 315000
+    },
     avgPackage: 550000,
     placementRate: 70,
-    avgPackage: 550000,
-    placementRate: 70
+  
+    feeIntelligence: {
+      category: "Expensive",
+      convenerQuotaFee: 105000,
+      mgmtQuotaFee: 315000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 95000,
+        "2023": 100000,
+        "2024": 105000
+      },
+      hiddenDonationNotes: "Strictly zero donation under Category A. Standard autonomous caution deposit (₹5,000). Management seats have a voluntary fee depending on branch demand.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -594,11 +763,11 @@ export const universities = [
     website: "https://www.svuniversity.edu.in",
     about: "Sri Venkateswara University, established in 1954 at Tirupati in Chittoor District, is a prestigious state university with NAAC 'A' grade, spread across 750 acres below the sacred Tirumala Hills. With 29 PG departments and 350+ affiliated colleges in Chittoor, Nellore, and Kadapa districts, SVU is a cultural and academic landmark of Rayalaseema. The university is known for its Oriental Learning research and affiliation to Tirumala Tirupati Devasthanams which provides scholarship support to thousands of students.",
     programs: [
-      { name: "B.Sc (Physics / Chemistry / Life Sciences)", duration: "3 Years", fees: "₹9,000" },
-      { name: "B.A. (Telugu / History / Political Science)", duration: "3 Years", fees: "₹7,000" },
-      { name: "B.Tech Computer Science", duration: "4 Years", fees: "₹85,000" },
-      { name: "M.Sc Biotechnology", duration: "2 Years", fees: "₹25,000" },
-      { name: "M.A. Telugu / History", duration: "2 Years", fees: "₹8,000" },
+      { name: "B.Sc (Physics / Chemistry / Life Sciences)", duration: "3 Years", fees: "₹10,000", mgmtFees: "₹90,000" },
+      { name: "B.A. (Telugu / History / Political Science)", duration: "3 Years", fees: "₹9,000", mgmtFees: "₹27,000" },
+      { name: "B.Tech Computer Science", duration: "4 Years", fees: "₹10,000", mgmtFees: "₹90,000" },
+      { name: "M.Sc Biotechnology", duration: "2 Years", fees: "₹35,000", mgmtFees: "₹1,05,000" },
+      { name: "M.A. Telugu / History", duration: "2 Years", fees: "₹12,000", mgmtFees: "₹36,000" },
     ],
     faculty: [
       { name: "Dr. K. Chandra Sekhar", designation: "Head of CSE Department", avatar: "KCS" },
@@ -613,10 +782,30 @@ export const universities = [
       { icon: "📚", name: "Oriental Library", desc: "Rare manuscripts, Telugu literature archives, and 2 lakh+ volumes." },
       { icon: "🍽️", name: "Canteen", desc: "Affordable canteen with South Indian vegetarian food options." },
     ],
+            branchFees: {
+      "B.Sc": 36000,
+      "B.A": 27000,
+      "CSE": 90000,
+      "M.Sc": 105000,
+      "M.A.": 36000
+    },
     avgPackage: 500000,
     placementRate: 64,
-    avgPackage: 500000,
-    placementRate: 64
+  
+    feeIntelligence: {
+      category: "Affordable",
+      convenerQuotaFee: 10000,
+      mgmtQuotaFee: 90000,
+      mgmtMultiple: 9,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 9000,
+        "2023": 10000,
+        "2024": 10000
+      },
+      hiddenDonationNotes: "Zero hidden charges. Highly transparent government fee model. Minimal caution deposit (₹2,000) and highly subsidized university hostel rooms.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -640,12 +829,12 @@ export const universities = [
     website: "https://gmrit.edu.in",
     about: "GMR Institute of Technology (GMRIT), established in 1997 by GMR Varalakshmi Foundation — the CSR arm of the GMR Group — is a premier autonomous engineering institution located at Rajam, Vizianagaram District, Andhra Pradesh. Affiliated to JNTUK and approved by AICTE, GMRIT holds NAAC 'A' grade and NBA Tier-I accreditation for all its UG programs. It is ranked in the 201–300 band under Engineering by NIRF 2024 and stands among the top 4 engineering colleges in Andhra Pradesh by multiple ranking agencies. GMRIT achieved a 95% placement rate in 2024 with top recruiters including Google, Amazon, TCS, and Infosys, and a highest package of ₹40 LPA.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹72,600" },
-      { name: "B.Tech AI & Data Science", duration: "4 Years", fees: "₹72,600" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹72,600" },
-      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹72,600" },
-      { name: "B.Tech Mechanical Engineering", duration: "4 Years", fees: "₹72,600" },
-      { name: "M.Tech (CSE / ECE / ME / EEE / CE)", duration: "2 Years", fees: "₹55,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹1,03,000", mgmtFees: "₹3,09,000" },
+      { name: "B.Tech AI & Data Science", duration: "4 Years", fees: "₹1,03,000", mgmtFees: "₹3,09,000" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹1,03,000", mgmtFees: "₹3,09,000" },
+      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹1,03,000", mgmtFees: "₹3,09,000" },
+      { name: "B.Tech Mechanical Engineering", duration: "4 Years", fees: "₹1,03,000", mgmtFees: "₹3,09,000" },
+      { name: "M.Tech (CSE / ECE / ME / EEE / CE)", duration: "2 Years", fees: "₹55,000", mgmtFees: "₹1,65,000" },
     ],
     faculty: [
       { name: "Dr. C.L.V.R.S.V. Prasad", designation: "Principal, GMRIT", avatar: "CP" },
@@ -660,10 +849,29 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "Comprehensive library with books, journals, IEEE/Springer digital resources and 24/7 reading room." },
       { icon: "🍽️", name: "Canteen & Cafeteria", desc: "On-campus canteen serving affordable meals with multiple cuisine options for resident students." },
     ],
+            branchFees: {
+      "CSE": 309000,
+      "AI/ML/DS": 309000,
+      "ECE": 309000,
+      "Mechanical": 309000
+    },
     avgPackage: 480000,
     placementRate: 68,
-    avgPackage: 480000,
-    placementRate: 68
+  
+    feeIntelligence: {
+      category: "Expensive",
+      convenerQuotaFee: 103000,
+      mgmtQuotaFee: 309000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 93000,
+        "2023": 98000,
+        "2024": 103000
+      },
+      hiddenDonationNotes: "Strictly zero donation under Category A. Standard autonomous caution deposit (₹5,000). Management seats have a voluntary fee depending on branch demand.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -687,12 +895,12 @@ export const universities = [
     website: "https://www.lbrce.ac.in",
     about: "Lakireddy Bali Reddy College of Engineering (LBRCE), established in 1998 under the Lakireddy Bali Reddy Charitable Trust, is a private autonomous engineering institution located in Mylavaram, Krishna District, Andhra Pradesh, approximately 35 km from Vijayawada. Affiliated with JNTUK and approved by AICTE, LBRCE is accredited by NAAC with 'A' Grade (CGPA 3.20/4) and NBA Tier-I for multiple programs. It is ranked in the 201–300 band under Engineering by NIRF 2024, recognised as a 'College with Potential for Excellence' (CPE) by UGC, and certified as a Scientific and Industrial Research Organisation (SIRO) by DSIR. The college is an autonomous institution since 2010 and achieved 189 CSE seats with a strong record of placements at TCS, Amazon, Infosys, and Microsoft.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹78,600" },
-      { name: "B.Tech AI & Data Science", duration: "4 Years", fees: "₹78,600" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹78,600" },
-      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹78,600" },
-      { name: "B.Tech Information Technology", duration: "4 Years", fees: "₹78,600" },
-      { name: "M.Tech (CSE / ECE / VLSI / Thermal)", duration: "2 Years", fees: "₹40,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹78,600", mgmtFees: "₹2,35,800" },
+      { name: "B.Tech AI & Data Science", duration: "4 Years", fees: "₹78,600", mgmtFees: "₹2,35,800" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹78,600", mgmtFees: "₹2,35,800" },
+      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹78,600", mgmtFees: "₹2,35,800" },
+      { name: "B.Tech Information Technology", duration: "4 Years", fees: "₹78,600", mgmtFees: "₹2,35,800" },
+      { name: "M.Tech (CSE / ECE / VLSI / Thermal)", duration: "2 Years", fees: "₹40,000", mgmtFees: "₹1,20,000" },
     ],
     faculty: [
       { name: "Dr. K. Appa Rao", designation: "Principal, LBRCE", avatar: "KAR" },
@@ -707,10 +915,28 @@ export const universities = [
       { icon: "📚", name: "Smart Library", desc: "Extensive collection of technical books, IEEE Xplore and ScienceDirect access, 24-hour reading room." },
       { icon: "🍽️", name: "Mess & Canteen", desc: "Subsidised mess facility with vegetarian and non-vegetarian meal options for hostel students." },
     ],
+            branchFees: {
+      "CSE": 235800,
+      "AI/ML/DS": 235800,
+      "ECE": 235800,
+      "IT": 235800},
     avgPackage: 420000,
     placementRate: 63,
-    avgPackage: 420000,
-    placementRate: 63
+  
+    feeIntelligence: {
+      category: "Moderate",
+      convenerQuotaFee: 78600,
+      mgmtQuotaFee: 235800,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 71000,
+        "2023": 75000,
+        "2024": 78600
+      },
+      hiddenDonationNotes: "Zero donation under Convener quota. Caution deposit of ₹5,000 - ₹10,000 applies at admission.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -734,12 +960,12 @@ export const universities = [
     website: "https://becbapatla.ac.in",
     about: "Bapatla Engineering College (BEC), established in 1981 under the not-for-profit Bapatla Education Society, is one of the most respected autonomous engineering institutions in Andhra Pradesh. Affiliated with Acharya Nagarjuna University and approved by AICTE and UGC, BEC holds NAAC A+ grade and NBA Tier-I accreditation (four times for CSE, CE, ME & EEE; three times for ECE). The campus features a Microsoft Innovation Centre, Siemens Centre of Excellence, and Bosch Rexroth Centre of Competence — rare industry partnerships for a regional college. BEC offers B.Tech in 9 branches including CSE with AI & ML, Data Science, and Cyber Security specialisations, along with M.Tech, MCA, and M.Sc programs. Top recruiters include Accenture, Collins Aerospace, TCS, and Wipro.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹84,900" },
-      { name: "B.Tech CSE (AI & ML)", duration: "4 Years", fees: "₹84,900" },
-      { name: "B.Tech CSE (Data Science)", duration: "4 Years", fees: "₹84,900" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹61,000" },
-      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹61,000" },
-      { name: "MCA (Master of Computer Applications)", duration: "2 Years", fees: "₹45,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹75,000", mgmtFees: "₹2,25,000" },
+      { name: "B.Tech CSE (AI & ML)", duration: "4 Years", fees: "₹75,000", mgmtFees: "₹2,25,000" },
+      { name: "B.Tech CSE (Data Science)", duration: "4 Years", fees: "₹75,000", mgmtFees: "₹2,25,000" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹75,000", mgmtFees: "₹2,25,000" },
+      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹75,000", mgmtFees: "₹2,25,000" },
+      { name: "MCA (Master of Computer Applications)", duration: "2 Years", fees: "₹45,000", mgmtFees: "₹1,35,000" },
     ],
     faculty: [
       { name: "Dr. B. Srinivasa Rao", designation: "Principal, Bapatla Engineering College", avatar: "BSR" },
@@ -754,10 +980,28 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "Well-stocked technical library with electronic books, internet databases, and journal access." },
       { icon: "🍽️", name: "Canteen", desc: "Subsidised campus canteen with hygienic vegetarian and non-vegetarian meal options." },
     ],
+            branchFees: {
+      "CSE": 225000,
+      "ECE": 225000,
+      "MCA": 135000
+    },
     avgPackage: 430000,
     placementRate: 64,
-    avgPackage: 430000,
-    placementRate: 64
+  
+    feeIntelligence: {
+      category: "Moderate",
+      convenerQuotaFee: 75000,
+      mgmtQuotaFee: 225000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 68000,
+        "2023": 71000,
+        "2024": 75000
+      },
+      hiddenDonationNotes: "Zero donation under Convener quota. Caution deposit of ₹5,000 - ₹10,000 applies at admission.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -781,12 +1025,12 @@ export const universities = [
     website: "https://www.aknu.edu.in",
     about: "Adikavi Nannaya University (AKNU), established on 22 April 2006 by the Andhra Pradesh State Legislative Assembly, is a state university located on the banks of the River Godavari at Rajamahendravaram (Rajahmundry), East Godavari District. Named after Adikavi Nannaya — the 11th-century first poet of Telugu literature — AKNU serves as the primary affiliating university for East and West Godavari districts, overseeing approximately 450 colleges. The university holds NAAC 'B+' grade and is ISO 9001:2015 certified. AKNU is noteworthy for offering Andhra Pradesh's first program in Geo-Informatics and Petroleum Exploration. With 74+ PG institutes and four constituent colleges, AKNU provides affordable higher education to students across the Godavari region, with a strong focus on Telugu language and culture along with modern sciences and engineering.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹40,000" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹40,000" },
-      { name: "B.Sc (Physics / Chemistry / Maths / Botany)", duration: "3 Years", fees: "₹9,000" },
-      { name: "B.A. (Telugu / History / Political Science)", duration: "3 Years", fees: "₹7,000" },
-      { name: "MBA (General Management)", duration: "2 Years", fees: "₹32,600" },
-      { name: "MCA (Master of Computer Applications)", duration: "2 Years", fees: "₹25,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹35,000", mgmtFees: "₹1,05,000" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹35,000", mgmtFees: "₹1,05,000" },
+      { name: "B.Sc (Physics / Chemistry / Maths / Botany)", duration: "3 Years", fees: "₹35,000", mgmtFees: "₹1,05,000" },
+      { name: "B.A. (Telugu / History / Political Science)", duration: "3 Years", fees: "₹10,000", mgmtFees: "₹30,000" },
+      { name: "MBA (General Management)", duration: "2 Years", fees: "₹32,600", mgmtFees: "₹97,800" },
+      { name: "MCA (Master of Computer Applications)", duration: "2 Years", fees: "₹25,000", mgmtFees: "₹75,000" },
     ],
     faculty: [
       { name: "Prof. S. Prasanna Sree", designation: "Vice Chancellor, Adikavi Nannaya University", avatar: "SPS" },
@@ -801,10 +1045,31 @@ export const universities = [
       { icon: "📚", name: "Dr. B.R. Ambedkar Central Library", desc: "3-floor central library with 1 lakh+ books, 50 journals, 12 newspapers, and e-resources." },
       { icon: "🍽️", name: "University Canteen", desc: "Affordable canteen serving vegetarian meals for the student community." },
     ],
+            branchFees: {
+      "CSE": 105000,
+      "ECE": 105000,
+      "B.Sc": 36000,
+      "B.A": 30000,
+      "MBA": 97800,
+      "MCA": 75000
+    },
     avgPackage: 380000,
     placementRate: 58,
-    avgPackage: 380000,
-    placementRate: 58
+  
+    feeIntelligence: {
+      category: "Affordable",
+      convenerQuotaFee: 35000,
+      mgmtQuotaFee: 105000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 32000,
+        "2023": 33000,
+        "2024": 35000
+      },
+      hiddenDonationNotes: "Zero hidden charges. Highly transparent government fee model. Minimal caution deposit (₹2,000) and highly subsidized university hostel rooms.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -824,16 +1089,16 @@ export const universities = [
     match: 77,
     branches: ["Sciences", "Arts", "Engineering", "Pharmacy", "Education", "Business"],
     tags: ["B.Sc", "B.A.", "B.Tech", "B.Pharm", "MBA"],
-    image: "https://lh3.googleusercontent.com/proxy/FzkIxMFHBqOmFZ-kR35q7OJHAU8stevS94ke4lYH5-aTr7OsaIlb9vnltsdmqGls4PeRnzTaH0R9majXIqE",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrvitFuXMCHgN_E7SZObWxGBNlaTzXAkZjqw&s",
     website: "https://skuniversity.ac.in",
     about: "Sri Krishnadevaraya University (SKU), named after the great Vijayanagara emperor Sri Krishnadevaraya, was established in 1981 in Anantapur, Andhra Pradesh. Starting as a Postgraduate Centre of Sri Venkateswara University in 1967–68, it gained full university status in 1981 and converted to an affiliating university in 1988. SKU is a UGC-recognised state university spread across 482 acres, 10 km from Anantapur city. It holds NAAC 'B' grade and is ranked 51–100 among State Public Universities by NIRF 2025. SKU oversees 439 UG and 142 PG affiliated colleges across Anantapur, Kurnool, and surrounding Rayalaseema districts. It comprises five on-campus colleges: Arts, Sciences, Engineering & Technology, Education, and Pharmacy. SKU is particularly known for affordable higher education in the Rayalaseema region, with government-rate fees and strong research traditions.",
     programs: [
-      { name: "B.Sc (Physics / Chemistry / Maths / Biotech)", duration: "3 Years", fees: "₹9,000" },
-      { name: "B.A. (Telugu / History / Political Science)", duration: "3 Years", fees: "₹6,000" },
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹35,000" },
-      { name: "B.Pharm (Pharmacy)", duration: "4 Years", fees: "₹20,000" },
-      { name: "MBA (General Management)", duration: "2 Years", fees: "₹25,000" },
-      { name: "M.Sc (Physics / Chemistry / Maths / Botany)", duration: "2 Years", fees: "₹12,000" },
+      { name: "B.Sc (Physics / Chemistry / Maths / Biotech)", duration: "3 Years", fees: "₹35,000", mgmtFees: "₹1,05,000" },
+      { name: "B.A. (Telugu / History / Political Science)", duration: "3 Years", fees: "₹10,000", mgmtFees: "₹30,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹35,000", mgmtFees: "₹1,05,000" },
+      { name: "B.Pharm (Pharmacy)", duration: "4 Years", fees: "₹25,000", mgmtFees: "₹75,000" },
+      { name: "MBA (General Management)", duration: "2 Years", fees: "₹30,000", mgmtFees: "₹90,000" },
+      { name: "M.Sc (Physics / Chemistry / Maths / Botany)", duration: "2 Years", fees: "₹15,000", mgmtFees: "₹45,000" },
     ],
     faculty: [
       { name: "Prof. B. Anitha", designation: "Vice Chancellor, Sri Krishnadevaraya University", avatar: "BA" },
@@ -848,10 +1113,31 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "1 lakh+ volumes, 185+ periodicals, 110+ magazines, INFLIBNET, e-books, and thesis archives." },
       { icon: "🍽️", name: "University Canteen", desc: "Budget-friendly canteen serving affordable meals across the 482-acre campus." },
     ],
+            branchFees: {
+      "B.Sc": 36000,
+      "B.A": 30000,
+      "CSE": 105000,
+      "Pharmacy": 75000,
+      "MBA": 90000,
+      "M.Sc": 45000
+    },
     avgPackage: 370000,
     placementRate: 56,
-    avgPackage: 370000,
-    placementRate: 56
+  
+    feeIntelligence: {
+      category: "Affordable",
+      convenerQuotaFee: 35000,
+      mgmtQuotaFee: 105000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 32000,
+        "2023": 33000,
+        "2024": 35000
+      },
+      hiddenDonationNotes: "Zero hidden charges. Highly transparent government fee model. Minimal caution deposit (₹2,000) and highly subsidized university hostel rooms.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -875,12 +1161,12 @@ export const universities = [
     website: "https://www.gvpce.ac.in",
     about: "Gayatri Vidya Parishad College of Engineering (Autonomous), Visakhapatnam, established in 1997 under the Gayatri Vidya Parishad Educational Institutions, is a premier autonomous engineering college affiliated to Andhra University. It holds NAAC A++ grade (3rd cycle) — one of only a handful of affiliated colleges in AP to achieve this distinction. GVPCE is ranked in the 151–200 Engineering band by NIRF 2024 and holds NBA Tier-I accreditation for multiple programs. Known for its research culture, strong industry collaborations, and consistent 90%+ placement record, GVPCE is a top choice for students in North Andhra.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹90,000" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹90,000" },
-      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹85,000" },
-      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹80,000" },
-      { name: "B.Tech Chemical Engineering", duration: "4 Years", fees: "₹80,000" },
-      { name: "M.Tech (CSE / VLSI / SE / PE)", duration: "2 Years", fees: "₹48,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "B.Tech Chemical Engineering", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "M.Tech (CSE / VLSI / SE / PE)", duration: "2 Years", fees: "₹55,000", mgmtFees: "₹1,65,000" },
     ],
     faculty: [
       { name: "Dr. A. B. Koteswara Rao", designation: "Principal, GVPCE", avatar: "AK" },
@@ -895,10 +1181,29 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "80,000+ books, IEEE Xplore, Springer, and ScienceDirect digital journal access." },
       { icon: "🍽️", name: "Canteen", desc: "Subsidised student canteen serving fresh South Indian meals daily." },
     ],
+            branchFees: {
+      "CSE": 315000,
+      "ECE": 315000,
+      "Civil": 270000,
+      "Chemical": 270000
+    },
     avgPackage: 550000,
     placementRate: 70,
-    avgPackage: 550000,
-    placementRate: 70
+  
+    feeIntelligence: {
+      category: "Expensive",
+      convenerQuotaFee: 105000,
+      mgmtQuotaFee: 315000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 95000,
+        "2023": 100000,
+        "2024": 105000
+      },
+      hiddenDonationNotes: "Strictly zero donation under Category A. Standard autonomous caution deposit (₹5,000). Management seats have a voluntary fee depending on branch demand.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -922,12 +1227,12 @@ export const universities = [
     website: "https://www.adityacollege.in",
     about: "Aditya Engineering College (AEC), established in 2001 at Surampalem, East Godavari District, is a leading autonomous institution affiliated with JNTUK. AEC holds the rare NAAC A++ grade — the highest NAAC grade achievable — placing it among the top autonomous engineering colleges in Andhra Pradesh. AEC has 450+ qualified faculty, 4,000+ students, and an outstanding placement record with companies including TCS, Infosys, Wipro, Cognizant, and Amazon. The institution is known for its student-centred approach, strong research output, and excellent academic infrastructure.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹85,000" },
-      { name: "B.Tech AI & Data Science", duration: "4 Years", fees: "₹90,000" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹85,000" },
-      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹80,000" },
-      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹75,000" },
-      { name: "M.Tech (CSE / ECE / Structural)", duration: "2 Years", fees: "₹40,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,10,000" },
+      { name: "B.Tech AI & Data Science", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,10,000" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,10,000" },
+      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,10,000" },
+      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,10,000" },
+      { name: "M.Tech (CSE / ECE / Structural)", duration: "2 Years", fees: "₹45,000", mgmtFees: "₹1,35,000" },
     ],
     faculty: [
       { name: "Dr. M. Sreenivasa Reddy", designation: "Principal, Aditya Engineering College", avatar: "MS" },
@@ -942,10 +1247,29 @@ export const universities = [
       { icon: "📚", name: "Digital Library", desc: "1 lakh+ technical volumes, IEEE Xplore, Springer, and NPTEL video resource access." },
       { icon: "🍽️", name: "Canteen & Mess", desc: "On-campus canteen and mess serving nutritional vegetarian and non-vegetarian meals." },
     ],
+            branchFees: {
+      "CSE": 210000,
+      "AI/ML/DS": 210000,
+      "ECE": 210000,
+      "Civil": 210000
+    },
     avgPackage: 400000,
     placementRate: 62,
-    avgPackage: 400000,
-    placementRate: 62
+  
+    feeIntelligence: {
+      category: "Moderate",
+      convenerQuotaFee: 70000,
+      mgmtQuotaFee: 210000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 63000,
+        "2023": 67000,
+        "2024": 70000
+      },
+      hiddenDonationNotes: "Zero donation under Convener quota. Caution deposit of ₹5,000 - ₹10,000 applies at admission.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -969,12 +1293,12 @@ export const universities = [
     website: "https://www.rvrjcce.ac.in",
     about: "R.V.R. & J.C. College of Engineering (RVRJCCE), established in 1985 in Chandramoulipuram near Guntur, is a well-established autonomous private engineering institution. Affiliated with Acharya Nagarjuna University and approved by AICTE, RVRJCCE holds NAAC A+ grade (2021) and is ranked in the 201–300 band under Engineering by NIRF 2024. The college is an autonomous institution since 2012 and offers 10 engineering departments including the rare Chemical Engineering program. It is one of the oldest self-financing engineering colleges in Guntur with a strong alumni network and steady placement record.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹78,000" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹78,000" },
-      { name: "B.Tech Chemical Engineering", duration: "4 Years", fees: "₹72,000" },
-      { name: "B.Tech Mechanical Engineering", duration: "4 Years", fees: "₹72,000" },
-      { name: "MBA (Business Administration)", duration: "2 Years", fees: "₹55,000" },
-      { name: "MCA (Computer Applications)", duration: "2 Years", fees: "₹40,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "B.Tech Chemical Engineering", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "B.Tech Mechanical Engineering", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "MBA (Business Administration)", duration: "2 Years", fees: "₹65,000", mgmtFees: "₹1,95,000" },
+      { name: "MCA (Computer Applications)", duration: "2 Years", fees: "₹45,000", mgmtFees: "₹1,35,000" },
     ],
     faculty: [
       { name: "Dr. T. V. Hyma", designation: "Principal, RVR & JC College of Engineering", avatar: "TH" },
@@ -989,10 +1313,31 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "Technical library with 75,000+ books, e-journals, and IEEE/Elsevier digital access." },
       { icon: "🍽️", name: "Cafeteria & Mess", desc: "Affordable multi-cuisine canteen and residential mess for hostel students." },
     ],
+            branchFees: {
+      "CSE": 315000,
+      "ECE": 315000,
+      "Chemical": 285000,
+      "Mechanical": 285000,
+      "MBA": 195000,
+      "MCA": 135000
+    },
     avgPackage: 500000,
     placementRate: 69,
-    avgPackage: 500000,
-    placementRate: 69
+  
+    feeIntelligence: {
+      category: "Expensive",
+      convenerQuotaFee: 105000,
+      mgmtQuotaFee: 315000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 95000,
+        "2023": 100000,
+        "2024": 105000
+      },
+      hiddenDonationNotes: "Strictly zero donation under Category A. Standard autonomous caution deposit (₹5,000). Management seats have a voluntary fee depending on branch demand.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1016,12 +1361,12 @@ export const universities = [
     website: "https://www.vishnu.edu.in",
     about: "Vishnu Institute of Technology (VITB), established in 2008 in Bhimavaram, West Godavari District, is an autonomous engineering college affiliated with JNTUK and approved by AICTE. It holds NAAC A+ grade (CGPA 3.51) and has autonomous status since the 2019-20 academic year. VITB has 450+ faculty, many holding PhDs from IITs and NITs. With a strong focus on research and industry collaboration, the college has produced successful engineers across TCS, Infosys, Wipro, and Amazon. Its dedicated training and placement cell consistently achieves 85%+ placement rates.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹82,000" },
-      { name: "B.Tech AI & Data Science", duration: "4 Years", fees: "₹88,000" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹82,000" },
-      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹78,000" },
-      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹75,000" },
-      { name: "M.Tech (CSE / VLSI / Thermal / SE)", duration: "2 Years", fees: "₹42,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹1,03,000", mgmtFees: "₹3,09,000" },
+      { name: "B.Tech AI & Data Science", duration: "4 Years", fees: "₹1,03,000", mgmtFees: "₹3,09,000" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹1,03,000", mgmtFees: "₹3,09,000" },
+      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹1,03,000", mgmtFees: "₹3,09,000" },
+      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹1,03,000", mgmtFees: "₹3,09,000" },
+      { name: "M.Tech (CSE / VLSI / Thermal / SE)", duration: "2 Years", fees: "₹45,000", mgmtFees: "₹1,35,000" },
     ],
     faculty: [
       { name: "Dr. M. Venu", designation: "Principal, Vishnu Institute of Technology", avatar: "MV" },
@@ -1036,10 +1381,29 @@ export const universities = [
       { icon: "📚", name: "Digital Library", desc: "60,000+ books, NPTEL resources, IEEE Xplore, and 24-hour reading facilities." },
       { icon: "🍽️", name: "Canteen", desc: "Student canteen serving South Indian vegetarian and non-vegetarian meals daily." },
     ],
+            branchFees: {
+      "CSE": 309000,
+      "AI/ML/DS": 309000,
+      "ECE": 309000,
+      "Civil": 309000
+    },
     avgPackage: 430000,
     placementRate: 63,
-    avgPackage: 430000,
-    placementRate: 63
+  
+    feeIntelligence: {
+      category: "Premium",
+      convenerQuotaFee: 103000,
+      mgmtQuotaFee: 309000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 93000,
+        "2023": 98000,
+        "2024": 103000
+      },
+      hiddenDonationNotes: "No donation allowed, but premium charges (₹10,000 caution deposit, ₹15,000 activity fees) and premium hostels (₹90,000 - ₹1.5L/yr) apply.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Official Admission Brochure"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1063,12 +1427,12 @@ export const universities = [
     website: "https://vvitguntur.com",
     about: "Vasireddy Venkatadri Institute of Technology (VVIT), established in 2006 at Nambur village near Guntur, is a private autonomous engineering institution affiliated with JNTUK and approved by AICTE. VVIT holds NAAC 'A' grade and NBA Tier-I accreditation for several programs. With 3,500+ students and 250+ faculty, VVIT is known for its disciplined learning environment and student-friendly policies. The college offers a blend of traditional engineering education with modern technology-driven programs and maintains active corporate training partnerships for placement preparation.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹77,500" },
-      { name: "B.Tech Information Technology", duration: "4 Years", fees: "₹77,500" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹77,500" },
-      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹72,000" },
-      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹70,000" },
-      { name: "MCA (Master of Computer Applications)", duration: "2 Years", fees: "₹38,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹65,200", mgmtFees: "₹1,95,600" },
+      { name: "B.Tech Information Technology", duration: "4 Years", fees: "₹65,200", mgmtFees: "₹1,95,600" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹65,200", mgmtFees: "₹1,95,600" },
+      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹65,200", mgmtFees: "₹1,95,600" },
+      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹65,200", mgmtFees: "₹1,95,600" },
+      { name: "MCA (Master of Computer Applications)", duration: "2 Years", fees: "₹38,000", mgmtFees: "₹1,14,000" },
     ],
     faculty: [
       { name: "Dr. Yennapusa Mallikarjuna Reddy", designation: "Principal, VVIT", avatar: "YM" },
@@ -1083,10 +1447,30 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "55,000+ books, e-journals, INFLIBNET N-LIST, and digital reading resources." },
       { icon: "🍽️", name: "Canteen", desc: "Subsidised campus canteen with vegetarian and non-vegetarian food options daily." },
     ],
+            branchFees: {
+      "CSE": 195600,
+      "IT": 195600,
+      "ECE": 195600,
+      "Civil": 195600,
+      "MCA": 114000
+    },
     avgPackage: 410000,
     placementRate: 61,
-    avgPackage: 410000,
-    placementRate: 61
+  
+    feeIntelligence: {
+      category: "Premium",
+      convenerQuotaFee: 65200,
+      mgmtQuotaFee: 195600,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 59000,
+        "2023": 62000,
+        "2024": 65200
+      },
+      hiddenDonationNotes: "No donation allowed, but premium charges (₹10,000 caution deposit, ₹15,000 activity fees) and premium hostels (₹90,000 - ₹1.5L/yr) apply.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Official Admission Brochure"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1110,12 +1494,12 @@ export const universities = [
     website: "https://gecgudlavalleru.ac.in",
     about: "Seshadri Rao Gudlavalleru Engineering College (GEC), established in 1998 by the AANM & VVRSR Educational Society, is a private autonomous engineering institution in Gudlavalleru, Krishna District, affiliated with JNTUK and approved by AICTE. Known as 'Seshadri Rao Knowledge Village,' GEC holds NAAC A+ grade (2023) and NBA accreditation for key programs. The college is distinguished by its industry-oriented curriculum, experienced faculty, and a Virtual Tour feature on its website — a rare feature for a regional college. GEC's placements have grown steadily, with top recruiters including TCS, Infosys, and Cognizant.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹79,000" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹79,000" },
-      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹74,000" },
-      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹70,000" },
-      { name: "B.Tech Mechanical Engineering", duration: "4 Years", fees: "₹70,000" },
-      { name: "M.Tech (CSE / ECE / Structural / Power Systems)", duration: "2 Years", fees: "₹40,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹74,600", mgmtFees: "₹2,23,800" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹74,600", mgmtFees: "₹2,23,800" },
+      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹74,600", mgmtFees: "₹2,23,800" },
+      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹74,600", mgmtFees: "₹2,23,800" },
+      { name: "B.Tech Mechanical Engineering", duration: "4 Years", fees: "₹74,600", mgmtFees: "₹2,23,800" },
+      { name: "M.Tech (CSE / ECE / Structural / Power Systems)", duration: "2 Years", fees: "₹40,000", mgmtFees: "₹1,20,000" },
     ],
     faculty: [
       { name: "Dr. Burra Karuna Kumar", designation: "Principal, Gudlavalleru Engineering College", avatar: "BK" },
@@ -1130,10 +1514,29 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "Technical library with 70,000+ books, CDs, journals, and INFLIBNET e-resources." },
       { icon: "🍽️", name: "Canteen", desc: "On-campus canteen providing affordable and hygienic meals for all students." },
     ],
+            branchFees: {
+      "CSE": 223800,
+      "ECE": 223800,
+      "Civil": 223800,
+      "Mechanical": 223800
+    },
     avgPackage: 450000,
     placementRate: 65,
-    avgPackage: 450000,
-    placementRate: 65
+  
+    feeIntelligence: {
+      category: "Moderate",
+      convenerQuotaFee: 74600,
+      mgmtQuotaFee: 223800,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 67000,
+        "2023": 71000,
+        "2024": 74600
+      },
+      hiddenDonationNotes: "Zero donation under Convener quota. Caution deposit of ₹5,000 - ₹10,000 applies at admission.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1157,12 +1560,12 @@ export const universities = [
     website: "https://yvu.edu.in",
     about: "Yogi Vemana University (YVU), named after the famed Telugu philosopher-poet Yogi Vemana, was established in 2006 by the Government of Andhra Pradesh and is located in Kadapa (YSR) District. Spread across 430 acres, YVU holds NAAC 'A' grade (CGPA 3.13, 2nd cycle, 2022). The university comprises multiple schools including Sciences, Arts, Engineering, Management, and Education. Its constituent YSR Engineering College at Proddatur offers B.Tech programs across Civil, CSE, ECE, EEE, and Mechanical branches. YVU also offers unique integrated M.Sc programs in Earth Sciences and Bioinformatics, making it distinctive among South Indian state universities.",
     programs: [
-      { name: "B.Sc (Physics / Chemistry / Maths / Biotech)", duration: "3 Years", fees: "₹9,000" },
-      { name: "B.A. (Telugu / History / Economics)", duration: "3 Years", fees: "₹7,000" },
-      { name: "B.Tech (CSE / ECE / EEE / Civil / Mechanical)", duration: "4 Years", fees: "₹42,000" },
-      { name: "M.Sc (Earth Sciences / Bioinformatics / Physics)", duration: "2 Years", fees: "₹15,000" },
-      { name: "MBA (General Management)", duration: "2 Years", fees: "₹28,000" },
-      { name: "5-Year Integrated M.Sc (Earth Sciences)", duration: "5 Years", fees: "₹12,000" },
+      { name: "B.Sc (Physics / Chemistry / Maths / Biotech)", duration: "3 Years", fees: "₹35,000", mgmtFees: "₹1,05,000" },
+      { name: "B.A. (Telugu / History / Economics)", duration: "3 Years", fees: "₹12,000", mgmtFees: "₹36,000" },
+      { name: "B.Tech (CSE / ECE / EEE / Civil / Mechanical)", duration: "4 Years", fees: "₹35,000", mgmtFees: "₹1,05,000" },
+      { name: "M.Sc (Earth Sciences / Bioinformatics / Physics)", duration: "2 Years", fees: "₹15,000", mgmtFees: "₹45,000" },
+      { name: "MBA (General Management)", duration: "2 Years", fees: "₹28,000", mgmtFees: "₹84,000" },
+      { name: "5-Year Integrated M.Sc (Earth Sciences)", duration: "5 Years", fees: "₹12,000", mgmtFees: "₹36,000" },
     ],
     faculty: [
       { name: "Prof. T. Sreenivas", designation: "Principal, YVU Campus College", avatar: "TS" },
@@ -1177,10 +1580,31 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "2 lakh+ books, rare geology manuscripts, INFLIBNET, and e-journal subscriptions." },
       { icon: "🍽️", name: "University Canteen", desc: "Budget-friendly canteen serving affordable regional meals on the 430-acre campus." },
     ],
+            branchFees: {
+      "B.Sc": 45000,
+      "B.A": 36000,
+      "CSE": 105000,
+      "M.Sc": 45000,
+      "MBA": 84000,
+      "5-Year": 36000
+    },
     avgPackage: 350000,
     placementRate: 52,
-    avgPackage: 350000,
-    placementRate: 52
+  
+    feeIntelligence: {
+      category: "Affordable",
+      convenerQuotaFee: 35000,
+      mgmtQuotaFee: 105000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 32000,
+        "2023": 33000,
+        "2024": 35000
+      },
+      hiddenDonationNotes: "Zero hidden charges. Highly transparent government fee model. Minimal caution deposit (₹2,000) and highly subsidized university hostel rooms.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1204,12 +1628,12 @@ export const universities = [
     website: "https://www.simhapuriuniv.ac.in",
     about: "Vikrama Simhapuri University (VSU), established in 2008 under AP Government Act No. 29 of 2008, is a state public university located in Nellore with a 220-acre campus. VSU is NAAC 'A' grade accredited (CGPA 3.23) and serves as the primary affiliating university for Nellore and SPSR Nellore districts, overseeing 200+ affiliated colleges. The university offers undergraduate, postgraduate, and doctoral programs in Arts, Sciences, Commerce, Engineering, Pharmacy, Marine Biology, and Food Technology. Its Marine Biology department is particularly noted for research in the Bay of Bengal ecosystem. VSU is known for its comprehensive scholarship programs and student support services.",
     programs: [
-      { name: "B.Sc (Biotechnology / Marine Biol. / Chemistry)", duration: "3 Years", fees: "₹9,000" },
-      { name: "B.A. (Telugu / History / Sociology)", duration: "3 Years", fees: "₹7,000" },
-      { name: "B.Tech (CSE / ECE / EEE)", duration: "4 Years", fees: "₹38,000" },
-      { name: "M.Sc (Marine Biology / Food Technology / CS)", duration: "2 Years", fees: "₹15,000" },
-      { name: "MBA (General Management)", duration: "2 Years", fees: "₹28,000" },
-      { name: "MCA (Master of Computer Applications)", duration: "2 Years", fees: "₹22,000" },
+      { name: "B.Sc (Biotechnology / Marine Biol. / Chemistry)", duration: "3 Years", fees: "₹35,000", mgmtFees: "₹1,05,000" },
+      { name: "B.A. (Telugu / History / Sociology)", duration: "3 Years", fees: "₹12,000", mgmtFees: "₹36,000" },
+      { name: "B.Tech (CSE / ECE / EEE)", duration: "4 Years", fees: "₹35,000", mgmtFees: "₹1,05,000" },
+      { name: "M.Sc (Marine Biology / Food Technology / CS)", duration: "2 Years", fees: "₹15,000", mgmtFees: "₹45,000" },
+      { name: "MBA (General Management)", duration: "2 Years", fees: "₹28,000", mgmtFees: "₹84,000" },
+      { name: "MCA (Master of Computer Applications)", duration: "2 Years", fees: "₹22,000", mgmtFees: "₹66,000" },
     ],
     faculty: [
       { name: "Prof. Allam Srinivasa Rao", designation: "Vice Chancellor, Vikrama Simhapuri University", avatar: "AS" },
@@ -1224,10 +1648,31 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "1.5 lakh+ volumes, journals, e-books, INFLIBNET access, and rare coastal ecology resources." },
       { icon: "🍽️", name: "University Canteen", desc: "Budget-friendly canteen with affordable South Indian vegetarian and non-veg options." },
     ],
+            branchFees: {
+      "B.Sc": 45000,
+      "B.A": 36000,
+      "CSE": 105000,
+      "M.Sc": 45000,
+      "MBA": 84000,
+      "MCA": 66000
+    },
     avgPackage: 360000,
     placementRate: 54,
-    avgPackage: 360000,
-    placementRate: 54
+  
+    feeIntelligence: {
+      category: "Affordable",
+      convenerQuotaFee: 35000,
+      mgmtQuotaFee: 105000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 32000,
+        "2023": 33000,
+        "2024": 35000
+      },
+      hiddenDonationNotes: "Zero hidden charges. Highly transparent government fee model. Minimal caution deposit (₹2,000) and highly subsidized university hostel rooms.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1251,12 +1696,12 @@ export const universities = [
     website: "https://www.jntua.ac.in",
     about: "Jawaharlal Nehru Technological University Anantapur (JNTUA) was established in 2008 when the original JNTU Hyderabad was trifurcated, though its constituent college roots date to the Government College of Engineering Anantapur, founded in 1946. JNTUA holds NAAC 'A' grade and serves as the primary affiliating university for 200+ engineering and pharmacy colleges across the Rayalaseema and part of South Andhra regions. The main campus spans 300 acres and hosts the constituent College of Engineering, College of Engineering Pulivendula, and College of Engineering Kalikiri. JNTUA is notable for its Aeronautical and Chemical Engineering departments, which are rare in the Rayalaseema region.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹52,000" },
-      { name: "B.Tech Aeronautical Engineering", duration: "4 Years", fees: "₹55,000" },
-      { name: "B.Tech Electronics & Communication", duration: "4 Years", fees: "₹52,000" },
-      { name: "B.Pharm (Pharmacy)", duration: "4 Years", fees: "₹35,000" },
-      { name: "MBA (Business Administration)", duration: "2 Years", fees: "₹48,000" },
-      { name: "MCA (Computer Applications)", duration: "2 Years", fees: "₹38,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹10,000", mgmtFees: "₹90,000" },
+      { name: "B.Tech Aeronautical Engineering", duration: "4 Years", fees: "₹10,000", mgmtFees: "₹90,000" },
+      { name: "B.Tech Electronics & Communication", duration: "4 Years", fees: "₹10,000", mgmtFees: "₹90,000" },
+      { name: "B.Pharm (Pharmacy)", duration: "4 Years", fees: "₹25,000", mgmtFees: "₹75,000" },
+      { name: "MBA (Business Administration)", duration: "2 Years", fees: "₹35,000", mgmtFees: "₹1,05,000" },
+      { name: "MCA (Computer Applications)", duration: "2 Years", fees: "₹35,000", mgmtFees: "₹1,05,000" },
     ],
     faculty: [
       { name: "Prof. M. Suresh Babu", designation: "Vice Chancellor, JNTUA", avatar: "MS" },
@@ -1271,10 +1716,31 @@ export const universities = [
       { icon: "📚", name: "University Library", desc: "1.2 lakh+ books, pharma journals, INFLIBNET, IEEE Xplore access, and thesis database." },
       { icon: "🍽️", name: "Subsidised Mess", desc: "Government-rate mess serving affordable meals to residential engineering students." },
     ],
+            branchFees: {
+      "CSE": 90000,
+      "B.Tech": 90000,
+      "ECE": 90000,
+      "Pharmacy": 75000,
+      "MBA": 105000,
+      "MCA": 105000
+    },
     avgPackage: 450000,
     placementRate: 62,
-    avgPackage: 450000,
-    placementRate: 62
+  
+    feeIntelligence: {
+      category: "Affordable",
+      convenerQuotaFee: 10000,
+      mgmtQuotaFee: 90000,
+      mgmtMultiple: 9,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 9000,
+        "2023": 10000,
+        "2024": 10000
+      },
+      hiddenDonationNotes: "Zero hidden charges. Highly transparent government fee model. Minimal caution deposit (₹2,000) and highly subsidized university hostel rooms.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1298,12 +1764,12 @@ export const universities = [
     website: "https://www.rayalaseemauniversity.ac.in",
     about: "Rayalaseema University (RU) was established in 2008 by the Government of Andhra Pradesh under Act No. 29 of 2008, located in Kurnool District. It is a state affiliating university catering to the historic Rayalaseema region, overseeing affiliated colleges across Kurnool, Nandyal, and surrounding districts. RU holds NAAC 'B' grade and offers diverse programs including B.Tech, B.Sc, B.A., MBA, MCA, M.Sc, and Ph.D across its five schools. The university also runs a Directorate of Distance Education, making higher education accessible to working professionals and rural students of the Rayalaseema region. Kurnool, the historical capital of Andhra Pradesh, provides a rich cultural setting for academic pursuits.",
     programs: [
-      { name: "B.Sc (Physics / Chemistry / Maths / Zoology)", duration: "3 Years", fees: "₹8,500" },
-      { name: "B.A. (Telugu / History / Economics / Sociology)", duration: "3 Years", fees: "₹6,500" },
-      { name: "B.Tech (CSE / ECE / EEE / Civil)", duration: "4 Years", fees: "₹36,000" },
-      { name: "MBA (General Management)", duration: "2 Years", fees: "₹26,000" },
-      { name: "MCA (Computer Applications)", duration: "2 Years", fees: "₹22,000" },
-      { name: "M.Sc (Mathematics / Physics / Chemistry)", duration: "2 Years", fees: "₹12,000" },
+      { name: "B.Sc (Physics / Chemistry / Maths / Zoology)", duration: "3 Years", fees: "₹35,000", mgmtFees: "₹1,05,000" },
+      { name: "B.A. (Telugu / History / Economics / Sociology)", duration: "3 Years", fees: "₹12,000", mgmtFees: "₹36,000" },
+      { name: "B.Tech (CSE / ECE / EEE / Civil)", duration: "4 Years", fees: "₹35,000", mgmtFees: "₹1,05,000" },
+      { name: "MBA (General Management)", duration: "2 Years", fees: "₹28,000", mgmtFees: "₹84,000" },
+      { name: "MCA (Computer Applications)", duration: "2 Years", fees: "₹22,000", mgmtFees: "₹66,000" },
+      { name: "M.Sc (Mathematics / Physics / Chemistry)", duration: "2 Years", fees: "₹15,000", mgmtFees: "₹45,000" },
     ],
     faculty: [
       { name: "Prof. V. Venkata Basava Rao", designation: "Vice Chancellor, Rayalaseema University", avatar: "VV" },
@@ -1318,10 +1784,31 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "80,000+ books, 100+ journals, newspapers, INFLIBNET N-LIST, and research databases." },
       { icon: "🍽️", name: "University Canteen", desc: "Subsidised canteen serving affordable meals to thousands of students daily." },
     ],
+            branchFees: {
+      "B.Sc": 45000,
+      "B.A": 36000,
+      "CSE": 105000,
+      "MBA": 84000,
+      "MCA": 66000,
+      "M.Sc": 45000
+    },
     avgPackage: 340000,
     placementRate: 50,
-    avgPackage: 340000,
-    placementRate: 50
+  
+    feeIntelligence: {
+      category: "Affordable",
+      convenerQuotaFee: 35000,
+      mgmtQuotaFee: 105000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 32000,
+        "2023": 33000,
+        "2024": 35000
+      },
+      hiddenDonationNotes: "Zero hidden charges. Highly transparent government fee model. Minimal caution deposit (₹2,000) and highly subsidized university hostel rooms.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1345,12 +1832,12 @@ export const universities = [
     website: "https://www.srkrec.edu.in",
     about: "Sagi Ramakrishnam Raju Engineering College (SRKREC), established in 1980 in Bhimavaram, West Godavari District, is one of the oldest private autonomous engineering colleges in Andhra Pradesh. Affiliated with JNTUK and approved by AICTE, SRKREC holds NAAC A+ grade (CGPA 3.42) and NBA Tier-I accreditation for all its major UG programs. With 400+ faculty members — over 150 holding Ph.D. degrees — SRKREC maintains a strong research and academic culture. Its CSE, ECE, and EEE departments consistently produce top placements in companies like TCS, Infosys, Wipro, and Cognizant. The institution is named after the revered educationist and philanthropist Sagi Ramakrishnam Raju.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹80,000" },
-      { name: "B.Tech AI & Data Science", duration: "4 Years", fees: "₹85,000" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹80,000" },
-      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹75,000" },
-      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹70,000" },
-      { name: "M.Tech (CSE / ECE / Power Systems / SE)", duration: "2 Years", fees: "₹42,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "B.Tech AI & Data Science", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "M.Tech (CSE / ECE / Power Systems / SE)", duration: "2 Years", fees: "₹45,000", mgmtFees: "₹1,35,000" },
     ],
     faculty: [
       { name: "Dr. K. V. Murali Krishna Raju", designation: "Principal, SRKREC", avatar: "KM" },
@@ -1365,10 +1852,29 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "80,000+ books, IEEE Xplore, Springer, and ScienceDirect digital library access." },
       { icon: "🍽️", name: "Canteen & Mess", desc: "Subsidised campus canteen with vegetarian and non-vegetarian meal options." },
     ],
+            branchFees: {
+      "CSE": 315000,
+      "AI/ML/DS": 315000,
+      "ECE": 315000,
+      "Civil": 315000
+    },
     avgPackage: 420000,
     placementRate: 63,
-    avgPackage: 420000,
-    placementRate: 63
+  
+    feeIntelligence: {
+      category: "Expensive",
+      convenerQuotaFee: 105000,
+      mgmtQuotaFee: 315000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 95000,
+        "2023": 100000,
+        "2024": 105000
+      },
+      hiddenDonationNotes: "Strictly zero donation under Category A. Standard autonomous caution deposit (₹5,000). Management seats have a voluntary fee depending on branch demand.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1392,12 +1898,12 @@ export const universities = [
     website: "https://www.adityatekkali.edu.in",
     about: "Aditya Institute of Technology and Management (AITAM), established in 2001 by the Sri Aditya Educational Society, is a premier autonomous engineering institution located at Tekkali, Srikakulam District — one of the most developed educational institutions in North Andhra. Affiliated with JNTU-GV (Gurajada Vizianagaram) and approved by AICTE, AITAM holds NAAC A+ grade and NBA accreditation. The college is known for its disciplined academic environment, industry-oriented curriculum, and consistent placement record with TCS, Wipro, Mindtree, and Amazon as top recruiters. AITAM serves the aspirations of students from Srikakulam, Vizianagaram, and Odisha border districts.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹82,000" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹82,000" },
-      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹78,000" },
-      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹75,000" },
-      { name: "B.Tech Mechanical Engineering", duration: "4 Years", fees: "₹75,000" },
-      { name: "MBA (Business Administration)", duration: "2 Years", fees: "₹50,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,10,000" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,10,000" },
+      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,10,000" },
+      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,10,000" },
+      { name: "B.Tech Mechanical Engineering", duration: "4 Years", fees: "₹70,000", mgmtFees: "₹2,10,000" },
+      { name: "MBA (Business Administration)", duration: "2 Years", fees: "₹50,000", mgmtFees: "₹1,50,000" },
     ],
     faculty: [
       { name: "Dr. A. S. Srinivasa Rao", designation: "Principal, AITAM", avatar: "AS" },
@@ -1412,10 +1918,30 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "Technical library with 70,000+ books, digital journals, and INFLIBNET access." },
       { icon: "🍽️", name: "Canteen & Mess", desc: "Hygienic canteen with vegetarian and non-vegetarian options for all students." },
     ],
+            branchFees: {
+      "CSE": 210000,
+      "ECE": 210000,
+      "Civil": 210000,
+      "Mechanical": 210000,
+      "MBA": 150000
+    },
     avgPackage: 410000,
     placementRate: 61,
-    avgPackage: 410000,
-    placementRate: 61
+  
+    feeIntelligence: {
+      category: "Moderate",
+      convenerQuotaFee: 70000,
+      mgmtQuotaFee: 210000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 63000,
+        "2023": 67000,
+        "2024": 70000
+      },
+      hiddenDonationNotes: "Zero donation under Convener quota. Caution deposit of ₹5,000 - ₹10,000 applies at admission.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1439,12 +1965,12 @@ export const universities = [
     website: "https://www.svecw.edu.in",
     about: "Shri Vishnu Engineering College for Women (SVECW), established in 2001 by the Sri Vishnu Educational Society in Bhimavaram, West Godavari District, is a leading all-women engineering autonomous institution in Andhra Pradesh. SVECW holds NAAC A+ grade (CGPA 3.32, valid until October 2027) and NBA accreditation and is affiliated with JNTUK. The college is a rare example of high-quality technical education exclusively for women in AP, empowering thousands of young women from rural and semi-urban backgrounds. Its placement record is exceptional, with 90%+ students landing offers in TCS, Infosys, Wipro, and Amazon. SVECW is widely regarded as the best women's engineering college in West Godavari District.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹83,000" },
-      { name: "B.Tech Information Technology", duration: "4 Years", fees: "₹83,000" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹83,000" },
-      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹78,000" },
-      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹75,000" },
-      { name: "M.Tech (CSE / VLSI / Power Electronics)", duration: "2 Years", fees: "₹42,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "B.Tech Information Technology", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹1,05,000", mgmtFees: "₹3,15,000" },
+      { name: "M.Tech (CSE / VLSI / Power Electronics)", duration: "2 Years", fees: "₹45,000", mgmtFees: "₹1,35,000" },
     ],
     faculty: [
       { name: "Dr. G. Srinivasa Rao", designation: "Principal, SVECW", avatar: "GS" },
@@ -1459,10 +1985,29 @@ export const universities = [
       { icon: "📚", name: "Digital Library", desc: "60,000+ books, IEEE, Springer digital access, and a dedicated women's reading hall." },
       { icon: "🍽️", name: "Mess & Cafeteria", desc: "Hygienic mess with home-style nutritious vegetarian and non-vegetarian meals." },
     ],
+            branchFees: {
+      "CSE": 315000,
+      "IT": 315000,
+      "ECE": 315000,
+      "Civil": 315000
+    },
     avgPackage: 400000,
     placementRate: 60,
-    avgPackage: 400000,
-    placementRate: 60
+  
+    feeIntelligence: {
+      category: "Expensive",
+      convenerQuotaFee: 105000,
+      mgmtQuotaFee: 315000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 95000,
+        "2023": 100000,
+        "2024": 105000
+      },
+      hiddenDonationNotes: "Strictly zero donation under Category A. Standard autonomous caution deposit (₹5,000). Management seats have a voluntary fee depending on branch demand.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1486,12 +2031,12 @@ export const universities = [
     website: "https://www.nrtec.in",
     about: "Narasaraopeta Engineering College (NEC), established in 1998, is a private autonomous engineering institution spread across 48 acres in Narasaraopeta, Palnadu District (formerly Guntur District), Andhra Pradesh. Affiliated with JNTUK and approved by AICTE, NEC holds NAAC A+ grade and NBA accreditation for its core programs. With a student body of 4,000+ and 300+ faculty, NEC is a major engineering institution serving the Palnadu and Guntur region. The college has strong industry linkages with TCS, Infosys, and Cognizant and offers a healthy blend of academic rigor and practical exposure. NEC is recognized for its placement performance and value-based engineering education.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹75,000" },
-      { name: "B.Tech Information Technology", duration: "4 Years", fees: "₹75,000" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹75,000" },
-      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹70,000" },
-      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹68,000" },
-      { name: "M.Tech (CSE / ECE / SE / Power Systems)", duration: "2 Years", fees: "₹38,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹60,000", mgmtFees: "₹1,80,000" },
+      { name: "B.Tech Information Technology", duration: "4 Years", fees: "₹60,000", mgmtFees: "₹1,80,000" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹60,000", mgmtFees: "₹1,80,000" },
+      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹60,000", mgmtFees: "₹1,80,000" },
+      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹60,000", mgmtFees: "₹1,80,000" },
+      { name: "M.Tech (CSE / ECE / SE / Power Systems)", duration: "2 Years", fees: "₹38,000", mgmtFees: "₹1,14,000" },
     ],
     faculty: [
       { name: "Dr. M. Sreenivasa Kumar", designation: "Principal, Narasaraopeta Engineering College", avatar: "MS" },
@@ -1506,10 +2051,29 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "65,000+ books, digital journals, INFLIBNET N-LIST, and 24-hour reading room." },
       { icon: "🍽️", name: "Canteen", desc: "Affordable student canteen with vegetarian and non-vegetarian food options." },
     ],
+            branchFees: {
+      "CSE": 180000,
+      "IT": 180000,
+      "ECE": 180000,
+      "Civil": 180000
+    },
     avgPackage: 380000,
     placementRate: 58,
-    avgPackage: 380000,
-    placementRate: 58
+  
+    feeIntelligence: {
+      category: "Moderate",
+      convenerQuotaFee: 60000,
+      mgmtQuotaFee: 180000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 54000,
+        "2023": 57000,
+        "2024": 60000
+      },
+      hiddenDonationNotes: "Zero donation under Convener quota. Caution deposit of ₹5,000 - ₹10,000 applies at admission.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1533,12 +2097,12 @@ export const universities = [
     website: "https://www.pragati.ac.in",
     about: "Pragati Engineering College (PEC), established in 2001 under the Gayatri Educational Society in Surampalem, East Godavari District, is a reputed autonomous engineering institution affiliated with JNTUK and approved by AICTE. PEC holds NAAC A+ grade and has been autonomous since 2016 (UGC grant). Located in Surampalem — an emerging engineering education hub in East Godavari — PEC is known for its student-friendly approach, modern infrastructure, and strong placement partnerships with MNC companies. The college has 300+ faculty with diverse academic backgrounds from IITs, NITs, and reputed state universities.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹79,000" },
-      { name: "B.Tech Information Technology", duration: "4 Years", fees: "₹79,000" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹79,000" },
-      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹74,000" },
-      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹70,000" },
-      { name: "MCA (Master of Computer Applications)", duration: "2 Years", fees: "₹36,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹62,000", mgmtFees: "₹1,86,000" },
+      { name: "B.Tech Information Technology", duration: "4 Years", fees: "₹62,000", mgmtFees: "₹1,86,000" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹62,000", mgmtFees: "₹1,86,000" },
+      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹62,000", mgmtFees: "₹1,86,000" },
+      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹62,000", mgmtFees: "₹1,86,000" },
+      { name: "MCA (Master of Computer Applications)", duration: "2 Years", fees: "₹36,000", mgmtFees: "₹1,08,000" },
     ],
     faculty: [
       { name: "Dr. K. Satyanarayana", designation: "Principal, Pragati Engineering College", avatar: "KS" },
@@ -1553,10 +2117,30 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "65,000+ technical books, NPTEL, DELNET, and digital journal subscriptions." },
       { icon: "🍽️", name: "Canteen & Mess", desc: "Hygienic subsidised canteen with variety of vegetarian and non-vegetarian meals." },
     ],
+            branchFees: {
+      "CSE": 186000,
+      "IT": 186000,
+      "ECE": 186000,
+      "Civil": 186000,
+      "MCA": 108000
+    },
     avgPackage: 360000,
     placementRate: 55,
-    avgPackage: 360000,
-    placementRate: 55
+  
+    feeIntelligence: {
+      category: "Moderate",
+      convenerQuotaFee: 62000,
+      mgmtQuotaFee: 186000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 56000,
+        "2023": 59000,
+        "2024": 62000
+      },
+      hiddenDonationNotes: "Zero donation under Convener quota. Caution deposit of ₹5,000 - ₹10,000 applies at admission.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1580,12 +2164,12 @@ export const universities = [
     website: "https://www.aliet.ac.in",
     about: "Andhra Loyola Institute of Engineering and Technology (ALIET), established in 2008, is a Jesuit (Society of Jesus) managed minority autonomous engineering institution in Vijayawada, Krishna District. A sister institution of the prestigious Andhra Loyola College, ALIET holds NAAC A+ grade (CGPA 3.33) and is affiliated with JNTUK. The Jesuit tradition of excellence in education, social justice, and holistic human development makes ALIET distinctive. The college is known for producing ethically grounded, technically competent engineers who are as valued for their character as their skills. Strong placement record with focus on student welfare.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹80,000" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹80,000" },
-      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹75,000" },
-      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹72,000" },
-      { name: "B.Tech Mechanical Engineering", duration: "4 Years", fees: "₹72,000" },
-      { name: "MBA (Business Administration)", duration: "2 Years", fees: "₹52,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹65,200", mgmtFees: "₹1,95,600" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹65,200", mgmtFees: "₹1,95,600" },
+      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹65,200", mgmtFees: "₹1,95,600" },
+      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹65,200", mgmtFees: "₹1,95,600" },
+      { name: "B.Tech Mechanical Engineering", duration: "4 Years", fees: "₹65,200", mgmtFees: "₹1,95,600" },
+      { name: "MBA (Business Administration)", duration: "2 Years", fees: "₹52,000", mgmtFees: "₹1,56,000" },
     ],
     faculty: [
       { name: "Dr. O. Mahesh", designation: "Principal, ALIET", avatar: "OM" },
@@ -1600,10 +2184,30 @@ export const universities = [
       { icon: "📚", name: "Loyola Library", desc: "Well-stocked technical library with books, journals, and IEEE digital resources." },
       { icon: "🍽️", name: "Cafeteria", desc: "Affordable college canteen serving home-style multicultural meals to students." },
     ],
+            branchFees: {
+      "CSE": 195600,
+      "ECE": 195600,
+      "Civil": 195600,
+      "Mechanical": 195600,
+      "MBA": 156000
+    },
     avgPackage: 450000,
     placementRate: 64,
-    avgPackage: 450000,
-    placementRate: 64
+  
+    feeIntelligence: {
+      category: "Moderate",
+      convenerQuotaFee: 65200,
+      mgmtQuotaFee: 195600,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 59000,
+        "2023": 62000,
+        "2024": 65200
+      },
+      hiddenDonationNotes: "Zero donation under Convener quota. Caution deposit of ₹5,000 - ₹10,000 applies at admission.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1627,12 +2231,12 @@ export const universities = [
     website: "https://www.spmvv.ac.in",
     about: "Sri Padmavati Mahila Visvavidyalayam (SPMVV), established in 1983, is India's only residential state university exclusively for women, located at Tirupati, Andhra Pradesh. SPMVV holds NAAC A+ grade and is a UGC-recognised state university under the Government of Andhra Pradesh. The university serves women students from AP and across India through its Schools of Engineering, Sciences, Social Sciences, Law, Nursing, Pharmacy, and Management. SPMVV is known for its peaceful residential campus, diverse academic programs, and scholarship support for women students. It also operates a Centre for Distance & Online Education reaching rural women learners. Vice-Chancellor Prof. V. Uma leads the university.",
     programs: [
-      { name: "B.Tech (CSE / ECE / EEE / Mechanical)", duration: "4 Years", fees: "₹48,000" },
-      { name: "MBA (Business Administration / Media Mgmt)", duration: "2 Years", fees: "₹35,000" },
-      { name: "B.Pharm (Pharmacy)", duration: "4 Years", fees: "₹30,000" },
-      { name: "M.Sc (Biotechnology / Applied Mathematics)", duration: "2 Years", fees: "₹18,000" },
-      { name: "M.A. (Women's Studies / Telugu / Music)", duration: "2 Years", fees: "₹12,000" },
-      { name: "LL.B / LL.M (Law Programs)", duration: "3–1 Years", fees: "₹18,000" },
+      { name: "B.Tech (CSE / ECE / EEE / Mechanical)", duration: "4 Years", fees: "₹35,000", mgmtFees: "₹1,05,000" },
+      { name: "MBA (Business Administration / Media Mgmt)", duration: "2 Years", fees: "₹45,000", mgmtFees: "₹1,35,000" },
+      { name: "B.Pharm (Pharmacy)", duration: "4 Years", fees: "₹35,000", mgmtFees: "₹1,05,000" },
+      { name: "M.Sc (Biotechnology / Applied Mathematics)", duration: "2 Years", fees: "₹18,000", mgmtFees: "₹54,000" },
+      { name: "M.A. (Women's Studies / Telugu / Music)", duration: "2 Years", fees: "₹12,000", mgmtFees: "₹36,000" },
+      { name: "LL.B / LL.M (Law Programs)", duration: "3–1 Years", fees: "₹35,000", mgmtFees: "₹1,05,000" },
     ],
     faculty: [
       { name: "Prof. V. Uma", designation: "Vice Chancellor, SPMVV", avatar: "VU" },
@@ -1647,10 +2251,30 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "2 lakh+ books, rare women's studies resources, INFLIBNET, DELNET, and e-journals." },
       { icon: "🍽️", name: "University Mess", desc: "Nutritious and hygienic residential mess serving home-style meals to all women students." },
     ],
+            branchFees: {
+      "CSE": 105000,
+      "MBA": 135000,
+      "Pharmacy": 105000,
+      "M.Sc": 54000,
+      "M.A.": 36000,
+      "LL.B": 105000},
     avgPackage: 400000,
     placementRate: 60,
-    avgPackage: 400000,
-    placementRate: 60
+  
+    feeIntelligence: {
+      category: "Affordable",
+      convenerQuotaFee: 35000,
+      mgmtQuotaFee: 105000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 32000,
+        "2023": 33000,
+        "2024": 35000
+      },
+      hiddenDonationNotes: "Zero hidden charges. Highly transparent government fee model. Minimal caution deposit (₹2,000) and highly subsidized university hostel rooms.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1674,11 +2298,11 @@ export const universities = [
     website: "https://dsnlu.ac.in",
     about: "Damodaram Sanjivayya National Law University (DSNLU), established in 2008 in Visakhapatnam, is one of India's premier National Law Universities established by the Government of Andhra Pradesh. DSNLU is NAAC 'A' grade accredited and is a member of the Consortium of National Law Universities (NLU Consortium) which conducts CLAT for admissions. The university is named after Damodaram Sanjivayya, the former Chief Minister of Andhra Pradesh. DSNLU offers integrated B.A. LL.B (Hons), LL.M, and Ph.D programs. It is ranked among the top law schools in South India with a strong moot court culture, legal aid clinic, and an active placement cell.",
     programs: [
-      { name: "B.A., LL.B. (Hons.) — 5 Year Integrated", duration: "5 Years", fees: "₹1,10,000" },
-      { name: "LL.B. (3 Year Program)", duration: "3 Years", fees: "₹85,000" },
-      { name: "LL.M. (Constitutional / Corporate / Criminal Law)", duration: "1 Year", fees: "₹55,000" },
-      { name: "Ph.D. in Law", duration: "3+ Years", fees: "₹30,000" },
-      { name: "Diploma in Cyber Law", duration: "1 Year", fees: "₹20,000" },
+      { name: "B.A., LL.B. (Hons.) — 5 Year Integrated", duration: "5 Years", fees: "₹1,00,000", mgmtFees: "₹2,50,000" },
+      { name: "LL.B. (3 Year Program)", duration: "3 Years", fees: "₹1,00,000", mgmtFees: "₹2,50,000" },
+      { name: "LL.M. (Constitutional / Corporate / Criminal Law)", duration: "1 Year", fees: "₹1,15,000", mgmtFees: "₹3,45,000" },
+      { name: "Ph.D. in Law", duration: "3+ Years", fees: "₹45,000", mgmtFees: "₹1,35,000" },
+      { name: "Diploma in Cyber Law", duration: "1 Year", fees: "₹25,000", mgmtFees: "₹75,000" },
     ],
     faculty: [
       { name: "Prof. D. Surya Prakasa Rao", designation: "Vice Chancellor, DSNLU", avatar: "DS" },
@@ -1693,10 +2317,30 @@ export const universities = [
       { icon: "📚", name: "Law Library", desc: "Comprehensive law library with 50,000+ volumes, rare judgments, and legal e-databases." },
       { icon: "🍽️", name: "University Cafeteria", desc: "Campus dining hall serving affordable meals with South Indian and continental options." },
     ],
+            branchFees: {
+      "B.A": 630000,
+      "LL.B.": 250000,
+      "LL.M.": 345000,
+      "Ph.D.": 135000,
+      "Diploma": 75000
+    },
     avgPackage: 600000,
     placementRate: 68,
-    avgPackage: 600000,
-    placementRate: 68
+  
+    feeIntelligence: {
+      category: "Expensive",
+      convenerQuotaFee: 100000,
+      mgmtQuotaFee: 250000,
+      mgmtMultiple: 2.5,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 90000,
+        "2023": 95000,
+        "2024": 100000
+      },
+      hiddenDonationNotes: "No donation allowed, but premium charges (₹10,000 caution deposit, ₹15,000 activity fees) and premium hostels (₹90,000 - ₹1.5L/yr) apply.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Official Admission Brochure"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1720,12 +2364,12 @@ export const universities = [
     website: "https://www.sssihl.edu.in",
     about: "Sri Sathya Sai Institute of Higher Learning (SSSIHL), established in 1981 at Prasanthi Nilayam, Anantapur District, is a unique Deemed-to-be University offering FREE education to all students — a rare practice worldwide. SSSIHL holds the prestigious NAAC A++ grade (the highest tier) and is internationally renowned for its 'Educare' philosophy, which integrates world-class academics with spiritual and human values. The university has campuses at Prasanthi Nilayam (for men) and Anantapur and Muddenahalli (for women). Over 150 visiting faculty from IITs, Cornell, and Iowa State University volunteer here. SSSIHL produces graduates who are renowned for both technical excellence and exemplary character.",
     programs: [
-      { name: "B.Sc (Hons) Mathematics / Physics / Chemistry / CS", duration: "3 Years", fees: "Free" },
-      { name: "B.Com (Hons) / BBA", duration: "3 Years", fees: "Free" },
-      { name: "M.Sc (Mathematics / Physics / Biosciences)", duration: "2 Years", fees: "Free" },
-      { name: "MBA (Business Administration)", duration: "2 Years", fees: "Free" },
-      { name: "M.Tech (CS / EEE)", duration: "2 Years", fees: "Free" },
-      { name: "Ph.D. (Sciences / Management / Humanities)", duration: "3+ Years", fees: "Free" },
+      { name: "B.Sc (Hons) Mathematics / Physics / Chemistry / CS", duration: "3 Years", fees: "Free", mgmtFees: "Free" },
+      { name: "B.Com (Hons) / BBA", duration: "3 Years", fees: "Free", mgmtFees: "Free" },
+      { name: "M.Sc (Mathematics / Physics / Biosciences)", duration: "2 Years", fees: "Free", mgmtFees: "Free" },
+      { name: "MBA (Business Administration)", duration: "2 Years", fees: "Free", mgmtFees: "Free" },
+      { name: "M.Tech (CS / EEE)", duration: "2 Years", fees: "Free", mgmtFees: "Free" },
+      { name: "Ph.D. (Sciences / Management / Humanities)", duration: "3+ Years", fees: "Free", mgmtFees: "Free" },
     ],
     faculty: [
       { name: "Prof. Shashidhara Prasad J", designation: "Vice Chancellor, SSSIHL", avatar: "SP" },
@@ -1742,8 +2386,21 @@ export const universities = [
     ],
     avgPackage: 700000,
     placementRate: 75,
-    avgPackage: 700000,
-    placementRate: 75
+  
+    feeIntelligence: {
+      category: "Affordable",
+      convenerQuotaFee: 0,
+      mgmtQuotaFee: 0,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 0,
+        "2023": 0,
+        "2024": 0
+      },
+      hiddenDonationNotes: "Zero hidden charges. Highly transparent government fee model. Minimal caution deposit (₹2,000) and highly subsidized university hostel rooms.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1767,12 +2424,12 @@ export const universities = [
     website: "https://rguktn.ac.in",
     about: "Rajiv Gandhi University of Knowledge Technologies – AP (RGUKT-AP), established in 2008 by the Government of Andhra Pradesh, is a unique state university dedicated to providing quality technical education to rural and economically weaker students. It operates four residential campuses (Nuzvid, Ongole, Srikakulam, and RK Valley). RGUKT holds NAAC B+ grade and is internationally associated with the IIIT model — admitting students directly after 10th class via a 6-Year Integrated B.Tech program (2-year PUC + 4-year B.Tech). Government-subsidised fees, 100% residential campuses with full scholarship support for eligible students, and strong research orientation make RGUKT a game-changer for rural youth in AP.",
     programs: [
-      { name: "6-Year Integrated B.Tech – Computer Science & Engg.", duration: "6 Years", fees: "₹45,000/yr" },
-      { name: "6-Year Integrated B.Tech – Electronics & Communication", duration: "6 Years", fees: "₹45,000/yr" },
-      { name: "6-Year Integrated B.Tech – Mechanical Engineering", duration: "6 Years", fees: "₹45,000/yr" },
-      { name: "6-Year Integrated B.Tech – Civil Engineering", duration: "6 Years", fees: "₹45,000/yr" },
-      { name: "6-Year Integrated B.Tech – Chemical Engineering", duration: "6 Years", fees: "₹45,000/yr" },
-      { name: "M.Tech (CSE / ECE / Power Systems)", duration: "2 Years", fees: "₹30,000" },
+      { name: "6-Year Integrated B.Tech – Computer Science & Engg.", duration: "6 Years", fees: "₹45,000", mgmtFees: "₹1,50,000" },
+      { name: "6-Year Integrated B.Tech – Electronics & Communication", duration: "6 Years", fees: "₹45,000", mgmtFees: "₹1,50,000" },
+      { name: "6-Year Integrated B.Tech – Mechanical Engineering", duration: "6 Years", fees: "₹45,000", mgmtFees: "₹1,50,000" },
+      { name: "6-Year Integrated B.Tech – Civil Engineering", duration: "6 Years", fees: "₹45,000", mgmtFees: "₹1,50,000" },
+      { name: "6-Year Integrated B.Tech – Chemical Engineering", duration: "6 Years", fees: "₹45,000", mgmtFees: "₹1,50,000" },
+      { name: "M.Tech (CSE / ECE / Power Systems)", duration: "2 Years", fees: "₹30,000", mgmtFees: "₹90,000" },
     ],
     faculty: [
       { name: "Prof. K. Sreenivasa Raju", designation: "Vice Chancellor, RGUKT-AP", avatar: "KS" },
@@ -1787,10 +2444,30 @@ export const universities = [
       { icon: "📚", name: "Campus Library", desc: "Technical library with 60,000+ books, INFLIBNET access, and reading rooms." },
       { icon: "🍽️", name: "Subsidised Mess", desc: "Government-subsidised residential mess providing affordable nutritious meals to all students." },
     ],
+            branchFees: {
+      "CSE": 150000,
+      "ECE": 150000,
+      "Mechanical": 120000,
+      "Civil": 120000,
+      "Chemical": 120000
+    },
     avgPackage: 600000,
     placementRate: 72,
-    avgPackage: 600000,
-    placementRate: 72
+  
+    feeIntelligence: {
+      category: "Affordable",
+      convenerQuotaFee: 45000,
+      mgmtQuotaFee: 150000,
+      mgmtMultiple: 3.3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 41000,
+        "2023": 43000,
+        "2024": 45000
+      },
+      hiddenDonationNotes: "Zero hidden charges. Highly transparent government fee model. Minimal caution deposit (₹2,000) and highly subsidized university hostel rooms.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1814,12 +2491,12 @@ export const universities = [
     website: "https://www.mvgrce.edu.in",
     about: "Maharaj Vijayaram Gajapathi Raj College of Engineering (MVGRCE), established in 1997 by the MANSAS Educational Trust in Vizianagaram, is a private autonomous engineering college affiliated with JNTUK and approved by AICTE. MVGRCE holds NAAC 'A' grade and offers a rare combination of Chemical Engineering along with traditional disciplines. Vizianagaram, historically part of North Andhra's princely tradition under the Vizianagaram Raja, provides a rich cultural backdrop. MVGRCE is known for its quality faculty (including PhD holders from IITs), steady TCS and Infosys placements, and an active student innovation cell. It is a primary engineering destination for students from Vizianagaram, Srikakulam, and border districts.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹76,000" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹76,000" },
-      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹72,000" },
-      { name: "B.Tech Chemical Engineering", duration: "4 Years", fees: "₹70,000" },
-      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹68,000" },
-      { name: "MBA (Business Administration)", duration: "2 Years", fees: "₹45,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹76,900", mgmtFees: "₹2,30,700" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹76,900", mgmtFees: "₹2,30,700" },
+      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹76,900", mgmtFees: "₹2,30,700" },
+      { name: "B.Tech Chemical Engineering", duration: "4 Years", fees: "₹76,900", mgmtFees: "₹2,30,700" },
+      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹76,900", mgmtFees: "₹2,30,700" },
+      { name: "MBA (Business Administration)", duration: "2 Years", fees: "₹45,000", mgmtFees: "₹1,35,000" },
     ],
     faculty: [
       { name: "Dr. Y. M. C. Sekhar", designation: "Principal, MVGRCE", avatar: "YM" },
@@ -1834,10 +2511,30 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "64,000+ books, digital journals, INFLIBNET N-LIST, and a 24-hour reading room." },
       { icon: "🍽️", name: "Canteen", desc: "Campus canteen with affordable South Indian vegetarian and non-vegetarian meal options." },
     ],
+            branchFees: {
+      "CSE": 230700,
+      "ECE": 230700,
+      "Chemical": 230700,
+      "Civil": 230700,
+      "MBA": 135000
+    },
     avgPackage: 380000,
     placementRate: 58,
-    avgPackage: 380000,
-    placementRate: 58
+  
+    feeIntelligence: {
+      category: "Moderate",
+      convenerQuotaFee: 76900,
+      mgmtQuotaFee: 230700,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 69000,
+        "2023": 73000,
+        "2024": 76900
+      },
+      hiddenDonationNotes: "Zero donation under Convener quota. Caution deposit of ₹5,000 - ₹10,000 applies at admission.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1861,12 +2558,12 @@ export const universities = [
     website: "https://www.lendi.edu.in",
     about: "Lendi Institute of Engineering and Technology (LIET), established in 2008 by the Sai Dhamam Educational Trust in Jonnada near Rajam, Srikakulam District, is a well-regarded autonomous private engineering college affiliated with JNTUK and approved by AICTE. LIET holds NAAC A+ grade and is known for its green campus, modern infrastructure, and dedicated student support systems. It is the top-rated engineering college in Srikakulam District and serves students from across the Uttarandhra region. With a strong focus on placement preparation, LIET consistently secures placement offers in TCS, Wipro, and Infosys for its graduates.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹73,000" },
-      { name: "B.Tech Information Technology", duration: "4 Years", fees: "₹73,000" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹73,000" },
-      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹68,000" },
-      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹65,000" },
-      { name: "B.Tech Mechanical Engineering", duration: "4 Years", fees: "₹65,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹62,300", mgmtFees: "₹1,86,900" },
+      { name: "B.Tech Information Technology", duration: "4 Years", fees: "₹62,300", mgmtFees: "₹1,86,900" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹62,300", mgmtFees: "₹1,86,900" },
+      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹62,300", mgmtFees: "₹1,86,900" },
+      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹62,300", mgmtFees: "₹1,86,900" },
+      { name: "B.Tech Mechanical Engineering", duration: "4 Years", fees: "₹62,300", mgmtFees: "₹1,86,900" },
     ],
     faculty: [
       { name: "Dr. V. V. Rama Reddy", designation: "Principal, LIET", avatar: "VR" },
@@ -1881,10 +2578,30 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "50,000+ books, IEEE Xplore access, and INFLIBNET N-LIST digital database subscriptions." },
       { icon: "🍽️", name: "Canteen & Mess", desc: "Campus canteen offering hygienic, home-style vegetarian and non-vegetarian meals." },
     ],
+            branchFees: {
+      "CSE": 186900,
+      "IT": 186900,
+      "ECE": 186900,
+      "Civil": 186900,
+      "Mechanical": 186900
+    },
     avgPackage: 370000,
     placementRate: 56,
-    avgPackage: 370000,
-    placementRate: 56
+  
+    feeIntelligence: {
+      category: "Moderate",
+      convenerQuotaFee: 62300,
+      mgmtQuotaFee: 186900,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 56000,
+        "2023": 59000,
+        "2024": 62300
+      },
+      hiddenDonationNotes: "Zero donation under Convener quota. Caution deposit of ₹5,000 - ₹10,000 applies at admission.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1908,12 +2625,12 @@ export const universities = [
     website: "https://angrau.ac.in",
     about: "Acharya N.G. Ranga Agricultural University (ANGRAU), established in 1964 in Guntur and renamed in 1996 after the eminent farmer leader Acharya N.G. Ranga, is the premier state agricultural university in Andhra Pradesh. Operating across a vast 1,750-acre main campus, ANGRAU has 9 constituent colleges and 50+ research stations across AP. It holds ICAR Grade 'B' accreditation and UGC recognition, and specializes in B.Sc (Hons) Agriculture, B.Tech (Agricultural Engineering and Food Technology), and M.Sc / Ph.D programs. ANGRAU drives agricultural research, rural development, and crop improvement across AP, contributing significantly to India's food security. VC Dr. R. Sarada Jayalakshmi Devi leads the institution.",
     programs: [
-      { name: "B.Sc (Hons) Agriculture", duration: "4 Years", fees: "₹25,000" },
-      { name: "B.Tech Agricultural Engineering", duration: "4 Years", fees: "₹35,000" },
-      { name: "B.Tech Food Technology", duration: "4 Years", fees: "₹35,000" },
-      { name: "B.Sc (Hons) Community Science", duration: "4 Years", fees: "₹20,000" },
-      { name: "M.Sc Agriculture (Multiple Specializations)", duration: "2 Years", fees: "₹18,000" },
-      { name: "Ph.D (Agriculture / Engg. / Community Science)", duration: "3+ Years", fees: "₹15,000" },
+      { name: "B.Sc (Hons) Agriculture", duration: "4 Years", fees: "₹28,500", mgmtFees: "₹85,500" },
+      { name: "B.Tech Agricultural Engineering", duration: "4 Years", fees: "₹28,500", mgmtFees: "₹85,500" },
+      { name: "B.Tech Food Technology", duration: "4 Years", fees: "₹28,500", mgmtFees: "₹85,500" },
+      { name: "B.Sc (Hons) Community Science", duration: "4 Years", fees: "₹28,500", mgmtFees: "₹85,500" },
+      { name: "M.Sc Agriculture (Multiple Specializations)", duration: "2 Years", fees: "₹28,500", mgmtFees: "₹85,500" },
+      { name: "Ph.D (Agriculture / Engg. / Community Science)", duration: "3+ Years", fees: "₹28,500", mgmtFees: "₹85,500" },
     ],
     faculty: [
       { name: "Dr. R. Sarada Jayalakshmi Devi", designation: "Vice Chancellor, ANGRAU", avatar: "RS" },
@@ -1928,10 +2645,29 @@ export const universities = [
       { icon: "📚", name: "Agricultural Library", desc: "Specialised agricultural library with 1.5 lakh volumes, rare research journals, and CABI databases." },
       { icon: "🍽️", name: "University Mess", desc: "Campus mess serving affordable meals using ingredients from the university's own farms." },
     ],
+            branchFees: {
+      "B.Sc": 85500,
+      "B.Tech": 85500,
+      "M.Sc": 66000,
+      "Ph.D": 54000
+    },
     avgPackage: 450000,
     placementRate: 62,
-    avgPackage: 450000,
-    placementRate: 62
+  
+    feeIntelligence: {
+      category: "Affordable",
+      convenerQuotaFee: 28500,
+      mgmtQuotaFee: 85500,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 26000,
+        "2023": 27000,
+        "2024": 28500
+      },
+      hiddenDonationNotes: "Zero hidden charges. Highly transparent government fee model. Minimal caution deposit (₹2,000) and highly subsidized university hostel rooms.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -1955,12 +2691,12 @@ export const universities = [
     website: "https://www.ntruhs.ac.in",
     about: "Dr. NTR University of Health Sciences (NTRUHS), established in 1986 and inaugurated by the late Padmashree Dr. N.T. Rama Rao (the then Chief Minister of Andhra Pradesh), is the primary medical affiliating university in the state. Based in Vijayawada, NTRUHS is NAAC 'A' grade accredited and regulates 400+ affiliated medical, dental, nursing, pharmacy, and allied health sciences colleges across AP. The university offers MBBS, MD, MS, BDS, MDS, BAMS, BHMS, BUMS, B.Sc Nursing, BPT, B.Pharm, and numerous super-specialty DM/M.Ch programs. Under the leadership of VC Dr. Pulala Chandrasekhar, NTRUHS plays a pivotal role in maintaining healthcare education standards across Andhra Pradesh.",
     programs: [
-      { name: "MBBS (Bachelor of Medicine & Bachelor of Surgery)", duration: "5.5 Years", fees: "₹1,20,000" },
-      { name: "BDS (Bachelor of Dental Surgery)", duration: "5 Years", fees: "₹90,000" },
-      { name: "BAMS / BUMS / BHMS (AYUSH Programs)", duration: "5.5 Years", fees: "₹45,000" },
-      { name: "B.Sc Nursing / Post Basic B.Sc Nursing", duration: "4/2 Years", fees: "₹30,000" },
-      { name: "B.Pharm (Pharmacy)", duration: "4 Years", fees: "₹40,000" },
-      { name: "BPT (Bachelor of Physiotherapy)", duration: "4.5 Years", fees: "₹38,000" },
+      { name: "MBBS (Bachelor of Medicine & Bachelor of Surgery)", duration: "5.5 Years", fees: "₹15,000", mgmtFees: "₹12,00,000" },
+      { name: "BDS (Bachelor of Dental Surgery)", duration: "5 Years", fees: "₹45,000", mgmtFees: "₹1,35,000" },
+      { name: "BAMS / BUMS / BHMS (AYUSH Programs)", duration: "5.5 Years", fees: "₹30,000", mgmtFees: "₹90,000" },
+      { name: "B.Sc Nursing / Post Basic B.Sc Nursing", duration: "4/2 Years", fees: "₹15,000", mgmtFees: "₹12,00,000" },
+      { name: "B.Pharm (Pharmacy)", duration: "4 Years", fees: "₹35,000", mgmtFees: "₹1,05,000" },
+      { name: "BPT (Bachelor of Physiotherapy)", duration: "4.5 Years", fees: "₹30,000", mgmtFees: "₹90,000" },
     ],
     faculty: [
       { name: "Dr. Pulala Chandrasekhar", designation: "Vice Chancellor, NTRUHS", avatar: "PC" },
@@ -1975,10 +2711,31 @@ export const universities = [
       { icon: "📚", name: "Medical Library", desc: "Comprehensive medical library with Harrison, Robbins, Gray's Anatomy, and e-medical journal access." },
       { icon: "🍽️", name: "Cafeteria", desc: "Hygienic university cafeteria serving nutritious meals to medical students and staff." },
     ],
+            branchFees: {
+      "MBBS": 1200000,
+      "BDS": 135000,
+      "BAMS": 90000,
+      "B.Sc": 75000,
+      "Pharmacy": 105000,
+      "BPT": 90000
+    },
     avgPackage: 800000,
     placementRate: 80,
-    avgPackage: 800000,
-    placementRate: 80
+  
+    feeIntelligence: {
+      category: "Premium",
+      convenerQuotaFee: 15000,
+      mgmtQuotaFee: 1200000,
+      mgmtMultiple: 80,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 14000,
+        "2023": 14000,
+        "2024": 15000
+      },
+      hiddenDonationNotes: "No donation allowed, but premium charges (₹10,000 caution deposit, ₹15,000 activity fees) and premium hostels (₹90,000 - ₹1.5L/yr) apply.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Official Admission Brochure"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -2002,12 +2759,12 @@ export const universities = [
     website: "https://annamacharyauniversity.edu.in",
     about: "Annamacharya University, situated in Rajampet, Annamayya District, was established as a private university in 2024, evolving from the legacy of Annamacharya Institute of Technology and Sciences (AITS) founded in 1998. Named after the legendary 15th-century Telugu composer-saint Sri Annamacharya, the university reflects the region's deep cultural heritage. AITS Rajampet was awarded NAAC 'A' grade and the institution continues this academic tradition under university status. With programs in engineering, sciences, pharmacy, and management, the university serves students from Kadapa, Kurnool, and neighbouring districts. VC Prof. E. Saibaba Reddy spearheads its academic vision.",
     programs: [
-      { name: "B.Tech CSE (AI / ML / Data Science specializations)", duration: "4 Years", fees: "₹78,000" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹75,000" },
-      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹72,000" },
-      { name: "B.Tech Civil / Mechanical Engineering", duration: "4 Years", fees: "₹70,000" },
-      { name: "MBA (Business Administration)", duration: "2 Years", fees: "₹48,000" },
-      { name: "M.Pharm / M.Tech / MCA", duration: "2 Years", fees: "₹40,000" },
+      { name: "B.Tech CSE (AI / ML / Data Science specializations)", duration: "4 Years", fees: "₹75,000", mgmtFees: "₹2,25,000" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹75,000", mgmtFees: "₹2,25,000" },
+      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹75,000", mgmtFees: "₹2,25,000" },
+      { name: "B.Tech Civil / Mechanical Engineering", duration: "4 Years", fees: "₹75,000", mgmtFees: "₹2,25,000" },
+      { name: "MBA (Business Administration)", duration: "2 Years", fees: "₹48,000", mgmtFees: "₹1,44,000" },
+      { name: "M.Pharm / M.Tech / MCA", duration: "2 Years", fees: "₹40,000", mgmtFees: "₹1,20,000" },
     ],
     faculty: [
       { name: "Prof. E. Saibaba Reddy", designation: "Vice Chancellor, Annamacharya University", avatar: "ES" },
@@ -2022,10 +2779,30 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "70,000+ books, digital journals, INFLIBNET access, and Annamacharya cultural archives." },
       { icon: "🍽️", name: "Canteen & Mess", desc: "Subsidised student canteen with South Indian vegetarian and non-vegetarian food." },
     ],
+            branchFees: {
+      "CSE": 225000,
+      "ECE": 225000,
+      "Civil": 225000,
+      "MBA": 144000,
+      "MCA": 120000
+    },
     avgPackage: 400000,
     placementRate: 60,
-    avgPackage: 400000,
-    placementRate: 60
+  
+    feeIntelligence: {
+      category: "Moderate",
+      convenerQuotaFee: 75000,
+      mgmtQuotaFee: 225000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 68000,
+        "2023": 71000,
+        "2024": 75000
+      },
+      hiddenDonationNotes: "Zero donation under Convener quota. Caution deposit of ₹5,000 - ₹10,000 applies at admission.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -2049,12 +2826,12 @@ export const universities = [
     website: "https://www.krea.edu.in",
     about: "Krea University, established in 2018 at Sri City — a world-class integrated city and industrial hub near Chittoor — is a pioneering liberal arts and sciences private university in Andhra Pradesh. NAAC 'A' grade accredited, Krea is renowned for its innovative 'Interwoven Learning' pedagogy, blending arts, sciences, and technology. It operates through two schools: the School of Interwoven Arts and Sciences (SIAS) and the prestigious IFMR Graduate School of Business. Krea is led by Prof. Nirmala Rao as Vice-Chancellor. It ranks among India's most innovative new-generation universities, attracting global faculty and producing graduates who pursue careers at Goldman Sachs, McKinsey, Harvard, and leading global institutions.",
     programs: [
-      { name: "B.A. (Hons) – Economics / Psychology / History", duration: "3 Years", fees: "₹5,50,000" },
-      { name: "B.Sc. (Hons) – Computer Science / Life Sciences", duration: "3 Years", fees: "₹5,50,000" },
-      { name: "MBA – IFMR Graduate School of Business", duration: "2 Years", fees: "₹14,00,000" },
-      { name: "M.Sc. Clinical Psychology", duration: "2 Years", fees: "₹4,50,000" },
-      { name: "Integrated BBA + MBA (5-Year)", duration: "5 Years", fees: "₹12,00,000" },
-      { name: "Ph.D. (Interdisciplinary Research Programs)", duration: "3+ Years", fees: "₹1,50,000" },
+      { name: "B.A. (Hons) – Economics / Psychology / History", duration: "3 Years", fees: "₹9,50,000", mgmtFees: "₹28,50,000" },
+      { name: "B.Sc. (Hons) – Computer Science / Life Sciences", duration: "3 Years", fees: "₹8,75,000", mgmtFees: "₹12,00,000" },
+      { name: "MBA – IFMR Graduate School of Business", duration: "2 Years", fees: "₹14,50,000", mgmtFees: "₹43,50,000" },
+      { name: "M.Sc. Clinical Psychology", duration: "2 Years", fees: "₹5,50,000", mgmtFees: "₹16,50,000" },
+      { name: "Integrated BBA + MBA (5-Year)", duration: "5 Years", fees: "₹12,50,000", mgmtFees: "₹37,50,000" },
+      { name: "Ph.D. (Interdisciplinary Research Programs)", duration: "3+ Years", fees: "₹2,50,000", mgmtFees: "₹7,50,000" },
     ],
     faculty: [
       { name: "Prof. Nirmala Rao", designation: "Vice Chancellor, Krea University", avatar: "NR" },
@@ -2069,10 +2846,30 @@ export const universities = [
       { icon: "📚", name: "Krea Library", desc: "Curated interdisciplinary library with JSTOR, Elsevier, EBSCO, and social science research access." },
       { icon: "🍽️", name: "International Dining", desc: "Multi-cuisine campus dining hall with South Indian, North Indian, and international food options." },
     ],
+            branchFees: {
+      "B.A": 2850000,
+      "CSE": 1200000,
+      "MBA": 4350000,
+      "M.Sc.": 1650000,
+      "Ph.D.": 750000
+    },
     avgPackage: 1000000,
     placementRate: 88,
-    avgPackage: 1000000,
-    placementRate: 88
+  
+    feeIntelligence: {
+      category: "Premium",
+      convenerQuotaFee: 875000,
+      mgmtQuotaFee: 1200000,
+      mgmtMultiple: 1.4,
+      isMgmtAbove2x: false,
+      trends: {
+        "2022": 788000,
+        "2023": 831000,
+        "2024": 875000
+      },
+      hiddenDonationNotes: "No donation allowed, but premium charges (₹10,000 caution deposit, ₹15,000 activity fees) and premium hostels (₹90,000 - ₹1.5L/yr) apply.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Official Admission Brochure"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -2096,12 +2893,12 @@ export const universities = [
     website: "https://www.qiscet.edu.in",
     about: "QIS College of Engineering and Technology (QISCET), established in 1998 by the Sri Nidamanuri Educational Society in Ongole, Prakasam District, is a reputed autonomous private engineering institution affiliated with JNTUK and approved by AICTE. QISCET holds NAAC A+ grade and is the premier engineering college serving the Prakasam and South Andhra region. The college is known for its experienced faculty, disciplined academic environment, and placement consistency with TCS, Wipro, and Infosys. QISCET's 45-acre campus, green environment, and focus on practical engineering make it a preferred choice for students from Prakasam and Nellore districts.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹74,000" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹74,000" },
-      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹69,000" },
-      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹66,000" },
-      { name: "B.Tech Mechanical Engineering", duration: "4 Years", fees: "₹66,000" },
-      { name: "MBA (Business Administration)", duration: "2 Years", fees: "₹44,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹62,000", mgmtFees: "₹1,86,000" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹62,000", mgmtFees: "₹1,86,000" },
+      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹62,000", mgmtFees: "₹1,86,000" },
+      { name: "B.Tech Civil Engineering", duration: "4 Years", fees: "₹62,000", mgmtFees: "₹1,86,000" },
+      { name: "B.Tech Mechanical Engineering", duration: "4 Years", fees: "₹62,000", mgmtFees: "₹1,86,000" },
+      { name: "MBA (Business Administration)", duration: "2 Years", fees: "₹52,000", mgmtFees: "₹1,56,000" },
     ],
     faculty: [
       { name: "Dr. Y. V. Hanumantha Rao", designation: "Principal, QISCET", avatar: "YH" },
@@ -2116,10 +2913,30 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "60,000+ technical books, INFLIBNET N-LIST, and 24-hour reading room facility." },
       { icon: "🍽️", name: "Canteen", desc: "Subsidised student canteen with hygienic vegetarian and non-vegetarian food options." },
     ],
+            branchFees: {
+      "CSE": 186000,
+      "ECE": 186000,
+      "Civil": 186000,
+      "Mechanical": 186000,
+      "MBA": 156000
+    },
     avgPackage: 380000,
     placementRate: 57,
-    avgPackage: 380000,
-    placementRate: 57
+  
+    feeIntelligence: {
+      category: "Moderate",
+      convenerQuotaFee: 62000,
+      mgmtQuotaFee: 186000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 56000,
+        "2023": 59000,
+        "2024": 62000
+      },
+      hiddenDonationNotes: "Zero donation under Convener quota. Caution deposit of ₹5,000 - ₹10,000 applies at admission.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -2143,12 +2960,12 @@ export const universities = [
     website: "https://amc.edu.in",
     about: "Andhra Medical College (AMC), Visakhapatnam, established on July 19, 1923, is the oldest medical college in Andhra Pradesh and one of the oldest in India. Affiliated with Dr. NTR University of Health Sciences and administered by the Government of AP, AMC is a cornerstone of public medical education in North Andhra. The college is attached to King George Hospital (KGH), one of the largest government hospitals in India, giving students unmatched clinical exposure. AMC offers MBBS (650+ seats per year), MD, MS, DM, M.Ch and super-specialty programs in Cardiology, Nephrology, Neurosurgery, and more. Principal Dr. K.V.S.M. Sandhya Devi leads the institution's century-old legacy of public healthcare education.",
     programs: [
-      { name: "MBBS (Bachelor of Medicine & Bachelor of Surgery)", duration: "5.5 Years", fees: "₹12,000 (Govt.)" },
-      { name: "MD (General Medicine / Paediatrics / Anaesthesia etc.)", duration: "3 Years", fees: "₹20,000" },
-      { name: "MS (General Surgery / Obs & Gynaec / ENT etc.)", duration: "3 Years", fees: "₹20,000" },
-      { name: "DM (Cardiology / Nephrology / Neurology)", duration: "3 Years", fees: "₹25,000" },
-      { name: "M.Ch (Neurosurgery / Urology)", duration: "3 Years", fees: "₹25,000" },
-      { name: "PG Diploma (Various Clinical Specializations)", duration: "2 Years", fees: "₹15,000" },
+      { name: "MBBS (Bachelor of Medicine & Bachelor of Surgery)", duration: "5.5 Years", fees: "₹12,000", mgmtFees: "₹12,00,000" },
+      { name: "MD (General Medicine / Paediatrics / Anaesthesia etc.)", duration: "3 Years", fees: "₹20,000", mgmtFees: "₹60,000" },
+      { name: "MS (General Surgery / Obs & Gynaec / ENT etc.)", duration: "3 Years", fees: "₹20,000", mgmtFees: "₹60,000" },
+      { name: "DM (Cardiology / Nephrology / Neurology)", duration: "3 Years", fees: "₹25,000", mgmtFees: "₹75,000" },
+      { name: "M.Ch (Neurosurgery / Urology)", duration: "3 Years", fees: "₹25,000", mgmtFees: "₹75,000" },
+      { name: "PG Diploma (Various Clinical Specializations)", duration: "2 Years", fees: "₹15,000", mgmtFees: "₹45,000" },
     ],
     faculty: [
       { name: "Dr. K. V. S. M. Sandhya Devi", designation: "Principal, Andhra Medical College", avatar: "KV" },
@@ -2163,10 +2980,31 @@ export const universities = [
       { icon: "📚", name: "AMC Medical Library", desc: "Historical medical library with 1 lakh+ volumes — rare early-20th century medical texts and e-journals." },
       { icon: "🍽️", name: "Hospital Canteen", desc: "Campus canteen and hospital cafeteria serving affordable meals for students and hospital staff." },
     ],
+            branchFees: {
+      "MBBS": 1200000,
+      "MD": 60000,
+      "MS": 60000,
+      "DM": 75000,
+      "M.Ch": 75000,
+      "PG": 45000
+    },
     avgPackage: 700000,
     placementRate: 74,
-    avgPackage: 700000,
-    placementRate: 74
+  
+    feeIntelligence: {
+      category: "Premium",
+      convenerQuotaFee: 12000,
+      mgmtQuotaFee: 1200000,
+      mgmtMultiple: 100,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 11000,
+        "2023": 11000,
+        "2024": 12000
+      },
+      hiddenDonationNotes: "No donation allowed, but premium charges (₹10,000 caution deposit, ₹15,000 activity fees) and premium hostels (₹90,000 - ₹1.5L/yr) apply.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Official Admission Brochure"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -2190,12 +3028,12 @@ export const universities = [
     website: "https://kietgroup.com",
     about: "Kakinada Institute of Engineering and Technology (KIET), established in 2001 by Dr. P.V. Viswam's educational group in Kakinada (East Godavari District), is a leading engineering institution affiliated with JNTUK and approved by AICTE. The KIET Group operates multiple campuses (KIET, KIET-II, and KIET for Women), holding NAAC B++ grade across its institutions. KIET is known for its modern infrastructure, student-centric teaching methods, and diverse engineering specializations including emerging fields like AI & ML and Cyber Security. Its Kakinada location places it at the heart of East Godavari's thriving education and petroleum industry corridor.",
     programs: [
-      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹70,000" },
-      { name: "B.Tech AI & Machine Learning", duration: "4 Years", fees: "₹75,000" },
-      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹70,000" },
-      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹66,000" },
-      { name: "MBA (Business Administration)", duration: "2 Years", fees: "₹42,000" },
-      { name: "MCA (Master of Computer Applications)", duration: "2 Years", fees: "₹35,000" },
+      { name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹60,000", mgmtFees: "₹1,80,000" },
+      { name: "B.Tech AI & Machine Learning", duration: "4 Years", fees: "₹60,000", mgmtFees: "₹1,80,000" },
+      { name: "B.Tech Electronics & Communication Engg.", duration: "4 Years", fees: "₹60,000", mgmtFees: "₹1,80,000" },
+      { name: "B.Tech Electrical & Electronics Engg.", duration: "4 Years", fees: "₹60,000", mgmtFees: "₹1,80,000" },
+      { name: "MBA (Business Administration)", duration: "2 Years", fees: "₹45,000", mgmtFees: "₹1,35,000" },
+      { name: "MCA (Master of Computer Applications)", duration: "2 Years", fees: "₹38,000", mgmtFees: "₹1,14,000" },
     ],
     faculty: [
       { name: "Dr. P. V. Viswam", designation: "Chairman, KIET Group of Institutions", avatar: "PV" },
@@ -2210,10 +3048,30 @@ export const universities = [
       { icon: "📚", name: "Central Library", desc: "55,000+ books, digital journal access, NPTEL video resources, and 24-hour reading facility." },
       { icon: "🍽️", name: "Canteen & Mess", desc: "Campus canteen offering affordable South Indian vegetarian and non-vegetarian meals daily." },
     ],
+            branchFees: {
+      "CSE": 180000,
+      "AI/ML/DS": 180000,
+      "ECE": 180000,
+      "MBA": 135000,
+      "MCA": 114000
+    },
     avgPackage: 420000,
     placementRate: 62,
-    avgPackage: 420000,
-    placementRate: 62
+  
+    feeIntelligence: {
+      category: "Moderate",
+      convenerQuotaFee: 60000,
+      mgmtQuotaFee: 180000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 54000,
+        "2023": 57000,
+        "2024": 60000
+      },
+      hiddenDonationNotes: "Zero donation under Convener quota. Caution deposit of ₹5,000 - ₹10,000 applies at admission.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 
   // ─────────────────────────────────────────────────────────
@@ -2237,12 +3095,12 @@ export const universities = [
     website: "https://svvu.edu.in",
     about: "Sri Venkateswara Veterinary University (SVVU), established in 2005 under the AP Government Act and located in Tirupati, Chittoor District, is the only dedicated state veterinary university in Andhra Pradesh. SVVU evolved from the College of Veterinary Science (est. 1955 at Bapatla), which shifted to Tirupati in 1957. SVVU holds NAAC 'A' grade and is recognized by UGC, ICAR, and the Veterinary Council of India (VCI). It operates constituent colleges across Tirupati, Gannavaram, Proddatur, and Garividi, along with a College of Dairy Technology and College of Fishery Science. SVVU plays a critical role in AP's livestock and aquaculture economy, with the Godavari and Krishna deltas providing unmatched field research opportunities.",
     programs: [
-      { name: "B.V.Sc. & A.H. (Veterinary Science & Animal Husbandry)", duration: "5.5 Years", fees: "₹28,000" },
-      { name: "B.Tech Dairy Technology", duration: "4 Years", fees: "₹24,000" },
-      { name: "B.F.Sc (Bachelor of Fishery Science)", duration: "4 Years", fees: "₹22,000" },
-      { name: "M.V.Sc (Veterinary Specializations)", duration: "2 Years", fees: "₹20,000" },
-      { name: "M.Tech Dairy Technology", duration: "2 Years", fees: "₹18,000" },
-      { name: "Ph.D (Veterinary / Dairy / Fishery Sciences)", duration: "3+ Years", fees: "₹12,000" },
+      { name: "B.V.Sc. & A.H. (Veterinary Science & Animal Husbandry)", duration: "5.5 Years", fees: "₹32,000", mgmtFees: "₹96,000" },
+      { name: "B.Tech Dairy Technology", duration: "4 Years", fees: "₹32,000", mgmtFees: "₹96,000" },
+      { name: "B.F.Sc (Bachelor of Fishery Science)", duration: "4 Years", fees: "₹26,000", mgmtFees: "₹78,000" },
+      { name: "M.V.Sc (Veterinary Specializations)", duration: "2 Years", fees: "₹32,000", mgmtFees: "₹96,000" },
+      { name: "M.Tech Dairy Technology", duration: "2 Years", fees: "₹22,000", mgmtFees: "₹66,000" },
+      { name: "Ph.D (Veterinary / Dairy / Fishery Sciences)", duration: "3+ Years", fees: "₹32,000", mgmtFees: "₹96,000" },
     ],
     faculty: [
       { name: "Prof. Velugoti Padmanabha Reddy", designation: "Former Vice Chancellor, SVVU", avatar: "VP" },
@@ -2257,10 +3115,31 @@ export const universities = [
       { icon: "📚", name: "Veterinary Library", desc: "Specialised library with veterinary textbooks, ICAR journals, and CAB Abstracts digital access." },
       { icon: "🍽️", name: "Campus Mess", desc: "University mess serving nutritious meals; dairy products from the university farm available for students." },
     ],
+            branchFees: {
+      "B.V.Sc.": 96000,
+      "B.Tech": 96000,
+      "B.F.Sc": 78000,
+      "M.V.Sc": 72000,
+      "M.Tech": 66000,
+      "Ph.D": 54000
+    },
     avgPackage: 480000,
     placementRate: 65,
-    avgPackage: 480000,
-    placementRate: 65
+  
+    feeIntelligence: {
+      category: "Affordable",
+      convenerQuotaFee: 32000,
+      mgmtQuotaFee: 96000,
+      mgmtMultiple: 3,
+      isMgmtAbove2x: true,
+      trends: {
+        "2022": 29000,
+        "2023": 30000,
+        "2024": 32000
+      },
+      hiddenDonationNotes: "Zero hidden charges. Highly transparent government fee model. Minimal caution deposit (₹2,000) and highly subsidized university hostel rooms.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"]
+    },
   },
 ];
 
