@@ -40,7 +40,7 @@ EduDiscovery helps students in Andhra Pradesh cut through the noise and find the
 1. **Visit the app:** [edu-discovery.vercel.app](https://edu-discovery.vercel.app)
 2. **Sign in** with Google
 3. **Search colleges** naturally or use the College Finder quiz
-4. **Chat with C3** (AI Counselor) for instant placement & fee data
+4. **Chat with AI** (AI Counselor) for instant fee data
 5. **Save to Wishlist** and compare your top picks
 
 **No installation needed.** The app is live and ready to use.
