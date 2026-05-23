@@ -3,7 +3,7 @@
 > **The smartest way to find your college in Andhra Pradesh.**  
 > AI-powered search, instant recommendations, and a personal counselor — all in one place.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-edudiscovery.vercel.app-black?style=for-the-badge&logo=vercel)](https://edu-discovery.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-edu-discovery.vercel.app-black?style=for-the-badge&logo=vercel)](https://edu-discovery.vercel.app)
 &nbsp;
 [![React](https://img.shields.io/badge/React%2019-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite%208-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
@@ -24,7 +24,7 @@ EduDiscovery helps students in Andhra Pradesh cut through the noise and find the
 |---|---|
 | 🤖 **AI-Powered Search** | Natural language search with Gemini semantic embeddings + cosine similarity ranking |
 | 💬 **AI Counselor** | Real-time AI chat with RAG over your college database — gets actual fee & placement data right |
-| 🏛️ **37+ AP Colleges** | Curated dataset with NAAC grades, NIRF rankings, branch-wise fees, placements, and campus imagery |
+| 🏛️ **45+ AP Colleges** | Curated dataset with NAAC grades, NIRF rankings, branch-wise fees, placements, and campus imagery |
 | 🔍 **Smart Filters** | Filter instantly by city, branch, or budget with priority-boosted city intent detection |
 | 🎯 **College Finder** | 3-step questionnaire (stream → location → budget) that surfaces your best-fit options |
 | 🧠 **Future Fit Quiz** | Personality-driven quiz to match students to the right type of institution |
