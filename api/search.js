@@ -1,24 +1,9 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { generateText } from "./aiHelper.js";
-import admin from "firebase-admin";
+import { db } from "./firebaseAdmin.js";
 import dotenv from "dotenv";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from 'url';
 
 dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Firebase Admin Setup
-const serviceAccountPath = path.join(__dirname, '..', 'serviceAccountKey.json');
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8')))
-  });
-}
-const db = admin.firestore();
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "dummy_key");
 

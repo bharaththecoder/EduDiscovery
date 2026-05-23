@@ -3,24 +3,9 @@
 // Reads user activity from Firestore and returns ranked colleges
 // ============================================================
 import dotenv from 'dotenv';
-import admin from 'firebase-admin';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import admin, { db } from './firebaseAdmin.js';
 
 dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Firebase Admin Setup
-const serviceAccountPath = path.join(__dirname, '..', 'serviceAccountKey.json');
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8')))
-  });
-}
-const db = admin.firestore();
 
 export default async function recommendHandler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
