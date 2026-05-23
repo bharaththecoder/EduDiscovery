@@ -23,7 +23,7 @@ EduDiscovery helps students in Andhra Pradesh cut through the noise and find the
 | Feature | Description |
 |---|---|
 | 🤖 **AI-Powered Search** | Natural language search with Gemini semantic embeddings + cosine similarity ranking |
-| 💬 **C3 Insta Counselor** | Real-time AI chat with RAG over your college database — gets actual fee & placement data right |
+| 💬 **AI Counselor** | Real-time AI chat with RAG over your college database — gets actual fee & placement data right |
 | 🏛️ **37+ AP Colleges** | Curated dataset with NAAC grades, NIRF rankings, branch-wise fees, placements, and campus imagery |
 | 🔍 **Smart Filters** | Filter instantly by city, branch, or budget with priority-boosted city intent detection |
 | 🎯 **College Finder** | 3-step questionnaire (stream → location → budget) that surfaces your best-fit options |
@@ -32,6 +32,18 @@ EduDiscovery helps students in Andhra Pradesh cut through the noise and find the
 | 👤 **Profile** | Editable bio, branch preference tracking, and quiz history |
 | 🔐 **Google Sign-In** | One-click auth via Firebase Authentication |
 | 📰 **Student News** | Curated AP admissions news feed on the home dashboard |
+
+---
+
+## 🎯 Quick Start
+
+1. **Visit the app:** [edu-discovery.vercel.app](https://edu-discovery.vercel.app)
+2. **Sign in** with Google
+3. **Search colleges** naturally or use the College Finder quiz
+4. **Chat with C3** (AI Counselor) for instant placement & fee data
+5. **Save to Wishlist** and compare your top picks
+
+**No installation needed.** The app is live and ready to use.
 
 ---
 
