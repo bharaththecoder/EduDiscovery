@@ -1,4 +1,4 @@
-// ============================================================
+﻿// ============================================================
 // EduDiscovery — Real AP University Dataset
 // All data sourced from: official websites, NAAC portal,
 // NIRF India 2024 rankings, APSCHE, and Wikipedia.
@@ -3159,7 +3159,7 @@ export const universities = [
     match: 87,
     branches: ["Engineering", "Sciences"],
     tags: ["CSE", "ECE", "EEE", "Mechanical", "Civil", "B.Tech"],
-    image: "https://www.pvpsiddhartha.ac.in/images/college-building.jpg",
+    image: "https://www.joonsquare.com/usermanage/image/business/prasad-v-potluri-siddhartha-institute-of-technology-krishna-15303/prasad-v-potluri-siddhartha-institute-of-technology-krishna-prasad-v.-potluri-siddhartha-institute-of-technology-2.jpg",
     website: "https://www.pvpsiddhartha.ac.in",
     about: "Prasad V Potluri Siddhartha Institute of Technology (PVPSIT), established in 1998 at Kanuru, Vijayawada, is an autonomous engineering institution affiliated to JNTUK and accredited with NAAC A+ grade. The institute is known for its rigorous academic standards, strong industry connections, and consistent placement record with top MNCs. PVPSIT is one of the most sought-after engineering colleges in the Krishna district, offering B.Tech, M.Tech, and MBA programs.",
     programs: [
@@ -3221,7 +3221,7 @@ export const universities = [
     match: 84,
     branches: ["Engineering"],
     tags: ["CSE", "ECE", "EEE", "Mechanical", "Civil", "B.Tech"],
-    image: "https://www.raghuenggcollege.com/images/campus.jpg",
+    image: "https://www.raghuenggcollege.com/wp-content/uploads/2025/09/college-overview.jpg",
     website: "https://www.raghuenggcollege.com",
     about: "Raghu Engineering College, established in 2001 and located at Dakamarri, Visakhapatnam district, is an autonomous institution affiliated to JNTUK and accredited with NAAC A+ grade. The college is known for its high academic standards, disciplined campus environment, and strong industry placement cell with companies like TCS, Wipro, and Cognizant visiting regularly. It offers a wide range of B.Tech programs and is one of the top engineering colleges in North Andhra.",
     programs: [
@@ -3283,7 +3283,7 @@ export const universities = [
     match: 83,
     branches: ["Engineering"],
     tags: ["CSE", "ECE", "EEE", "Mechanical", "Civil", "B.Tech"],
-    image: "https://www.sietk.org/images/campus-view.jpg",
+    image: "https://media.licdn.com/dms/image/v2/C561BAQGL7y0AVmZ8hA/company-background_10000/company-background_10000/0/1593799980712/siddharth_institute_of_engineering__technology_puttur_cover?e=2147483647&v=beta&t=EFrODxGKGrnjevcE_PnZsEJm-2Cv-4537GdXnHA8EjY",
     website: "https://www.sietk.org",
     about: "Siddharth Institute of Engineering & Technology (SIETK), established in 2001 in Puttur, Chittoor district, is an autonomous engineering college affiliated to JNTUA and accredited with NAAC A+ grade. Located in the Tirupati education corridor, SIETK is known for its quality faculty, modern infrastructure, and consistent academic outcomes. The college serves students from the Rayalaseema and Nellore regions, offering B.Tech, M.Tech, and MBA programs with a focus on employability.",
     programs: [
@@ -3345,7 +3345,7 @@ export const universities = [
     match: 82,
     branches: ["Engineering"],
     tags: ["CSE", "ECE", "EEE", "Mechanical", "Civil", "B.Tech"],
-    image: "https://srivasaviengg.ac.in/wp-content/uploads/2022/01/campus-view.jpg",
+    image: "https://content.jdmagicbox.com/comp/tadepalligudem/64/9999pmulhydstd80364/catalogue/sri-vasavi-engineering-college-tadepalligudem-ho-tadepalligudem-colleges-pcxfry1.jpg",
     website: "https://www.srivasaviengg.ac.in",
     about: "Sri Vasavi Engineering College (SVEC), established in 1998 at Tadepalligudem, West Godavari district, is an autonomous engineering institution affiliated to JNTUK and accredited with NAAC 'A' grade. The college is known for its placement cell that has consistently placed students at companies like Amazon, TCS, Infosys, and Wipro, with the highest package reaching ₹44 LPA. SVEC serves students from West Godavari and surrounding districts and is a well-regarded choice for engineering education in coastal Andhra.",
     programs: [
@@ -3407,7 +3407,7 @@ export const universities = [
     match: 74,
     branches: ["Sciences", "Arts", "Engineering", "Business", "Pharmacy", "Law"],
     tags: ["B.Sc", "B.Com", "B.A.", "MBA", "MCA", "Pharmacy"],
-    image: "https://www.kru.ac.in/images/campus.jpg",
+    image: "https://api.salahlo.in/media/university/photos/admin-block-min.jpeg",
     website: "https://www.kru.ac.in",
     about: "Krishna University, established in 2008 at Machilipatnam, is a state university serving as the affiliating body for colleges in Krishna, NTR, Eluru, and Palnadu districts of Andhra Pradesh. The university holds NAAC 'B+' grade and offers a wide range of programs spanning sciences, arts, commerce, engineering, pharmacy, and law through its constituent and affiliated colleges. It plays a crucial role in providing affordable higher education to students in the Krishna-Guntur belt.",
     programs: [
@@ -3469,7 +3469,7 @@ export const universities = [
     match: 80,
     branches: ["Engineering", "Business", "Sciences", "Agriculture"],
     tags: ["CSE", "AI/ML", "Aerospace", "Forensic Science", "BBA", "B.Tech"],
-    image: "https://cutmap.ac.in/wp-content/uploads/2022/campus-vizianagaram.jpg",
+    image: "https://cutmap.ac.in/wp-content/uploads/2025/02/cutmap.jpg",
     website: "https://cutmap.ac.in",
     about: "Centurion University of Technology and Management (CUTM), Andhra Pradesh, established in 2017 at Paralakhemundi road, Vizianagaram, is a deemed-to-be university with NAAC 'A' grade. Uniquely focused on skill-based education, CUTM integrates industry practice with classroom learning — particularly strong in aerospace engineering, forensic science, agri-business, and allied health sciences. The university is known for its innovative curriculum, industry partnerships, and focus on rural employability.",
     programs: [
@@ -3531,7 +3531,7 @@ export const universities = [
     match: 72,
     branches: ["Sciences", "Arts", "Business", "Education"],
     tags: ["B.A.", "B.Com", "MBA", "MCA", "M.A.", "Telugu Studies"],
-    image: "https://www.dravidianuniversity.ac.in/images/campus.jpg",
+    image: "https://www.dravidianuniversity.ac.in/treasury/landing/images/library.jpg",
     website: "https://www.dravidianuniversity.ac.in",
     about: "Dravidian University, established in 1997 by the Government of Andhra Pradesh at Kuppam in Chittoor district, is a unique state university dedicated to the promotion of Dravidian languages, culture, and literature. Holding NAAC 'B' grade, the university serves as a vital hub for higher education in the tri-state border region (AP, Karnataka, Tamil Nadu) and focuses on Telugu, Tamil, Kannada, and Malayalam language studies alongside science and management programs. It offers affordable education to tribal and rural communities through both regular and distance learning modes.",
     programs: [
@@ -3593,7 +3593,7 @@ export const universities = [
     match: 79,
     branches: ["Medical"],
     tags: ["MBBS", "MD", "MS", "Super Specialty", "Medical"],
-    image: "https://smcvja.in/wp-content/uploads/hospital-front.jpg",
+    image: "https://smcvja.in/public/admin/aboutImage/617004526_1724777524_image.png",
     website: "https://smcvja.in",
     about: "Government Siddhartha Medical College (GSMC), Vijayawada, established in 1980 and inaugurated on March 13, 1981, is one of the premier government medical colleges in Andhra Pradesh, affiliated to Dr. NTR University of Health Sciences. The college operates in conjunction with the Government General Hospital (GGH), one of the largest tertiary care hospitals in AP, providing medical students with extensive clinical exposure. GSMC offers MBBS, MD, MS, DM, and M.Ch programs with highly subsidised government fee structures, making it a top choice for NEET-qualified students in AP.",
     programs: [
@@ -3652,7 +3652,7 @@ export const universities = [
     match: 78,
     branches: ["Medical"],
     tags: ["MBBS", "MD", "MS", "Government Medical", "Medical"],
-    image: "https://rmckakinada.com/images/college-main.jpg",
+    image: "https://blog.rmgoe.org/wp-content/uploads/2022/09/Rangaraya-Medical-College-Kakinada.webp",
     website: "https://rmckakinada.com",
     about: "Rangaraya Medical College (RMC), Kakinada, one of the oldest medical colleges in Andhra Pradesh, was originally established as a private institution in 1958 and taken over by the Government of AP in 1977. Affiliated to Dr. NTR University of Health Sciences, RMC is attached to the Government General Hospital (GGH) Kakinada — a 1,000+ bed teaching hospital. The college offers MBBS and postgraduate medical programs and is the primary medical training institution for East Godavari and surrounding districts.",
     programs: [
@@ -3710,7 +3710,7 @@ export const universities = [
     match: 80,
     branches: ["Medical"],
     tags: ["MBBS", "MD", "MS", "Government Medical", "Super Specialty"],
-    image: "https://gmcguntur.edu.in/images/front-view.jpg",
+    image: "https://rmgoe.org/universities/India/images/1751008170_685e43aa8f106.png",
     website: "https://gmcguntur.edu.in",
     about: "Guntur Medical College (GMC), established in 1946, is one of the oldest and most prestigious government medical colleges in Andhra Pradesh, affiliated to Dr. NTR University of Health Sciences. It operates with the Government General Hospital (GGH) Guntur — a 1,500+ bed multi-specialty teaching hospital providing exceptional clinical training. GMC produces hundreds of doctors every year and is the primary medical training centre for the Krishna-Guntur region, offering MBBS, MD, MS, DM, and M.Ch programs.",
     programs: [
@@ -3749,6 +3749,174 @@ export const universities = [
       trends: { "2022": 20000, "2023": 22000, "2024": 25000 },
       hiddenDonationNotes: "Extremely affordable under Govt. quota (NEET counselling). Management seats at significant premium through NTRUHS counselling.",
       sources: ["Official College Website (gmcguntur.edu.in)", "NTRUHS", "Collegedunia"],
+    },
+  },
+
+  // ─────────────────────────────────────────────────────────
+  // 58. ANDHRA LOYOLA COLLEGE (ALC)
+  // ─────────────────────────────────────────────────────────
+  {
+    id: "andhra-loyola-college-vijayawada",
+    name: "Andhra Loyola College",
+    shortName: "ALC",
+    city: "Vijayawada",
+    state: "Andhra Pradesh",
+    established: 1953,
+    acres: 97,
+    ratio: "1:18",
+    naac: "A+",
+    nirf: "151-200",
+    match: 83,
+    branches: ["Sciences", "Arts", "Business"],
+    tags: ["B.Sc", "B.Com", "BBA", "BCA", "MBA", "MCA", "Autonomous"],
+    image: "https://www.andhraloyolacollege.ac.in/images/campus.jpg",
+    website: "https://www.andhraloyolacollege.ac.in",
+    about: "Andhra Loyola College (ALC), Vijayawada, founded in 1953 by the Jesuit Society, is one of Andhra Pradesh's most prestigious autonomous liberal arts and science colleges affiliated to Krishna University. Accredited with NAAC A+ and consistently ranked in NIRF's 151-200 band for Colleges, ALC is recognized by UGC as a College with Potential for Excellence and spreads across a verdant 97-acre campus in the heart of Vijayawada. The college offers UG and PG programs in sciences, commerce, arts, management, and computer applications with an active placement cell channeling graduates to TCS, Wipro, Infosys, ICICI Bank, and Axis Bank.",
+    programs: [
+      { name: "B.Sc (Physics / Chemistry / CS / Biotechnology)", duration: "3 Years", fees: "Rs.15,000", mgmtFees: "Rs.40,000" },
+      { name: "B.Com (General / Computers)", duration: "3 Years", fees: "Rs.12,000", mgmtFees: "Rs.35,000" },
+      { name: "BBA (Business Administration)", duration: "3 Years", fees: "Rs.18,000", mgmtFees: "Rs.50,000" },
+      { name: "BCA (Computer Applications)", duration: "3 Years", fees: "Rs.20,000", mgmtFees: "Rs.55,000" },
+      { name: "MBA (Business Administration)", duration: "2 Years", fees: "Rs.35,000", mgmtFees: "Rs.70,000" },
+      { name: "MCA (Computer Applications)", duration: "2 Years", fees: "Rs.40,000", mgmtFees: "Rs.90,000" },
+    ],
+    faculty: [
+      { name: "Fr. Xavier Alphonse", designation: "Principal", avatar: "XA" },
+      { name: "Dr. G. Srinivasa Rao", designation: "Head of Computer Science", avatar: "GSR" },
+      { name: "Dr. P. Suryakantham", designation: "Head of Commerce", avatar: "PS" },
+    ],
+    facilities: [
+      { icon: "SPORTS", name: "Sports Complex", desc: "97-acre campus with cricket ground, basketball, volleyball, and athletics track." },
+      { icon: "WIFI", name: "Campus Wi-Fi", desc: "High-speed internet connectivity across all academic blocks." },
+      { icon: "LAB", name: "Science Labs", desc: "Well-equipped chemistry, physics, biology, and computer science labs." },
+      { icon: "HOSTEL", name: "Hostels", desc: "Separate Jesuit-managed hostels for men and women with chapel and mess." },
+      { icon: "LIB", name: "Central Library", desc: "90,000+ volumes with e-journal and INFLIBNET access." },
+      { icon: "FOOD", name: "Canteen", desc: "Subsidised canteen serving hygienic meals to students and staff daily." },
+    ],
+    branchFees: { "B.Sc": 40000, "B.Com": 35000, "BBA": 50000, "BCA": 55000, "MBA": 70000, "MCA": 90000 },
+    avgPackage: 380000,
+    placementRate: 65,
+    feeIntelligence: {
+      category: "Affordable",
+      convenerQuotaFee: 15000,
+      mgmtQuotaFee: 40000,
+      mgmtMultiple: 2.7,
+      isMgmtAbove2x: true,
+      trends: { "2022": 12000, "2023": 13000, "2024": 15000 },
+      hiddenDonationNotes: "Zero hidden charges. Jesuit-run institution with transparent and affordable fee model.",
+      sources: ["Official College Website", "Careers360", "Collegedunia", "UGC"],
+    },
+  },
+
+  // ─────────────────────────────────────────────────────────
+  // 59. SRI VENKATESWARA COLLEGE OF ENGINEERING (SVCE) TIRUPATI
+  // ─────────────────────────────────────────────────────────
+  {
+    id: "svce-tirupati",
+    name: "Sri Venkateswara College of Engineering",
+    shortName: "SVCE",
+    city: "Tirupati",
+    state: "Andhra Pradesh",
+    established: 2007,
+    acres: 10,
+    ratio: "1:15",
+    naac: "A",
+    nirf: "201-300",
+    match: 81,
+    branches: ["Engineering"],
+    tags: ["CSE", "ECE", "EEE", "Mechanical", "Civil", "B.Tech", "AI/ML"],
+    image: "https://svcolleges.edu.in/wp-content/uploads/campus.jpg",
+    website: "https://www.svcolleges.edu.in",
+    about: "Sri Venkateswara College of Engineering (SVCE), Tirupati, established in 2007, is a NAAC A accredited private engineering institution affiliated to JNTUA and ranked in NIRF 201-300 engineering band. Located in the temple city of Tirupati, SVCE offers B.Tech programs across nine disciplines alongside M.Tech, MBA, and MCA, with a dedicated Training and Placement Cell that has placed 1,500+ students with top recruiters including TCS, Infosys, Capgemini, IBM, Zoho, and Accenture. The college is known for its strong industry-academia linkages and recorded a highest package of Rs.15 LPA.",
+    programs: [
+      { name: "B.Tech Computer Science and Engineering", duration: "4 Years", fees: "Rs.58,000", mgmtFees: "Rs.2,50,000" },
+      { name: "B.Tech CSE (AI and Machine Learning)", duration: "4 Years", fees: "Rs.58,000", mgmtFees: "Rs.2,50,000" },
+      { name: "B.Tech Electronics and Communication", duration: "4 Years", fees: "Rs.58,000", mgmtFees: "Rs.2,50,000" },
+      { name: "B.Tech Electrical and Electronics", duration: "4 Years", fees: "Rs.58,000", mgmtFees: "Rs.2,50,000" },
+      { name: "B.Tech Mechanical Engineering", duration: "4 Years", fees: "Rs.58,000", mgmtFees: "Rs.2,50,000" },
+      { name: "MBA (Business Administration)", duration: "2 Years", fees: "Rs.50,000", mgmtFees: "Rs.1,00,000" },
+    ],
+    faculty: [
+      { name: "Dr. B. Suresh Kumar", designation: "Head of CSE Department", avatar: "BSK" },
+      { name: "Dr. K. Narasimha Raju", designation: "Head of ECE Department", avatar: "KNR" },
+      { name: "Dr. A. Vijaya Lakshmi", designation: "Head of Mechanical Department", avatar: "AVL" },
+    ],
+    facilities: [
+      { icon: "SPORTS", name: "Sports Ground", desc: "Cricket ground and indoor sports facilities for student recreation." },
+      { icon: "WIFI", name: "Campus Wi-Fi", desc: "High-speed internet access throughout academic blocks and labs." },
+      { icon: "LAB", name: "Engineering Labs", desc: "Modern, well-equipped labs for all B.Tech specializations." },
+      { icon: "HOSTEL", name: "Hostels", desc: "Separate boys and girls hostels near the college campus." },
+      { icon: "LIB", name: "Technical Library", desc: "40,000+ volumes with digital databases and IEEE access." },
+      { icon: "FOOD", name: "Canteen", desc: "Affordable canteen serving South Indian meals to students." },
+    ],
+    branchFees: { "CSE": 250000, "ECE": 250000, "EEE": 250000, "Mechanical": 250000, "Civil": 250000 },
+    avgPackage: 550000,
+    placementRate: 78,
+    feeIntelligence: {
+      category: "Moderate",
+      convenerQuotaFee: 58000,
+      mgmtQuotaFee: 250000,
+      mgmtMultiple: 4.3,
+      isMgmtAbove2x: true,
+      trends: { "2022": 50000, "2023": 55000, "2024": 58000 },
+      hiddenDonationNotes: "Zero donation under Convener quota. Building fee of Rs.10,000/year applies.",
+      sources: ["APHERMC G.O.Ms.No.17", "Official College Website", "Careers360", "Collegedunia"],
+    },
+  },
+
+  // ─────────────────────────────────────────────────────────
+  // 60. P.B. SIDDHARTHA COLLEGE OF ARTS AND SCIENCE
+  // ─────────────────────────────────────────────────────────
+  {
+    id: "pbsiddhartha-college-vijayawada",
+    name: "Parvathaneni Brahmayya Siddhartha College of Arts and Science",
+    shortName: "PB Siddhartha",
+    city: "Vijayawada",
+    state: "Andhra Pradesh",
+    established: 1975,
+    acres: 8,
+    ratio: "1:20",
+    naac: "A+",
+    nirf: "---",
+    match: 80,
+    branches: ["Sciences", "Arts", "Business"],
+    tags: ["B.Sc", "B.Com", "BBA", "BCA", "MBA", "MCA", "Autonomous"],
+    image: "https://www.pbsiddhartha.ac.in/images/campus.jpg",
+    website: "https://www.pbsiddhartha.ac.in",
+    about: "Parvathaneni Brahmayya Siddhartha College of Arts and Science (PB Siddhartha), established in 1975 at Moghalrajpuram, Vijayawada, is a NAAC A+ accredited autonomous degree college affiliated to Krishna University and recognized by UGC as a College with Potential for Excellence. The college offers comprehensive UG and PG programs in sciences, commerce, management, and computer applications on a compact 8-acre urban campus with a well-stocked library of over 90,000 volumes. An active placement cell facilitates campus recruitment with companies like TCS, Infosys, Wipro, Tech Mahindra, HCL, and HDFC Bank, with highest packages reaching Rs.10 LPA.",
+    programs: [
+      { name: "B.Sc (Computer Science / Data Science / Biotechnology)", duration: "3 Years", fees: "Rs.25,000", mgmtFees: "Rs.60,000" },
+      { name: "B.Com (Honours / Computer Applications)", duration: "3 Years", fees: "Rs.20,000", mgmtFees: "Rs.45,000" },
+      { name: "BBA (Business Analytics)", duration: "3 Years", fees: "Rs.30,000", mgmtFees: "Rs.60,000" },
+      { name: "BCA (Computer Applications)", duration: "3 Years", fees: "Rs.35,000", mgmtFees: "Rs.70,000" },
+      { name: "MBA (Business Analytics)", duration: "2 Years", fees: "Rs.50,000", mgmtFees: "Rs.1,00,000" },
+      { name: "MCA (Computer Applications)", duration: "2 Years", fees: "Rs.45,000", mgmtFees: "Rs.90,000" },
+    ],
+    faculty: [
+      { name: "Dr. V. Ramakrishna", designation: "Principal", avatar: "VR" },
+      { name: "Dr. K. Suresh Babu", designation: "Head of Computer Science", avatar: "KSB" },
+      { name: "Dr. P. Padmaja", designation: "Head of Commerce and Management", avatar: "PP" },
+    ],
+    facilities: [
+      { icon: "SPORTS", name: "Sports and Multi-Gym", desc: "Multi-gym, indoor games, and outdoor sports facilities on campus." },
+      { icon: "WIFI", name: "Campus Network", desc: "Internet-enabled smart classrooms and digital learning infrastructure." },
+      { icon: "LAB", name: "Science and IT Labs", desc: "Dedicated labs for physics, chemistry, computer science, and data science." },
+      { icon: "HOSTEL", name: "Day Scholars", desc: "Primarily a day-scholar college in the heart of Vijayawada city." },
+      { icon: "LIB", name: "Central Library", desc: "90,000+ volumes with INFLIBNET N-LIST and e-journal access." },
+      { icon: "FOOD", name: "Canteen", desc: "Campus canteen providing affordable meals during college hours." },
+    ],
+    branchFees: { "B.Sc": 60000, "B.Com": 45000, "BBA": 60000, "BCA": 70000, "MBA": 100000, "MCA": 90000 },
+    avgPackage: 380000,
+    placementRate: 57,
+    feeIntelligence: {
+      category: "Affordable",
+      convenerQuotaFee: 25000,
+      mgmtQuotaFee: 60000,
+      mgmtMultiple: 2.4,
+      isMgmtAbove2x: true,
+      trends: { "2022": 20000, "2023": 22000, "2024": 25000 },
+      hiddenDonationNotes: "Zero hidden charges. Transparent autonomous college fee model with minimal extras.",
+      sources: ["Official College Website", "Careers360", "Collegedunia", "UGC"],
     },
   },
 
