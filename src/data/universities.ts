@@ -157,7 +157,7 @@ export const universities = [
     match: 89,
     branches: ["Engineering", "Medical", "Sciences", "Arts", "Law"],
     tags: ["Marine Eng", "Medicine", "Law", "Physics", "B.Tech"],
-    image: "https://www.andhrauniversity.edu.in/img/slider/AU-InGate.jpg",
+    image: "https://assets.findmycollege.com/FMC_IMAGES/289/assets/engg-profile.jpg",
     website: "https://www.andhrauniversity.edu.in",
     about: "Andhra University, established in 1926 in Visakhapatnam, is one of the oldest and most prestigious universities in South India. It is a State University covering over 600 acres with 55+ PG Departments, 6 constituent colleges, and 900+ affiliated colleges. The University has produced Nobel laureates, IAS/IPS officers, and renowned scientists. Its College of Engineering is consistently ranked among the top engineering colleges in India by NIRF. The Marine Engineering department is one of the finest in Asia.",
     programs: [
@@ -1021,7 +1021,7 @@ export const universities = [
     match: 76,
     branches: ["Engineering", "Sciences", "Arts", "Management", "Law"],
     tags: ["B.Tech", "B.Sc", "B.A.", "MBA", "MCA"],
-    image: "https://aknu.edu.in/assets/building-xSrzI0qM.jpg",
+    image: "https://aknu.edu.in/assets/DSC_1043-DidbbyCh.png",
     website: "https://www.aknu.edu.in",
     about: "Adikavi Nannaya University (AKNU), established on 22 April 2006 by the Andhra Pradesh State Legislative Assembly, is a state university located on the banks of the River Godavari at Rajamahendravaram (Rajahmundry), East Godavari District. Named after Adikavi Nannaya — the 11th-century first poet of Telugu literature — AKNU serves as the primary affiliating university for East and West Godavari districts, overseeing approximately 450 colleges. The university holds NAAC 'B+' grade and is ISO 9001:2015 certified. AKNU is noteworthy for offering Andhra Pradesh's first program in Geo-Informatics and Petroleum Exploration. With 74+ PG institutes and four constituent colleges, AKNU provides affordable higher education to students across the Godavari region, with a strong focus on Telugu language and culture along with modern sciences and engineering.",
     programs: [
