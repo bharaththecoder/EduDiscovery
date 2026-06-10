@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Globe, Mail, Eye, EyeOff, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export default function Landing() {
     }
   };
 
-  const handleEmailSubmit = async (e) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -36,78 +37,248 @@ export default function Landing() {
         await login(form.email, form.password);
       }
       navigate('/home');
-    } catch (e) {
-      setError(e.message?.replace('Firebase: ', '')?.replace(/\(auth\/.*\)\.?/, '') || 'Auth failed');
+    } catch (err: any) {
+      setError(err.message?.replace('Firebase: ', '')?.replace(/\(auth\/.*\)\.?/, '') || 'Auth failed');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       {/* Hero */}
-      <div className="hero-section">
-        <div className="floating-card" style={{
-          position: 'absolute', top: '40px', right: '20px',
-          background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(255,255,255,0.3)', borderRadius: '16px',
-          padding: '12px 16px', width: '220px', zIndex: 2,
+      <div className="hero-section" style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, var(--bg) 0%, rgba(5, 150, 105, 0.05) 50%, rgba(16, 185, 129, 0.1) 100%)',
+        position: 'relative',
+        overflow: 'hidden',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '80px 24px 60px',
+      }}>
+        {/* Subtle mesh glowing elements in the background */}
+        <div style={{
+          position: 'absolute', top: '-10%', left: '10%',
+          width: '350px', height: '350px',
+          background: 'radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%)',
+          filter: 'blur(50px)',
+          pointerEvents: 'none',
+        }} />
+        <div style={{
+          position: 'absolute', bottom: '10%', right: '10%',
+          width: '400px', height: '400px',
+          background: 'radial-gradient(circle, rgba(5, 150, 105, 0.12) 0%, transparent 70%)',
+          filter: 'blur(60px)',
+          pointerEvents: 'none',
+        }} />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center" style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          width: '100%',
+          position: 'relative',
+          zIndex: 2,
         }}>
-          <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.8)', marginBottom: '4px', fontWeight: '700' }}>98% MATCH</div>
-          <div style={{ fontSize: '14px', fontWeight: '800', color: '#fff', marginBottom: '8px' }}>SRM University AP • CSE</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            {['S', 'R', 'M'].map((l, i) => (
-              <div key={i} style={{
-                width: '24px', height: '24px', borderRadius: '50%',
-                background: `hsl(${i * 60 + 240}, 70%, 70%)`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '10px', fontWeight: '800', color: '#fff',
-                marginLeft: i > 0 ? '-6px' : 0, border: '2px solid white',
-              }}>{l}</div>
-            ))}
-            <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.85)', marginLeft: '6px' }}>Joining Now</span>
-          </div>
-        </div>
-
-        <div style={{ position: 'relative', zIndex: 2, width: '100%', maxWidth: '400px' }}>
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: '6px',
-            background: 'rgba(255,255,255,0.2)', padding: '6px 16px',
-            borderRadius: '999px', fontSize: '12px', fontWeight: '700',
-            color: '#fff', marginBottom: '24px',
-            border: '1px solid rgba(255,255,255,0.3)',
-          }}>
-            <Sparkles size={12} /> NEXT GEN SCHOLARS
-          </div>
-
-          <h1 style={{ fontSize: '44px', fontWeight: '900', color: '#fff', lineHeight: 1.1, marginBottom: '16px', letterSpacing: '-1px' }}>
-            The Future<br />Starts Here.
-          </h1>
-          <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.85)', marginBottom: '36px', lineHeight: 1.6 }}>
-            Navigate your academic journey with AI-powered matching for universities in Andhra Pradesh.
-          </p>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <button onClick={handleGoogle} disabled={loading} className="btn glow-up" style={{
-              background: '#fff', color: 'var(--text-main)', border: 'none',
-              padding: '15px 24px', fontWeight: '700',
-              fontSize: '15px', display: 'flex', alignItems: 'center',
-              justifyContent: 'center', gap: '10px', cursor: 'pointer',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+          
+          {/* Left Column: Copy & Actions */}
+          <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div style={{
+              alignSelf: 'flex-start',
+              display: 'inline-flex', alignItems: 'center', gap: '6px',
+              background: 'var(--primary-light)', padding: '8px 16px',
+              borderRadius: '999px', fontSize: '13px', fontWeight: '700',
+              color: 'var(--primary)',
+              border: '1.5px solid var(--border)',
+              boxShadow: 'var(--shadow-sm)',
             }}>
-              <Globe size={18} color="#4285F4" />
-              Continue with Google
-            </button>
-            <button onClick={() => { setShowEmailModal(true); setIsSignup(false); }} className="btn glow-up" style={{
-              background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)',
-              color: '#fff', border: '1px solid rgba(255,255,255,0.4)',
-              padding: '15px 24px', fontWeight: '700',
-              fontSize: '15px', display: 'flex', alignItems: 'center',
-              justifyContent: 'center', gap: '10px', cursor: 'pointer',
+              <Sparkles size={14} className="text-primary animate-pulse" />
+              <span>NEXT GEN COLLEGE COUNSELING</span>
+            </div>
+
+            <h1 style={{
+              fontSize: 'clamp(38px, 5vw, 56px)',
+              fontWeight: '900',
+              color: 'var(--text-main)',
+              lineHeight: 1.1,
+              letterSpacing: '-1.5px',
             }}>
-              <Mail size={18} />
-              Continue with Email
-            </button>
+              The Future of <br />
+              <span style={{
+                background: 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}>College Discovery</span> <br />
+              Starts Here.
+            </h1>
+
+            <p style={{
+              fontSize: '16px',
+              color: 'var(--text-muted)',
+              lineHeight: 1.6,
+              maxWidth: '480px',
+            }}>
+              Navigate your academic journey with AI-powered matching for top-tier universities in Andhra Pradesh. Filter by rank, branches, fees, and location.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', maxWidth: '380px', marginTop: '8px' }}>
+              <button onClick={handleGoogle} disabled={loading} className="btn btn-primary" style={{
+                padding: '16px 24px', fontWeight: '800',
+                fontSize: '15px', display: 'flex', alignItems: 'center',
+                justifyContent: 'center', gap: '12px', cursor: 'pointer',
+                borderRadius: 'var(--radius-full)',
+                boxShadow: '0 10px 25px rgba(5, 150, 105, 0.25)',
+              }}>
+                <Globe size={18} />
+                Continue with Google
+              </button>
+              <button onClick={() => { setShowEmailModal(true); setIsSignup(false); }} className="btn btn-ghost" style={{
+                padding: '16px 24px', fontWeight: '800',
+                fontSize: '15px', display: 'flex', alignItems: 'center',
+                justifyContent: 'center', gap: '12px', cursor: 'pointer',
+                borderRadius: 'var(--radius-full)',
+                background: 'var(--surface-glass)',
+                border: '1.5px solid var(--border)',
+              }}>
+                <Mail size={18} />
+                Continue with Email
+              </button>
+            </div>
+            
+            {/* Quick stats / social proof */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginTop: '16px', borderTop: '1px solid var(--border)', paddingTop: '20px' }}>
+              <div>
+                <div style={{ fontSize: '20px', fontWeight: '900', color: 'var(--text-main)' }}>100+</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>AP Colleges</div>
+              </div>
+              <div style={{ borderLeft: '1px solid var(--border)', height: '32px' }} />
+              <div>
+                <div style={{ fontSize: '20px', fontWeight: '900', color: 'var(--text-main)' }}>94%</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>Match Accuracy</div>
+              </div>
+              <div style={{ borderLeft: '1px solid var(--border)', height: '32px' }} />
+              <div>
+                <div style={{ fontSize: '20px', fontWeight: '900', color: 'var(--text-main)' }}>50K+</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>Active Students</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Visual Showcase */}
+          <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '380px' }} className="hidden md:flex">
+            
+            {/* Central glowing background circle */}
+            <div style={{
+              position: 'absolute',
+              width: '300px', height: '300px',
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)',
+              opacity: 0.15,
+              filter: 'blur(30px)',
+            }} />
+
+            {/* Main Interactive Mockup Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 30, rotate: -2 }}
+              animate={{ opacity: 1, y: 0, rotate: 1 }}
+              transition={{ duration: 0.8, ease: [0.25, 1, 0.5, 1] }}
+              style={{
+                width: '320px',
+                background: 'var(--surface)',
+                borderRadius: '24px',
+                border: '1.5px solid var(--border)',
+                padding: '24px',
+                boxShadow: 'var(--shadow-lg), 0 20px 40px rgba(0,0,0,0.08)',
+                position: 'relative',
+                zIndex: 5,
+              }}
+              whileHover={{ rotateY: 8, rotateX: 8, scale: 1.02 }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <span style={{
+                  background: 'var(--primary-light)',
+                  color: 'var(--primary)',
+                  fontSize: '11px',
+                  fontWeight: '800',
+                  padding: '6px 12px',
+                  borderRadius: '999px',
+                  letterSpacing: '0.5px'
+                }}>98% MATCH RATING</span>
+                <span style={{ fontSize: '20px' }}>🌟</span>
+              </div>
+              <h3 style={{ fontSize: '18px', fontWeight: '900', color: 'var(--text-main)', marginBottom: '8px' }}>VIT-AP University</h3>
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>Amravati, Andhra Pradesh</p>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+                  <span style={{ color: 'var(--text-muted)' }}>Estimated Tuition:</span>
+                  <span style={{ fontWeight: '700', color: 'var(--text-main)' }}>₹1.95 Lakhs/Yr</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+                  <span style={{ color: 'var(--text-muted)' }}>Cutoff (CSE):</span>
+                  <span style={{ fontWeight: '700', color: 'var(--text-main)' }}>4,800 Rank</span>
+                </div>
+              </div>
+              
+              <div style={{ height: '1px', background: 'var(--border)', marginBottom: '16px' }} />
+              
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <span className="tag" style={{ fontSize: '10px' }}>CSE Core</span>
+                <span className="tag" style={{ fontSize: '10px' }}>Autonomous</span>
+                <span className="tag" style={{ fontSize: '10px' }}>A++ NAAC</span>
+              </div>
+            </motion.div>
+
+            {/* Smaller Floating Card 1: AI Prompt */}
+            <motion.div
+              animate={{ y: [0, -12, 0] }}
+              transition={{ repeat: Infinity, duration: 5, ease: 'easeInOut' }}
+              style={{
+                position: 'absolute',
+                top: '10%',
+                left: '-10px',
+                width: '200px',
+                background: 'var(--surface-glass)',
+                border: '1.5px solid var(--border)',
+                borderRadius: '16px',
+                padding: '12px 16px',
+                boxShadow: 'var(--shadow-md)',
+                zIndex: 6,
+                backdropFilter: 'blur(8px)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '18px' }}>💬</span>
+                <div>
+                  <div style={{ fontSize: '10px', fontWeight: '800', color: 'var(--primary)' }}>AI COUNSELOR</div>
+                  <div style={{ fontSize: '11px', fontWeight: '600', color: 'var(--text-main)', marginTop: '2px' }}>"You qualify for fee waiver!"</div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Smaller Floating Card 2: Admission Odds */}
+            <motion.div
+              animate={{ y: [0, 12, 0] }}
+              transition={{ repeat: Infinity, duration: 4.5, ease: 'easeInOut' }}
+              style={{
+                position: 'absolute',
+                bottom: '10%',
+                right: '-20px',
+                width: '180px',
+                background: 'var(--surface-glass)',
+                border: '1.5px solid var(--border)',
+                borderRadius: '16px',
+                padding: '12px 16px',
+                boxShadow: 'var(--shadow-md)',
+                zIndex: 6,
+                backdropFilter: 'blur(8px)',
+              }}
+            >
+              <div style={{ fontSize: '10px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Admission Odds</div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginTop: '4px' }}>
+                <span style={{ fontSize: '24px', fontWeight: '900', color: '#059669' }}>High</span>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>(Rank 8,500)</span>
+              </div>
+            </motion.div>
           </div>
         </div>
       </div>

@@ -35,7 +35,7 @@ function AIVerdict({ colleges }: { colleges: any[] }) {
       avg: (computeROI(c) + computeValueScore(c)) / 2
     }));
     scores.sort((a, b) => b.avg - a.avg);
-    
+
     const winner = scores[0];
     const runnerUp = scores[1];
     const gap = winner.avg - runnerUp.avg;
@@ -51,13 +51,13 @@ function AIVerdict({ colleges }: { colleges: any[] }) {
   }, [colleges]);
 
   return (
-    <div style={{ 
-      marginTop: '40px', 
-      background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)', 
-      borderRadius: '24px', 
+    <div style={{
+      marginTop: '40px',
+      background: 'linear-gradient(135deg, #031A13 0%, #062E22 100%)',
+      borderRadius: '24px',
       padding: '32px',
       color: '#fff',
-      boxShadow: '0 20px 40px rgba(30,27,75,0.3)',
+      boxShadow: '0 20px 40px rgba(3,26,19,0.3)',
       position: 'relative',
       overflow: 'hidden'
     }}>
@@ -72,7 +72,7 @@ function AIVerdict({ colleges }: { colleges: any[] }) {
       </div>
 
       <h2 style={{ fontSize: '24px', fontWeight: '900', marginBottom: '12px' }}>
-        The Verdict: Go for <span style={{ color: '#818cf8' }}>{verdict.winner.name}</span>
+        The Verdict: Go for <span style={{ color: '#34d399' }}>{verdict.winner.name}</span>
       </h2>
       <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '15px', lineHeight: 1.6, maxWidth: '600px' }}>
         {verdict.text} Our intelligence engine analyzed the package-to-fee ratio and historical placement rates across all branches.
@@ -118,7 +118,7 @@ export default function ComparePage() {
     const fees = selectedColleges
       .filter(c => c && c.branchFees && c.branchFees[branch])
       .map(c => c.branchFees[branch]);
-    
+
     if (fees.length < 2) return null;
     return Math.min(...fees);
   };
@@ -127,9 +127,9 @@ export default function ComparePage() {
   const generateRadarData = () => {
     const validColleges = selectedColleges.filter(c => c !== null);
     if (validColleges.length === 0) return [];
-    
+
     const categories = ['Placements', 'ROI', 'Infrastructure', 'Academics', 'Reputation'];
-    
+
     return categories.map((cat, i) => {
       const dataPoint: any = { subject: cat };
       validColleges.forEach((c) => {
@@ -138,11 +138,11 @@ export default function ComparePage() {
         if (c.naac === 'A++') val += 2;
         else if (c.naac === 'A+') val += 1.5;
         else if (c.naac === 'A') val += 1;
-        
+
         // Randomization based on string name length and category idx to create varied charts
         const seed = (c.name.length + i) % 4;
         const finalVal = Math.min(10, val + seed - 1);
-        
+
         // ROI calculation based on fee vs rank
         if (cat === 'ROI') {
           const firstFee = c.branchFees ? Object.values(c.branchFees)[0] as number : 200000;
@@ -158,7 +158,7 @@ export default function ComparePage() {
 
   const radarData = generateRadarData();
   const validColleges = selectedColleges.filter(c => c !== null);
-  const chartColors = ["#7C3AED", "#0ea5e9", "#F43F5E"];
+  const chartColors = ["#10b981", "#0ea5e9", "#F43F5E"];
 
   return (
     <div className="page" style={{ paddingBottom: '40px' }}>
@@ -197,7 +197,7 @@ export default function ComparePage() {
               </div>
 
               {selected ? (
-                <Card style={{ flex: 1, marginTop: '12px', borderRadius: '16px', border: '1px solid var(--border)', overflow: 'hidden' }}>
+                <Card style={{ flex: 1, marginTop: '12px', borderRadius: '16px', border: '1px solid var(--border)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                   <div style={{ height: '140px', overflow: 'hidden' }}>
                     <img src={selected.image} alt={selected.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
@@ -207,8 +207,8 @@ export default function ComparePage() {
                       <MapPin size={12} /> {selected.city}
                     </div>
                   </CardHeader>
-                  <CardContent style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                    
+                  <CardContent style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: '20px', flex: 1 }}>
+
                     <div>
                       <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '0.5px' }}>Match Score</div>
                       <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '20px' }}>
@@ -216,17 +216,17 @@ export default function ComparePage() {
                         <Badge variant="outline" style={{ fontWeight: 600 }}>NAAC {selected.naac}</Badge>
                       </div>
 
-                      <ScoreBar 
-                        label="ROI Score" 
-                        value={computeROI(selected)} 
-                        color="#10b981" 
-                        icon={<DollarSign size={12} />} 
+                      <ScoreBar
+                        label="ROI Score"
+                        value={computeROI(selected)}
+                        color="#10b981"
+                        icon={<DollarSign size={12} />}
                       />
-                      <ScoreBar 
-                        label="Value Score" 
-                        value={computeValueScore(selected)} 
-                        color="#7C3AED" 
-                        icon={<Trophy size={11} />} 
+                      <ScoreBar
+                        label="Value Score"
+                        value={computeValueScore(selected)}
+                        color="#059669"
+                        icon={<Trophy size={11} />}
                       />
                     </div>
 
@@ -242,9 +242,9 @@ export default function ComparePage() {
                             return (
                               <div key={branch} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <span style={{ fontSize: '13px', color: '#64748b', fontWeight: 500 }}>{branch}</span>
-                                <span style={{ 
-                                  fontSize: '13px', 
-                                  fontWeight: 700, 
+                                <span style={{
+                                  fontSize: '13px',
+                                  fontWeight: 700,
                                   color: isLowest ? '#10b981' : '#1e293b',
                                   padding: isLowest ? '2px 8px' : '0',
                                   background: isLowest ? '#f0fdf4' : 'transparent',
@@ -274,7 +274,7 @@ export default function ComparePage() {
                       </div>
                     </div>
 
-                    <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px', marginTop: '4px' }}>
+                    <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px', marginTop: 'auto' }}>
                       <Link to={`/university/${selected.id}`} className="btn btn-primary btn-full btn-sm" style={{ padding: '12px' }}>Full Analysis</Link>
                     </div>
 
@@ -312,35 +312,35 @@ export default function ComparePage() {
         <>
           <Card className="mt-8 border-slate-200 overflow-hidden shadow-md rounded-[24px]">
             <CardHeader className="bg-slate-50/50 border-b border-slate-100 px-6 py-5">
-               <CardTitle className="text-lg font-black text-slate-800">Visual Performance Analysis</CardTitle>
-               <p className="text-sm font-medium text-slate-500 mt-1">Multi-dimensional comparison matrix generated via Recharts data.</p>
+              <CardTitle className="text-lg font-black text-slate-800">Visual Performance Analysis</CardTitle>
+              <p className="text-sm font-medium text-slate-500 mt-1">Multi-dimensional comparison matrix generated via Recharts data.</p>
             </CardHeader>
             <CardContent className="p-6">
-               <div className="w-full h-[400px]">
-                 <ResponsiveContainer width="100%" height="100%">
-                   <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
-                     <PolarGrid stroke="#e2e8f0" />
-                     <PolarAngleAxis dataKey="subject" tick={{ fill: '#475569', fontSize: 13, fontWeight: 700 }} />
-                     <PolarRadiusAxis angle={30} domain={[0, 10]} tick={false} axisLine={false} />
-                     <Tooltip 
-                       contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)', padding: '12px' }}
-                       itemStyle={{ fontWeight: 700 }}
-                     />
-                     <Legend wrapperStyle={{ paddingTop: '20px' }} />
-                     
-                     {validColleges.map((c, i) => (
-                       <Radar 
-                         key={c.id} 
-                         name={c.shortName || c.name} 
-                         dataKey={c.shortName || c.name.slice(0, 10)} 
-                         stroke={chartColors[i]} 
-                         fill={chartColors[i]} 
-                         fillOpacity={0.3} 
-                       />
-                     ))}
-                   </RadarChart>
-                 </ResponsiveContainer>
-               </div>
+              <div className="w-full h-[400px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
+                    <PolarGrid stroke="#e2e8f0" />
+                    <PolarAngleAxis dataKey="subject" tick={{ fill: '#475569', fontSize: 13, fontWeight: 700 }} />
+                    <PolarRadiusAxis angle={30} domain={[0, 10]} tick={false} axisLine={false} />
+                    <Tooltip
+                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)', padding: '12px' }}
+                      itemStyle={{ fontWeight: 700 }}
+                    />
+                    <Legend wrapperStyle={{ paddingTop: '20px' }} />
+
+                    {validColleges.map((c, i) => (
+                      <Radar
+                        key={c.id}
+                        name={c.shortName || c.name}
+                        dataKey={c.shortName || c.name.slice(0, 10)}
+                        stroke={chartColors[i]}
+                        fill={chartColors[i]}
+                        fillOpacity={0.3}
+                      />
+                    ))}
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
             </CardContent>
           </Card>
 

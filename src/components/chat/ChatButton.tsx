@@ -38,8 +38,8 @@ export default function ChatButton() {
               backdropFilter: 'blur(12px)',
               padding: '10px 20px',
               borderRadius: '99px',
-              border: '1.5px solid rgba(124, 58, 237, 0.16)',
-              boxShadow: '0 10px 30px rgba(124, 58, 237, 0.08), 0 1px 2px rgba(0,0,0,0.02)',
+              border: '1.5px solid rgba(16, 185, 129, 0.16)',
+              boxShadow: '0 10px 30px rgba(16, 185, 129, 0.08), 0 1px 2px rgba(0,0,0,0.02)',
               marginBottom: '4px',
               cursor: 'pointer',
               display: 'flex',
@@ -56,7 +56,7 @@ export default function ChatButton() {
             className="hidden md:flex glow-up compact-card"
           >
             <span style={{ 
-              background: 'linear-gradient(135deg, #4F46E5 0%, #9333EA 50%, #EC4899 100%)',
+              background: 'linear-gradient(135deg, #10B981 0%, #059669 50%, #047857 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               fontSize: '11px', 
@@ -88,14 +88,14 @@ export default function ChatButton() {
             localStorage.setItem('hasShownCounselorTooltip', 'true');
           } catch (e) {}
         }}
-        className="relative w-15 h-15 rounded-full flex items-center justify-center text-white transition-all shadow-[0_10px_35px_rgba(124,58,237,0.32)] hover:shadow-[0_18px_48px_rgba(124,58,237,0.48)] border-[2.5px] border-white"
+        className="relative w-15 h-15 rounded-full flex items-center justify-center text-white transition-all shadow-[0_10px_35px_rgba(16,185,129,0.32)] hover:shadow-[0_18px_48px_rgba(16,185,129,0.48)] border-[2.5px] border-white"
         style={{
-          background: 'linear-gradient(135deg, #4F46E5 0%, #9333EA 50%, #EC4899 100%)',
+          background: 'linear-gradient(135deg, #10B981 0%, #059669 50%, #047857 100%)',
         }}
       >
         {/* Continuous Breathing Halo ping rings */}
-        <span className="absolute -inset-[4px] rounded-full border-2 border-purple-500/20 animate-ping" style={{ animationDuration: '3s' }}></span>
-        <span className="absolute -inset-[8px] rounded-full border border-indigo-500/10 animate-pulse" style={{ animationDuration: '2s' }}></span>
+        <span className="absolute -inset-[4px] rounded-full border-2 border-emerald-500/20 animate-ping" style={{ animationDuration: '3s' }}></span>
+        <span className="absolute -inset-[8px] rounded-full border border-teal-500/10 animate-pulse" style={{ animationDuration: '2s' }}></span>
         
         {/* Custom Premium Sparkly AI Chat Bubble SVG */}
         <svg 

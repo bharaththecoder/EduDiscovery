@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart, MapPin } from 'lucide-react';
 import { useWishlist } from '@/contexts/WishlistContext';
@@ -29,6 +29,41 @@ export default function UniversityCard({ university, compact = false, reasons = 
   const [imgSrc, setImgSrc] = useState(university.image || FALLBACK);
   const [showAllReasons, setShowAllReasons] = useState(false);
 
+  // 3D Tilt Effect State
+  const [tilt, setTilt] = useState({ x: 0, y: 0, scale: 1, translateY: 0 });
+
+  // Detect mobile viewport (below 768px) to disable popup/tilt effects
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isMobile) return;
+    const card = e.currentTarget;
+    const box = card.getBoundingClientRect();
+    const x = e.clientX - box.left - box.width / 2;
+    const y = e.clientY - box.top - box.height / 2;
+    
+    // Rotate maximum 4 degrees on either axis (subtle 3D effect)
+    const rX = -(y / (box.height / 2)) * 4;
+    const rY = (x / (box.width / 2)) * 4;
+    
+    setTilt({ 
+      x: rY, 
+      y: rX, 
+      scale: compact ? 1.012 : 1.018, 
+      translateY: compact ? -4 : -6 
+    });
+  };
+
+  const handleMouseLeave = () => {
+    if (isMobile) return;
+    setTilt({ x: 0, y: 0, scale: 1, translateY: 0 });
+  };
 
   const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -43,8 +78,14 @@ export default function UniversityCard({ university, compact = false, reasons = 
     return (
       <div
         onClick={handleClick}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
         className="compact-card glow-up"
-        style={{}}
+        style={{
+          transform: isMobile ? 'none' : `perspective(1000px) translateY(${tilt.translateY}px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) scale(${tilt.scale})`,
+          transition: isMobile ? 'none' : 'transform 0.22s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.22s ease, border-color 0.22s ease',
+          transformStyle: isMobile ? 'flat' : 'preserve-3d',
+        }}
       >
         <div style={{ position: 'relative', height: '120px', flexShrink: 0, overflow: 'hidden', borderTopLeftRadius: 'var(--radius-md)', borderTopRightRadius: 'var(--radius-md)' }}>
           <img
@@ -53,9 +94,15 @@ export default function UniversityCard({ university, compact = false, reasons = 
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             loading="lazy"
           />
-          <div className="match-badge" style={{ position: 'absolute', top: '8px', left: '8px', fontSize: '10px' }}>
-            {university.match}% MATCH
-          </div>
+          {university.naac && (
+            <div style={{
+              position: 'absolute', top: '8px', left: '8px', fontSize: '10px',
+              background: '#0F172A', color: '#ffffff', padding: '4px 8px',
+              borderRadius: 'var(--radius-full)', fontWeight: '800', letterSpacing: '0.5px'
+            }}>
+              NAAC {university.naac}
+            </div>
+          )}
           <button onClick={handleToggle} style={{
             position: 'absolute', top: '8px', right: '8px',
             background: 'rgba(255,255,255,0.92)', border: 'none',
@@ -86,12 +133,17 @@ export default function UniversityCard({ university, compact = false, reasons = 
   return (
     <div
       onClick={handleClick}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       className="glow-up"
       style={{
         borderRadius: 'var(--radius-lg)', 
         background: 'var(--surface)', 
         cursor: 'pointer',
         display: 'flex', flexDirection: 'column', height: '100%',
+        transform: isMobile ? 'none' : `perspective(1000px) translateY(${tilt.translateY}px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) scale(${tilt.scale})`,
+        transition: isMobile ? 'none' : 'transform 0.22s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.22s ease, border-color 0.22s ease',
+        transformStyle: isMobile ? 'flat' : 'preserve-3d',
       }}
     >
       {/* Image */}
@@ -108,17 +160,13 @@ export default function UniversityCard({ university, compact = false, reasons = 
           background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 55%)',
         }} />
 
-        {/* Match badge */}
-        <div className="match-badge" style={{ position: 'absolute', top: '10px', left: '10px' }}>
-          {university.match}% MATCH
-        </div>
-
-        {/* NAAC badge */}
+        {/* NAAC Badge */}
         {university.naac && (
           <div style={{
-            position: 'absolute', top: '10px', right: '48px',
-            background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)',
-            color: '#fff', padding: '3px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: '700',
+            position: 'absolute', top: '10px', left: '10px',
+            background: '#0F172A', color: '#ffffff', padding: '5px 10px',
+            borderRadius: 'var(--radius-full)', fontWeight: '800', fontSize: '11px',
+            letterSpacing: '0.5px', zIndex: 10
           }}>
             NAAC {university.naac}
           </div>

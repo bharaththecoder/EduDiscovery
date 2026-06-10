@@ -16,6 +16,7 @@ const QuizPage = lazy(() => import('@/pages/QuizPage'));
 const QuizResultPage = lazy(() => import('@/pages/QuizResultPage'));
 const AdminSeedPage = lazy(() => import('@/pages/AdminSeedPage'));
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
+const WishlistPage = lazy(() => import('@/pages/WishlistPage'));
 
 const Guard = ({ children }: { children: React.ReactNode }) => {
   const { currentUser } = useAuth();
@@ -49,6 +50,7 @@ function App() {
                 <Route path="/compare" element={<ComparePage />} />
                 <Route path="/university/:id" element={<UniversityDetailPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/wishlist" element={<WishlistPage />} />
                 <Route path="/quiz" element={<QuizPage />} />
                 <Route path="/quiz-result" element={<QuizResultPage />} />
                 <Route path="/admin/seed-colleges" element={<AdminSeedPage />} />

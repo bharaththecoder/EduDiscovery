@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import BottomNav from './BottomNav';
 import AICounselor from '@/components/chat/AICounselor';
+import PWAInstallBanner from './PWAInstallBanner';
 
 export default function Layout() {
   return (
@@ -32,6 +33,7 @@ export default function Layout() {
       </main>
       <BottomNav />
       <AICounselor />
+      <PWAInstallBanner />
     </div>
   );
 }

@@ -50,7 +50,7 @@ Visit the official website at sche.ap.gov.in, click on EAPCET – Results 2024, 
   {
     id: "jagananna-scholarship-2024",
     category: "SCHOLARSHIPS",
-    categoryColor: "#6C3BFF",
+    categoryColor: "#10B981",
     title: "Jagananna Vidya Deevena 2024–25: Full Fee Reimbursement for Eligible Students",
     summary: "The AP government's flagship scholarship scheme is accepting applications for 2024–25. Students with family income under ₹2.5 lakh per year are eligible for 100% tuition fee reimbursement.",
     date: "March 25, 2024",

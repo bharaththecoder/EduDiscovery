@@ -19,11 +19,17 @@ export const useWishlist = (): WishlistContextType => {
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const { currentUser } = useAuth();
-  const [wishlist, setWishlist] = useState<University[]>([]);
+  const [wishlist, setWishlist] = useState<University[]>(() => {
+    try {
+      const local = localStorage.getItem('wishlist');
+      return local ? JSON.parse(local) : [];
+    } catch {
+      return [];
+    }
+  });
 
   useEffect(() => {
     if (!db || !currentUser || !db.app) {
-      setWishlist([]);
       return;
     }
 
@@ -31,29 +37,34 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     const userRef = doc(db, 'users', currentUser.id);
     const unsubscribe = onSnapshot(userRef, (docSnap) => {
       if (docSnap.exists()) {
-        setWishlist(docSnap.data().wishlist || []);
+        const remoteList = docSnap.data().wishlist || [];
+        setWishlist(remoteList);
+        localStorage.setItem('wishlist', JSON.stringify(remoteList));
       }
+    }, (err) => {
+      console.warn("Firestore wishlist sync error, using local state:", err);
     });
 
     return () => unsubscribe();
   }, [currentUser]);
 
   const toggleWishlist = async (university: University) => {
+    const isSaved = wishlist.some(u => u.id === university.id);
+    const newWishlist = isSaved
+      ? wishlist.filter(u => u.id !== university.id)
+      : [...wishlist, university];
+
+    // Optimistically update local state & local storage
+    setWishlist(newWishlist);
+    localStorage.setItem('wishlist', JSON.stringify(newWishlist));
+
     if (!currentUser || !db || !db.app) return;
     
     const userRef = doc(db, 'users', currentUser.id);
-    const isSaved = wishlist.some(u => u.id === university.id);
-
     try {
-      if (isSaved) {
-        await updateDoc(userRef, {
-          wishlist: arrayRemove(university)
-        });
-      } else {
-        await updateDoc(userRef, {
-          wishlist: arrayUnion(university)
-        });
-      }
+      await updateDoc(userRef, {
+        wishlist: newWishlist
+      });
     } catch (error) {
       console.error("Wishlist sync error:", error);
     }

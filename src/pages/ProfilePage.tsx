@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useToast } from '@/contexts/ToastContext';
-import { ChevronDown, ChevronUp, Bell, Shield, HelpCircle, Edit3, LogOut, Camera } from 'lucide-react';
+import { ChevronDown, ChevronUp, Bell, Shield, HelpCircle, Edit3, LogOut, Camera, Sun, Moon } from 'lucide-react';
+import { useTheme } from '@/contexts/ThemeContext';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import UniversityCard from '@/components/cards/UniversityCard';
 import { storage } from '@/services/firebase';
@@ -21,7 +22,7 @@ const AVAILABLE_TAGS = [
   'Merit Student', 'Research Focused', 'Entrepreneurial', 'AP EAPCET 2024'
 ];
 
-function EditModal({ currentUser, onClose }) {
+function EditModal({ currentUser, onClose }: { currentUser: any; onClose: () => void }) {
   const { updateUserDoc } = useAuth();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -29,17 +30,17 @@ function EditModal({ currentUser, onClose }) {
     bio: currentUser?.bio || '',
     city: currentUser?.city || '',
   });
-  const [selectedTags, setSelectedTags] = useState(currentUser?.tags || []);
+  const [selectedTags, setSelectedTags] = useState<string[]>(currentUser?.tags || []);
   
   const { showToast } = useToast();
 
-  const toggleTag = (tag) => {
-    setSelectedTags(prev => 
-      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+  const toggleTag = (tag: string) => {
+    setSelectedTags((prev: string[]) => 
+      prev.includes(tag) ? prev.filter((t: string) => t !== tag) : [...prev, tag]
     );
   };
 
-  const handleSave = async (e) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
@@ -68,20 +69,19 @@ function EditModal({ currentUser, onClose }) {
           <div>
             <label style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '6px', display: 'block' }}>Basic Information</label>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {[
-                { placeholder: 'Display Name', key: 'name', type: 'text' },
-                { placeholder: 'Bio (e.g. Aspiring Engineer)', key: 'bio', type: 'text' },
-                { placeholder: 'Current City', key: 'city', type: 'text' },
-              ].map(({ placeholder, key, type }) => (
-                <div key={key} className="input-wrap">
-                  <input 
-                    type={type} 
-                    placeholder={placeholder} 
-                    value={form[key]} 
-                    onChange={e => setForm({ ...form, [key]: e.target.value })}
-                  />
-                </div>
-              ))}
+              {(['name', 'bio', 'city'] as const).map((key) => {
+                const placeholders = { name: 'Display Name', bio: 'Bio (e.g. Aspiring Engineer)', city: 'Current City' };
+                return (
+                  <div key={key} className="input-wrap">
+                    <input 
+                      type="text" 
+                      placeholder={placeholders[key]} 
+                      value={form[key]} 
+                      onChange={e => setForm({ ...form, [key]: e.target.value })}
+                    />
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -120,7 +120,7 @@ function EditModal({ currentUser, onClose }) {
   );
 }
 
-function NotificationsModal({ onClose }) {
+function NotificationsModal({ onClose }: { onClose: () => void }) {
   const notifications = [
     { icon: '📢', text: 'AP EAPCET 2024: Final phase allotment results are out. Check your status now.', time: 'Just now', color: 'var(--primary)' },
     { icon: '📜', text: 'Jnanabhumi Portal open for 2024-25 Fee Reimbursement applications.', time: '3 hours ago', color: 'var(--accent)' },
@@ -147,9 +147,9 @@ function NotificationsModal({ onClose }) {
   );
 }
 
-function PrivacyModal({ onClose }) {
+function PrivacyModal({ onClose }: { onClose: () => void }) {
   const [toggles, setToggles] = useState({ activity: true, emails: false, personalized: true, share: false });
-  const toggle = (key) => setToggles(p => ({ ...p, [key]: !p[key] }));
+  const toggle = (key: keyof typeof toggles) => setToggles(p => ({ ...p, [key]: !p[key] }));
   const labels = { activity: 'Share Activity Data', emails: 'Marketing Emails', personalized: 'Personalised Recommendations', share: 'Share with Partner Colleges' };
   return (
     <div className="overlay" onClick={onClose}>
@@ -157,28 +157,31 @@ function PrivacyModal({ onClose }) {
         <button onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>×</button>
         <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '20px' }}>Privacy & Security</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-          {Object.entries(labels).map(([key, label]) => (
-            <div key={key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
-              <div>
-                <p style={{ fontWeight: '600', fontSize: '14px' }}>{label}</p>
-                <p style={{ color: 'var(--text-muted)', fontSize: '12px', marginTop: '2px' }}>
-                  {toggles[key] ? 'Currently enabled' : 'Currently disabled'}
-                </p>
+          {Object.entries(labels).map(([key, label]) => {
+            const toggleKey = key as keyof typeof toggles;
+            return (
+              <div key={key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
+                <div>
+                  <p style={{ fontWeight: '600', fontSize: '14px' }}>{label}</p>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '12px', marginTop: '2px' }}>
+                    {toggles[toggleKey] ? 'Currently enabled' : 'Currently disabled'}
+                  </p>
+                </div>
+                <label className="toggle">
+                  <input type="checkbox" checked={toggles[toggleKey]} onChange={() => toggle(toggleKey)} />
+                  <span className="toggle-slider" />
+                </label>
               </div>
-              <label className="toggle">
-                <input type="checkbox" checked={toggles[key]} onChange={() => toggle(key)} />
-                <span className="toggle-slider" />
-              </label>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
   );
 }
 
-function HelpModal({ onClose }) {
-  const [openFaq, setOpenFaq] = useState(null);
+function HelpModal({ onClose }: { onClose: () => void }) {
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
   return (
     <div className="overlay" onClick={onClose}>
       <div className="modal-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
@@ -200,12 +203,13 @@ function HelpModal({ onClose }) {
 
 export default function Profile() {
   const navigate = useNavigate();
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { currentUser, logout, updateUserDoc, profileStrength: completionScore } = useAuth();
   const { wishlist } = useWishlist();
   const { showToast } = useToast();
+  const { theme, setTheme } = useTheme();
 
-  const [modal, setModal] = useState(null); // 'edit' | 'notifications' | 'privacy' | 'help'
+  const [modal, setModal] = useState<string | null>(null); // 'edit' | 'notifications' | 'privacy' | 'help'
   const [uploading, setUploading] = useState(false);
   
   const profile = {
@@ -216,12 +220,12 @@ export default function Profile() {
     city: currentUser?.city || ''
   };
 
-  const appliedCount = currentUser?.appliedCount || 0;
+  const appliedCount = (currentUser?.appliedCount as number) || 0;
   
 
   const handleAvatarClick = () => fileInputRef.current?.click();
 
-  const handleFileChange = async (e) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && currentUser) {
       if (file.size > 2 * 1024 * 1024) {
@@ -257,7 +261,7 @@ export default function Profile() {
   ];
 
   return (
-    <div style={{ background: 'var(--bg)', minHeight: '100vh', paddingBottom: '40px' }}>
+    <div style={{ background: 'transparent', minHeight: '100vh', paddingBottom: '40px' }}>
       <input 
         type="file" 
         ref={fileInputRef} 
@@ -397,6 +401,70 @@ export default function Profile() {
             </button>
           ))}
         </div>
+ 
+            {/* Visual Customization Card */}
+            <h2 style={{ fontSize: '18px', fontWeight: '900', marginBottom: '14px', marginTop: '24px' }}>Theme Style</h2>
+            <div style={{ 
+              background: 'var(--surface)', 
+              borderRadius: 'var(--radius-lg)', 
+              padding: '20px 24px', 
+              boxShadow: 'var(--shadow-sm)', 
+              marginBottom: '24px', 
+              border: '1px solid var(--border)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px'
+            }}>
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                Personalise your EduDiscovery interface style. Toggle between light and dark themes.
+              </p>
+              
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button
+                  onClick={() => setTheme('light')}
+                  style={{
+                    flex: 1,
+                    padding: '12px',
+                    borderRadius: 'var(--radius-sm)',
+                    border: `1.5px solid ${theme === 'light' ? 'var(--primary)' : 'var(--border)'}`,
+                    background: theme === 'light' ? 'var(--primary-light)' : 'transparent',
+                    color: theme === 'light' ? 'var(--primary)' : 'var(--text-muted)',
+                    fontWeight: '700',
+                    fontSize: '14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    transition: 'all 0.2s',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <Sun size={16} /> Light
+                </button>
+                
+                <button
+                  onClick={() => setTheme('dark')}
+                  style={{
+                    flex: 1,
+                    padding: '12px',
+                    borderRadius: 'var(--radius-sm)',
+                    border: `1.5px solid ${theme === 'dark' ? 'var(--primary)' : 'var(--border)'}`,
+                    background: theme === 'dark' ? 'var(--primary-light)' : 'transparent',
+                    color: theme === 'dark' ? 'var(--primary)' : 'var(--text-muted)',
+                    fontWeight: '700',
+                    fontSize: '14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    transition: 'all 0.2s',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <Moon size={16} /> Dark
+                </button>
+              </div>
+            </div>
 
             {/* Sign Out */}
             <button

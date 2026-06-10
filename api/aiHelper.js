@@ -4,9 +4,9 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // Primary OpenRouter model
-const PRIMARY_MODEL = "minimax/minimax-01:free";
+const PRIMARY_MODEL = "nvidia/nemotron-3-ultra-550b-a55b:free";
 // Backup Gemini model
-const FALLBACK_MODEL = "gemini-flash-latest";
+const FALLBACK_MODEL = "gemini-2.5-flash-lite";
 
 /**
  * Helper to call OpenRouter API for standard completion (non-streaming)
@@ -22,33 +22,45 @@ async function callOpenRouter(messages, systemInstruction) {
   formattedMessages.push(...messages);
 
   console.log(`[AI] Attempting OpenRouter call with model: ${PRIMARY_MODEL}...`);
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-      "HTTP-Referer": "http://localhost:3001",
-      "X-Title": "EduDiscovery AP"
-    },
-    body: JSON.stringify({
-      model: PRIMARY_MODEL,
-      messages: formattedMessages,
-      temperature: 0.7,
-      max_tokens: 1200
-    })
-  });
-
-  if (!response.ok) {
-    const errText = await response.text();
-    throw new Error(`OpenRouter API failed (${response.status}): ${errText}`);
-  }
-
-  const data = await response.json();
-  const text = data.choices?.[0]?.message?.content;
-  if (!text) throw new Error("Empty response from OpenRouter");
   
-  console.log(`[AI] OpenRouter request succeeded!`);
-  return text;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 6000); // 6 seconds timeout
+
+  try {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "http://localhost:3001",
+        "X-Title": "EduDiscovery AP"
+      },
+      body: JSON.stringify({
+        model: PRIMARY_MODEL,
+        messages: formattedMessages,
+        temperature: 0.7,
+        max_tokens: 1200
+      }),
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`OpenRouter API failed (${response.status}): ${errText}`);
+    }
+
+    const data = await response.json();
+    const text = data.choices?.[0]?.message?.content;
+    if (!text) throw new Error("Empty response from OpenRouter");
+    
+    console.log(`[AI] OpenRouter request succeeded!`);
+    return text;
+  } catch (err) {
+    clearTimeout(timeoutId);
+    throw err;
+  }
 }
 
 /**
@@ -121,16 +133,18 @@ export async function streamChat(message, systemInstruction, history, res) {
         formattedMessages.push({ role: "system", content: systemInstruction });
       }
       
-      // Append history
+      // Append history (support both role/content and sender/text formats)
       history.forEach(h => {
-        formattedMessages.push({ 
-          role: h.role === "user" ? "user" : "assistant", 
-          content: h.content 
-        });
+        const role = h.role || (h.sender === "user" ? "user" : "assistant");
+        const content = h.content || h.text || "";
+        formattedMessages.push({ role, content });
       });
       
       // Append latest message
       formattedMessages.push({ role: "user", content: message });
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6000); // 6 seconds timeout
 
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
@@ -146,8 +160,11 @@ export async function streamChat(message, systemInstruction, history, res) {
           stream: true,
           temperature: 0.7,
           max_tokens: 1200
-        })
+        }),
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errText = await response.text();
@@ -226,10 +243,14 @@ export async function streamChat(message, systemInstruction, history, res) {
     systemInstruction: systemInstruction
   });
 
-  let formattedHistory = history.map(msg => ({
-    role: msg.role === 'user' ? 'user' : 'model',
-    parts: [{ text: msg.content }]
-  }));
+  let formattedHistory = history.map(msg => {
+    const role = msg.role || (msg.sender === 'user' ? 'user' : 'model');
+    const text = msg.content || msg.text || '';
+    return {
+      role: role === 'user' ? 'user' : 'model',
+      parts: [{ text }]
+    };
+  });
 
   // Gemini requires history to start with a 'user' message
   if (formattedHistory.length > 0 && formattedHistory[0].role === 'model') {

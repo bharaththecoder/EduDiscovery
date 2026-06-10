@@ -48,7 +48,7 @@ export interface University {
 }
 
 export interface FeeIntelligence {
-  category: 'Affordable' | 'Moderate' | 'Expensive' | 'Premium';
+  category: string;
   convenerQuotaFee: number;
   mgmtQuotaFee: number;
   mgmtMultiple: number;

@@ -214,15 +214,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     <AuthContext.Provider value={value}>
       {loading ? (
         <div style={{
-          height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center', background: 'var(--bg)', gap: '16px'
+          position: 'fixed',
+          inset: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'var(--bg)',
+          gap: '16px',
+          zIndex: 9999,
+          margin: 0,
+          padding: '20px',
+          textAlign: 'center',
+          boxSizing: 'border-box',
+          overflow: 'hidden'
         }}>
           <div style={{
             width: '40px', height: '40px', border: '3px solid var(--primary-light)',
             borderTopColor: 'var(--primary)', borderRadius: '50%',
             animation: 'spin 1s linear infinite'
           }} />
-          <p style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-muted)' }}>Initializing EduDiscovery...</p>
+          <p style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-muted)', margin: 0 }}>Initializing EduDiscovery...</p>
           <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
       ) : children}

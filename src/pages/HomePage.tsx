@@ -7,6 +7,7 @@ import { universities } from '@/data/universities';
 import UniversityCard from '@/components/cards/UniversityCard';
 import { getActivity } from '@/services/activityTracker';
 import { ActivityEvent, University } from '@/types';
+import { useWishlist } from '@/contexts/WishlistContext';
 
 // ─── News Modal ───────────────────────────────────────────────
 function NewsModal({ article, onClose }: { article: any; onClose: () => void }) {
@@ -62,8 +63,8 @@ function SectionRow({ icon, title, action, onAction }: { icon: React.ReactNode; 
             fontSize: '13px', fontWeight: '700', border: 'none', cursor: 'pointer',
             transition: 'all 0.2s',
           }}
-          onMouseOver={e => (e.currentTarget as HTMLElement).style.background = 'var(--primary)' }
-          onMouseOut={e => (e.currentTarget as HTMLElement).style.background = 'var(--primary-light)' }
+          onMouseOver={e => (e.currentTarget as HTMLElement).style.background = 'var(--primary)'}
+          onMouseOut={e => (e.currentTarget as HTMLElement).style.background = 'var(--primary-light)'}
         >
           {action} <ChevronRight size={14} />
         </button>
@@ -76,17 +77,28 @@ function SectionRow({ icon, title, action, onAction }: { icon: React.ReactNode; 
 export default function Home() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
+  const { wishlist } = useWishlist();
   const [activeNews, setActiveNews] = useState<any>(null);
   const [recentViews, setRecentViews] = useState<ActivityEvent[]>([]);
   const [recommendations, setRecommendations] = useState<University[]>([]);
   const [loadingRecs, setLoadingRecs] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const firstName = currentUser?.name?.split(' ')[0] || 'Scholar';
+  const collegesDiscovered = universities.length;
+  const savedCount = wishlist.length;
+  const quizCompleted = currentUser?.quizResults ? '100%' : 'Pending';
 
   useEffect(() => {
     async function fetchData() {
       if (!currentUser?.id) return;
-      
+
       // 1. Get recent views
       const activity = await getActivity(currentUser.id);
       setRecentViews(activity.recentViews || []);
@@ -125,19 +137,118 @@ export default function Home() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       <div className="page" style={{ paddingBottom: '48px' }}>
 
-        {/* ── Greeting ── */}
-        <div style={{ paddingTop: '20px', marginBottom: '32px' }}>
-          <p style={{ color: 'var(--text-muted)', fontSize: '14px', fontWeight: '500' }}>Welcome back,</p>
-          <h1 style={{ fontSize: '30px', fontWeight: '900', lineHeight: 1.2, color: 'var(--text-main)' }}>
-            Hey {firstName}! 👋
-          </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: '4px' }}>
-            Here's what's best for you today.
-          </p>
+        {/* ── Greeting Hero Banner ── */}
+        <div style={{
+          background: 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)',
+          borderRadius: 'var(--radius-lg)',
+          padding: '40px 32px',
+          color: '#fff',
+          position: 'relative',
+          overflow: 'hidden',
+          marginTop: '20px',
+          marginBottom: '36px',
+          boxShadow: 'var(--shadow-lg)',
+        }}>
+          {/* Glowing blur effects */}
+          <div style={{
+            position: 'absolute', top: '-20%', right: '-10%',
+            width: '250px', height: '250px',
+            borderRadius: '50%', background: 'rgba(255, 255, 255, 0.15)',
+            filter: 'blur(40px)',
+          }} />
+          <div style={{
+            position: 'absolute', bottom: '-30%', left: '30%',
+            width: '300px', height: '300px',
+            borderRadius: '50%', background: 'rgba(52, 211, 153, 0.2)',
+            filter: 'blur(50px)',
+          }} />
+
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_360px] gap-8" style={{
+            position: 'relative',
+            zIndex: 2,
+          }}>
+
+            {/* Left Column: Greeting & Actions */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', justifyContent: 'center' }}>
+              <div style={{
+                alignSelf: 'flex-start',
+                background: 'rgba(255, 255, 255, 0.2)',
+                backdropFilter: 'blur(4px)',
+                padding: '4px 12px',
+                borderRadius: '999px',
+                fontSize: '11px',
+                fontWeight: '800',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                color: '#fff',
+                marginBottom: '8px'
+              }}>
+                🎓 Interactive Dashboard
+              </div>
+              <h1 style={{ fontSize: '36px', fontWeight: '900', lineHeight: 1.15 }}>
+                Hey {firstName}! 👋
+              </h1>
+              <p style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '15px', marginTop: '4px', maxWidth: '520px', lineHeight: 1.6 }}>
+                Discover your perfect college match, compare branch options side-by-side, and ask our AI Counselor for admission updates.
+              </p>
+
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '20px' }}>
+                <button
+                  onClick={() => navigate('/quiz')}
+                  className="btn"
+                  style={{ background: '#FFFFFF', color: 'var(--primary)', padding: '12px 24px', fontWeight: '800', fontSize: '14px', borderRadius: 'var(--radius-full)', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                >
+                  Start Quiz ⚡
+                </button>
+                <button
+                  onClick={() => navigate('/search')}
+                  className="btn"
+                  style={{ border: '2px solid rgba(255,255,255,0.4)', background: 'transparent', color: '#fff', padding: '12px 24px', fontWeight: '700', fontSize: '14px', borderRadius: 'var(--radius-full)' }}
+                >
+                  Explore College List
+                </button>
+              </div>
+            </div>
+
+            {/* Right Column: Glassmorphic Quick Stats */}
+            <div className="hidden md:grid" style={{
+              background: 'rgba(255, 255, 255, 0.12)',
+              backdropFilter: 'blur(12px)',
+              border: '1.5px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '20px',
+              padding: '24px',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: '16px',
+            }}>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <span style={{ fontSize: '20px' }}>🏫</span>
+                <span style={{ fontSize: '24px', fontWeight: '900' }}>{collegesDiscovered}</span>
+                <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.8)', fontWeight: '600' }}>Colleges Online</span>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <span style={{ fontSize: '20px' }}>💖</span>
+                <span style={{ fontSize: '24px', fontWeight: '900' }}>{savedCount}</span>
+                <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.8)', fontWeight: '600' }}>Saved Wishlist</span>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', gridColumn: 'span 2', background: 'rgba(255, 255, 255, 0.08)', padding: '12px', borderRadius: '12px', marginTop: '4px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.9)', fontWeight: '700' }}>Future Fit Quiz</span>
+                  <span style={{ fontSize: '11px', background: '#34D399', color: '#047857', padding: '2px 8px', borderRadius: '999px', fontWeight: '800' }}>{quizCompleted}</span>
+                </div>
+                <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.2)', borderRadius: '999px', overflow: 'hidden', marginTop: '6px' }}>
+                  <div style={{ width: quizCompleted === '100%' ? '100%' : '15%', height: '100%', background: '#fff', borderRadius: '999px' }} />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
 
         {/* ── Recently Viewed (Phase 3) ── */}
         {recentViews.length > 0 && (
@@ -160,13 +271,24 @@ export default function Home() {
             <SectionRow icon={<Zap size={18} />} title="Recommended for You" />
             {loadingRecs ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {[1, 2, 3, 4].map(i => (
-                  <div key={i} className="animate-pulse bg-white rounded-3xl h-64 shadow-sm border border-slate-100" />
+                {(isMobile ? [1, 2] : [1, 2, 3, 4]).map(i => (
+                  <div key={i} className="card" style={{ display: 'flex', flexDirection: 'column', height: '340px', overflow: 'hidden', border: '1px solid var(--border)', background: 'var(--surface)' }}>
+                    <div className="shimmer-block" style={{ height: '180px' }} />
+                    <div style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <div className="shimmer-block" style={{ height: '18px', width: '70%', borderRadius: '4px' }} />
+                      <div className="shimmer-block" style={{ height: '12px', width: '40%', borderRadius: '4px' }} />
+                      <div style={{ display: 'flex', gap: '6px', marginTop: '4px' }}>
+                        <div className="shimmer-block" style={{ height: '16px', width: '50px', borderRadius: '99px' }} />
+                        <div className="shimmer-block" style={{ height: '16px', width: '60px', borderRadius: '99px' }} />
+                      </div>
+                      <div className="shimmer-block" style={{ height: '32px', width: '100%', borderRadius: '99px', marginTop: 'auto' }} />
+                    </div>
+                  </div>
                 ))}
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {recommendations.map((uni) => (
+                {(isMobile ? recommendations.slice(0, 2) : recommendations).map((uni) => (
                   <UniversityCard key={uni.id} university={uni} />
                 ))}
               </div>
@@ -206,16 +328,16 @@ export default function Home() {
             {/* Quiz Banner */}
             <div
               onClick={() => navigate('/quiz')}
-              className="glow-up"
+              className="glass-card glow-up"
               style={{
-                background: 'var(--dark-card)', borderRadius: 'var(--radius-lg)',
+                borderRadius: 'var(--radius-lg)',
                 padding: '28px 24px', cursor: 'pointer',
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
               }}
             >
               <div>
-                <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: '700' }}>Not sure where to start?</p>
-                <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '900', marginBottom: '14px', lineHeight: 1.3 }}>
+                <p style={{ color: 'var(--text-muted)', fontSize: '12px', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: '700' }}>Not sure where to start?</p>
+                <h3 style={{ color: 'var(--text-main)', fontSize: '18px', fontWeight: '900', marginBottom: '14px', lineHeight: 1.3 }}>
                   Start the 2-Minute<br />Future Fit Quiz ⚡
                 </h3>
                 <div style={{ background: 'var(--primary)', color: '#fff', padding: '9px 20px', borderRadius: '999px', fontSize: '13px', fontWeight: '800', display: 'inline-block' }}>
@@ -228,19 +350,19 @@ export default function Home() {
             {/* Compare Banner */}
             <div
               onClick={() => navigate('/compare')}
-              className="glow-up"
+              className="glass-card glow-up"
               style={{
-                background: 'var(--gradient-warm)', borderRadius: 'var(--radius-lg)',
+                borderRadius: 'var(--radius-lg)',
                 padding: '28px 24px', cursor: 'pointer',
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
               }}
             >
               <div>
-                <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '12px', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: '700' }}>Make the right choice</p>
-                <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: '900', marginBottom: '14px', lineHeight: 1.3 }}>
+                <p style={{ color: 'var(--text-muted)', fontSize: '12px', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: '700' }}>Make the right choice</p>
+                <h3 style={{ color: 'var(--text-main)', fontSize: '18px', fontWeight: '900', marginBottom: '14px', lineHeight: 1.3 }}>
                   Compare Colleges<br />Side-by-Side ⚖️
                 </h3>
-                <div style={{ background: '#fff', color: 'var(--primary)', padding: '9px 20px', borderRadius: '999px', fontSize: '13px', fontWeight: '800', display: 'inline-block' }}>
+                <div style={{ background: 'var(--primary)', color: '#fff', padding: '9px 20px', borderRadius: '999px', fontSize: '13px', fontWeight: '800', display: 'inline-block' }}>
                   Compare Now →
                 </div>
               </div>

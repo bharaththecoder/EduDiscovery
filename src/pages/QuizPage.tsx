@@ -146,7 +146,7 @@ export default function Quiz() {
   ];
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', animation: 'fadeIn 0.25s ease' }}>
       {/* Header */}
       <div style={{
         padding: '20px 20px 0',

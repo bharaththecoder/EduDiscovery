@@ -133,40 +133,40 @@ export default function SearchPage() {
 
   const displayResults = isAiSearch
     ? aiResults.filter(uni => {
-        const matchesCity = activeCities.length === 0 || activeCities.includes(uni.city);
-        const matchesBranch = activeBranches.length === 0 || activeBranches.some(b => uni.branches?.includes(b));
-        return matchesCity && matchesBranch;
-      })
+      const matchesCity = activeCities.length === 0 || activeCities.includes(uni.city);
+      const matchesBranch = activeBranches.length === 0 || activeBranches.some(b => uni.branches?.includes(b));
+      return matchesCity && matchesBranch;
+    })
     : filtered;
 
   const { budget: parsedBudget, branch: parsedBranch } = useMemo(() => parseIntent(query), [query]);
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)' }} onClick={() => setShowSuggestions(false)}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }} onClick={() => setShowSuggestions(false)}>
       {/* Redesigned Premium Sticky Header */}
-      <div 
+      <div
         className="w-full"
         style={{
           position: 'sticky',
           top: 0,
           zIndex: 40,
-          background: 'linear-gradient(180deg, rgba(248, 250, 252, 0.98) 0%, rgba(248, 250, 252, 0.95) 85%, rgba(248, 250, 252, 0) 100%)',
+          background: 'linear-gradient(180deg, var(--bg) 0%, var(--bg-glass-fade) 85%, transparent 100%)',
           backdropFilter: 'blur(16px)',
           padding: '24px 20px 16px',
-          borderBottom: '1px solid rgba(226, 232, 240, 0.8)',
+          borderBottom: '1.5px solid var(--border)',
         }}
       >
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          
+
           {/* Top Row: Title, Subtitle, and AI Search Indicator */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
               <h1 style={{ fontSize: '26px', fontWeight: '900', letterSpacing: '-0.5px', color: 'var(--text-main)', lineHeight: 1.15 }}>
-                Discover Premier <span className="gradient-text" style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #4F46E5 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Education in AP</span> 🎓
+                Discover Premier <span className="gradient-text" style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #059669 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Education in AP</span> 🎓
               </h1>
-              <div style={{ 
-                background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(79, 70, 229, 0.1) 100%)', 
-                border: '1px solid rgba(124, 58, 237, 0.2)',
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%)',
+                border: '1px solid rgba(16, 185, 129, 0.2)',
                 borderRadius: '99px',
                 padding: '6px 14px',
                 fontSize: '11px',
@@ -175,7 +175,7 @@ export default function SearchPage() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px',
-                boxShadow: '0 2px 10px rgba(124, 58, 237, 0.05)'
+                boxShadow: '0 2px 10px rgba(16, 185, 129, 0.05)'
               }}>
                 <Sparkles size={12} className="animate-pulse" />
                 <span>AI-POWERED SEARCH</span>
@@ -188,32 +188,32 @@ export default function SearchPage() {
 
           {/* AI Semantic Search Bar with Suggestions */}
           <div style={{ position: 'relative', marginBottom: '20px' }} onClick={e => e.stopPropagation()}>
-            <form 
-              onSubmit={handleSubmit} 
+            <form
+              onSubmit={handleSubmit}
               style={{
-                background: 'rgba(255, 255, 255, 0.95)',
-                border: '2px solid rgba(124, 58, 237, 0.12)',
+                background: 'var(--search-bg)',
+                border: '2px solid var(--search-border)',
                 borderRadius: '20px',
                 padding: '4px',
                 display: 'flex',
                 alignItems: 'center',
-                boxShadow: '0 8px 30px rgba(124, 58, 237, 0.06)',
+                boxShadow: 'var(--shadow-sm)',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               }}
               onFocus={e => {
                 e.currentTarget.style.borderColor = 'var(--primary)';
-                e.currentTarget.style.boxShadow = '0 10px 30px rgba(124, 58, 237, 0.15), 0 0 0 4px rgba(124, 58, 237, 0.1)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-md), 0 0 0 4px var(--primary-glow)';
               }}
               onBlur={e => {
-                e.currentTarget.style.borderColor = 'rgba(124, 58, 237, 0.12)';
-                e.currentTarget.style.boxShadow = '0 8px 30px rgba(124, 58, 237, 0.06)';
+                e.currentTarget.style.borderColor = 'var(--search-border)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
               }}
             >
               {/* Sparkles Glowing Icon */}
-              <div style={{ 
-                padding: '0 12px 0 16px', 
-                color: 'var(--primary)', 
-                display: 'flex', 
+              <div style={{
+                padding: '0 12px 0 16px',
+                color: 'var(--primary)',
+                display: 'flex',
                 alignItems: 'center',
                 borderRight: '1px solid rgba(226, 232, 240, 0.8)',
                 marginRight: '12px',
@@ -247,9 +247,9 @@ export default function SearchPage() {
 
               {/* Clear button */}
               {query && (
-                <button 
-                  type="button" 
-                  onClick={() => { setQuery(''); setIsAiSearch(false); setShowSuggestions(false); }} 
+                <button
+                  type="button"
+                  onClick={() => { setQuery(''); setIsAiSearch(false); setShowSuggestions(false); }}
                   style={{
                     padding: '8px',
                     marginRight: '6px',
@@ -277,7 +277,7 @@ export default function SearchPage() {
                 type="submit"
                 disabled={!query.trim() || isLoading}
                 style={{
-                  background: 'linear-gradient(135deg, var(--primary) 0%, #4F46E5 100%)',
+                  background: 'var(--gradient)',
                   color: '#fff',
                   fontWeight: '800',
                   borderRadius: '16px',
@@ -286,20 +286,22 @@ export default function SearchPage() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
-                  boxShadow: '0 4px 14px rgba(124, 58, 237, 0.3)',
+                  boxShadow: '0 4px 14px var(--primary-glow)',
                   transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                   opacity: (!query.trim() || isLoading) ? 0.6 : 1,
                   cursor: (!query.trim() || isLoading) ? 'not-allowed' : 'pointer'
                 }}
                 onMouseOver={e => {
                   if (query.trim() && !isLoading) {
-                    e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
-                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(124, 58, 237, 0.4)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 8px 18px var(--primary-glow)';
+                    e.currentTarget.style.filter = 'brightness(1.08)';
                   }
                 }}
                 onMouseOut={e => {
-                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                  e.currentTarget.style.boxShadow = '0 4px 14px rgba(124, 58, 237, 0.3)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 14px var(--primary-glow)';
+                  e.currentTarget.style.filter = 'none';
                 }}
               >
                 {isLoading ? (
@@ -320,8 +322,8 @@ export default function SearchPage() {
             {showSuggestions && suggestions.length > 0 && (
               <div style={{
                 position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0,
-                background: '#fff', borderRadius: '20px', border: '1px solid rgba(124, 58, 237, 0.1)',
-                boxShadow: '0 20px 40px rgba(15, 23, 42, 0.12)', zIndex: 100, overflow: 'hidden',
+                background: 'var(--dropdown-bg)', borderRadius: '20px', border: '1.5px solid var(--border)',
+                boxShadow: 'var(--shadow-lg)', zIndex: 100, overflow: 'hidden',
                 padding: '6px'
               }}>
                 {suggestions.map((s, i) => (
@@ -355,13 +357,13 @@ export default function SearchPage() {
             {query && (parsedBudget || parsedBranch) && (
               <div style={{ display: 'flex', gap: '8px', marginTop: '10px', flexWrap: 'wrap' }}>
                 {parsedBranch && (
-                  <span style={{ 
-                    background: 'rgba(124, 58, 237, 0.08)', 
-                    color: 'var(--primary)', 
-                    border: '1.5px solid rgba(124, 58, 237, 0.15)',
-                    padding: '4px 12px', 
-                    borderRadius: '999px', 
-                    fontSize: '11px', 
+                  <span style={{
+                    background: 'rgba(16, 185, 129, 0.08)',
+                    color: 'var(--primary)',
+                    border: '1.5px solid rgba(16, 185, 129, 0.15)',
+                    padding: '4px 12px',
+                    borderRadius: '999px',
+                    fontSize: '11px',
                     fontWeight: '800',
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -371,13 +373,13 @@ export default function SearchPage() {
                   </span>
                 )}
                 {parsedBudget && (
-                  <span style={{ 
-                    background: 'rgba(16, 185, 129, 0.08)', 
-                    color: '#059669', 
+                  <span style={{
+                    background: 'rgba(16, 185, 129, 0.08)',
+                    color: '#059669',
                     border: '1.5px solid rgba(16, 185, 129, 0.15)',
-                    padding: '4px 12px', 
-                    borderRadius: '999px', 
-                    fontSize: '11px', 
+                    padding: '4px 12px',
+                    borderRadius: '999px',
+                    fontSize: '11px',
                     fontWeight: '800',
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -392,29 +394,29 @@ export default function SearchPage() {
 
           {/* Filter Container with beautiful dividers */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingBottom: '4px' }}>
-            
+
             {/* Filter Row — Cities */}
             <div className="no-scrollbar" style={{ overflowX: 'auto', display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '4px', scrollbarWidth: 'none' }}>
-              <div style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '6px', 
-                color: 'var(--text-muted)', 
-                fontSize: '11px', 
-                fontWeight: '800', 
-                textTransform: 'uppercase', 
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                color: 'var(--text-muted)',
+                fontSize: '11px',
+                fontWeight: '800',
+                textTransform: 'uppercase',
                 letterSpacing: '0.5px',
                 marginRight: '4px',
-                flexShrink: 0 
+                flexShrink: 0
               }}>
-                <SlidersHorizontal size={12} className="text-purple-500" />
+                <SlidersHorizontal size={12} className="text-emerald-500" />
                 <span>Cities:</span>
               </div>
               {CITIES.map(city => {
                 const isActive = activeCities.includes(city);
                 return (
-                  <button 
-                    key={city} 
+                  <button
+                    key={city}
                     className="chip"
                     onClick={() => toggleCity(city)}
                     style={{
@@ -422,10 +424,10 @@ export default function SearchPage() {
                       borderRadius: '99px',
                       fontSize: '13px',
                       fontWeight: '600',
-                      background: isActive ? 'var(--primary)' : 'rgba(255, 255, 255, 0.9)',
+                      background: isActive ? 'var(--primary)' : 'var(--chip-bg)',
                       color: isActive ? '#fff' : 'var(--text-muted)',
-                      border: isActive ? '1.5px solid transparent' : '1.5px solid rgba(226, 232, 240, 0.8)',
-                      boxShadow: isActive ? '0 4px 12px rgba(124, 58, 237, 0.25)' : 'none',
+                      border: isActive ? '1.5px solid transparent' : '1.5px solid var(--chip-border)',
+                      boxShadow: isActive ? 'var(--shadow-glow)' : 'none',
                       transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                       display: 'inline-flex',
                       alignItems: 'center',
@@ -435,15 +437,15 @@ export default function SearchPage() {
                       if (!isActive) {
                         e.currentTarget.style.borderColor = 'var(--primary)';
                         e.currentTarget.style.color = 'var(--primary)';
-                        e.currentTarget.style.background = 'rgba(124, 58, 237, 0.04)';
+                        e.currentTarget.style.background = 'var(--primary-light)';
                         e.currentTarget.style.transform = 'translateY(-1px)';
                       }
                     }}
                     onMouseOut={e => {
                       if (!isActive) {
-                        e.currentTarget.style.borderColor = 'rgba(226, 232, 240, 0.8)';
+                        e.currentTarget.style.borderColor = 'var(--chip-border)';
                         e.currentTarget.style.color = 'var(--text-muted)';
-                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.9)';
+                        e.currentTarget.style.background = 'var(--chip-bg)';
                         e.currentTarget.style.transform = 'translateY(0)';
                       }
                     }}
@@ -457,26 +459,26 @@ export default function SearchPage() {
 
             {/* Filter Row — Branches */}
             <div className="no-scrollbar" style={{ overflowX: 'auto', display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '8px', scrollbarWidth: 'none' }}>
-              <div style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '6px', 
-                color: 'var(--text-muted)', 
-                fontSize: '11px', 
-                fontWeight: '800', 
-                textTransform: 'uppercase', 
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                color: 'var(--text-muted)',
+                fontSize: '11px',
+                fontWeight: '800',
+                textTransform: 'uppercase',
                 letterSpacing: '0.5px',
                 marginRight: '4px',
-                flexShrink: 0 
+                flexShrink: 0
               }}>
-                <span style={{ width: '12px', height: '12px', background: 'rgba(124, 58, 237, 0.1)', borderRadius: '3px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px', color: 'var(--primary)', fontWeight: 'bold' }}>🎓</span>
+                <span style={{ width: '12px', height: '12px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '3px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px', color: 'var(--primary)', fontWeight: 'bold' }}>🎓</span>
                 <span>Branches:</span>
               </div>
               {BRANCHES.map(b => {
                 const isActive = activeBranches.includes(b);
                 return (
-                  <button 
-                    key={b} 
+                  <button
+                    key={b}
                     className="chip"
                     onClick={() => toggleBranch(b)}
                     style={{
@@ -484,10 +486,10 @@ export default function SearchPage() {
                       borderRadius: '99px',
                       fontSize: '13px',
                       fontWeight: '600',
-                      background: isActive ? 'var(--primary)' : 'rgba(255, 255, 255, 0.9)',
+                      background: isActive ? 'var(--primary)' : 'var(--chip-bg)',
                       color: isActive ? '#fff' : 'var(--text-muted)',
-                      border: isActive ? '1.5px solid transparent' : '1.5px solid rgba(226, 232, 240, 0.8)',
-                      boxShadow: isActive ? '0 4px 12px rgba(124, 58, 237, 0.25)' : 'none',
+                      border: isActive ? '1.5px solid transparent' : '1.5px solid var(--chip-border)',
+                      boxShadow: isActive ? 'var(--shadow-glow)' : 'none',
                       transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                       display: 'inline-flex',
                       alignItems: 'center',
@@ -497,15 +499,15 @@ export default function SearchPage() {
                       if (!isActive) {
                         e.currentTarget.style.borderColor = 'var(--primary)';
                         e.currentTarget.style.color = 'var(--primary)';
-                        e.currentTarget.style.background = 'rgba(124, 58, 237, 0.04)';
+                        e.currentTarget.style.background = 'var(--primary-light)';
                         e.currentTarget.style.transform = 'translateY(-1px)';
                       }
                     }}
                     onMouseOut={e => {
                       if (!isActive) {
-                        e.currentTarget.style.borderColor = 'rgba(226, 232, 240, 0.8)';
+                        e.currentTarget.style.borderColor = 'var(--chip-border)';
                         e.currentTarget.style.color = 'var(--text-muted)';
-                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.9)';
+                        e.currentTarget.style.background = 'var(--chip-bg)';
                         e.currentTarget.style.transform = 'translateY(0)';
                       }
                     }}
@@ -534,17 +536,18 @@ export default function SearchPage() {
         {/* AI Reasoning Block */}
         {!isLoading && isAiSearch && aiReasoning && (
           <div className="glow-up" style={{
-            background: 'linear-gradient(to br, #f5f3ff, #eef2ff)',
-            border: '1px solid rgba(124, 58, 237, 0.1)',
+            background: 'var(--ai-insights-bg)',
+            border: '1.5px solid var(--search-border)',
             padding: '20px',
             borderRadius: '24px',
             marginBottom: '32px',
+            boxShadow: 'var(--shadow-sm)',
           }}>
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles size={16} className="text-purple-600" />
-              <span className="font-bold text-purple-900 text-sm">AI Insights</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+              <Sparkles size={16} style={{ color: 'var(--primary)' }} />
+              <span style={{ fontWeight: 'bold', color: 'var(--text-main)', fontSize: '14px' }}>AI Insights</span>
             </div>
-            <p className="text-purple-800/80 text-[14.5px] leading-relaxed font-medium">{aiReasoning}</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '14.5px', lineHeight: '1.6', fontWeight: '500' }}>{aiReasoning}</p>
           </div>
         )}
 
@@ -565,13 +568,17 @@ export default function SearchPage() {
         {/* Skeletons */}
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="animate-pulse bg-white rounded-[24px] h-[340px] border border-slate-100 shadow-sm">
-                <div className="h-[180px] bg-slate-100 rounded-t-[24px]"></div>
-                <div className="p-5 space-y-3">
-                  <div className="h-4 bg-slate-100 rounded w-3/4"></div>
-                  <div className="h-3 bg-slate-50 rounded w-1/2"></div>
-                  <div className="h-4 bg-slate-50 rounded w-full mt-4"></div>
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className="card" style={{ display: 'flex', flexDirection: 'column', height: '340px', overflow: 'hidden', border: '1px solid var(--border)', background: 'var(--surface)' }}>
+                <div className="shimmer-block" style={{ height: '180px' }} />
+                <div style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div className="shimmer-block" style={{ height: '18px', width: '75%', borderRadius: '4px' }} />
+                  <div className="shimmer-block" style={{ height: '12px', width: '50%', borderRadius: '4px' }} />
+                  <div style={{ display: 'flex', gap: '6px', marginTop: '4px' }}>
+                    <div className="shimmer-block" style={{ height: '16px', width: '50px', borderRadius: '99px' }} />
+                    <div className="shimmer-block" style={{ height: '16px', width: '60px', borderRadius: '99px' }} />
+                  </div>
+                  <div className="shimmer-block" style={{ height: '32px', width: '100%', borderRadius: '99px', marginTop: 'auto' }} />
                 </div>
               </div>
             ))}
@@ -580,13 +587,7 @@ export default function SearchPage() {
           displayResults.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {displayResults.map(uni => (
-                <div key={uni.id} className="relative">
-                  {isAiSearch && uni.matchScore && (
-                    <div className="absolute top-4 left-4 z-10 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full text-white text-xs font-bold flex items-center gap-1">
-                      <Sparkles size={12} className="text-yellow-400" />
-                      {(uni.matchScore * 100).toFixed(0)}% Match
-                    </div>
-                  )}
+                <div key={uni.id} className="relative flex flex-col h-full">
                   {isAiSearch && uni.intelligenceScore !== undefined && (
                     <div className="absolute top-4 right-4 z-10 bg-emerald-600/80 backdrop-blur-md px-2 py-1 rounded-full text-white text-xs font-bold flex items-center gap-1">
                       <TrendingUp size={10} />
@@ -604,7 +605,8 @@ export default function SearchPage() {
               <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Try adjusting your filters or search term.</p>
               <button
                 onClick={() => { setQuery(''); setIsAiSearch(false); setActiveCities([]); setActiveBranches([]); }}
-                className="mx-auto mt-5 px-6 py-3 bg-purple-100 text-purple-700 font-bold rounded-2xl"
+                className="btn btn-secondary mx-auto mt-5"
+                style={{ display: 'flex', gap: '8px' }}
               >
                 Reset All
               </button>

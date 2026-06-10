@@ -71,10 +71,10 @@ class ErrorBoundary extends Component<Props, State> {
               fontWeight: '700',
               fontSize: '15px',
               color: '#fff',
-              background: 'linear-gradient(135deg, #7C3AED 0%, #3B82F6 100%)',
+              background: 'var(--gradient)',
               cursor: 'pointer',
               border: 'none',
-              boxShadow: '0 6px 20px rgba(124,58,237,0.35)',
+              boxShadow: '0 6px 20px rgba(16,185,129,0.35)',
             }}
           >
             Return to Home

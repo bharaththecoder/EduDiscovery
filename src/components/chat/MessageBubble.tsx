@@ -25,12 +25,12 @@ export default function MessageBubble({ text, sender }: MessageBubbleProps) {
           lineHeight: '1.45',
           borderRadius: isUser ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
           background: isUser 
-            ? 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 50%, #D946EF 100%)' 
+            ? 'var(--gradient)' 
             : '#FFFFFF',
           color: isUser ? '#FFFFFF' : '#1E293B',
-          border: isUser ? 'none' : '1.5px solid rgba(124, 58, 237, 0.1)',
+          border: isUser ? 'none' : '1.5px solid rgba(16, 185, 129, 0.1)',
           boxShadow: isUser 
-            ? '0 6px 16px rgba(139, 92, 246, 0.18)' 
+            ? '0 6px 16px rgba(16, 185, 129, 0.18)' 
             : '0 4px 16px rgba(15, 23, 42, 0.04)',
           transition: 'all 0.2s ease',
           whiteSpace: 'pre-wrap',

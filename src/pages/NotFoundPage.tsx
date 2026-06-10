@@ -7,7 +7,7 @@ export default function NotFoundPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'var(--bg)',
+      background: 'transparent',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -21,13 +21,13 @@ export default function NotFoundPage() {
       <div style={{
         position: 'absolute', top: '-10%', left: '-10%',
         width: '400px', height: '400px',
-        background: 'radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%)',
         borderRadius: '50%', pointerEvents: 'none',
       }} />
       <div style={{
         position: 'absolute', bottom: '-10%', right: '-10%',
         width: '400px', height: '400px',
-        background: 'radial-gradient(circle, rgba(14,165,233,0.10) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(5,150,105,0.10) 0%, transparent 70%)',
         borderRadius: '50%', pointerEvents: 'none',
       }} />
 
@@ -36,7 +36,7 @@ export default function NotFoundPage() {
         fontSize: 'clamp(80px, 20vw, 140px)',
         fontWeight: '900',
         lineHeight: 1,
-        background: 'linear-gradient(135deg, #7C3AED 0%, #3B82F6 100%)',
+        background: 'var(--gradient)',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
         backgroundClip: 'text',
@@ -99,7 +99,7 @@ export default function NotFoundPage() {
             color: '#fff',
             background: 'var(--gradient)',
             cursor: 'pointer',
-            boxShadow: '0 6px 20px rgba(124,58,237,0.35)',
+            boxShadow: '0 6px 20px rgba(16,185,129,0.35)',
             transition: 'var(--transition)',
           }}
           onMouseOver={e => (e.currentTarget.style.opacity = '0.9')}

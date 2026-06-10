@@ -37,21 +37,25 @@ export default async function seedHandler(req, res) {
         Tags: ${college.tags.join(", ")}
       `.replace(/\s+/g, " ").trim();
 
+      let embedding = null;
       try {
         const result = await model.embedContent(contentToEmbed);
-        const embedding = result.embedding.values;
-
-        // Store into Firestore using Admin SDK
-        await db.collection("colleges").doc(college.id).set({
-          ...college,
-          embedding
-        });
+        embedding = result.embedding.values;
         embeddedCount++;
         console.log(`Successfully embedded: ${college.name}`);
       } catch (embErr) {
-        console.error(`Failed to embed ${college.name}:`, embErr);
-        // On first failure, throw to let the response catch it so we can see the error in the UI/terminal
-        if (embeddedCount === 0) throw embErr;
+        console.warn(`[Seeder] Warning: Failed to generate embedding for ${college.name} (${embErr.message}). Saving text data only.`);
+      }
+
+      try {
+        const docData = { ...college };
+        if (embedding) {
+          docData.embedding = embedding;
+        }
+        await db.collection("colleges").doc(college.id).set(docData);
+      } catch (dbErr) {
+        console.error(`[Seeder] Error saving ${college.name} to Firestore:`, dbErr);
+        throw dbErr;
       }
     }
 

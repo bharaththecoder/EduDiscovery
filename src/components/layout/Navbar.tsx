@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Search, LogOut } from 'lucide-react';
+import { Menu, X, Search, LogOut, Download, Sun, Moon } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePWA } from '@/contexts/PWAContext';
+import { useTheme } from '@/contexts/ThemeContext';
+import { motion } from 'framer-motion';
 
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { currentUser, logout } = useAuth();
+  const { isInstallable, installApp } = usePWA();
+  const { theme, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const firstName = currentUser?.name?.split(' ')[0] || 'Scholar';
@@ -19,9 +24,10 @@ export default function Navbar() {
 
   const navLinks = [
     { label: 'Home', path: '/home' },
+    { label: 'Finder', path: '/quiz' },
     { label: 'Search', path: '/search' },
-    { label: 'Compare', path: '/compare' },
-    { label: 'Quiz', path: '/quiz' },
+    { label: 'Wishlist', path: '/wishlist' },
+    { label: 'Profile', path: '/profile' },
   ];
 
   return (
@@ -40,9 +46,9 @@ export default function Navbar() {
         {/* Logo */}
         <NavLink 
           to="/home"
-          style={{ fontWeight: '900', fontSize: '20px', letterSpacing: '-1px', color: 'var(--primary)', textDecoration: 'none' }}
+          style={{ display: 'flex', alignItems: 'center', fontWeight: '900', fontSize: '22px', letterSpacing: '-0.8px', color: 'var(--primary)', textDecoration: 'none' }}
         >
-          EduDiscovery
+          <span>EduDiscovery</span>
         </NavLink>
 
         {/* Desktop Nav Links */}
@@ -52,24 +58,94 @@ export default function Navbar() {
               key={link.path}
               to={link.path}
               style={({ isActive }) => ({
-                fontSize: '15px', fontWeight: '600',
+                fontSize: '15px', fontWeight: '700',
                 color: isActive ? 'var(--primary)' : 'var(--text-muted)',
                 transition: 'var(--transition)',
-                textDecoration: 'none'
+                textDecoration: 'none',
+                position: 'relative',
+                padding: '6px 0'
               })}
             >
-              {link.label}
+              {({ isActive }) => (
+                <div style={{ position: 'relative' }}>
+                  {link.label}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeNavIndicator"
+                      style={{
+                        position: 'absolute',
+                        bottom: '-6px',
+                        left: 0,
+                        right: 0,
+                        height: '3px',
+                        background: 'var(--primary)',
+                        borderRadius: '99px',
+                      }}
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                </div>
+              )}
             </NavLink>
           ))}
         </div>
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-4">
+          {isInstallable && (
+            <button 
+              onClick={installApp} 
+              style={{
+                background: 'var(--primary-light)', 
+                color: 'var(--primary)',
+                fontWeight: '600',
+                fontSize: '13px',
+                padding: '8px 16px',
+                borderRadius: '999px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                border: '1px solid rgba(124, 58, 237, 0.15)',
+                transition: 'var(--transition)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'var(--primary)';
+                e.currentTarget.style.color = '#fff';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'var(--primary-light)';
+                e.currentTarget.style.color = 'var(--primary)';
+              }}
+            >
+              <Download size={14} /> Install App
+            </button>
+          )}
+
           <button onClick={() => navigate('/search')} style={{
             background: 'var(--primary-light)', width: '38px', height: '38px',
             borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
             <Search size={18} color="var(--primary)" />
+          </button>
+
+          {/* Desktop Theme Toggle */}
+          <button 
+            onClick={toggleTheme} 
+            style={{
+              background: 'var(--primary-light)', 
+              width: '38px', 
+              height: '38px',
+              borderRadius: '50%', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              color: 'var(--primary)',
+              cursor: 'pointer',
+              transition: 'var(--transition)',
+            }}
+            title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
+          >
+            {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
           </button>
           
           <div style={{
@@ -94,7 +170,7 @@ export default function Navbar() {
 
       {/* Mobile Menu Dropdown */}
       {menuOpen && (
-        <div className="md:hidden absolute w-full" style={{ background: '#fff', borderBottom: '1px solid var(--border)', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}>
+        <div className="md:hidden absolute w-full" style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)', boxShadow: 'var(--shadow-md)' }}>
           <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {navLinks.map((link) => (
                <button
@@ -111,6 +187,21 @@ export default function Navbar() {
                </button>
             ))}
             
+            {isInstallable && (
+              <>
+                <button
+                  onClick={() => { installApp(); setMenuOpen(false); }}
+                  style={{
+                    padding: '12px 16px', borderRadius: '8px', textAlign: 'left',
+                    color: 'var(--primary)', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '12px',
+                    background: 'var(--primary-light)'
+                  }}
+                >
+                  <Download size={18} /> Install App Version
+                </button>
+              </>
+            )}
+
             <div className="divider" style={{ margin: '12px 0' }} />
             
              <button

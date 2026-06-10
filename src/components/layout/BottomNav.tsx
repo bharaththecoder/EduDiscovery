@@ -1,16 +1,17 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Search, User, Compass } from 'lucide-react';
+import { Home, Search, User, Compass, Heart } from 'lucide-react';
 
 export default function BottomNav() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
   const items = [
-    { label: 'Home',    icon: Home,    path: '/home' },
-    { label: 'Search',  icon: Search,  path: '/search' },
-    { label: 'Finder',  icon: Compass, path: '/quiz' },
-    { label: 'Profile', icon: User,    path: '/profile' },
+    { label: 'Home',     icon: Home,    path: '/home' },
+    { label: 'Finder',   icon: Compass, path: '/quiz' },
+    { label: 'Search',   icon: Search,  path: '/search' },
+    { label: 'Wishlist', icon: Heart,   path: '/wishlist' },
+    { label: 'Profile',  icon: User,    path: '/profile' },
   ];
 
   return (

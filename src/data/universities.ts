@@ -1,4 +1,4 @@
-﻿// ============================================================
+// ============================================================
 // EduDiscovery — Real AP University Dataset
 // All data sourced from: official websites, NAAC portal,
 // NIRF India 2024 rankings, APSCHE, and Wikipedia.
@@ -3613,7 +3613,7 @@ export const universities = [
       { icon: "📡", name: "Medical IT Lab", desc: "Digital learning and simulation lab for clinical training." },
       { icon: "🔬", name: "Research & Anatomy Labs", desc: "Advanced pathology, microbiology, and anatomy dissection halls." },
       { icon: "🏠", name: "MBBS Hostels", desc: "Separate hostels for male and female medical students." },
-      { icon: "📚", name: "Medical Library", description: "Comprehensive medical library with 50,000+ volumes and journals." },
+      { icon: "📚", name: "Medical Library", desc: "Comprehensive medical library with 50,000+ volumes and journals." },
       { icon: "🍽️", name: "Hospital Canteen", desc: "Canteen facility serving affordable meals to students and staff." },
     ],
     branchFees: {

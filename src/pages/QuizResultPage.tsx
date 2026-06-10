@@ -32,7 +32,7 @@ function AnalyzingScreen() {
 
   return (
     <div style={{
-      minHeight: '100vh', background: 'var(--bg)',
+      minHeight: '100vh', background: 'transparent',
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center',
       padding: '40px 20px', textAlign: 'center',
@@ -105,8 +105,8 @@ function CategoryBadge({ category }: { category: string }) {
     </span>
   );
   if (category === 'match') return (
-    <span className="inline-flex items-center gap-1 bg-purple-100/80 text-purple-600 px-2.5 py-1 rounded-full text-[11px] font-bold">
-      <Zap size={10} className="fill-purple-500" /> Great Match
+    <span className="inline-flex items-center gap-1 bg-sky-100/80 text-sky-600 px-2.5 py-1 rounded-full text-[11px] font-bold">
+      <Zap size={10} className="fill-sky-500" /> Great Match
     </span>
   );
   return (
@@ -158,16 +158,37 @@ function FilterPanel({ source, onFilter }: { source: any[]; onFilter: (f: any[])
     <div style={{ marginBottom: '28px' }}>
       <button
         onClick={() => setOpen(!open)}
-        className="inline-flex items-center gap-2 bg-white border border-slate-200 rounded-full px-5 py-2 text-[13px] font-bold text-slate-700 hover:border-purple-500 hover:text-purple-600 transition-all shadow-sm"
+        className="btn-ghost"
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '8px',
+          padding: '10px 20px',
+          borderRadius: 'var(--radius-full)',
+          fontSize: '13px',
+          fontWeight: '700',
+          background: 'var(--surface)',
+          border: '1px solid var(--border)',
+          color: 'var(--text-main)',
+          cursor: 'pointer',
+          transition: 'all 0.2s',
+          boxShadow: 'var(--shadow-sm)',
+        }}
       >
-        <Filter size={14} /> Refine Results {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+        <Filter size={14} style={{ color: 'var(--primary)' }} />
+        <span>Refine Results</span>
+        {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
       </button>
 
       {open && (
-        <div className="mt-3 p-5 rounded-2xl bg-white border border-slate-200 shadow-md animate-fade-in-up">
+        <div className="mt-3 p-5 rounded-2xl animate-fade-in-up" style={{
+          background: 'var(--surface)',
+          border: '1.5px solid var(--border)',
+          boxShadow: 'var(--shadow-md)',
+        }}>
           <div style={{ marginBottom: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{ fontSize: '13px', fontWeight: '700' }}>Max Annual Fee</span>
+              <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-main)' }}>Max Annual Fee</span>
               <span style={{ fontSize: '13px', fontWeight: '800', color: 'var(--primary)' }}>
                 {maxFee >= 500000 ? 'Any budget' : `≤ ₹${(maxFee / 100000).toFixed(1)}L`}
               </span>
@@ -180,7 +201,7 @@ function FilterPanel({ source, onFilter }: { source: any[]; onFilter: (f: any[])
             </div>
           </div>
           <div>
-            <span style={{ fontSize: '13px', fontWeight: '700', display: 'block', marginBottom: '10px' }}>NAAC Grade</span>
+            <span style={{ fontSize: '13px', fontWeight: '700', display: 'block', marginBottom: '10px', color: 'var(--text-main)' }}>NAAC Grade</span>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               {naacGrades.map(g => (
                 <button key={g}
@@ -203,25 +224,12 @@ function ResultCard({ uni, rank }: { uni: any; rank: number }) {
   const medals = ['🥇', '🥈', '🥉'];
   const medal = medals[rank] || `#${rank + 1}`;
 
-  const matchColor =
-    uni.matchPercent >= 78 ? '#16a34a' :
-    uni.matchPercent >= 55 ? '#7c3aed' : '#059669';
-  const matchBg =
-    uni.matchPercent >= 78 ? '#dcfce7' :
-    uni.matchPercent >= 55 ? '#ede9fe' : '#d1fae5';
-
   return (
-    <div style={{ animation: `fadeIn 0.4s ease-out ${rank * 0.07}s both` }}>
+    <div style={{ animation: `fadeIn 0.4s ease-out ${rank * 0.07}s both`, display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ fontSize: '18px' }}>{medal}</span>
           <CategoryBadge category={uni.category} />
-        </div>
-        <div style={{
-          background: matchBg, color: matchColor,
-          padding: '4px 12px', borderRadius: '99px', fontSize: '12px', fontWeight: '800',
-        }}>
-          {uni.matchPercent}% Match
         </div>
       </div>
       <UniversityCard university={uni} reasons={uni.reasons} breakdown={uni.breakdown} />
@@ -239,14 +247,14 @@ export default function QuizResult() {
   const [isSynced, setIsSynced] = useState(false);
   const [showAnalyzing, setShowAnalyzing] = useState(true);
   const [filtered, setFiltered] = useState<any[] | null>(null);
-  
+
   // AI Personalization State
   const [aiReasoning, setAiReasoning] = useState<string | null>(null);
   const [isGeneratingAi, setIsGeneratingAi] = useState(false);
 
   const rawAnswers = state?.answers || JSON.parse(localStorage.getItem('edu_quiz_answers') || '{}');
   const answers: QuizAnswers = rawAnswers;
-  const { all, dream, match, safe } = React.useMemo(() => 
+  const { all, dream, match, safe } = React.useMemo(() =>
     getRecommendations(universities, answers, 10),
     [answers]
   );
@@ -261,7 +269,7 @@ export default function QuizResult() {
       setTypedReasoning("");
       let index = 0;
       const words = aiReasoning.split(" ");
-      
+
       const timer = setInterval(() => {
         if (index < words.length) {
           setTypedReasoning(prev => prev + (prev ? " " : "") + words[index]);
@@ -271,7 +279,7 @@ export default function QuizResult() {
           setIsTyping(false);
         }
       }, 40); // 40ms per word is a good "syncing" speed
-      
+
       return () => clearInterval(timer);
     }
   }, [aiReasoning]);
@@ -281,7 +289,7 @@ export default function QuizResult() {
   // Sync to Firebase and fetch AI personalized reasoning
   useEffect(() => {
     if (currentUser && Object.keys(answers).length && !showAnalyzing) {
-      
+
       // 1. Sync data
       (async () => {
         setIsSyncing(true);
@@ -298,24 +306,24 @@ export default function QuizResult() {
         } catch { /* silent */ }
         finally { setIsSyncing(false); }
       })();
-      
+
       // 2. Fetch AI Reasoning for top matches
       if (all.length > 0) {
         setIsGeneratingAi(true);
         fetch('/api/quiz-reasoning', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            answers, 
-            topColleges: all.slice(0, 3) 
+          body: JSON.stringify({
+            answers,
+            topColleges: all.slice(0, 3)
           })
         })
-        .then(res => res.json())
-        .then(data => {
-          if (data.reasoning) setAiReasoning(data.reasoning);
-        })
-        .catch(console.error)
-        .finally(() => setIsGeneratingAi(false));
+          .then(res => res.json())
+          .then(data => {
+            if (data.reasoning) setAiReasoning(data.reasoning);
+          })
+          .catch(console.error)
+          .finally(() => setIsGeneratingAi(false));
       }
     }
   }, [currentUser, showAnalyzing]);
@@ -323,9 +331,9 @@ export default function QuizResult() {
   if (showAnalyzing) return <AnalyzingScreen />;
 
   const displayAll = filtered ?? all;
-  const displayDream    = displayAll.filter((u: any) => u.category === 'dream');
-  const displayMatch    = displayAll.filter((u: any) => u.category === 'match');
-  const displaySafe     = displayAll.filter((u: any) => u.category === 'safe');
+  const displayDream = displayAll.filter((u: any) => u.category === 'dream');
+  const displayMatch = displayAll.filter((u: any) => u.category === 'match');
+  const displaySafe = displayAll.filter((u: any) => u.category === 'safe');
 
   const answerLabels: Record<string, string> = {
     priority: '⭐ Priority', branch: '📚 Course', budget: '💰 Budget',
@@ -333,7 +341,7 @@ export default function QuizResult() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', animation: 'fadeIn 0.25s ease' }}>
       {/* Hero */}
       <div style={{
         background: 'var(--gradient)', padding: '48px 20px 36px',
@@ -353,7 +361,7 @@ export default function QuizResult() {
       </div>
 
       <div style={{ padding: '28px 20px 0', maxWidth: '1100px', margin: '0 auto' }}>
-        
+
         {/* Preference tags */}
         <div style={{ marginBottom: '24px' }}>
           <p style={{ fontSize: '12px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '10px' }}>Based on your answers</p>
@@ -370,31 +378,34 @@ export default function QuizResult() {
         {/* AI Personalized Summary Block */}
         <div className="w-full transition-all duration-500 ease-in-out">
           {(isGeneratingAi || aiReasoning) && (
-            <div className={`bg-gradient-to-br from-purple-50 to-indigo-50/50 border border-purple-200/60 p-6 rounded-[24px] mb-8 shadow-sm relative overflow-hidden animate-fade-in-up ${!aiReasoning ? 'min-h-[160px]' : 'min-h-[220px]'}`}>
-               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-purple-200/40 to-transparent rounded-bl-full pointer-events-none" />
-               <div className="flex items-center gap-2 mb-4">
-                 <div className="bg-purple-100 p-2 rounded-full shadow-inner">
-                   <Sparkles size={16} className="text-purple-600 animate-pulse" />
-                 </div>
-                 <div className="flex flex-col">
-                   <span className="font-extrabold text-slate-800 text-sm tracking-tight">AI Counselor's Verdict</span>
-                   {isTyping && <span className="text-[10px] text-purple-500 font-bold animate-pulse">SYNCING WORDS...</span>}
-                 </div>
-               </div>
-               
-               {isGeneratingAi && !aiReasoning ? (
-                 <div className="space-y-4 animate-pulse">
-                   <div className="h-4 bg-purple-200/40 rounded-full w-[95%]"></div>
-                   <div className="h-4 bg-purple-200/40 rounded-full w-[85%]"></div>
-                   <div className="h-4 bg-purple-200/40 rounded-full w-[90%]"></div>
-                   <div className="h-4 bg-purple-200/40 rounded-full w-[60%]"></div>
-                 </div>
-                ) : (
-                  <div className="text-slate-700 text-[15px] leading-relaxed font-medium whitespace-pre-line">
-                    {typedReasoning}
-                    {isTyping && <span className="inline-block w-1.5 h-4 bg-purple-400 ml-1 animate-bounce" />}
-                  </div>
-                )}
+            <div className={`border p-6 rounded-[24px] mb-8 shadow-sm relative overflow-hidden animate-fade-in-up ${!aiReasoning ? 'min-h-[160px]' : 'min-h-[220px]'}`} style={{
+              background: 'var(--ai-insights-bg)',
+              borderColor: 'var(--search-border)',
+            }}>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-emerald-200/20 to-transparent rounded-bl-full pointer-events-none" />
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-2 rounded-full shadow-inner" style={{ background: 'var(--primary-light)' }}>
+                  <Sparkles size={16} style={{ color: 'var(--primary)' }} className="animate-pulse" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-extrabold text-sm tracking-tight" style={{ color: 'var(--text-main)' }}>AI Counselor's Verdict</span>
+                  {isTyping && <span className="text-[10px] text-emerald-500 font-bold animate-pulse">SYNCING WORDS...</span>}
+                </div>
+              </div>
+
+              {isGeneratingAi && !aiReasoning ? (
+                <div className="space-y-4 animate-pulse">
+                  <div className="h-4 bg-emerald-200/20 rounded-full w-[95%]"></div>
+                  <div className="h-4 bg-emerald-200/20 rounded-full w-[85%]"></div>
+                  <div className="h-4 bg-emerald-200/20 rounded-full w-[90%]"></div>
+                  <div className="h-4 bg-emerald-200/20 rounded-full w-[60%]"></div>
+                </div>
+              ) : (
+                <div className="text-[15px] leading-relaxed font-medium whitespace-pre-line" style={{ color: 'var(--text-main)', opacity: 0.9 }}>
+                  {typedReasoning}
+                  {isTyping && <span className="inline-block w-1.5 h-4 bg-emerald-400 ml-1 animate-bounce" />}
+                </div>
+              )}
             </div>
           )}
         </div>
