@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, Sparkles, LayoutGrid, Newspaper, Clock, Zap } from 'lucide-react';
+import { motion, Variants } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { newsArticles } from '@/data/news';
 import { universities } from '@/data/universities';
-import UniversityCard from '@/components/cards/UniversityCard';
+import UniversityCard, { UniversityCardSkeleton } from '@/components/cards/UniversityCard';
 import { getActivity } from '@/services/activityTracker';
 import { ActivityEvent, University } from '@/types';
 import { useWishlist } from '@/contexts/WishlistContext';
@@ -72,6 +73,26 @@ function SectionRow({ icon, title, action, onAction }: { icon: React.ReactNode; 
     </div>
   );
 }
+
+// ─── Animation Variants ───────────────────────────────────────
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.06
+    }
+  }
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 15 },
+  show: { 
+    opacity: 1, 
+    y: 0,
+    transition: { type: "spring", stiffness: 260, damping: 22 }
+  }
+};
 
 // ─── Main Home Component ──────────────────────────────────────
 export default function Home() {
@@ -252,7 +273,13 @@ export default function Home() {
 
         {/* ── Recently Viewed (Phase 3) ── */}
         {recentViews.length > 0 && (
-          <div style={{ marginBottom: '48px' }}>
+          <motion.div 
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ type: "spring", stiffness: 120, damping: 15 }}
+            style={{ marginBottom: '48px' }}
+          >
             <SectionRow icon={<Clock size={18} />} title="Recently Viewed" />
             <div className="scroll-row">
               {recentViews.map((item) => {
@@ -262,42 +289,50 @@ export default function Home() {
                 ) : null;
               })}
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* ── Personalized Recommendations (Phase 3) ── */}
         {(loadingRecs || recommendations.length > 0) && (
-          <div style={{ marginBottom: '48px' }}>
+          <motion.div 
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ type: "spring", stiffness: 120, damping: 15 }}
+            style={{ marginBottom: '48px' }}
+          >
             <SectionRow icon={<Zap size={18} />} title="Recommended for You" />
             {loadingRecs ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {(isMobile ? [1, 2] : [1, 2, 3, 4]).map(i => (
-                  <div key={i} className="card" style={{ display: 'flex', flexDirection: 'column', height: '340px', overflow: 'hidden', border: '1px solid var(--border)', background: 'var(--surface)' }}>
-                    <div className="shimmer-block" style={{ height: '180px' }} />
-                    <div style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                      <div className="shimmer-block" style={{ height: '18px', width: '70%', borderRadius: '4px' }} />
-                      <div className="shimmer-block" style={{ height: '12px', width: '40%', borderRadius: '4px' }} />
-                      <div style={{ display: 'flex', gap: '6px', marginTop: '4px' }}>
-                        <div className="shimmer-block" style={{ height: '16px', width: '50px', borderRadius: '99px' }} />
-                        <div className="shimmer-block" style={{ height: '16px', width: '60px', borderRadius: '99px' }} />
-                      </div>
-                      <div className="shimmer-block" style={{ height: '32px', width: '100%', borderRadius: '99px', marginTop: 'auto' }} />
-                    </div>
-                  </div>
+                  <UniversityCardSkeleton key={i} />
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <motion.div 
+                variants={containerVariants}
+                initial="hidden"
+                animate="show"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+              >
                 {(isMobile ? recommendations.slice(0, 2) : recommendations).map((uni) => (
-                  <UniversityCard key={uni.id} university={uni} />
+                  <motion.div key={uni.id} variants={itemVariants}>
+                    <UniversityCard university={uni} />
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             )}
-          </div>
+          </motion.div>
         )}
 
         {/* ── Top Matches ── */}
-        <div style={{ marginBottom: '48px' }}>
+        <motion.div 
+          initial={{ opacity: 0, y: 25 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ type: "spring", stiffness: 120, damping: 15 }}
+          style={{ marginBottom: '48px' }}
+        >
           <SectionRow
             icon={<Sparkles size={18} />}
             title="Top Matches For You"
@@ -312,22 +347,38 @@ export default function Home() {
               ))}
             </div>
 
-            <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <motion.div 
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+              className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            >
               {topUniversities.map((uni: any) => (
-                <UniversityCard key={uni.id} university={uni} />
+                <motion.div key={uni.id} variants={itemVariants}>
+                  <UniversityCard university={uni} />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
 
         {/* ── Action Banners ── */}
-        <div style={{ marginBottom: '48px' }}>
+        <motion.div 
+          initial={{ opacity: 0, y: 25 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ type: "spring", stiffness: 120, damping: 15 }}
+          style={{ marginBottom: '48px' }}
+        >
           <SectionRow icon={<LayoutGrid size={18} />} title="Quick Actions" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             {/* Quiz Banner */}
-            <div
+            <motion.div
               onClick={() => navigate('/quiz')}
+              whileHover={{ scale: 1.025, y: -2 }}
+              whileTap={{ scale: 0.985 }}
+              transition={{ type: "spring", stiffness: 350, damping: 20 }}
               className="glass-card glow-up"
               style={{
                 borderRadius: 'var(--radius-lg)',
@@ -340,16 +391,23 @@ export default function Home() {
                 <h3 style={{ color: 'var(--text-main)', fontSize: '18px', fontWeight: '900', marginBottom: '14px', lineHeight: 1.3 }}>
                   Start the 2-Minute<br />Future Fit Quiz ⚡
                 </h3>
-                <div style={{ background: 'var(--primary)', color: '#fff', padding: '9px 20px', borderRadius: '999px', fontSize: '13px', fontWeight: '800', display: 'inline-block' }}>
+                <motion.div 
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  style={{ background: 'var(--primary)', color: '#fff', padding: '9px 20px', borderRadius: '999px', fontSize: '13px', fontWeight: '800', display: 'inline-block' }}
+                >
                   Take Quiz →
-                </div>
+                </motion.div>
               </div>
               <div style={{ fontSize: '52px', flexShrink: 0 }}>🎯</div>
-            </div>
+            </motion.div>
 
             {/* Compare Banner */}
-            <div
+            <motion.div
               onClick={() => navigate('/compare')}
+              whileHover={{ scale: 1.025, y: -2 }}
+              whileTap={{ scale: 0.985 }}
+              transition={{ type: "spring", stiffness: 350, damping: 20 }}
               className="glass-card glow-up"
               style={{
                 borderRadius: 'var(--radius-lg)',
@@ -362,29 +420,45 @@ export default function Home() {
                 <h3 style={{ color: 'var(--text-main)', fontSize: '18px', fontWeight: '900', marginBottom: '14px', lineHeight: 1.3 }}>
                   Compare Colleges<br />Side-by-Side ⚖️
                 </h3>
-                <div style={{ background: 'var(--primary)', color: '#fff', padding: '9px 20px', borderRadius: '999px', fontSize: '13px', fontWeight: '800', display: 'inline-block' }}>
+                <motion.div 
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  style={{ background: 'var(--primary)', color: '#fff', padding: '9px 20px', borderRadius: '999px', fontSize: '13px', fontWeight: '800', display: 'inline-block' }}
+                >
                   Compare Now →
-                </div>
+                </motion.div>
               </div>
               <div style={{ fontSize: '52px', flexShrink: 0 }}>📊</div>
-            </div>
-
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
 
         {/* ── Latest News ── */}
-        <div style={{ marginBottom: '40px' }}>
+        <motion.div 
+          initial={{ opacity: 0, y: 25 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ type: "spring", stiffness: 120, damping: 15 }}
+          style={{ marginBottom: '40px' }}
+        >
           <SectionRow icon={<Newspaper size={18} />} title="Latest for Students" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
             {newsArticles.slice(0, 3).map((article: any) => (
-              <div
+              <motion.div
                 key={article.id}
+                variants={itemVariants}
                 onClick={() => setActiveNews(article)}
                 className="glow-up"
                 style={{
                   background: 'var(--surface)', borderRadius: 'var(--radius-md)',
                   padding: '20px', cursor: 'pointer', boxShadow: 'var(--shadow-sm)',
                   border: '1px solid var(--border)', display: 'flex', flexDirection: 'column',
+                  height: '100%'
                 }}
               >
                 <div style={{ display: 'inline-block', padding: '4px 10px', borderRadius: '999px', background: article.categoryColor + '18', color: article.categoryColor, fontSize: '11px', fontWeight: '800', marginBottom: '12px', letterSpacing: '0.5px', alignSelf: 'flex-start' }}>
@@ -396,10 +470,10 @@ export default function Home() {
                   <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{article.date} · {article.readTime}</span>
                   <span style={{ color: 'var(--primary)', fontWeight: '700', fontSize: '13px' }}>Read →</span>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
       </div>
 

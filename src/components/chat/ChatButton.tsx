@@ -78,9 +78,26 @@ export default function ChatButton() {
       {/* Redesigned Floating Sparkle Pulse Button */}
       <motion.button
         initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
+        animate={{ 
+          opacity: 1, 
+          scale: 1,
+          boxShadow: [
+            "0 10px 30px rgba(16,185,129,0.35), 0 0 0 0px rgba(16,185,129,0.25)",
+            "0 10px 30px rgba(16,185,129,0.35), 0 0 0 15px rgba(16,185,129,0)",
+            "0 10px 30px rgba(16,185,129,0.35), 0 0 0 0px rgba(16,185,129,0)"
+          ]
+        }}
         whileHover={{ scale: 1.08, y: -3 }}
         whileTap={{ scale: 0.94 }}
+        transition={{
+          boxShadow: {
+            duration: 2.2,
+            repeat: Infinity,
+            ease: "easeInOut"
+          },
+          opacity: { duration: 0.2 },
+          scale: { duration: 0.2 },
+        }}
         onClick={() => {
           setIsOpen(true);
           setShowTooltip(false);
@@ -88,14 +105,14 @@ export default function ChatButton() {
             localStorage.setItem('hasShownCounselorTooltip', 'true');
           } catch (e) {}
         }}
-        className="relative w-15 h-15 rounded-full flex items-center justify-center text-white transition-all shadow-[0_10px_35px_rgba(16,185,129,0.32)] hover:shadow-[0_18px_48px_rgba(16,185,129,0.48)] border-[2.5px] border-white"
+        className="relative w-15 h-15 rounded-full flex items-center justify-center text-white border-[2.5px] border-white cursor-pointer"
         style={{
           background: 'linear-gradient(135deg, #10B981 0%, #059669 50%, #047857 100%)',
         }}
       >
         {/* Continuous Breathing Halo ping rings */}
-        <span className="absolute -inset-[4px] rounded-full border-2 border-emerald-500/20 animate-ping" style={{ animationDuration: '3s' }}></span>
-        <span className="absolute -inset-[8px] rounded-full border border-teal-500/10 animate-pulse" style={{ animationDuration: '2s' }}></span>
+        <span className="absolute -inset-[6px] rounded-full border-2 border-emerald-500/25 animate-ping" style={{ animationDuration: '3.5s' }}></span>
+        <span className="absolute -inset-[10px] rounded-full border border-teal-500/15 animate-pulse" style={{ animationDuration: '2.5s' }}></span>
         
         {/* Custom Premium Sparkly AI Chat Bubble SVG */}
         <svg 

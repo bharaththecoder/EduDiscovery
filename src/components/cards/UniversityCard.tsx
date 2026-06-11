@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart, MapPin } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useToast } from '@/contexts/ToastContext';
 
@@ -103,14 +104,21 @@ export default function UniversityCard({ university, compact = false, reasons = 
               NAAC {university.naac}
             </div>
           )}
-          <button onClick={handleToggle} style={{
-            position: 'absolute', top: '8px', right: '8px',
-            background: 'rgba(255,255,255,0.92)', border: 'none',
-            borderRadius: '50%', width: '28px', height: '28px',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-          }}>
+          <motion.button 
+            whileHover={{ scale: 1.15 }}
+            whileTap={{ scale: 0.85 }}
+            transition={{ type: "spring", stiffness: 450, damping: 15 }}
+            onClick={handleToggle} 
+            style={{
+              position: 'absolute', top: '8px', right: '8px',
+              background: 'rgba(255,255,255,0.92)', border: 'none',
+              borderRadius: '50%', width: '28px', height: '28px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+              zIndex: 10
+            }}
+          >
             <Heart size={13} fill={saved ? 'var(--accent)' : 'none'} color={saved ? 'var(--accent)' : '#999'} />
-          </button>
+          </motion.button>
         </div>
         <div style={{ padding: '10px 12px', flex: 1 }}>
           <p style={{ fontSize: '13px', fontWeight: '700', lineHeight: 1.3, marginBottom: '4px', color: 'var(--text-main)' }}>
@@ -121,7 +129,14 @@ export default function UniversityCard({ university, compact = false, reasons = 
           </div>
           <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
             {university.tags.slice(0, 2).map((tag: string) => (
-              <span key={tag} className="tag" style={{ fontSize: '10px', padding: '2px 7px' }}>{tag}</span>
+              <motion.span 
+                key={tag} 
+                whileHover={{ scale: 1.05, y: -1 }}
+                className="tag" 
+                style={{ fontSize: '10px', padding: '2px 7px', display: 'inline-block' }}
+              >
+                {tag}
+              </motion.span>
             ))}
           </div>
         </div>
@@ -173,16 +188,22 @@ export default function UniversityCard({ university, compact = false, reasons = 
         )}
 
         {/* Wishlist button */}
-        <button onClick={handleToggle} style={{
-          position: 'absolute', top: '9px', right: '9px',
-          background: 'rgba(255,255,255,0.92)', border: 'none',
-          borderRadius: '50%', width: '34px', height: '34px',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
-          transition: 'all 0.2s',
-        }}>
+        <motion.button 
+          whileHover={{ scale: 1.15 }}
+          whileTap={{ scale: 0.85 }}
+          transition={{ type: "spring", stiffness: 450, damping: 15 }}
+          onClick={handleToggle} 
+          style={{
+            position: 'absolute', top: '9px', right: '9px',
+            background: 'rgba(255,255,255,0.92)', border: 'none',
+            borderRadius: '50%', width: '34px', height: '34px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+            zIndex: 10,
+          }}
+        >
           <Heart size={16} fill={saved ? 'var(--accent)' : 'none'} color={saved ? 'var(--accent)' : '#666'} />
-        </button>
+        </motion.button>
 
         {/* Name on image bottom */}
         <div style={{ position: 'absolute', bottom: '10px', left: '12px', right: '48px' }}>
@@ -206,7 +227,14 @@ export default function UniversityCard({ university, compact = false, reasons = 
 
         <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
           {university.tags.slice(0, 4).map((tag: string) => (
-            <span key={tag} className="tag" style={{ fontSize: '10px', padding: '2px 8px' }}>{tag}</span>
+            <motion.span 
+              key={tag} 
+              whileHover={{ scale: 1.05, y: -1 }}
+              className="tag" 
+              style={{ fontSize: '10px', padding: '2px 8px', display: 'inline-block' }}
+            >
+              {tag}
+            </motion.span>
           ))}
         </div>
 
@@ -278,13 +306,16 @@ export default function UniversityCard({ university, compact = false, reasons = 
         {/* Spacer */}
         <div style={{ flex: 1 }} />
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          transition={{ type: "spring", stiffness: 500, damping: 25 }}
           onClick={handleClick}
           className="btn btn-primary btn-sm btn-full"
           style={{ marginTop: '4px' }}
         >
           View Details
-        </button>
+        </motion.button>
       </div>
     </div>
   );
@@ -307,6 +338,45 @@ function BreakdownRow({ label, value, color }: { label: string; value: number; c
             transition: 'width 0.8s ease-out'
           }} 
         />
+      </div>
+    </div>
+  );
+}
+
+export function UniversityCardSkeleton({ compact = false }: { compact?: boolean }) {
+  if (compact) {
+    return (
+      <div className="compact-card animate-pulse" style={{ background: 'var(--surface)', height: '210px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
+        <div style={{ height: '120px', background: 'var(--border)', opacity: 0.15, borderTopLeftRadius: 'var(--radius-md)', borderTopRightRadius: 'var(--radius-md)' }} />
+        <div style={{ padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ height: '14px', width: '70%', background: 'var(--border)', borderRadius: '4px' }} />
+          <div style={{ height: '10px', width: '40%', background: 'var(--border)', borderRadius: '4px' }} />
+          <div style={{ display: 'flex', gap: '4px' }}>
+            <div style={{ height: '16px', width: '40px', background: 'var(--border)', borderRadius: '999px' }} />
+            <div style={{ height: '16px', width: '50px', background: 'var(--border)', borderRadius: '999px' }} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="animate-pulse" style={{ borderRadius: 'var(--radius-lg)', background: 'var(--surface)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', height: '400px' }}>
+      <div style={{ aspectRatio: '16/9', background: 'var(--border)', opacity: 0.15, borderTopLeftRadius: 'var(--radius-lg)', borderTopRightRadius: 'var(--radius-lg)' }} />
+      <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
+        <div style={{ height: '12px', width: '50%', background: 'var(--border)', borderRadius: '4px' }} />
+        <div style={{ height: '18px', width: '80%', background: 'var(--border)', borderRadius: '4px' }} />
+        <div style={{ display: 'flex', gap: '6px' }}>
+          <div style={{ height: '18px', width: '50px', background: 'var(--border)', borderRadius: '999px' }} />
+          <div style={{ height: '18px', width: '60px', background: 'var(--border)', borderRadius: '999px' }} />
+          <div style={{ height: '18px', width: '55px', background: 'var(--border)', borderRadius: '999px' }} />
+        </div>
+        <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ height: '12px', width: '90%', background: 'var(--border)', borderRadius: '4px' }} />
+          <div style={{ height: '12px', width: '85%', background: 'var(--border)', borderRadius: '4px' }} />
+        </div>
+        <div style={{ flex: 1 }} />
+        <div style={{ height: '36px', width: '100%', background: 'var(--border)', borderRadius: 'var(--radius-sm)' }} />
       </div>
     </div>
   );

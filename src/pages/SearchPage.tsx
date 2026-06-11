@@ -1,12 +1,33 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { Search, SlidersHorizontal, Sparkles, AlertCircle, TrendingUp } from 'lucide-react';
-import UniversityCard from '@/components/cards/UniversityCard';
+import { motion, Variants } from 'framer-motion';
+import UniversityCard, { UniversityCardSkeleton } from '@/components/cards/UniversityCard';
 import { universities } from '@/data/universities';
 import { useAuth } from '@/contexts/AuthContext';
 import { trackSearch } from '@/services/activityTracker';
 
 const CITIES = ['Amaravati', 'Visakhapatnam', 'Vijayawada', 'Guntur', 'Kakinada', 'Tirupati'];
 const BRANCHES = ['Engineering', 'Medical', 'Arts', 'Law', 'Business', 'Sciences', 'Pharmacy'];
+
+// ─── Animation Variants ───────────────────────────────────────
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05
+    }
+  }
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 15 },
+  show: { 
+    opacity: 1, 
+    y: 0,
+    transition: { type: "spring", stiffness: 260, damping: 22 }
+  }
+};
 
 // ─── Intent Parser ─────────────────────────────────────────────
 function parseIntent(query: string): { budget?: string; branch?: string } {
@@ -415,10 +436,13 @@ export default function SearchPage() {
               {CITIES.map(city => {
                 const isActive = activeCities.includes(city);
                 return (
-                  <button
+                  <motion.button
                     key={city}
                     className="chip"
                     onClick={() => toggleCity(city)}
+                    whileHover={{ scale: 1.05, y: -1 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 15 }}
                     style={{
                       padding: '6px 14px',
                       borderRadius: '99px',
@@ -428,31 +452,15 @@ export default function SearchPage() {
                       color: isActive ? '#fff' : 'var(--text-muted)',
                       border: isActive ? '1.5px solid transparent' : '1.5px solid var(--chip-border)',
                       boxShadow: isActive ? 'var(--shadow-glow)' : 'none',
-                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: '4px'
-                    }}
-                    onMouseOver={e => {
-                      if (!isActive) {
-                        e.currentTarget.style.borderColor = 'var(--primary)';
-                        e.currentTarget.style.color = 'var(--primary)';
-                        e.currentTarget.style.background = 'var(--primary-light)';
-                        e.currentTarget.style.transform = 'translateY(-1px)';
-                      }
-                    }}
-                    onMouseOut={e => {
-                      if (!isActive) {
-                        e.currentTarget.style.borderColor = 'var(--chip-border)';
-                        e.currentTarget.style.color = 'var(--text-muted)';
-                        e.currentTarget.style.background = 'var(--chip-bg)';
-                        e.currentTarget.style.transform = 'translateY(0)';
-                      }
+                      gap: '4px',
+                      cursor: 'pointer'
                     }}
                   >
                     {isActive && <span style={{ width: '5px', height: '5px', background: '#fff', borderRadius: '50%', display: 'inline-block' }} />}
                     <span>{city}</span>
-                  </button>
+                  </motion.button>
                 );
               })}
             </div>
@@ -477,10 +485,13 @@ export default function SearchPage() {
               {BRANCHES.map(b => {
                 const isActive = activeBranches.includes(b);
                 return (
-                  <button
+                  <motion.button
                     key={b}
                     className="chip"
                     onClick={() => toggleBranch(b)}
+                    whileHover={{ scale: 1.05, y: -1 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 15 }}
                     style={{
                       padding: '6px 14px',
                       borderRadius: '99px',
@@ -490,31 +501,15 @@ export default function SearchPage() {
                       color: isActive ? '#fff' : 'var(--text-muted)',
                       border: isActive ? '1.5px solid transparent' : '1.5px solid var(--chip-border)',
                       boxShadow: isActive ? 'var(--shadow-glow)' : 'none',
-                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: '4px'
-                    }}
-                    onMouseOver={e => {
-                      if (!isActive) {
-                        e.currentTarget.style.borderColor = 'var(--primary)';
-                        e.currentTarget.style.color = 'var(--primary)';
-                        e.currentTarget.style.background = 'var(--primary-light)';
-                        e.currentTarget.style.transform = 'translateY(-1px)';
-                      }
-                    }}
-                    onMouseOut={e => {
-                      if (!isActive) {
-                        e.currentTarget.style.borderColor = 'var(--chip-border)';
-                        e.currentTarget.style.color = 'var(--text-muted)';
-                        e.currentTarget.style.background = 'var(--chip-bg)';
-                        e.currentTarget.style.transform = 'translateY(0)';
-                      }
+                      gap: '4px',
+                      cursor: 'pointer'
                     }}
                   >
                     {isActive && <span style={{ width: '5px', height: '5px', background: '#fff', borderRadius: '50%', display: 'inline-block' }} />}
                     <span>{b}</span>
-                  </button>
+                  </motion.button>
                 );
               })}
             </div>
@@ -568,26 +563,20 @@ export default function SearchPage() {
         {/* Skeletons */}
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="card" style={{ display: 'flex', flexDirection: 'column', height: '340px', overflow: 'hidden', border: '1px solid var(--border)', background: 'var(--surface)' }}>
-                <div className="shimmer-block" style={{ height: '180px' }} />
-                <div style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <div className="shimmer-block" style={{ height: '18px', width: '75%', borderRadius: '4px' }} />
-                  <div className="shimmer-block" style={{ height: '12px', width: '50%', borderRadius: '4px' }} />
-                  <div style={{ display: 'flex', gap: '6px', marginTop: '4px' }}>
-                    <div className="shimmer-block" style={{ height: '16px', width: '50px', borderRadius: '99px' }} />
-                    <div className="shimmer-block" style={{ height: '16px', width: '60px', borderRadius: '99px' }} />
-                  </div>
-                  <div className="shimmer-block" style={{ height: '32px', width: '100%', borderRadius: '99px', marginTop: 'auto' }} />
-                </div>
-              </div>
+            {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+              <UniversityCardSkeleton key={i} />
             ))}
           </div>
         ) : (
           displayResults.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <motion.div 
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            >
               {displayResults.map(uni => (
-                <div key={uni.id} className="relative flex flex-col h-full">
+                <motion.div key={uni.id} variants={itemVariants} className="relative flex flex-col h-full">
                   {isAiSearch && uni.intelligenceScore !== undefined && (
                     <div className="absolute top-4 right-4 z-10 bg-emerald-600/80 backdrop-blur-md px-2 py-1 rounded-full text-white text-xs font-bold flex items-center gap-1">
                       <TrendingUp size={10} />
@@ -595,9 +584,9 @@ export default function SearchPage() {
                     </div>
                   )}
                   <UniversityCard university={uni} />
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           ) : (
             <div style={{ textAlign: 'center', padding: '60px 20px' }}>
               <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔍</div>

@@ -2360,6 +2360,7 @@ export const universities = [
     match: 89,
     branches: ["Sciences", "Arts", "Business", "Engineering"],
     tags: ["B.Sc", "MBA", "M.Sc", "M.Tech", "B.Com", "Free Education"],
+    // image: "https://iic.sssihl.edu.in/wp-content/uploads/2025/02/SSSIHL-History-Timeline-1980s-right-scaled-1.jpg",
     image: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Sri_Sathya_Sai_Institute_of_Higher_Learning_-_PSN_Campus_-_Main_Building.png",
     website: "https://www.sssihl.edu.in",
     about: "Sri Sathya Sai Institute of Higher Learning (SSSIHL), established in 1981 at Prasanthi Nilayam, Anantapur District, is a unique Deemed-to-be University offering FREE education to all students — a rare practice worldwide. SSSIHL holds the prestigious NAAC A++ grade (the highest tier) and is internationally renowned for its 'Educare' philosophy, which integrates world-class academics with spiritual and human values. The university has campuses at Prasanthi Nilayam (for men) and Anantapur and Muddenahalli (for women). Over 150 visiting faculty from IITs, Cornell, and Iowa State University volunteer here. SSSIHL produces graduates who are renowned for both technical excellence and exemplary character.",

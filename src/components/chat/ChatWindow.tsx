@@ -87,19 +87,19 @@ export default function ChatWindow() {
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95, y: 30 }}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="fixed bottom-0 md:bottom-6 right-0 md:right-6 w-full md:w-[380px] h-[calc(100vh-100px)] md:h-[calc(100vh-140px)] max-h-[620px] bg-slate-50 md:bg-white/95 md:backdrop-blur-xl rounded-t-[2.2rem] md:rounded-t-[2.2rem] md:rounded-b-[1.5rem] shadow-[0_24px_80px_-15px_rgba(124,58,237,0.18)] flex flex-col overflow-hidden z-50 border border-slate-100/80"
+      className="fixed bottom-0 md:bottom-6 right-0 md:right-6 w-full md:w-[380px] h-[calc(100vh-100px)] md:h-[calc(100vh-140px)] max-h-[620px] bg-slate-50 dark:bg-slate-950 md:bg-white/95 md:backdrop-blur-xl rounded-t-[2.2rem] md:rounded-t-[2.2rem] md:rounded-b-[1.5rem] shadow-[0_24px_80px_-15px_rgba(0,135,90,0.15)] dark:shadow-[0_24px_80px_-15px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden z-50 border border-slate-100/80 dark:border-slate-800/80"
     >
       {/* Concept 3: Premium Insta-Style Header */}
       <div 
-        className="px-5 py-4 flex items-center justify-between shrink-0 border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-10"
+        className="px-5 py-4 flex items-center justify-between shrink-0 border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-10"
         style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}
       >
         <div className="flex items-center gap-3">
           {/* Circular Glowing Gradient Avatar */}
           <div className="relative">
-            <div className="w-11 h-11 rounded-full p-[2.5px] bg-gradient-to-tr from-[#4F46E5] via-[#9333EA] to-[#EC4899] flex items-center justify-center shadow-sm">
-              <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-purple-600">
-                <Sparkles size={18} className="text-purple-600 filter drop-shadow(0 0 2px rgba(124,58,237,0.2))" />
+            <div className="w-11 h-11 rounded-full p-[2.5px] bg-gradient-to-tr from-[var(--primary)] via-[var(--accent)] to-[var(--primary)] flex items-center justify-center shadow-sm">
+              <div className="w-full h-full rounded-full bg-white dark:bg-slate-900 flex items-center justify-center text-[var(--primary)] dark:text-[var(--accent)]">
+                <Sparkles size={18} className="text-[var(--primary)] dark:text-[var(--accent)] filter drop-shadow(0 0 2px var(--primary-glow))" />
               </div>
             </div>
             {/* Pulsing Active Beacon */}
@@ -108,12 +108,12 @@ export default function ChatWindow() {
             </div>
           </div>
           <div>
-            <h2 className="font-bold text-slate-800 text-[15px] leading-tight flex items-center gap-1">
+            <h2 className="font-bold text-slate-800 dark:text-slate-100 text-[15px] leading-tight flex items-center gap-1">
               AI Counselor
             </h2>
             <div className="flex items-center gap-1 mt-0.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Active Now</p>
+              <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">Active Now</p>
             </div>
           </div>
         </div>
@@ -121,14 +121,14 @@ export default function ChatWindow() {
           {/* Action buttons */}
           <button 
             onClick={clearMessages}
-            className="p-2 hover:bg-purple-50 rounded-full text-slate-400 hover:text-purple-600 transition-all"
+            className="p-2 hover:bg-emerald-50 dark:hover:bg-emerald-950/35 rounded-full text-slate-400 hover:text-[var(--primary)] transition-all"
             title="Clear Chat"
           >
             <Trash2 size={16} />
           </button>
           <button 
             onClick={() => setIsOpen(false)}
-            className="p-2 hover:bg-slate-100 rounded-full text-slate-400 hover:text-slate-700 transition-all"
+            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all"
           >
             <X size={18} />
           </button>
@@ -138,20 +138,20 @@ export default function ChatWindow() {
       {/* Messages Area */}
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto px-3 py-4 space-y-2"
+        className="flex-1 overflow-y-auto px-3 py-4 space-y-2 dark:bg-slate-900"
         style={{
-          background: 'linear-gradient(180deg, #FAFAFF 0%, #F4F0FF 100%)',
+          background: 'linear-gradient(180deg, var(--bg) 0%, var(--surface) 100%)',
         }}
       >
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-center px-8 animate-fade-in">
-            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-5 shadow-sm border border-slate-100">
-              <Sparkles size={30} className="text-purple-500 animate-pulse" />
+            <div className="w-16 h-16 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center mb-5 shadow-sm border border-slate-100 dark:border-slate-800">
+              <Sparkles size={30} className="text-[var(--primary)] dark:text-[var(--accent)] animate-pulse" />
             </div>
-            <p className="text-[16px] font-extrabold text-slate-800">
+            <p className="text-[16px] font-extrabold text-slate-800 dark:text-slate-100">
               {quizContext ? "Personal Admission Assistant" : "Get Professional Advice"}
             </p>
-            <p className="text-[13px] text-slate-400 mt-2 leading-relaxed">
+            <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
               {quizContext 
                 ? "Ask anything about your matching colleges, convener fees, and ROI placements." 
                 : "Unlock the full AI advisor experience by completing our discovery preferences quiz."}
@@ -159,7 +159,7 @@ export default function ChatWindow() {
             {!quizContext && (
               <button 
                 onClick={() => { setIsOpen(false); window.location.href = '/quiz'; }}
-                className="mt-6 px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[13px] font-extrabold rounded-full hover:shadow-[0_8px_20px_rgba(124,58,237,0.3)] transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+                className="mt-6 px-8 py-3 bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] text-white text-[13px] font-extrabold rounded-full hover:shadow-[0_8px_20px_rgba(0,135,90,0.25)] transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
               >
                 Start Preference Quiz
               </button>
@@ -175,7 +175,7 @@ export default function ChatWindow() {
                 <button
                   key={i}
                   onClick={() => handleSend(q.replace(/[💡⭐💰]\s*/, ''))}
-                  className="px-4 py-1.5 bg-white border border-slate-200/80 rounded-full text-[12px] font-bold text-purple-600 shadow-sm hover:border-purple-400 hover:text-purple-700 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="px-4 py-1.5 bg-white dark:bg-slate-900 border border-slate-200/85 dark:border-slate-800 rounded-full text-[12px] font-bold text-[var(--primary)] dark:text-[var(--accent)] shadow-sm hover:border-[var(--accent)] hover:text-[var(--secondary)] dark:hover:text-white transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                 >
                   {q}
                 </button>
@@ -203,10 +203,10 @@ export default function ChatWindow() {
 
         {/* Loading message typing indicator */}
         {isLoading && (
-          <div className="flex gap-1.5 px-4 py-3 ml-3 bg-[#FAFAFF] border border-slate-200/40 w-fit rounded-2xl shadow-sm">
-            <span className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce [animation-duration:0.6s]"></span>
-            <span className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce [animation-duration:0.6s] [animation-delay:150ms]"></span>
-            <span className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce [animation-duration:0.6s] [animation-delay:300ms]"></span>
+          <div className="flex gap-1.5 px-4 py-3 ml-12 bg-white dark:bg-slate-900 border border-slate-200/40 dark:border-slate-850 w-fit rounded-2xl shadow-sm">
+            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce [animation-duration:0.6s]"></span>
+            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce [animation-duration:0.6s] [animation-delay:150ms]"></span>
+            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce [animation-duration:0.6s] [animation-delay:300ms]"></span>
           </div>
         )}
 
@@ -220,9 +220,9 @@ export default function ChatWindow() {
       </div>
 
       {/* Clean Pill Input Area (Concept 3) */}
-      <div className="px-5 pt-4 pb-7 bg-white border-t border-slate-100 shrink-0">
+      <div className="px-5 pt-4 pb-7 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-900 shrink-0">
         <div 
-          className="rounded-full px-5 py-1.5 flex items-center border transition-all duration-200"
+          className="rounded-full px-5 py-1.5 flex items-center border transition-all duration-200 dark:bg-slate-900/60 dark:border-slate-800"
           style={{
             background: '#F8FAFC',
             borderColor: '#E2E8F0',
@@ -250,17 +250,17 @@ export default function ChatWindow() {
               }
             }}
             placeholder="Ask a question..."
-            className="flex-1 bg-transparent outline-none resize-none text-[14px] py-2 font-medium text-slate-700 placeholder:text-slate-400 max-h-[100px] no-scrollbar"
+            className="flex-1 bg-transparent outline-none resize-none text-[14px] py-2 font-medium text-slate-700 dark:text-slate-200 placeholder:text-slate-400 max-h-[100px] no-scrollbar"
             disabled={isLoading}
           />
 
           <motion.button
             onClick={() => handleSend(input)}
             disabled={!input.trim() || isLoading}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-white transition-all duration-300 shadow-sm shrink-0"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-white transition-all duration-300 shadow-sm shrink-0 dark:disabled:bg-slate-800"
             style={{
               background: input.trim() 
-                ? 'linear-gradient(135deg, #4F46E5 0%, #9333EA 50%, #EC4899 100%)'
+                ? 'linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%)'
                 : 'rgba(226, 232, 240, 0.9)',
               color: input.trim() ? '#fff' : '#94A3B8',
               cursor: input.trim() ? 'pointer' : 'not-allowed',

@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // Primary OpenRouter model
-const PRIMARY_MODEL = "nvidia/nemotron-3-ultra-550b-a55b:free";
+const PRIMARY_MODEL = "openrouter/free";
 // Backup Gemini model
 const FALLBACK_MODEL = "gemini-2.5-flash-lite";
 
@@ -24,7 +24,7 @@ async function callOpenRouter(messages, systemInstruction) {
   console.log(`[AI] Attempting OpenRouter call with model: ${PRIMARY_MODEL}...`);
   
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 6000); // 6 seconds timeout
+  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 seconds timeout
 
   try {
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -144,7 +144,7 @@ export async function streamChat(message, systemInstruction, history, res) {
       formattedMessages.push({ role: "user", content: message });
 
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 6000); // 6 seconds timeout
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 seconds timeout
 
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
@@ -178,9 +178,10 @@ export async function streamChat(message, systemInstruction, history, res) {
 
       // Set up chunk buffer to handle partial lines in SSE
       let buffer = "";
+      const decoder = new TextDecoder("utf-8");
       
       for await (const chunk of reader) {
-        buffer += chunk.toString("utf8");
+        buffer += decoder.decode(chunk, { stream: true });
         const lines = buffer.split("\n");
         // Save the last incomplete line back to buffer
         buffer = lines.pop() || "";
