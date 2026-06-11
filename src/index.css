@@ -162,7 +162,13 @@
 
 html { 
   scroll-behavior: smooth; 
-  zoom: 1.15;
+  zoom: 1.0;
+}
+
+@media (min-width: 1024px) {
+  html {
+    zoom: 1.05;
+  }
 }
 
 body {
