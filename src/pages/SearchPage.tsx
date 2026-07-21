@@ -1,8 +1,9 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { Search, SlidersHorizontal, Sparkles, AlertCircle, TrendingUp } from 'lucide-react';
-import { motion, Variants } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import UniversityCard, { UniversityCardSkeleton } from '@/components/cards/UniversityCard';
-import { universities } from '@/data/universities';
+import { MagneticButton, SpotlightCard, HolographicBadge } from '@/components/Animation3DComponents';
+import { useUniversities } from '@/contexts/UniversityContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { trackSearch } from '@/services/activityTracker';
 
@@ -15,16 +16,18 @@ const containerVariants: Variants = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.05
+      staggerChildren: 0.06
     }
   }
 };
 
 const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 15 },
+  hidden: { opacity: 0, y: 25, rotateX: 12, scale: 0.95 },
   show: { 
     opacity: 1, 
     y: 0,
+    rotateX: 0,
+    scale: 1,
     transition: { type: "spring", stiffness: 260, damping: 22 }
   }
 };
@@ -66,6 +69,7 @@ function parseIntent(query: string): { budget?: string; branch?: string } {
 
 export default function SearchPage() {
   const { currentUser } = useAuth();
+  const { universities, loading: loadingColleges } = useUniversities();
   const [query, setQuery] = useState('');
   const [activeCities, setActiveCities] = useState<string[]>([]);
   const [activeBranches, setActiveBranches] = useState<string[]>([]);
@@ -87,17 +91,24 @@ export default function SearchPage() {
 
   // Suggestions from local data while typing
   const suggestions = useMemo(() => {
-    if (!query || query.length < 2) return [];
+    if (!query || query.length < 2 || loadingColleges) return [];
     const lower = query.toLowerCase();
     const matches: string[] = [];
     for (const uni of universities) {
-      if (uni.name.toLowerCase().includes(lower)) matches.push(uni.name);
-      else if (uni.city.toLowerCase().includes(lower)) matches.push(`${uni.name} · ${uni.city}`);
-      else if (uni.tags.some(t => t.toLowerCase().includes(lower))) matches.push(`${uni.name} — ${uni.tags.find(t => t.toLowerCase().includes(lower))}`);
+      if (uni.name.toLowerCase().includes(lower)) {
+        matches.push(uni.name);
+      } else if (uni.city.toLowerCase().includes(lower)) {
+        matches.push(`${uni.name} · ${uni.city}`);
+      } else {
+        const matchingTag = uni.tags.find(t => t.toLowerCase().includes(lower));
+        if (matchingTag) {
+          matches.push(`${uni.name} — ${matchingTag}`);
+        }
+      }
       if (matches.length >= 5) break;
     }
     return matches;
-  }, [query]);
+  }, [query, universities, loadingColleges]);
 
   // Execute AI Search
   const runAISearch = useCallback(async (q: string) => {
@@ -127,6 +138,10 @@ export default function SearchPage() {
     }
   }, [currentUser]);
 
+  useEffect(() => {
+    document.title = "Explore Colleges | EduDiscovery AP";
+  }, []);
+
   // Debounce: trigger AI search 600ms after typing stops
   useEffect(() => {
     if (debounceTimer.current) clearTimeout(debounceTimer.current);
@@ -142,15 +157,18 @@ export default function SearchPage() {
   };
 
   // Local filter fallback
-  const filtered = useMemo(() => universities.filter(uni => {
-    const matchesQuery = isAiSearch || !query ||
-      uni.name.toLowerCase().includes(query.toLowerCase()) ||
-      uni.city.toLowerCase().includes(query.toLowerCase()) ||
-      uni.tags.some(t => t.toLowerCase().includes(query.toLowerCase()));
-    const matchesCity = activeCities.length === 0 || activeCities.includes(uni.city);
-    const matchesBranch = activeBranches.length === 0 || activeBranches.some(b => uni.branches.includes(b));
-    return matchesQuery && matchesCity && matchesBranch;
-  }), [query, isAiSearch, activeCities, activeBranches]);
+  const filtered = useMemo(() => {
+    const lowerQuery = query.toLowerCase();
+    return universities.filter(uni => {
+      const matchesQuery = isAiSearch || !query ||
+        uni.name.toLowerCase().includes(lowerQuery) ||
+        uni.city.toLowerCase().includes(lowerQuery) ||
+        uni.tags.some(t => t.toLowerCase().includes(lowerQuery));
+      const matchesCity = activeCities.length === 0 || activeCities.includes(uni.city);
+      const matchesBranch = activeBranches.length === 0 || activeBranches.some(b => uni.branches?.includes(b));
+      return matchesQuery && matchesCity && matchesBranch;
+    });
+  }, [query, isAiSearch, activeCities, activeBranches, universities]);
 
   const displayResults = isAiSearch
     ? aiResults.filter(uni => {
@@ -182,25 +200,13 @@ export default function SearchPage() {
           {/* Top Row: Title, Subtitle, and AI Search Indicator */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-              <h1 style={{ fontSize: '26px', fontWeight: '900', letterSpacing: '-0.5px', color: 'var(--text-main)', lineHeight: 1.15 }}>
+              <h1 className="wave-underline" style={{ fontSize: '26px', fontWeight: '900', letterSpacing: '-0.5px', color: 'var(--text-main)', lineHeight: 1.15, display: 'inline-block' }}>
                 Discover Premier <span className="gradient-text" style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #059669 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Education in AP</span> 🎓
               </h1>
-              <div style={{
-                background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%)',
-                border: '1px solid rgba(16, 185, 129, 0.2)',
-                borderRadius: '99px',
-                padding: '6px 14px',
-                fontSize: '11px',
-                fontWeight: '800',
-                color: 'var(--primary)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                boxShadow: '0 2px 10px rgba(16, 185, 129, 0.05)'
-              }}>
-                <Sparkles size={12} className="animate-pulse" />
-                <span>AI-POWERED SEARCH</span>
-              </div>
+              <HolographicBadge>
+                <Sparkles size={12} style={{ color: 'var(--primary)' }} />
+                <span style={{ color: 'var(--primary)' }}>AI-POWERED SEARCH</span>
+              </HolographicBadge>
             </div>
             <p style={{ color: 'var(--text-muted)', fontSize: '13.5px', fontWeight: '500', maxWidth: '600px', lineHeight: 1.4 }}>
               Enter natural questions (e.g. <i>"Top CSE colleges under 5 lakh"</i>) or use the smart tags below to filter instantly.
@@ -268,8 +274,7 @@ export default function SearchPage() {
 
               {/* Clear button */}
               {query && (
-                <button
-                  type="button"
+                <MagneticButton
                   onClick={() => { setQuery(''); setIsAiSearch(false); setShowSuggestions(false); }}
                   style={{
                     padding: '8px',
@@ -286,11 +291,11 @@ export default function SearchPage() {
                     background: 'rgba(241, 245, 249, 0.8)',
                     transition: 'all 0.2s',
                   }}
-                  onMouseOver={e => (e.currentTarget.style.background = 'rgba(226, 232, 240, 1)')}
-                  onMouseOut={e => (e.currentTarget.style.background = 'rgba(241, 245, 249, 0.8)')}
+                  onMouseOver={(e: React.MouseEvent<HTMLButtonElement>) => (e.currentTarget.style.background = 'rgba(226, 232, 240, 1)')}
+                  onMouseOut={(e: React.MouseEvent<HTMLButtonElement>) => (e.currentTarget.style.background = 'rgba(241, 245, 249, 0.8)')}
                 >
                   ×
-                </button>
+                </MagneticButton>
               )}
 
               {/* Action Button */}
@@ -554,14 +559,14 @@ export default function SearchPage() {
             )}
           </p>
           {(activeCities.length > 0 || activeBranches.length > 0) && (
-            <button onClick={() => { setActiveCities([]); setActiveBranches([]); }} style={{ color: 'var(--accent)', fontSize: '13px', fontWeight: '700' }}>
+            <MagneticButton onClick={() => { setActiveCities([]); setActiveBranches([]); }} style={{ color: 'var(--accent)', fontSize: '13px', fontWeight: '700' }}>
               Clear Filters
-            </button>
+            </MagneticButton>
           )}
         </div>
 
         {/* Skeletons */}
-        {isLoading ? (
+        {isLoading || loadingColleges ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
               <UniversityCardSkeleton key={i} />
@@ -575,30 +580,44 @@ export default function SearchPage() {
               animate="show"
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
             >
-              {displayResults.map(uni => (
-                <motion.div key={uni.id} variants={itemVariants} className="relative flex flex-col h-full">
-                  {isAiSearch && uni.intelligenceScore !== undefined && (
-                    <div className="absolute top-4 right-4 z-10 bg-emerald-600/80 backdrop-blur-md px-2 py-1 rounded-full text-white text-xs font-bold flex items-center gap-1">
-                      <TrendingUp size={10} />
-                      ROI {uni.intelligenceScore}/10
-                    </div>
-                  )}
-                  <UniversityCard university={uni} />
-                </motion.div>
-              ))}
+              <AnimatePresence mode="popLayout">
+                {displayResults.map(uni => (
+                  <motion.div 
+                    key={uni.id} 
+                    layout
+                    variants={itemVariants} 
+                    transition={{
+                      type: "spring",
+                      stiffness: 120,
+                      damping: 18,
+                      mass: 0.8
+                    }}
+                    exit={{ opacity: 0, scale: 0.9, y: 10, transition: { duration: 0.15 } }}
+                    className="relative flex flex-col h-full"
+                  >
+                    {isAiSearch && uni.intelligenceScore !== undefined && (
+                      <div className="absolute top-4 right-4 z-10 bg-emerald-600/80 backdrop-blur-md px-2 py-1 rounded-full text-white text-xs font-bold flex items-center gap-1">
+                        <TrendingUp size={10} />
+                        ROI {uni.intelligenceScore}/10
+                      </div>
+                    )}
+                    <UniversityCard university={uni} />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </motion.div>
           ) : (
             <div style={{ textAlign: 'center', padding: '60px 20px' }}>
               <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔍</div>
               <h3 style={{ fontWeight: '800', marginBottom: '8px' }}>No colleges found</h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Try adjusting your filters or search term.</p>
-              <button
+              <MagneticButton
                 onClick={() => { setQuery(''); setIsAiSearch(false); setActiveCities([]); setActiveBranches([]); }}
                 className="btn btn-secondary mx-auto mt-5"
                 style={{ display: 'flex', gap: '8px' }}
               >
                 Reset All
-              </button>
+              </MagneticButton>
             </div>
           )
         )}

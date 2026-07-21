@@ -4,7 +4,7 @@ import { Menu, X, Search, LogOut, Download, Sun, Moon } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePWA } from '@/contexts/PWAContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -24,10 +24,9 @@ export default function Navbar() {
 
   const navLinks = [
     { label: 'Home', path: '/home' },
-    { label: 'Finder', path: '/quiz' },
     { label: 'Search', path: '/search' },
+    { label: 'Predictor', path: '/predictor' },
     { label: 'Wishlist', path: '/wishlist' },
-    { label: 'Profile', path: '/profile' },
   ];
 
   return (
@@ -59,7 +58,7 @@ export default function Navbar() {
               to={link.path}
               style={({ isActive }) => ({
                 fontSize: '15px', fontWeight: '700',
-                color: isActive ? 'var(--primary)' : 'var(--text-muted)',
+                color: isActive ? 'var(--primary)' : 'var(--text-main)',
                 transition: 'var(--transition)',
                 textDecoration: 'none',
                 position: 'relative',
@@ -68,7 +67,13 @@ export default function Navbar() {
             >
               {({ isActive }) => (
                 <div style={{ position: 'relative' }}>
-                  {link.label}
+                  <motion.span
+                    whileHover={{ scale: 1.06, color: 'var(--primary)' }}
+                    whileTap={{ scale: 0.95 }}
+                    style={{ display: 'inline-block' }}
+                  >
+                    {link.label}
+                  </motion.span>
                   {isActive && (
                     <motion.div
                       layoutId="activeNavIndicator"
@@ -93,8 +98,10 @@ export default function Navbar() {
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-4">
           {isInstallable && (
-            <button 
+            <motion.button 
               onClick={installApp} 
+              whileHover={{ scale: 1.05, y: -1 }}
+              whileTap={{ scale: 0.95 }}
               style={{
                 background: 'var(--primary-light)', 
                 color: 'var(--primary)',
@@ -118,19 +125,26 @@ export default function Navbar() {
               }}
             >
               <Download size={14} /> Install App
-            </button>
+            </motion.button>
           )}
 
-          <button onClick={() => navigate('/search')} style={{
-            background: 'var(--primary-light)', width: '38px', height: '38px',
-            borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
+          <motion.button 
+            onClick={() => navigate('/search')} 
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            whileTap={{ scale: 0.9 }}
+            style={{
+              background: 'var(--primary-light)', width: '38px', height: '38px',
+              borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}
+          >
             <Search size={18} color="var(--primary)" />
-          </button>
+          </motion.button>
 
           {/* Desktop Theme Toggle */}
-          <button 
+          <motion.button 
             onClick={toggleTheme} 
+            whileHover={{ scale: 1.1, rotate: 12 }}
+            whileTap={{ scale: 0.9 }}
             style={{
               background: 'var(--primary-light)', 
               width: '38px', 
@@ -141,29 +155,78 @@ export default function Navbar() {
               justifyContent: 'center',
               color: 'var(--primary)',
               cursor: 'pointer',
-              transition: 'var(--transition)',
+              border: 'none',
+              overflow: 'hidden',
+              position: 'relative'
             }}
             title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
           >
-            {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-          </button>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={theme}
+                initial={{ y: -20, opacity: 0, rotate: -90 }}
+                animate={{ y: 0, opacity: 1, rotate: 0 }}
+                exit={{ y: 20, opacity: 0, rotate: 90 }}
+                transition={{ duration: 0.25, ease: 'easeInOut' }}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+              </motion.div>
+            </AnimatePresence>
+          </motion.button>
           
-          <div style={{
-            width: '38px', height: '38px', borderRadius: '50%',
-            background: 'var(--gradient)', display: 'flex', alignItems: 'center',
-            justifyContent: 'center', color: '#fff', fontWeight: '800', fontSize: '16px',
-            cursor: 'pointer', overflow: 'hidden'
-          }} onClick={() => navigate('/profile')}>
+          <motion.div 
+            whileHover={{ scale: 1.1, rotate: 8 }}
+            whileTap={{ scale: 0.9 }}
+            style={{
+              width: '38px', height: '38px', borderRadius: '50%',
+              background: 'var(--gradient)', display: 'flex', alignItems: 'center',
+              justifyContent: 'center', color: '#fff', fontWeight: '800', fontSize: '16px',
+              cursor: 'pointer', overflow: 'hidden'
+            }} 
+            onClick={() => navigate('/profile')}
+          >
             {currentUser?.photoURL ? (
               <img src={currentUser.photoURL} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             ) : avatarLetter}
-          </div>
+          </motion.div>
         </div>
 
-        {/* Mobile Hamburger */}
-        <div className="md:hidden flex items-center">
-          <button onClick={() => setMenuOpen(!menuOpen)} style={{ color: 'var(--text-main)', padding: '4px' }}>
-            {menuOpen ? <X size={28} /> : <Menu size={28} />}
+        {/* Mobile Hamburger & Theme Toggle */}
+        <div className="md:hidden flex items-center gap-3">
+          <button 
+            onClick={toggleTheme} 
+            style={{
+              background: 'var(--primary-light)', 
+              width: '34px', 
+              height: '34px',
+              borderRadius: '50%', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              color: 'var(--primary)',
+              cursor: 'pointer',
+              border: 'none',
+              overflow: 'hidden',
+              position: 'relative'
+            }}
+            title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={theme}
+                initial={{ y: -15, opacity: 0, rotate: -90 }}
+                animate={{ y: 0, opacity: 1, rotate: 0 }}
+                exit={{ y: 15, opacity: 0, rotate: 90 }}
+                transition={{ duration: 0.2, ease: 'easeInOut' }}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
+              </motion.div>
+            </AnimatePresence>
+          </button>
+          <button onClick={() => setMenuOpen(!menuOpen)} style={{ color: 'var(--text-main)', padding: '4px', background: 'transparent', border: 'none', cursor: 'pointer' }}>
+            {menuOpen ? <X size={26} /> : <Menu size={26} />}
           </button>
         </div>
       </div>

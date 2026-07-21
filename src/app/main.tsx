@@ -24,3 +24,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </AppProviders>
   </React.StrictMode>
 );
+
+// HMR trigger v2

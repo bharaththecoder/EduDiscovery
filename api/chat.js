@@ -1,10 +1,13 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { streamChat } from "./aiHelper.js";
 import admin, { db } from "./firebaseAdmin.js";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-// ─── In-memory college cache (reused from search.js pattern) ──
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "dummy_key");
+
+// ─── In-memory college cache ──
 let cachedColleges = null;
 let cacheTime = 0;
 const CACHE_TTL = 1000 * 60 * 60; // 1 hour
@@ -14,9 +17,9 @@ async function getCollegesFromFirestore() {
   const snap = await db.collection('colleges').get();
   cachedColleges = snap.docs.map(d => {
     const data = d.data();
-    // Strip embedding to save memory
-    const { embedding, ...rest } = data;
-    return { id: d.id, ...rest };
+    const college = { id: d.id, ...data };
+    college._searchTargetText = `${college.name} ${college.shortName || ''} ${college.city} ${college.state} ${(college.tags || []).join(' ')} ${college.about || ''} ${(college.branches || []).join(' ')}`.toLowerCase();
+    return college;
   });
   cacheTime = Date.now();
   return cachedColleges;
@@ -44,6 +47,34 @@ function extractCollegeKeywords(message) {
   return { names: foundNames, branches: foundBranches, attrs: foundAttrs };
 }
 
+function cosineSimilarity(vecA, vecB) {
+  if (!vecA || !vecB) return 0;
+  let dotProduct = 0, normA = 0, normB = 0;
+  for (let i = 0; i < vecA.length; i++) {
+    dotProduct += vecA[i] * vecB[i];
+    normA += vecA[i] * vecA[i];
+    normB += vecB[i] * vecB[i];
+  }
+  return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+}
+
+function keywordMatchScore(query, college) {
+  const lowerQuery = query.toLowerCase();
+  const words = lowerQuery.split(/\s+/).filter(w => w.length > 1);
+  if (words.length === 0) return 0.5;
+
+  let matches = 0;
+  const targetText = college._searchTargetText || `${college.name} ${college.shortName || ''} ${college.city} ${college.state} ${(college.tags || []).join(' ')} ${college.about || ''} ${(college.branches || []).join(' ')}`.toLowerCase();
+
+  words.forEach(word => {
+    if (targetText.includes(word)) {
+      matches += 1;
+    }
+  });
+
+  return Math.min(1.0, 0.2 + (matches / words.length) * 0.8);
+}
+
 // ─── Retrieve and format relevant college facts for RAG ───────
 async function fetchRelevantCollegeFacts(message) {
   let colleges;
@@ -58,23 +89,39 @@ async function fetchRelevantCollegeFacts(message) {
 
   const keywords = extractCollegeKeywords(message);
   const lower = message.toLowerCase();
+
+  // 1. Generate embedding for user message with fallback handling
+  let queryEmbedding = null;
+  try {
+    if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_actual_key_here') {
+      const embedModel = genAI.getGenerativeModel({ model: "gemini-embedding-001" });
+      const result = await embedModel.embedContent(message);
+      queryEmbedding = result.embedding.values;
+    }
+  } catch (embErr) {
+    console.warn("[RAG-AI] Semantic embedding failed for chat context, using high-fidelity keyword matching fallback:", embErr.message);
+  }
   
-  // Score colleges by relevance to message
+  // 2. Score colleges by relevance to message
   const scored = colleges.map(c => {
-    let score = 0;
+    let semanticScore = 0.5;
+    if (queryEmbedding && c.embedding) {
+      semanticScore = cosineSimilarity(queryEmbedding, c.embedding);
+    } else {
+      semanticScore = keywordMatchScore(message, c);
+    }
+
+    const keywordScore = keywordMatchScore(message, c);
+    let combinedScore = semanticScore * 0.7 + keywordScore * 0.3;
+
+    // Apply massive boost if the college name matches user query keywords
     const cLower = `${c.name} ${c.shortName || ''} ${(c.tags || []).join(' ')}`.toLowerCase();
-    
-    // Name match (highest priority)
-    if (keywords.names.some(n => cLower.includes(n))) score += 40;
-    // Branch match
-    if (keywords.branches.some(b => cLower.includes(b))) score += 20;
-    // City in message
-    if (c.city && lower.includes(c.city.toLowerCase())) score += 30;
-    // NAAC mention
-    if (keywords.attrs.includes('naac') || keywords.attrs.includes('ranking')) score += 5;
-    
-    return { ...c, _score: score };
-  }).filter(c => c._score > 0)
+    if (keywords.names.some(n => cLower.includes(n))) {
+      combinedScore += 10.0;
+    }
+
+    return { ...c, _score: combinedScore };
+  }).filter(c => c._score > 0.4) // Filter out irrelevant colleges
     .sort((a, b) => b._score - a._score)
     .slice(0, 4); // top 4 colleges
   

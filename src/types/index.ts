@@ -21,6 +21,12 @@ export interface Facility {
   desc: string;
 }
 
+export interface PlacementRecord {
+  company: string;
+  package: string;
+  year: number;
+}
+
 export interface University {
   id: string;
   name: string;
@@ -38,7 +44,9 @@ export interface University {
   image: string;
   website: string;
   about: string;
+  lastVerified?: string;
   programs: Program[];
+  placements?: PlacementRecord[];
   faculty: Faculty[];
   facilities: Facility[];
   branchFees?: Record<string, number | undefined>;

@@ -145,7 +145,8 @@ export function computeFitScore(
 
   // 2. Rank tier vs institution selectivity
   if (rankTier) {
-    const rankValue = rankTierValues[rankTier.toLowerCase()] ?? 40000;
+    const safeRank = Array.isArray(rankTier) ? rankTier[0] : rankTier;
+    const rankValue = rankTierValues[String(safeRank).toLowerCase()] ?? 40000;
     const nirf = uni.nirf || '';
     const hasTopNirf = nirf.includes('#') && parseInt(nirf.replace(/[^0-9]/g, '')) < 100;
 
@@ -168,7 +169,8 @@ export function computeFitScore(
 
   // 3. Budget vs fees
   if (budgetTier) {
-    const maxAffordable = budgetTierMaxFee[budgetTier.toLowerCase()] ?? 250000;
+    const safeBudget = Array.isArray(budgetTier) ? budgetTier[0] : budgetTier;
+    const maxAffordable = budgetTierMaxFee[String(safeBudget).toLowerCase()] ?? 250000;
     const minFee = getMinFee(uni);
     if (minFee <= maxAffordable * 0.8) {
       probability += 12;
@@ -207,11 +209,15 @@ export function computeFitScore(
 // ─── Rank all colleges by intelligence ───────────────────────
 export function rankByIntelligence(unis: any[]): any[] {
   return [...unis]
-    .map(u => ({
-      ...u,
-      _roiScore: computeROI(u),
-      _valueScore: computeValueScore(u),
-      _intelligenceRank: computeROI(u) * 0.5 + computeValueScore(u) * 0.5,
-    }))
+    .map(u => {
+      const roi = computeROI(u);
+      const value = computeValueScore(u);
+      return {
+        ...u,
+        _roiScore: roi,
+        _valueScore: value,
+        _intelligenceRank: roi * 0.5 + value * 0.5,
+      };
+    })
     .sort((a, b) => b._intelligenceRank - a._intelligenceRank);
 }

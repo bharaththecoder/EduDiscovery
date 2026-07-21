@@ -25,7 +25,9 @@ export default function ChatWindow() {
     setError,
     setIsOpen,
     quizContext,
-    clearMessages
+    clearMessages,
+    pendingPrompt,
+    setPendingPrompt
   } = useCounselor();
 
   const [input, setInput] = useState('');
@@ -80,6 +82,13 @@ export default function ChatWindow() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (pendingPrompt) {
+      handleSend(pendingPrompt);
+      setPendingPrompt(null);
+    }
+  }, [pendingPrompt, handleSend]);
 
   return (
     <motion.div

@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { Search, MapPin, CheckCircle2 } from 'lucide-react';
+import { Search, MapPin, CheckCircle2, Share2, Trash2, ArrowLeftRight, Check, X, ShieldAlert, Award, GraduationCap, Building2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { universities } from '@/data/universities';
+import { useUniversities } from '@/contexts/UniversityContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { computeROI, computeValueScore } from '@/utils/intelligenceEngine';
 import { Sparkles, TrendingUp, DollarSign, Trophy } from 'lucide-react';
+import { useToast } from '@/contexts/ToastContext';
+import { motion } from 'framer-motion';
+import { GlassTiltPanel, HolographicBadge, Perspective3DCardFoldOut } from '@/components/Animation3DComponents';
 
 function ScoreBar({ label, value, color, icon }: { label: string, value: number, color: string, icon: React.ReactNode }) {
   return (
@@ -51,44 +54,109 @@ function AIVerdict({ colleges }: { colleges: any[] }) {
   }, [colleges]);
 
   return (
-    <div style={{
-      marginTop: '40px',
-      background: 'linear-gradient(135deg, #031A13 0%, #062E22 100%)',
-      borderRadius: '24px',
-      padding: '32px',
-      color: '#fff',
-      boxShadow: '0 20px 40px rgba(3,26,19,0.3)',
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
+    <motion.div
+      initial={{ opacity: 0, y: 30, scale: 0.95 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6 }}
+      className="neon-border"
+      style={{
+        marginTop: '40px',
+        background: 'linear-gradient(135deg, #031A13 0%, #062E22 100%)',
+        borderRadius: '24px',
+        padding: '32px',
+        color: '#fff',
+        boxShadow: '0 20px 40px rgba(3,26,19,0.3)',
+        position: 'relative',
+        overflow: 'hidden'
+      }}
+    >
       <div style={{ position: 'absolute', top: '-20px', right: '-20px', opacity: 0.1 }}>
         <Sparkles size={120} />
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-        <div style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', padding: '6px 14px', borderRadius: '99px', fontSize: '12px', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <Sparkles size={14} /> AI COUNSEL VERDICT
-        </div>
+        <HolographicBadge>
+          <Sparkles size={14} color="#fff" /> <span style={{ color: '#fff' }}>AI COUNSEL VERDICT</span>
+        </HolographicBadge>
       </div>
 
       <h2 style={{ fontSize: '24px', fontWeight: '900', marginBottom: '12px' }}>
-        The Verdict: Go for <span style={{ color: '#34d399' }}>{verdict.winner.name}</span>
+        The Verdict: Go for <span className="holographic" style={{ WebkitTextFillColor: 'unset', color: '#34d399' }}>{verdict.winner.name}</span>
       </h2>
       <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '15px', lineHeight: 1.6, maxWidth: '600px' }}>
         {verdict.text} Our intelligence engine analyzed the package-to-fee ratio and historical placement rates across all branches.
       </p>
 
       <div style={{ display: 'flex', gap: '16px', marginTop: '24px' }}>
-        <button className="btn btn-primary" style={{ background: '#fff', color: 'var(--primary)', border: 'none' }}>View Detailed Analysis</button>
-        <button style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', padding: '12px 24px', borderRadius: '99px', fontWeight: '700', fontSize: '14px' }}>Talk to a Mentor</button>
+        <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }} className="btn btn-primary" style={{ background: '#fff', color: 'var(--primary)', border: 'none' }}>View Detailed Analysis</motion.button>
+        <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }} style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', padding: '12px 24px', borderRadius: '99px', fontWeight: '700', fontSize: '14px' }}>Talk to a Mentor</motion.button>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 
 export default function ComparePage() {
+  React.useEffect(() => {
+    document.title = "Compare Colleges | EduDiscovery AP";
+  }, []);
+
+  const { universities, loading: loadingColleges } = useUniversities();
   const [selectedColleges, setSelectedColleges] = useState<(any | null)[]>([null, null]);
+  const [chartType, setChartType] = useState<'overall' | 'placements' | 'fees'>('overall');
+  const { showToast } = useToast() as { showToast: (msg: string, type: string) => void };
+
+  const validColleges = selectedColleges.filter(Boolean);
+
+  const handleShare = () => {
+    if (validColleges.length === 0) return;
+    
+    let report = `⚖️ EDUDISCOVERY AP - COLLEGE COMPARISON REPORT\n`;
+    report += `==============================================\n\n`;
+    
+    validColleges.forEach((c: any, idx: number) => {
+      const minFee = c.branchFees ? Math.min(...(Object.values(c.branchFees) as number[])) : 100000;
+      report += `${idx + 1}. ${c.name} (${c.shortName || c.id})\n`;
+      report += `   - City: ${c.city}\n`;
+      report += `   - NAAC: ${c.naac} | NIRF: ${c.nirf || 'N/A'}\n`;
+      report += `   - ROI Score: ${computeROI(c)}/10 | Value Score: ${computeValueScore(c)}/10\n`;
+      report += `   - Avg Package: ₹${((c.avgPackage || 500000) / 100000).toFixed(1)} LPA\n`;
+      report += `   - Minimum Tuition Fee: ₹${minFee.toLocaleString()}/yr\n\n`;
+    });
+    
+    navigator.clipboard.writeText(report);
+    showToast('📋 Comparison summary copied to clipboard!', 'success');
+  };
+
+  const generatePlacementData = () => {
+    const validColleges = selectedColleges.filter(c => c !== null);
+    return validColleges.map(c => ({
+      name: c.shortName || c.name.slice(0, 10),
+      "Avg Package (LPA)": c.avgPackage ? c.avgPackage / 100000 : 0,
+      "Placement Rate (%)": c.placementRate || 0,
+    }));
+  };
+
+  const generateFeeData = () => {
+    const validColleges = selectedColleges.filter(c => c !== null);
+    const branchesSet = new Set<string>();
+    validColleges.forEach(c => {
+      if (c.branchFees) {
+        Object.keys(c.branchFees).forEach(b => branchesSet.add(b));
+      }
+    });
+    const branches = Array.from(branchesSet);
+
+    return branches.map(branch => {
+      const dataPoint: any = { branch };
+      validColleges.forEach(c => {
+        const feeVal = c.branchFees?.[branch];
+        dataPoint[c.shortName || c.name.slice(0, 10)] = feeVal ? feeVal / 1000 : 0;
+      });
+      return dataPoint;
+    });
+  };
 
   const handleSelect = (index: number, universityId: string) => {
     const uni = universities.find(c => c.id === universityId) || null;
@@ -157,13 +225,12 @@ export default function ComparePage() {
   };
 
   const radarData = generateRadarData();
-  const validColleges = selectedColleges.filter(c => c !== null);
   const chartColors = ["#10b981", "#0ea5e9", "#F43F5E"];
 
   return (
     <div className="page" style={{ paddingBottom: '40px' }}>
       <div className="pt-6 pb-2 md:pt-10 mb-4 border-b border-border text-center md:text-left">
-        <h1 style={{ fontSize: '24px', fontWeight: '900', margin: 0, color: 'var(--primary)' }}>Compare Colleges</h1>
+        <h1 className="wave-underline" style={{ fontSize: '24px', fontWeight: '900', margin: 0, color: 'var(--primary)', display: 'inline-block' }}>Compare Colleges</h1>
         <p style={{ color: 'var(--text-muted)', marginTop: '8px', fontSize: '14px' }}>
           Select up to 3 colleges for detailed side-by-side branch-wise fee comparisons.
         </p>
@@ -185,10 +252,10 @@ export default function ComparePage() {
                 <select
                   value={selected?.id || ''}
                   onChange={(e) => handleSelect(idx, e.target.value)}
-                  style={{ flex: 1, padding: '12px 8px', fontSize: '14px', width: '100%', background: 'transparent' }}
+                  style={{ flex: 1, padding: '12px 8px', fontSize: '14px', width: '100%', background: 'var(--surface)', color: 'var(--text-main)', border: 'none', outline: 'none' }}
                 >
-                  <option value="">Select a college...</option>
-                  {universities.map(c => (
+                  <option value="">{loadingColleges ? 'Loading database...' : 'Select a college...'}</option>
+                  {!loadingColleges && universities.map(c => (
                     <option key={c.id} value={c.id} disabled={selectedColleges.some((sc, sIdx) => sIdx !== idx && sc?.id === c.id)}>
                       {c.name}
                     </option>
@@ -197,14 +264,18 @@ export default function ComparePage() {
               </div>
 
               {selected ? (
-                <Card style={{ flex: 1, marginTop: '12px', borderRadius: '16px', border: '1px solid var(--border)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                <Perspective3DCardFoldOut
+                  active={!!selected}
+                  style={{ flex: 1, marginTop: '12px' }}
+                >
+                <Card className="neon-border" style={{ flex: 1, borderRadius: '16px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                   <div style={{ height: '140px', overflow: 'hidden' }}>
                     <img src={selected.image} alt={selected.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
                   <CardHeader style={{ padding: '16px' }}>
                     <CardTitle style={{ fontSize: '17px', fontWeight: '800' }}>{selected.shortName || selected.name}</CardTitle>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-muted)', fontSize: '12px', marginTop: '4px' }}>
-                      <MapPin size={12} /> {selected.city}
+                       <MapPin size={12} /> {selected.city}
                     </div>
                   </CardHeader>
                   <CardContent style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: '20px', flex: 1 }}>
@@ -280,28 +351,44 @@ export default function ComparePage() {
 
                   </CardContent>
                 </Card>
+                </Perspective3DCardFoldOut>
               ) : (
-                <div style={{ flex: 1, border: '2px dashed #e2e8f0', borderRadius: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '400px', color: '#94a3b8', gap: '12px', marginTop: '12px', background: '#f8fafc' }}>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                  style={{ flex: 1, border: '2px dashed var(--border)', borderRadius: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '400px', color: 'var(--text-muted)', gap: '12px', marginTop: '12px', background: 'var(--surface-glass)', backdropFilter: 'blur(8px)' }}
+                >
+                  <motion.div
+                    animate={{ y: [0, -8, 0] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                    style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'var(--primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', border: '1.5px solid var(--primary-glow)' }}
+                  >
                     <Search size={20} />
-                  </div>
-                  <span style={{ fontSize: '13px', fontWeight: 500 }}>Choose a college to compare</span>
-                </div>
+                  </motion.div>
+                  <span style={{ fontSize: '13px', fontWeight: 700 }}>Choose a college to compare</span>
+                </motion.div>
               )}
             </div>
           ))}
 
           {selectedColleges.length < 3 && (
             <div style={{ minWidth: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingLeft: '20px' }}>
-              <button
+              <motion.button
                 onClick={addCollegeSlot}
+                whileHover={{ scale: 1.1, rotate: 90 }}
+                whileTap={{ scale: 0.95 }}
                 style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', color: 'var(--primary)', fontWeight: 700 }}
               >
-                <div style={{ width: '60px', height: '60px', borderRadius: '30px', background: 'var(--primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', transition: 'transform 0.2s' }} className="hover:scale-110">
+                <motion.div
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                  style={{ width: '60px', height: '60px', borderRadius: '30px', background: 'var(--primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', boxShadow: '0 0 20px rgba(16,185,129,0.2)' }}
+                >
                   +
-                </div>
+                </motion.div>
                 <span style={{ fontSize: '14px' }}>Add College</span>
-              </button>
+              </motion.button>
             </div>
           )}
         </div>
@@ -310,39 +397,116 @@ export default function ComparePage() {
       {/* Advanced Chart Comparison */}
       {validColleges.length > 1 && (
         <>
-          <Card className="mt-8 border-slate-200 overflow-hidden shadow-md rounded-[24px]">
-            <CardHeader className="bg-slate-50/50 border-b border-slate-100 px-6 py-5">
-              <CardTitle className="text-lg font-black text-slate-800">Visual Performance Analysis</CardTitle>
-              <p className="text-sm font-medium text-slate-500 mt-1">Multi-dimensional comparison matrix generated via Recharts data.</p>
-            </CardHeader>
+          <GlassTiltPanel className="mt-8 border-slate-200 overflow-hidden shadow-md rounded-[24px]">
+            <div className="bg-slate-50/50 border-b border-slate-100 px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <CardTitle className="text-lg font-black text-slate-800">Visual Performance Analysis</CardTitle>
+                <p className="text-sm font-medium text-slate-500 mt-1">Multi-dimensional comparison matrix generated via Recharts data.</p>
+              </div>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <button
+                  onClick={handleShare}
+                  className="btn btn-ghost"
+                  style={{
+                    padding: '8px 16px',
+                    fontSize: '12px',
+                    fontWeight: '800',
+                    border: '1.5px solid var(--primary)',
+                    color: 'var(--primary)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    borderRadius: '999px',
+                    cursor: 'pointer',
+                    background: 'var(--surface)'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = 'var(--primary-light)'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = 'var(--surface)'}
+                >
+                  <Share2 size={13} /> Copy Report
+                </button>
+              </div>
+              <div className="flex bg-slate-100 p-1 rounded-xl self-start sm:self-auto">
+                {(['overall', 'placements', 'fees'] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setChartType(tab)}
+                    style={{ cursor: 'pointer' }}
+                    className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${
+                      chartType === tab
+                        ? 'bg-white text-slate-800 shadow-sm'
+                        : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                  >
+                    {tab === 'overall' ? 'Overall' : tab === 'placements' ? 'Placements' : 'Fees'}
+                  </button>
+                ))}
+              </div>
+            </div>
             <CardContent className="p-6">
               <div className="w-full h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
-                    <PolarGrid stroke="#e2e8f0" />
-                    <PolarAngleAxis dataKey="subject" tick={{ fill: '#475569', fontSize: 13, fontWeight: 700 }} />
-                    <PolarRadiusAxis angle={30} domain={[0, 10]} tick={false} axisLine={false} />
-                    <Tooltip
-                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)', padding: '12px' }}
-                      itemStyle={{ fontWeight: 700 }}
-                    />
-                    <Legend wrapperStyle={{ paddingTop: '20px' }} />
-
-                    {validColleges.map((c, i) => (
-                      <Radar
-                        key={c.id}
-                        name={c.shortName || c.name}
-                        dataKey={c.shortName || c.name.slice(0, 10)}
-                        stroke={chartColors[i]}
-                        fill={chartColors[i]}
-                        fillOpacity={0.3}
+                  {chartType === 'overall' ? (
+                    <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
+                      <PolarGrid stroke="#e2e8f0" />
+                      <PolarAngleAxis dataKey="subject" tick={{ fill: '#475569', fontSize: 13, fontWeight: 700 }} />
+                      <PolarRadiusAxis angle={30} domain={[0, 10]} tick={false} axisLine={false} />
+                      <Tooltip
+                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)', padding: '12px' }}
+                        itemStyle={{ fontWeight: 700 }}
                       />
-                    ))}
-                  </RadarChart>
+                      <Legend wrapperStyle={{ paddingTop: '20px' }} />
+
+                      {validColleges.map((c, i) => (
+                        <Radar
+                          key={c.id}
+                          name={c.shortName || c.name}
+                          dataKey={c.shortName || c.name.slice(0, 10)}
+                          stroke={chartColors[i]}
+                          fill={chartColors[i]}
+                          fillOpacity={0.3}
+                        />
+                      ))}
+                    </RadarChart>
+                  ) : chartType === 'placements' ? (
+                    <BarChart data={generatePlacementData()} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                      <XAxis dataKey="name" tick={{ fill: '#475569', fontSize: 12, fontWeight: 600 }} />
+                      <YAxis tick={{ fill: '#475569', fontSize: 12 }} />
+                      <Tooltip
+                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)', padding: '12px' }}
+                        itemStyle={{ fontWeight: 700 }}
+                      />
+                      <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                      <Bar name="Avg Package (LPA)" dataKey="Avg Package (LPA)" fill="#10b981" radius={[8, 8, 0, 0]} />
+                      <Bar name="Placement Rate (%)" dataKey="Placement Rate (%)" fill="#0ea5e9" radius={[8, 8, 0, 0]} />
+                    </BarChart>
+                  ) : (
+                    <BarChart data={generateFeeData()} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                      <XAxis dataKey="branch" tick={{ fill: '#475569', fontSize: 12, fontWeight: 600 }} />
+                      <YAxis label={{ value: 'Fee (Thousands ₹)', angle: -90, position: 'insideLeft', offset: -10, style: { fill: '#475569', fontWeight: 600, fontSize: 12 } }} tick={{ fill: '#475569', fontSize: 12 }} />
+                      <Tooltip
+                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)', padding: '12px' }}
+                        itemStyle={{ fontWeight: 700 }}
+                        formatter={(value) => [`₹${(Number(value) * 1000).toLocaleString()}/yr`, '']}
+                      />
+                      <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                      {validColleges.map((c, i) => (
+                        <Bar
+                          key={c.id}
+                          name={c.shortName || c.name}
+                          dataKey={c.shortName || c.name.slice(0, 10)}
+                          fill={chartColors[i]}
+                          radius={[6, 6, 0, 0]}
+                        />
+                      ))}
+                    </BarChart>
+                  )}
                 </ResponsiveContainer>
               </div>
             </CardContent>
-          </Card>
+          </GlassTiltPanel>
 
           <AIVerdict colleges={validColleges} />
         </>

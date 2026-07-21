@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { QuizAnswers } from '@/utils/quizAgent';
+import { FloatingEmoji3D, OrbitRing, InteractiveFluidParticles, MagneticButton } from '@/components/Animation3DComponents';
 
 interface Question {
   key: keyof QuizAnswers | 'priority';
@@ -105,35 +107,46 @@ const QUESTIONS: Question[] = [
 export default function Quiz() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<Partial<QuizAnswers>>({});
-  const [selected, setSelected] = useState<string | null>(null);
+  const [answers, setAnswers] = useState<Record<string, string[]>>({});
   const [animating, setAnimating] = useState(false);
 
   const progress = ((step) / QUESTIONS.length) * 100;
   const current = QUESTIONS[step];
+  const currentSelection = answers[current.key as string] || [];
+
+  const handleOptionSelect = (optionLabel: string) => {
+    if (animating) return;
+    
+    let updatedSelection = [...currentSelection];
+    if (updatedSelection.includes(optionLabel)) {
+      updatedSelection = updatedSelection.filter(lbl => lbl !== optionLabel);
+    } else {
+      updatedSelection.push(optionLabel);
+    }
+    
+    setAnswers({ ...answers, [current.key as string]: updatedSelection });
+  };
 
   const handleNext = () => {
-    if (!selected || animating) return;
-    const newAnswers = { ...answers, [current.key]: selected };
-    setAnswers(newAnswers);
-    setSelected(null);
+    if (animating || currentSelection.length === 0) return;
 
     if (step < QUESTIONS.length - 1) {
       setAnimating(true);
       setTimeout(() => {
         setStep(step + 1);
         setAnimating(false);
-      }, 200);
+      }, 250);
     } else {
-      localStorage.setItem('edu_quiz_answers', JSON.stringify(newAnswers));
-      navigate('/quiz-result', { state: { answers: newAnswers } });
+      setAnimating(true);
+      setTimeout(() => {
+        localStorage.setItem('edu_quiz_answers', JSON.stringify(answers));
+        navigate('/quiz-result', { state: { answers } });
+      }, 250);
     }
   };
 
   const handleBack = () => {
     if (step === 0) { navigate(-1); return; }
-    const prevKey = QUESTIONS[step - 1].key;
-    setSelected((answers as any)[prevKey] || null);
     setStep(step - 1);
   };
 
@@ -146,21 +159,27 @@ export default function Quiz() {
   ];
 
   return (
-    <div style={{ minHeight: '100vh', background: 'transparent', animation: 'fadeIn 0.25s ease' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', animation: 'fadeIn 0.25s ease', position: 'relative', overflow: 'hidden' }}>
+      <InteractiveFluidParticles count={20} color="rgba(16,185,129,0.15)" />
       {/* Header */}
       <div style={{
+        position: 'relative',
+        zIndex: 2,
         padding: '20px 20px 0',
         maxWidth: '680px',
         margin: '0 auto',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-          <button onClick={handleBack} style={{
-            background: 'var(--primary-light)', color: 'var(--primary)',
-            width: '40px', height: '40px', borderRadius: '50%',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-          }}>
+          <MagneticButton
+            onClick={handleBack}
+            style={{
+              background: 'var(--primary-light)', color: 'var(--primary)',
+              width: '40px', height: '40px', borderRadius: '50%',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+            }}
+          >
             <ArrowLeft size={20} />
-          </button>
+          </MagneticButton>
           <div style={{ flex: 1 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
               <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>
@@ -189,99 +208,152 @@ export default function Quiz() {
       </div>
 
       <div style={{
-        padding: '0 20px 40px',
+        padding: '0 16px 100px',
         maxWidth: '680px',
         margin: '0 auto',
-        opacity: animating ? 0 : 1,
-        transform: animating ? 'translateX(20px)' : 'translateX(0)',
-        transition: 'all 0.2s ease',
+        position: 'relative',
+        zIndex: 2,
       }}>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={step}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.5}
+            onDragEnd={(e, info) => {
+              if (info.offset.x > 120) {
+                handleBack();
+              }
+            }}
+            initial={{ opacity: 0, x: 80, rotateY: 12 }}
+            animate={{ opacity: 1, x: 0, rotateY: 0 }}
+            exit={{ opacity: 0, x: -80, rotateY: -12 }}
+            transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+            style={{ transformStyle: 'preserve-3d', perspective: '800px', cursor: 'grab' }}
+            whileDrag={{ scale: 0.98, cursor: 'grabbing' }}
+          >
         {/* Question Header */}
-        <div style={{ marginBottom: '28px' }}>
-          <div style={{
-            width: '60px', height: '60px', borderRadius: '18px',
-            background: 'var(--gradient)', display: 'flex',
-            alignItems: 'center', justifyContent: 'center',
-            fontSize: '28px', marginBottom: '20px',
-            boxShadow: 'var(--shadow-md)',
-          }}>
-            {current.icon}
+        <div style={{ marginBottom: '24px', position: 'relative' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
+            <div style={{ flex: 1 }}>
+              <div style={{
+                width: '52px', height: '52px', borderRadius: '16px',
+                background: 'var(--gradient)', display: 'flex',
+                alignItems: 'center', justifyContent: 'center',
+                fontSize: '24px', marginBottom: '16px',
+                boxShadow: 'var(--shadow-md)',
+              }}>
+                {current.icon}
+              </div>
+              <h1 style={{ fontSize: 'clamp(20px, 5vw, 26px)', fontWeight: '900', lineHeight: 1.25, marginBottom: '8px', color: 'var(--text-main)' }}>
+                {current.q}
+              </h1>
+              <p style={{ color: 'var(--text-muted)', fontSize: '13.5px', lineHeight: 1.5 }}>
+                {current.subtitle}
+              </p>
+            </div>
+            
+            {/* 3D Floating Emoji with orbit (Hidden on small screens for max readability) */}
+            <div className="hidden sm:flex" style={{
+              width: '90px', height: '90px',
+              alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0,
+              position: 'relative',
+            }}>
+              <OrbitRing size={90} color="rgba(16,185,129,0.2)" duration={8} thickness={1}>
+                <FloatingEmoji3D emoji={current.emoji} size={44} />
+              </OrbitRing>
+            </div>
           </div>
-          <h1 style={{ fontSize: '26px', fontWeight: '900', lineHeight: 1.25, marginBottom: '8px', color: 'var(--text-main)' }}>
-            {current.q}
-          </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.5 }}>
-            {current.subtitle}
-          </p>
         </div>
 
         {/* Options */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '28px' }}>
-          {current.options.map(opt => {
-            const isSelected = selected === opt.label;
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
+          {current.options.map((opt, optIdx) => {
+            const isSelected = currentSelection.includes(opt.label);
             return (
-              <button
+              <motion.button
                 key={opt.label}
-                onClick={() => setSelected(opt.label)}
+                onClick={() => handleOptionSelect(opt.label)}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: optIdx * 0.05 }}
+                className={`quiz-option ${isSelected ? 'selected neon-border' : ''}`}
                 style={{
-                  padding: '16px 20px',
+                  padding: '14px 16px',
                   borderRadius: 'var(--radius-md)',
-                  background: isSelected ? 'var(--primary)' : 'var(--surface)',
+                  background: isSelected ? 'var(--gradient)' : 'var(--surface)',
                   border: `2px solid ${isSelected ? 'var(--primary)' : 'var(--border)'}`,
                   cursor: 'pointer',
-                  transition: 'all 0.18s ease',
                   textAlign: 'left',
                   width: '100%',
-                  boxShadow: isSelected ? '0 4px 16px var(--primary-glow)' : 'var(--shadow-sm)',
-                  transform: isSelected ? 'translateY(-1px)' : 'none',
+                  boxShadow: isSelected ? '0 4px 16px rgba(16,185,129,0.25)' : 'none',
+                  transition: 'background 0.2s, border-color 0.2s, box-shadow 0.2s',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   {/* Radio indicator */}
-                  <div style={{
-                    width: '22px', height: '22px', borderRadius: '50%', flexShrink: 0,
-                    border: `2px solid ${isSelected ? '#fff' : 'var(--border)'}`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: isSelected ? 'rgba(255,255,255,0.2)' : 'transparent',
-                  }}>
-                    {isSelected && <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#fff' }} />}
+                  <div
+                    style={{
+                      width: '20px', height: '20px', borderRadius: '50%', flexShrink: 0,
+                      border: `2px solid ${isSelected ? '#fff' : 'var(--border)'}`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      background: isSelected ? 'rgba(255,255,255,0.2)' : 'transparent',
+                    }}
+                  >
+                    {isSelected && <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#fff' }} />}
                   </div>
-                  <span style={{ fontSize: '22px', flexShrink: 0 }}>{opt.icon}</span>
+                  <span style={{ fontSize: '20px', flexShrink: 0 }}>{opt.icon}</span>
                   <div style={{ flex: 1 }}>
                     <div style={{
-                      fontWeight: '700', fontSize: '15px',
+                      fontWeight: '700', fontSize: '14px',
                       color: isSelected ? '#fff' : 'var(--text-main)',
                       marginBottom: '2px',
                     }}>
                       {opt.label}
                     </div>
                     <div style={{
-                      fontSize: '12px',
-                      color: isSelected ? 'rgba(255,255,255,0.75)' : 'var(--text-muted)',
+                      fontSize: '11.5px',
+                      color: isSelected ? 'rgba(255,255,255,0.85)' : 'var(--text-muted)',
                     }}>
                       {opt.desc}
                     </div>
                   </div>
                 </div>
-              </button>
+              </motion.button>
             );
           })}
         </div>
 
-        {/* Next / Submit */}
-        <button
-          onClick={handleNext}
-          disabled={!selected}
-          className="btn btn-primary btn-full"
-          style={{
-            padding: '16px', fontSize: '16px', fontWeight: '800',
-            opacity: !selected ? 0.45 : 1,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-            transition: 'all 0.2s ease',
-          }}
-        >
-          {step === QUESTIONS.length - 1 ? '✨ Find My Best Colleges' : <>Next <ChevronRight size={18} /></>}
-        </button>
+        {/* Next Button */}
+        <div style={{ display: 'flex', justifyContent: 'stretch', marginTop: '16px' }}>
+          <MagneticButton
+            onClick={handleNext}
+            className="w-full sm:w-auto"
+            style={{
+              background: currentSelection.length > 0 ? 'var(--primary)' : 'var(--surface-disabled)',
+              color: currentSelection.length > 0 ? '#fff' : 'var(--text-muted)',
+              padding: '14px 28px',
+              borderRadius: '999px',
+              fontWeight: '800',
+              fontSize: '15px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              opacity: currentSelection.length > 0 ? 1 : 0.6,
+              cursor: currentSelection.length > 0 ? 'pointer' : 'not-allowed',
+              transition: 'var(--transition)',
+              boxShadow: currentSelection.length > 0 ? '0 8px 24px rgba(16,185,129,0.3)' : 'none',
+              marginLeft: 'auto'
+            }}
+          >
+            {step === QUESTIONS.length - 1 ? 'See Matches' : 'Next'} <ChevronRight size={18} />
+          </MagneticButton>
+        </div>
+
+        </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );

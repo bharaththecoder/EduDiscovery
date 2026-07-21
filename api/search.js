@@ -25,7 +25,7 @@ function keywordMatchScore(query, college) {
   if (words.length === 0) return 0.5;
 
   let matches = 0;
-  const targetText = `${college.name} ${college.shortName || ''} ${college.city} ${college.state} ${(college.tags || []).join(' ')} ${college.about || ''} ${(college.branches || []).join(' ')}`.toLowerCase();
+  const targetText = college._searchTargetText || `${college.name} ${college.shortName || ''} ${college.city} ${college.state} ${(college.tags || []).join(' ')} ${college.about || ''} ${(college.branches || []).join(' ')}`.toLowerCase();
 
   words.forEach(word => {
     if (targetText.includes(word)) {
@@ -97,7 +97,11 @@ export default async function searchHandler(req, res) {
     // 2. Fetch colleges from Firestore (with caching)
     if (!cachedColleges || (Date.now() - cachedTime > CACHE_DURATION)) {
       const snapshot = await db.collection("colleges").get();
-      cachedColleges = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      cachedColleges = snapshot.docs.map(doc => {
+        const college = { id: doc.id, ...doc.data() };
+        college._searchTargetText = `${college.name} ${college.shortName || ''} ${college.city} ${college.state} ${(college.tags || []).join(' ')} ${college.about || ''} ${(college.branches || []).join(' ')}`.toLowerCase();
+        return college;
+      });
       cachedTime = Date.now();
     }
 

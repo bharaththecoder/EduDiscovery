@@ -5,6 +5,7 @@ import { ToastProvider } from '@/contexts/ToastContext';
 import { CounselorProvider } from '@/contexts/CounselorContext';
 import { PWAProvider } from '@/contexts/PWAContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import { UniversityProvider } from '@/contexts/UniversityContext';
 
 interface AppProvidersProps {
   children: ReactNode;
@@ -17,7 +18,9 @@ export function AppProviders({ children }: AppProvidersProps) {
         <PWAProvider>
           <WishlistProvider>
             <ToastProvider>
-              <CounselorProvider>{children}</CounselorProvider>
+              <UniversityProvider>
+                <CounselorProvider>{children}</CounselorProvider>
+              </UniversityProvider>
             </ToastProvider>
           </WishlistProvider>
         </PWAProvider>

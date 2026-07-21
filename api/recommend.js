@@ -70,10 +70,17 @@ export default async function recommendHandler(req, res) {
       score += naacBonus[uni.naac] || 0;
 
       // ROI bonus (inline compute)
-      const feeValues = uni.branchFees ? Object.values(uni.branchFees).filter(v => typeof v === 'number' && !isNaN(v)) : [];
-      const minFee = feeValues.length > 0
-        ? Math.min(...feeValues)
-        : 100000;
+      let minFee = 100000;
+      if (uni.branchFees) {
+        let minVal = Infinity;
+        for (const k in uni.branchFees) {
+          const v = uni.branchFees[k];
+          if (typeof v === 'number' && !isNaN(v) && v < minVal) {
+            minVal = v;
+          }
+        }
+        if (minVal !== Infinity) minFee = minVal;
+      }
       const avgPackage = uni.avgPackage || 500000;
       const roi = minFee > 0 && isFinite(minFee) ? avgPackage / (minFee * 4) : 1;
       score += Math.min(15, Math.round(roi * 5));

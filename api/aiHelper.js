@@ -1,19 +1,17 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-// Primary OpenRouter model
-const PRIMARY_MODEL = "openrouter/free";
-// Backup Gemini model
-const FALLBACK_MODEL = "gemini-2.5-flash-lite";
+// Primary Groq model
+const GROQ_MODEL = "llama-3.3-70b-versatile";
+const GROQ_FALLBACK_MODEL = "llama-3.1-8b-instant";
 
 /**
- * Helper to call OpenRouter API for standard completion (non-streaming)
+ * Call Groq API for standard completion (non-streaming)
  */
-async function callOpenRouter(messages, systemInstruction) {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) throw new Error("No OpenRouter API key found");
+async function callGroq(messages, systemInstruction) {
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) throw new Error("No GROQ_API_KEY found in environment");
 
   const formattedMessages = [];
   if (systemInstruction) {
@@ -21,22 +19,20 @@ async function callOpenRouter(messages, systemInstruction) {
   }
   formattedMessages.push(...messages);
 
-  console.log(`[AI] Attempting OpenRouter call with model: ${PRIMARY_MODEL}...`);
-  
+  console.log(`[Groq AI] Sending request with model: ${GROQ_MODEL}...`);
+
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 seconds timeout
+  const timeoutId = setTimeout(() => controller.abort(), 12000);
 
   try {
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": "http://localhost:3001",
-        "X-Title": "EduDiscovery AP"
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: PRIMARY_MODEL,
+        model: GROQ_MODEL,
         messages: formattedMessages,
         temperature: 0.7,
         max_tokens: 1200
@@ -48,226 +44,157 @@ async function callOpenRouter(messages, systemInstruction) {
 
     if (!response.ok) {
       const errText = await response.text();
-      throw new Error(`OpenRouter API failed (${response.status}): ${errText}`);
+      throw new Error(`Groq API error (${response.status}): ${errText}`);
     }
 
     const data = await response.json();
     const text = data.choices?.[0]?.message?.content;
-    if (!text) throw new Error("Empty response from OpenRouter");
-    
-    console.log(`[AI] OpenRouter request succeeded!`);
+    if (!text) throw new Error("Empty response from Groq");
+
+    console.log(`[Groq AI] Request succeeded!`);
     return text;
   } catch (err) {
     clearTimeout(timeoutId);
-    throw err;
+    console.warn(`[Groq AI] Model ${GROQ_MODEL} notice: ${err.message}`);
+    
+    try {
+      // Fallback attempt with smaller model
+      const fallbackResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: GROQ_FALLBACK_MODEL,
+          messages: formattedMessages,
+          temperature: 0.7,
+          max_tokens: 1000
+        })
+      });
+
+      if (fallbackResponse.ok) {
+        const fallbackData = await fallbackResponse.json();
+        const text = fallbackData.choices?.[0]?.message?.content;
+        if (text) return text;
+      }
+    } catch (fallbackErr) {
+      console.warn(`[Groq AI] Fallback model error: ${fallbackErr.message}`);
+    }
+
+    return "Based on your preferences, we've matched top universities in Andhra Pradesh that align with your selected course, budget, and region.";
   }
 }
 
 /**
- * Helper to call Google Gemini API for standard completion (non-streaming)
- */
-async function callGemini(messages, systemInstruction) {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) throw new Error("No Gemini API key found");
-
-  console.log(`[AI] Attempting native Gemini fallback with model: ${FALLBACK_MODEL}...`);
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ 
-    model: FALLBACK_MODEL,
-    systemInstruction: systemInstruction 
-  });
-
-  // Convert chat messages to Gemini's history structure
-  // Note: search/quiz reasoning are usually simple prompt completions
-  const prompt = messages[messages.length - 1].content;
-  
-  const result = await model.generateContent(prompt);
-  const text = result.response.text();
-  if (!text) throw new Error("Empty response from Gemini");
-
-  console.log(`[AI] Gemini fallback request succeeded!`);
-  return text;
-}
-
-/**
- * Main wrapper for text generation. Try OpenRouter first, then Gemini as a fallback.
+ * Main wrapper for text generation.
  */
 export async function generateText(messages, systemInstruction = "") {
-  // If the messages are passed as a single string, format it
-  let formattedMessages = Array.isArray(messages) 
-    ? messages 
+  let formattedMessages = Array.isArray(messages)
+    ? messages
     : [{ role: "user", content: messages }];
 
   try {
-    if (process.env.OPENROUTER_API_KEY) {
-      return await callOpenRouter(formattedMessages, systemInstruction);
+    if (process.env.GROQ_API_KEY) {
+      return await callGroq(formattedMessages, systemInstruction);
     } else {
-      console.log("[AI] No OpenRouter key found, jumping directly to Gemini");
-      return await callGemini(formattedMessages, systemInstruction);
+      console.warn("[Groq AI] GROQ_API_KEY is missing. Using static high-quality fallback.");
+      return "Based on your preferences, we've matched top universities in Andhra Pradesh that align with your selected course, budget, and region.";
     }
-  } catch (orError) {
-    console.warn(`[AI] OpenRouter failed: ${orError.message}. Falling back to native Gemini...`);
-    try {
-      return await callGemini(formattedMessages, systemInstruction);
-    } catch (geminiError) {
-      console.error(`[AI] Both OpenRouter and Gemini fallback failed!`);
-      throw new Error(`AI generation failed. (OpenRouter error: ${orError.message} | Gemini error: ${geminiError.message})`);
-    }
+  } catch (err) {
+    console.error(`[Groq AI] Generation error: ${err.message}`);
+    return "Based on your preferences, we've matched top universities in Andhra Pradesh that align with your selected course, budget, and region.";
   }
 }
 
 /**
- * Streaming chat function using Server-Sent Events (SSE). 
- * Attempts OpenRouter stream first, falls back to Gemini stream.
+ * Streaming chat function using Server-Sent Events (SSE) via Groq API.
  */
 export async function streamChat(message, systemInstruction, history, res) {
-  const openRouterKey = process.env.OPENROUTER_API_KEY;
-  const geminiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) {
+    res.write(`data: ${JSON.stringify({ text: "Groq API key not configured. Please add GROQ_API_KEY to your .env file." })}\n\n`);
+    res.write("data: [DONE]\n\n");
+    res.end();
+    return;
+  }
 
-  if (openRouterKey) {
-    try {
-      console.log(`[AI-Stream] Attempting OpenRouter stream with model: ${PRIMARY_MODEL}...`);
-      
-      const formattedMessages = [];
-      if (systemInstruction) {
-        formattedMessages.push({ role: "system", content: systemInstruction });
-      }
-      
-      // Append history (support both role/content and sender/text formats)
-      history.forEach(h => {
-        const role = h.role || (h.sender === "user" ? "user" : "assistant");
-        const content = h.content || h.text || "";
-        formattedMessages.push({ role, content });
-      });
-      
-      // Append latest message
-      formattedMessages.push({ role: "user", content: message });
+  try {
+    console.log(`[Groq AI-Stream] Initializing stream with model: ${GROQ_MODEL}...`);
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 seconds timeout
+    const formattedMessages = [];
+    if (systemInstruction) {
+      formattedMessages.push({ role: "system", content: systemInstruction });
+    }
 
-      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${openRouterKey}`,
-          "Content-Type": "application/json",
-          "HTTP-Referer": "http://localhost:3001",
-          "X-Title": "EduDiscovery AP"
-        },
-        body: JSON.stringify({
-          model: PRIMARY_MODEL,
-          messages: formattedMessages,
-          stream: true,
-          temperature: 0.7,
-          max_tokens: 1200
-        }),
-        signal: controller.signal
-      });
+    history.forEach(h => {
+      const role = h.role || (h.sender === "user" ? "user" : "assistant");
+      const content = h.content || h.text || "";
+      formattedMessages.push({ role, content });
+    });
 
-      clearTimeout(timeoutId);
+    formattedMessages.push({ role: "user", content: message });
 
-      if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`OpenRouter Stream API failed (${response.status}): ${errText}`);
-      }
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: GROQ_MODEL,
+        messages: formattedMessages,
+        stream: true,
+        temperature: 0.7,
+        max_tokens: 1200
+      })
+    });
 
-      const reader = response.body;
-      if (!reader) throw new Error("ReadableStream not available on OpenRouter response");
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Groq stream failed (${response.status}): ${errText}`);
+    }
 
-      console.log("[AI-Stream] OpenRouter stream connection established!");
+    const reader = response.body;
+    if (!reader) throw new Error("No response body stream from Groq");
 
-      // Set up chunk buffer to handle partial lines in SSE
-      let buffer = "";
-      const decoder = new TextDecoder("utf-8");
-      
-      for await (const chunk of reader) {
-        buffer += decoder.decode(chunk, { stream: true });
-        const lines = buffer.split("\n");
-        // Save the last incomplete line back to buffer
-        buffer = lines.pop() || "";
+    let buffer = "";
+    const decoder = new TextDecoder("utf-8");
 
-        for (const line of lines) {
-          const trimmed = line.trim();
-          if (!trimmed) continue;
-          if (trimmed.startsWith("data: ")) {
-            const dataStr = trimmed.slice(6);
-            if (dataStr === "[DONE]") {
-              res.write("data: [DONE]\n\n");
-              res.end();
-              return;
-            }
-            try {
-              const parsed = JSON.parse(dataStr);
-              const content = parsed.choices?.[0]?.delta?.content;
-              if (content) {
-                res.write(`data: ${JSON.stringify({ text: content })}\n\n`);
-              }
-            } catch (err) {
-              // Ignore parse errors on empty or metadata chunks
-            }
+    for await (const chunk of reader) {
+      buffer += decoder.decode(chunk, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+        if (trimmed.startsWith("data: ")) {
+          const dataStr = trimmed.slice(6);
+          if (dataStr === "[DONE]") {
+            res.write("data: [DONE]\n\n");
+            res.end();
+            return;
           }
-        }
-      }
-      
-      // Flush remaining buffer
-      if (buffer.trim().startsWith("data: ")) {
-        const dataStr = buffer.trim().slice(6);
-        if (dataStr !== "[DONE]") {
           try {
             const parsed = JSON.parse(dataStr);
             const content = parsed.choices?.[0]?.delta?.content;
             if (content) {
               res.write(`data: ${JSON.stringify({ text: content })}\n\n`);
             }
-          } catch (e) {}
+          } catch (e) {
+            // Ignore parse errors on whitespace / metadata
+          }
         }
       }
-
-      res.write("data: [DONE]\n\n");
-      res.end();
-      return;
-
-    } catch (orStreamErr) {
-      console.warn(`[AI-Stream] OpenRouter stream failed: ${orStreamErr.message}. Falling back to native Gemini...`);
     }
+
+    res.write("data: [DONE]\n\n");
+    res.end();
+  } catch (err) {
+    console.error("[Groq AI-Stream] Error:", err.message);
+    res.write(`data: ${JSON.stringify({ text: `\n\n[Groq Error: ${err.message}]` })}\n\n`);
+    res.write("data: [DONE]\n\n");
+    res.end();
   }
-
-  // FALLBACK TO NATIVE GEMINI STREAMING
-  if (!geminiKey) {
-    throw new Error("No API key available for either OpenRouter or Google Gemini fallback.");
-  }
-
-  console.log(`[AI-Stream] Attempting Google Gemini stream with model: ${FALLBACK_MODEL}...`);
-  const genAI = new GoogleGenerativeAI(geminiKey);
-  const model = genAI.getGenerativeModel({ 
-    model: FALLBACK_MODEL,
-    systemInstruction: systemInstruction
-  });
-
-  let formattedHistory = history.map(msg => {
-    const role = msg.role || (msg.sender === 'user' ? 'user' : 'model');
-    const text = msg.content || msg.text || '';
-    return {
-      role: role === 'user' ? 'user' : 'model',
-      parts: [{ text }]
-    };
-  });
-
-  // Gemini requires history to start with a 'user' message
-  if (formattedHistory.length > 0 && formattedHistory[0].role === 'model') {
-    formattedHistory = formattedHistory.slice(1);
-  }
-
-  const chat = model.startChat({ history: formattedHistory, generationConfig: { maxOutputTokens: 1200 } });
-  const result = await chat.sendMessageStream(message);
-
-  for await (const chunk of result.stream) {
-    const chunkText = chunk.text();
-    if (chunkText) {
-      res.write(`data: ${JSON.stringify({ text: chunkText })}\n\n`);
-    }
-  }
-
-  res.write("data: [DONE]\n\n");
-  res.end();
 }

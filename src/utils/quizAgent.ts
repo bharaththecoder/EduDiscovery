@@ -4,12 +4,12 @@
 // ============================================================
 
 export interface QuizAnswers {
-  branch: string;
-  budget: string;
-  location: string;
-  type: string;
-  rank: string;
-  priority?: string; // NEW: "What matters most to you?"
+  branch: string | string[];
+  budget: string | string[];
+  location: string | string[];
+  type: string | string[];
+  rank: string | string[];
+  priority?: string | string[]; // NEW: "What matters most to you?"
 }
 
 export interface ScoreBreakdown {
@@ -54,18 +54,23 @@ const PRIORITY_WEIGHTS: Record<string, typeof BASE_WEIGHTS> = {
   'research & higher studies':        { branch: 30, budget: 10, location: 15, type: 25, rank: 20 },
 };
 
-function getWeights(priority?: string) {
+function getWeights(priority?: string | string[]) {
   if (!priority) return BASE_WEIGHTS;
-  const key = priority.toLowerCase();
+  const p = Array.isArray(priority) ? priority[0] : priority; // Just use first for weights
+  const key = (p || '').toLowerCase();
   return PRIORITY_WEIGHTS[key] || BASE_WEIGHTS;
 }
 
 // ─── Branch Scoring ──────────────────────────────────────────
-export function scoreBranch(university: any, branch: string, maxW: number): { score: number; reason: string } {
-  const tags = university.tags.map((t: string) => t.toLowerCase());
-  const programs = university.programs.map((p: any) => p.name.toLowerCase());
-  const branches = university.branches.map((br: string) => br.toLowerCase());
-
+export function scoreBranch(university: any, branch: string | string[], maxW: number): { score: number; reason: string } {
+  if (!branch) return { score: Math.round(maxW * 0.5), reason: '' };
+  if (Array.isArray(branch)) {
+    return branch.reduce((best, b) => {
+      const res = scoreBranch(university, b, maxW);
+      return res.score > best.score ? res : best;
+    }, { score: -1, reason: '' });
+  }
+  const branchStr = branch as string;
   const branchMap: Record<string, string[]> = {
     'cse / ai & data science':     ['cse', 'computer', 'ai', 'ml', 'data science', 'it', 'information technology'],
     'ece / vlsi / embedded':        ['ece', 'electronics', 'communication', 'vlsi', 'embedded'],
@@ -77,29 +82,42 @@ export function scoreBranch(university: any, branch: string, maxW: number): { sc
     'law & humanities':             ['law', 'll.b', 'ba', 'b.a', 'arts', 'history'],
   };
 
-  const keywords = branchMap[branch.toLowerCase()] || [branch.toLowerCase()];
-
-  const tagMatch  = keywords.some(k => tags.some((t: string) => t.includes(k)));
-  const progMatch = keywords.some(k => programs.some((p: string) => p.includes(k)));
-  const brMatch   = keywords.some(k => branches.some((br: string) => br.includes(k)));
+  const keywords = branchMap[branchStr.toLowerCase()] || [branchStr.toLowerCase()];  const tagMatch  = keywords.some(k => university.tags?.some((t: string) => t.toLowerCase().includes(k)));
+  const progMatch = keywords.some(k => university.programs?.some((p: any) => p.name?.toLowerCase().includes(k)));
+  const brMatch   = keywords.some(k => university.branches?.some((br: string) => br.toLowerCase().includes(k)));
 
   // Hard filter: if NO branch match at all → score 0 (strict exclusion)
   if (!tagMatch && !progMatch && !brMatch) return { score: 0, reason: '' };
 
-  if (tagMatch && progMatch) return { score: maxW,                           reason: `Offers ${branch.split('/')[0].trim()} programs you prefer` };
-  if (tagMatch || progMatch) return { score: Math.round(maxW * 0.72),        reason: `Has relevant ${branch.split('/')[0].trim()} courses` };
+  if (tagMatch && progMatch) return { score: maxW,                           reason: `Offers ${branchStr.split('/')[0].trim()} programs you prefer` };
+  if (tagMatch || progMatch) return { score: Math.round(maxW * 0.72),        reason: `Has relevant ${branchStr.split('/')[0].trim()} courses` };
   return                             { score: Math.round(maxW * 0.40),        reason: `Partial match for your field of study` };
 }
 
 // ─── Budget Scoring ──────────────────────────────────────────
-export function scoreBudget(university: any, budget: string, maxW: number): { score: number; reason: string } {
-  const fees = university.programs
-    .map((p: any) => parseInt(p.fees.replace(/[^0-9]/g, '')) || 0)
-    .filter((f: number) => f > 0);
+export function scoreBudget(university: any, budget: string | string[], maxW: number): { score: number; reason: string } {
+  if (!budget) return { score: Math.round(maxW * 0.5), reason: '' };
+  if (Array.isArray(budget)) {
+    return budget.reduce((best, b) => {
+      const res = scoreBudget(university, b, maxW);
+      return res.score > best.score ? res : best;
+    }, { score: -1, reason: '' });
+  }
+  const budgetStr = budget as string;
+  let minFee = Infinity;
+  if (university.programs) {
+    for (let i = 0; i < university.programs.length; i++) {
+      const p = university.programs[i];
+      if (p.fees) {
+        const f = parseInt(p.fees.replace(/[^0-9]/g, '')) || 0;
+        if (f > 0 && f < minFee) {
+          minFee = f;
+        }
+      }
+    }
+  }
 
-  if (fees.length === 0) return { score: Math.round(maxW * 0.5), reason: 'Fee info not available' };
-
-  const minFee = Math.min(...fees);
+  if (minFee === Infinity) return { score: Math.round(maxW * 0.5), reason: 'Fee info not available' };
 
   const budgetRanges: Record<string, { min: number; max: number; label: string }> = {
     'under ₹75k (very budget friendly)': { min: 0,      max: 75000,  label: 'Under ₹75K' },
@@ -109,7 +127,7 @@ export function scoreBudget(university: any, budget: string, maxW: number): { sc
     '₹4l+ (top tier / global)':          { min: 400000, max: Infinity, label: '₹4L+' },
   };
 
-  const range = budgetRanges[budget.toLowerCase()];
+  const range = budgetRanges[budgetStr.toLowerCase()];
   if (!range) return { score: Math.round(maxW * 0.5), reason: 'Budget not matched' };
 
   // Perfect — min fee within range
@@ -129,7 +147,15 @@ export function scoreBudget(university: any, budget: string, maxW: number): { sc
 }
 
 // ─── Location Scoring (distance-aware tiers) ──────────────────
-export function scoreLocation(university: any, location: string, maxW: number): { score: number; reason: string } {
+export function scoreLocation(university: any, location: string | string[], maxW: number): { score: number; reason: string } {
+  if (!location) return { score: Math.round(maxW * 0.5), reason: '' };
+  if (Array.isArray(location)) {
+    return location.reduce((best, loc) => {
+      const res = scoreLocation(university, loc, maxW);
+      return res.score > best.score ? res : best;
+    }, { score: -1, reason: '' });
+  }
+  const locationStr = location as string;
   // Group universities into geographic zones
   const zones: Record<string, string[]> = {
     north:   ['Visakhapatnam', 'Rajam', 'Rajamahendravaram'],
@@ -173,7 +199,7 @@ export function scoreLocation(university: any, location: string, maxW: number): 
     },
   };
 
-  const pref = locationCityMap[location.toLowerCase()];
+  const pref = locationCityMap[locationStr.toLowerCase()];
   if (!pref) return { score: Math.round(maxW * 0.5), reason: '' };
 
   // No preference = full score
@@ -198,13 +224,21 @@ export function scoreLocation(university: any, location: string, maxW: number): 
 }
 
 // ─── College Type Scoring ─────────────────────────────────────
-export function scoreType(university: any, type: string, maxW: number): { score: number; reason: string } {
+export function scoreType(university: any, type: string | string[], maxW: number): { score: number; reason: string } {
+  if (!type) return { score: Math.round(maxW * 0.5), reason: '' };
+  if (Array.isArray(type)) {
+    return type.reduce((best, t) => {
+      const res = scoreType(university, t, maxW);
+      return res.score > best.score ? res : best;
+    }, { score: -1, reason: '' });
+  }
+  const typeStr = type as string;
   const gov    = ['andhra-university', 'jntuk', 'acharya-nagarjuna-university', 'sv-university', 'aknu-rajamahendravaram', 'sku-anantapur'];
   const pvt    = ['srm-ap', 'vit-ap', 'kl-university', 'vignan-university', 'amrita-ap', 'gitam'];
   const auto   = ['vr-siddhartha', 'gmrit-rajam', 'lbrce-mylavaram', 'bec-bapatla', 'gvpce-visakhapatnam', 'aec-surampalem', 'nri-institute'];
 
   const tid = university.id;
-  const t = type.toLowerCase();
+  const t = typeStr.toLowerCase();
 
   if (t.includes('private')) {
     if (pvt.includes(tid)) return { score: maxW,                    reason: 'Private university with strong placement record' };
@@ -228,11 +262,19 @@ export function scoreType(university: any, type: string, maxW: number): { score:
 }
 
 // ─── Rank Scoring ─────────────────────────────────────────────
-export function scoreRank(university: any, rank: string, maxW: number): { score: number; reason: string } {
+export function scoreRank(university: any, rank: string | string[], maxW: number): { score: number; reason: string } {
+  if (!rank) return { score: Math.round(maxW * 0.5), reason: '' };
+  if (Array.isArray(rank)) {
+    return rank.reduce((best, r) => {
+      const res = scoreRank(university, r, maxW);
+      return res.score > best.score ? res : best;
+    }, { score: -1, reason: '' });
+  }
+  const rankStr = rank as string;
   const naac    = university.naac;
   const hasNirf = university.nirf !== '—' && university.nirf !== '';
 
-  const r = rank.toLowerCase();
+  const r = rankStr.toLowerCase();
 
   if (r.includes('top 5,000')) {
     if (naac === 'A++' && hasNirf) return { score: maxW,                    reason: `NAAC ${naac} + NIRF ranked — ideal for top rankers` };

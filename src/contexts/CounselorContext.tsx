@@ -23,6 +23,8 @@ interface CounselorContextType {
   setError: (error: string | null) => void;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
+  pendingPrompt: string | null;
+  setPendingPrompt: (prompt: string | null) => void;
 }
 
 const CounselorContext = createContext<CounselorContextType | undefined>(undefined);
@@ -36,14 +38,31 @@ export function CounselorProvider({ children }: { children: React.ReactNode }) {
     timestamp: new Date(),
   };
 
-  const [messages, setMessages] = useState<Message[]>([initialMessage]);
+  const [messages, setMessages] = useState<Message[]>(() => {
+    const cached = localStorage.getItem('edudiscovery_counselor_chat');
+    if (cached) {
+      try {
+        const list = JSON.parse(cached);
+        return list.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) }));
+      } catch (e) {
+        console.warn('Failed to parse cached chat messages:', e);
+      }
+    }
+    return [initialMessage];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('edudiscovery_counselor_chat', JSON.stringify(messages));
+  }, [messages]);
 
   const clearMessages = () => {
     setMessages([initialMessage]);
+    localStorage.removeItem('edudiscovery_counselor_chat');
   };
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [pendingPrompt, setPendingPrompt] = useState<string | null>(null);
 
   // Get quiz data from localStorage or currentUser profile
   const [quizContext, setQuizContext] = useState<any>(null);
@@ -118,6 +137,8 @@ export function CounselorProvider({ children }: { children: React.ReactNode }) {
         setError,
         isOpen,
         setIsOpen,
+        pendingPrompt,
+        setPendingPrompt,
       }}
     >
       {children}

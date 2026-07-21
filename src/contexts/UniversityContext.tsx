@@ -3,6 +3,8 @@ import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '@/services/firebase';
 import { University } from '@/types';
 
+import { universities as localUniversities } from '@/data/universities';
+
 interface UniversityContextType {
   universities: University[];
   loading: boolean;
@@ -12,17 +14,36 @@ interface UniversityContextType {
 const UniversityContext = createContext<UniversityContextType | undefined>(undefined);
 
 export function UniversityProvider({ children }: { children: React.ReactNode }) {
-  const [universities, setUniversities] = useState<University[]>([]);
+  const [universities, setUniversities] = useState<University[]>(localUniversities);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const cached = localStorage.getItem('edudiscovery_colleges_cache');
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setUniversities(parsed);
+          setLoading(false);
+        }
+      } catch (e) {
+        console.warn('Failed to parse cached colleges:', e);
+      }
+    }
+
     async function loadColleges() {
       try {
         const snap = await getDocs(collection(db, 'colleges'));
         const list = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as University[];
-        setUniversities(list);
+        if (list && list.length > 0) {
+          setUniversities(list);
+          localStorage.setItem('edudiscovery_colleges_cache', JSON.stringify(list));
+        } else {
+          setUniversities(localUniversities);
+        }
       } catch (e) {
-        console.error("Error loading universities from Firestore:", e);
+        console.error("Error loading universities from Firestore, using local dataset:", e);
+        setUniversities(localUniversities);
       } finally {
         setLoading(false);
       }

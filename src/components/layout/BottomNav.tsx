@@ -8,11 +8,10 @@ export default function BottomNav() {
   const { pathname } = useLocation();
 
   const items = [
-    { label: 'Home',     icon: Home,    path: '/home' },
-    { label: 'Finder',   icon: Compass, path: '/quiz' },
-    { label: 'Search',   icon: Search,  path: '/search' },
-    { label: 'Wishlist', icon: Heart,   path: '/wishlist' },
-    { label: 'Profile',  icon: User,    path: '/profile' },
+    { label: 'Home', icon: Home, path: '/home' },
+    { label: 'Search', icon: Search, path: '/search' },
+    { label: 'Wishlist', icon: Heart, path: '/wishlist' },
+    { label: 'Profile', icon: User, path: '/profile' },
   ];
 
   return (
@@ -20,7 +19,13 @@ export default function BottomNav() {
       {items.map(({ label, icon: Icon, path }) => {
         const active = pathname === path;
         return (
-          <button key={path} className={`nav-item ${active ? 'active' : ''}`} onClick={() => navigate(path)}>
+          <motion.button 
+            key={path} 
+            className={`nav-item ${active ? 'active' : ''}`} 
+            onClick={() => navigate(path)}
+            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.05 }}
+          >
             <div style={{
               position: 'relative',
               borderRadius: '12px',
@@ -45,7 +50,7 @@ export default function BottomNav() {
               <Icon size={20} style={{ position: 'relative', zIndex: 1, color: active ? 'var(--primary)' : 'inherit' }} />
             </div>
             <span>{label}</span>
-          </button>
+          </motion.button>
         );
       })}
     </nav>

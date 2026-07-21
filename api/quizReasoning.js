@@ -21,9 +21,8 @@ export default async function quizReasoningHandler(req, res) {
       Based on our internal algorithm, these are their top matched colleges:
       ${topColleges.map((c, i) => `${i+1}. ${c.name} (${c.matchPercent}% match) - ${c.city}`).join('\n')}
       
-      Write a brief, personalized, and encouraging 2-3 paragraph summary addressing the student directly ("You").
-      Explain *why* these top colleges are a great fit for their specific priorities (e.g., budget, location, or branch).
-      Highlight one standout feature from their #1 match. Do not use robotic language. Be enthusiastic.
+      Write a very short, precise, and encouraging 1-paragraph summary addressing the student directly ("You").
+      Explain briefly *why* these top colleges are a great fit based on their answers. Be concise and avoid repeating the same points or over-explaining. Maximum 3-4 sentences. Do not use robotic language.
     `;
 
     const reasoningText = await generateText(prompt);

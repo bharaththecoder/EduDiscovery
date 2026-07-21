@@ -10,9 +10,11 @@ import {
   BookOpen, MapPin, Wallet, Award, GraduationCap,
   Star, Shield, Zap
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { QuizAnswers } from '@/utils/quizAgent';
+import { ConfettiExplosion, FloatingEmoji3D, OrbitRing, HolographicBadge, MagneticButton, SpotlightCard, StarField } from '@/components/Animation3DComponents';
 
-// ─── Animated Loading Screen ──────────────────────────────────
+// ─── Animated Loading Screen (3D Hologram) ─────────────────────
 function AnalyzingScreen() {
   const steps = [
     'Reading your priorities...',
@@ -37,45 +39,77 @@ function AnalyzingScreen() {
       alignItems: 'center', justifyContent: 'center',
       padding: '40px 20px', textAlign: 'center',
     }}>
-      <div style={{
-        width: '96px', height: '96px', borderRadius: '50%',
-        background: 'var(--gradient)', marginBottom: '28px',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: '38px', boxShadow: '0 0 40px var(--primary-glow)',
-        animation: 'spin-scale 2s ease-in-out infinite',
-      }}>🧠</div>
-      <h2 style={{ fontSize: '22px', fontWeight: '900', marginBottom: '8px' }}>Analyzing Your Preferences{dots}</h2>
+      {/* 3D Brain Hologram */}
+      <div style={{ position: 'relative', marginBottom: '28px' }}>
+        <OrbitRing size={130} color="rgba(16,185,129,0.3)" duration={6} thickness={2}>
+          <OrbitRing size={100} color="rgba(0,212,255,0.2)" duration={4} thickness={1} reverse>
+            <motion.div
+              animate={{ 
+                scale: [1, 1.15, 1],
+                rotateY: [0, 360],
+              }}
+              transition={{ 
+                scale: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
+                rotateY: { duration: 8, repeat: Infinity, ease: 'linear' },
+              }}
+              style={{
+                width: '72px', height: '72px', borderRadius: '50%',
+                background: 'var(--gradient)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '34px',
+                boxShadow: '0 0 40px var(--primary-glow), 0 0 80px rgba(16,185,129,0.15)',
+                transformStyle: 'preserve-3d',
+              }}
+            >
+              🧠
+            </motion.div>
+          </OrbitRing>
+        </OrbitRing>
+      </div>
+
+      <motion.h2
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        style={{ fontSize: '22px', fontWeight: '900', marginBottom: '8px' }}
+      >
+        Analyzing Your Preferences{dots}
+      </motion.h2>
       <p style={{ color: 'var(--text-muted)', fontSize: '13px', maxWidth: '260px', lineHeight: 1.6 }}>
         Our smart agent is personalizing results just for you.
       </p>
       <div style={{ marginTop: '36px', width: '100%', maxWidth: '300px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {steps.map((step, i) => (
-          <div key={i} style={{
-            display: 'flex', alignItems: 'center', gap: '10px',
-            padding: '9px 14px', borderRadius: '10px',
-            background: i <= currentStep ? 'var(--primary-light)' : 'transparent',
-            transition: 'background 0.4s',
-          }}>
-            <div style={{
-              width: '18px', height: '18px', borderRadius: '50%', flexShrink: 0,
-              background: i < currentStep ? '#10b981' : i === currentStep ? 'var(--primary)' : '#e5e7eb',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '9px', color: '#fff', transition: 'background 0.3s',
-            }}>{i < currentStep ? '✓' : ''}</div>
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: i * 0.2 }}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '10px',
+              padding: '9px 14px', borderRadius: '10px',
+              background: i <= currentStep ? 'var(--primary-light)' : 'transparent',
+              transition: 'background 0.4s',
+            }}
+          >
+            <motion.div
+              animate={i < currentStep ? { scale: [0.8, 1.2, 1] } : {}}
+              style={{
+                width: '18px', height: '18px', borderRadius: '50%', flexShrink: 0,
+                background: i < currentStep ? '#10b981' : i === currentStep ? 'var(--primary)' : '#e5e7eb',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '9px', color: '#fff', transition: 'background 0.3s',
+              }}
+            >
+              {i < currentStep ? '✓' : ''}
+            </motion.div>
             <span style={{
               fontSize: '12px', fontWeight: i <= currentStep ? '700' : '400',
               color: i <= currentStep ? 'var(--primary)' : 'var(--text-muted)',
               transition: 'color 0.3s',
             }}>{step}</span>
-          </div>
+          </motion.div>
         ))}
       </div>
-      <style>{`
-        @keyframes spin-scale {
-          0%, 100% { transform: scale(1) rotate(0deg); }
-          50% { transform: scale(1.1) rotate(5deg); }
-        }
-      `}</style>
     </div>
   );
 }
@@ -146,8 +180,19 @@ function FilterPanel({ source, onFilter }: { source: any[]; onFilter: (f: any[])
     let out = [...source];
     if (maxFee < 500000) {
       out = out.filter(u => {
-        const fees = u.programs.map((p: any) => parseInt(p.fees.replace(/[^0-9]/g, '')) || 0).filter(Boolean);
-        return fees.length && Math.min(...fees) <= maxFee;
+        let minFee = Infinity;
+        if (u.programs) {
+          for (let i = 0; i < u.programs.length; i++) {
+            const p = u.programs[i];
+            if (p.fees) {
+              const f = parseInt(p.fees.replace(/[^0-9]/g, '')) || 0;
+              if (f > 0 && f < minFee) {
+                minFee = f;
+              }
+            }
+          }
+        }
+        return minFee <= maxFee;
       });
     }
     if (naacFilter.length) out = out.filter(u => naacFilter.includes(u.naac));
@@ -156,7 +201,7 @@ function FilterPanel({ source, onFilter }: { source: any[]; onFilter: (f: any[])
 
   return (
     <div style={{ marginBottom: '28px' }}>
-      <button
+      <MagneticButton
         onClick={() => setOpen(!open)}
         className="btn-ghost"
         style={{
@@ -178,7 +223,7 @@ function FilterPanel({ source, onFilter }: { source: any[]; onFilter: (f: any[])
         <Filter size={14} style={{ color: 'var(--primary)' }} />
         <span>Refine Results</span>
         {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-      </button>
+      </MagneticButton>
 
       {open && (
         <div className="mt-3 p-5 rounded-2xl animate-fade-in-up" style={{
@@ -204,12 +249,12 @@ function FilterPanel({ source, onFilter }: { source: any[]; onFilter: (f: any[])
             <span style={{ fontSize: '13px', fontWeight: '700', display: 'block', marginBottom: '10px', color: 'var(--text-main)' }}>NAAC Grade</span>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               {naacGrades.map(g => (
-                <button key={g}
+                <MagneticButton key={g}
                   onClick={() => setNaacFilter(p => p.includes(g) ? p.filter(x => x !== g) : [...p, g])}
                   className={`chip ${naacFilter.includes(g) ? 'active' : ''}`}
                   style={{ fontSize: '12px', padding: '5px 12px' }}>
                   {g}
-                </button>
+                </MagneticButton>
               ))}
             </div>
           </div>
@@ -225,16 +270,32 @@ function ResultCard({ uni, rank }: { uni: any; rank: number }) {
   const medal = medals[rank] || `#${rank + 1}`;
 
   return (
-    <div style={{ animation: `fadeIn 0.4s ease-out ${rank * 0.07}s both`, display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <motion.div
+      initial={{ opacity: 0, y: 30, rotateX: 15, scale: 0.9 }}
+      whileInView={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
+      viewport={{ once: true, margin: '-30px' }}
+      transition={{ duration: 0.5, delay: rank * 0.08, ease: [0.16, 1, 0.3, 1] }}
+      whileHover={{ y: -6, scale: 1.02, rotateX: 2 }}
+      style={{ 
+        display: 'flex', flexDirection: 'column', height: '100%',
+        transformStyle: 'preserve-3d', perspective: '800px',
+      }}
+    >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '18px' }}>{medal}</span>
+          <motion.span
+            initial={{ scale: 0, rotateY: -180 }}
+            animate={{ scale: 1, rotateY: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 + rank * 0.1, type: 'spring' }}
+            style={{ fontSize: '18px' }}
+          >
+            {medal}
+          </motion.span>
           <CategoryBadge category={uni.category} />
         </div>
       </div>
       <UniversityCard university={uni} reasons={uni.reasons} breakdown={uni.breakdown} />
-    </div>
-
+    </motion.div>
   );
 }
 
@@ -259,36 +320,14 @@ export default function QuizResult() {
     [answers]
   );
 
-  // Typing effect logic
-  const [typedReasoning, setTypedReasoning] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-
-  useEffect(() => {
-    if (aiReasoning) {
-      setIsTyping(true);
-      setTypedReasoning("");
-      let index = 0;
-      const words = aiReasoning.split(" ");
-
-      const timer = setInterval(() => {
-        if (index < words.length) {
-          setTypedReasoning(prev => prev + (prev ? " " : "") + words[index]);
-          index++;
-        } else {
-          clearInterval(timer);
-          setIsTyping(false);
-        }
-      }, 40); // 40ms per word is a good "syncing" speed
-
-      return () => clearInterval(timer);
-    }
-  }, [aiReasoning]);
-
   useEffect(() => { setTimeout(() => setShowAnalyzing(false), 2700); }, []);
+
+  const hasFetchedRef = useRef(false);
 
   // Sync to Firebase and fetch AI personalized reasoning
   useEffect(() => {
-    if (currentUser && Object.keys(answers).length && !showAnalyzing) {
+    if (currentUser && Object.keys(answers).length && !showAnalyzing && !hasFetchedRef.current) {
+      hasFetchedRef.current = true;
 
       // 1. Sync data
       (async () => {
@@ -320,9 +359,15 @@ export default function QuizResult() {
         })
           .then(res => res.json())
           .then(data => {
-            if (data.reasoning) setAiReasoning(data.reasoning);
+            if (data.reasoning) {
+              setAiReasoning(data.reasoning);
+            } else {
+              setAiReasoning("Based on your preferences, we've matched top universities in Andhra Pradesh that align with your selected course, budget, and region.");
+            }
           })
-          .catch(console.error)
+          .catch(() => {
+            setAiReasoning("Based on your preferences, we've matched top universities in Andhra Pradesh that align with your selected course, budget, and region.");
+          })
           .finally(() => setIsGeneratingAi(false));
       }
     }
@@ -347,12 +392,26 @@ export default function QuizResult() {
         background: 'var(--gradient)', padding: '48px 20px 36px',
         textAlign: 'center', position: 'relative', overflow: 'hidden',
       }}>
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.5, pointerEvents: 'none' }}>
+          <StarField width={2000} height={1000} count={200} speed={0.5} />
+        </div>
+        {/* Confetti burst on results! */}
+        <ConfettiExplosion count={80} />
+
         <div style={{ position: 'absolute', width: '250px', height: '250px', borderRadius: '50%', background: 'rgba(255,255,255,0.06)', top: '-80px', right: '-60px' }} />
-        <Trophy size={44} color="#fff" style={{ marginBottom: '14px' }} className="mx-auto" />
-        <h1 style={{ color: '#fff', fontSize: '28px', fontWeight: '900', marginBottom: '8px', lineHeight: 1.2 }}>
+        <motion.div
+          initial={{ scale: 0, rotateY: -180 }}
+          animate={{ scale: 1, rotateY: 0 }}
+          transition={{ duration: 0.6, type: 'spring', stiffness: 200 }}
+          className="mx-auto"
+          style={{ marginBottom: '14px' }}
+        >
+          <Trophy size={44} color="#fff" />
+        </motion.div>
+        <h1 style={{ color: '#fff', fontSize: '28px', fontWeight: '900', marginBottom: '8px', lineHeight: 1.2, position: 'relative', zIndex: 5 }}>
           Your Personalised Matches
         </h1>
-        <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '14px', maxWidth: '340px', margin: '0 auto 20px', lineHeight: 1.5 }}>
+        <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '14px', maxWidth: '340px', margin: '0 auto 20px', lineHeight: 1.5, position: 'relative', zIndex: 5 }}>
           Smart agent analyzed {universities.length} colleges using your priorities &amp; adaptive weights.
         </p>
         <div style={{ display: 'inline-flex', justifyContent: 'center', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'rgba(255,255,255,0.75)', fontWeight: '600', background: 'rgba(255,255,255,0.12)', padding: '6px 14px', borderRadius: '99px', width: '150px' }}>
@@ -360,7 +419,7 @@ export default function QuizResult() {
         </div>
       </div>
 
-      <div style={{ padding: '28px 20px 0', maxWidth: '1100px', margin: '0 auto' }}>
+      <div style={{ padding: '20px 16px 80px', maxWidth: '1200px', margin: '0 auto' }}>
 
         {/* Preference tags */}
         <div style={{ marginBottom: '24px' }}>
@@ -369,7 +428,7 @@ export default function QuizResult() {
             {Object.entries(answers).map(([key, val]) => (
               <span key={key} style={{ background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: '99px', padding: '5px 13px', fontSize: '12px', fontWeight: '600', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <span style={{ color: 'var(--primary)', fontWeight: '800' }}>{answerLabels[key] || key}:</span>
-                {val as string}
+                {Array.isArray(val) ? val.join(', ') : val}
               </span>
             ))}
           </div>
@@ -385,11 +444,11 @@ export default function QuizResult() {
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-emerald-200/20 to-transparent rounded-bl-full pointer-events-none" />
               <div className="flex items-center gap-2 mb-4">
                 <div className="p-2 rounded-full shadow-inner" style={{ background: 'var(--primary-light)' }}>
-                  <Sparkles size={16} style={{ color: 'var(--primary)' }} className="animate-pulse" />
+                  <Sparkles size={16} style={{ color: 'var(--primary)' }} className={isGeneratingAi ? "animate-pulse" : ""} />
                 </div>
                 <div className="flex flex-col">
                   <span className="font-extrabold text-sm tracking-tight" style={{ color: 'var(--text-main)' }}>AI Counselor's Verdict</span>
-                  {isTyping && <span className="text-[10px] text-emerald-500 font-bold animate-pulse">SYNCING WORDS...</span>}
+                  {isGeneratingAi && <span className="text-[10px] text-emerald-500 font-bold animate-pulse">ANALYZING MATCHES...</span>}
                 </div>
               </div>
 
@@ -401,10 +460,15 @@ export default function QuizResult() {
                   <div className="h-4 bg-emerald-200/20 rounded-full w-[60%]"></div>
                 </div>
               ) : (
-                <div className="text-[15px] leading-relaxed font-medium whitespace-pre-line" style={{ color: 'var(--text-main)', opacity: 0.9 }}>
-                  {typedReasoning}
-                  {isTyping && <span className="inline-block w-1.5 h-4 bg-emerald-400 ml-1 animate-bounce" />}
-                </div>
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="text-[15px] leading-relaxed font-medium whitespace-pre-line" 
+                  style={{ color: 'var(--text-main)', opacity: 0.9 }}
+                >
+                  {aiReasoning}
+                </motion.div>
               )}
             </div>
           )}
@@ -430,7 +494,7 @@ export default function QuizResult() {
                   subtitle="Highest match — fits your branch, budget, location, and rank perfectly."
                   count={displayDream.length}
                 />
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {displayDream.map((uni, i) => (
                     <ResultCard key={uni.id} uni={uni} rank={i} />
                   ))}
@@ -447,7 +511,7 @@ export default function QuizResult() {
                   subtitle="Strong alignment across most of your criteria — highly recommended."
                   count={displayMatch.length}
                 />
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {displayMatch.map((uni, i) => (
                     <ResultCard key={uni.id} uni={uni} rank={i} />
                   ))}
@@ -464,7 +528,7 @@ export default function QuizResult() {
                   subtitle="Solid backup choices — meet your core requirements with wider cutoffs."
                   count={displaySafe.length}
                 />
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {displaySafe.map((uni, i) => (
                     <ResultCard key={uni.id} uni={uni} rank={i} />
                   ))}
@@ -476,12 +540,12 @@ export default function QuizResult() {
 
         {/* CTA */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', paddingBottom: '40px' }}>
-          <button onClick={() => navigate('/search')} className="btn btn-primary btn-full" style={{ padding: '16px', fontSize: '15px' }}>
+          <MagneticButton onClick={() => navigate('/search')} className="btn btn-primary btn-full" style={{ padding: '16px', fontSize: '15px' }}>
             Explore All Universities
-          </button>
-          <button onClick={() => navigate('/quiz')} className="btn btn-ghost btn-full" style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontSize: '15px' }}>
+          </MagneticButton>
+          <MagneticButton onClick={() => navigate('/quiz')} className="btn btn-ghost btn-full" style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontSize: '15px' }}>
             <RotateCcw size={16} /> Retake Quiz
-          </button>
+          </MagneticButton>
         </div>
       </div>
     </div>

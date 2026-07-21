@@ -8,6 +8,11 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import UniversityCard from '@/components/cards/UniversityCard';
 import { storage } from '@/services/firebase';
+import { getRecommendations } from '@/utils/quizAgent';
+import { universities } from '@/data/universities';
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
+import { motion } from 'framer-motion';
+import { OrbitRing, AnimatedCounter3D, HolographicBadge, MagneticButton, SpotlightCard, FloatingEmoji3D } from '@/components/Animation3DComponents';
 
 const FAQS = [
   { q: 'How does the completion score work?', a: 'Your profile score is calculated based on how much information you have shared. A complete profile (Photo, Bio, Tags, and Base Info) helps us provide better college recommendations.' },
@@ -62,7 +67,7 @@ function EditModal({ currentUser, onClose }: { currentUser: any; onClose: () => 
   return (
     <div className="overlay" onClick={onClose}>
       <div className="modal-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
-        <button onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', zIndex: 10 }}>×</button>
+        <MagneticButton onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', zIndex: 10 }}>×</MagneticButton>
         <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '20px' }}>Edit Profile</h2>
         
         <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -89,7 +94,7 @@ function EditModal({ currentUser, onClose }: { currentUser: any; onClose: () => 
             <label style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '8px', display: 'block' }}>Professional Tags</label>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {AVAILABLE_TAGS.map(tag => (
-                <button
+                <MagneticButton
                   key={tag}
                   type="button"
                   onClick={() => toggleTag(tag)}
@@ -106,14 +111,14 @@ function EditModal({ currentUser, onClose }: { currentUser: any; onClose: () => 
                   }}
                 >
                   {tag}
-                </button>
+                </MagneticButton>
               ))}
             </div>
           </div>
 
-          <button type="submit" disabled={loading} className="btn btn-primary btn-full" style={{ padding: '15px', marginTop: '10px' }}>
+          <MagneticButton type="submit" disabled={loading} className="btn btn-primary btn-full" style={{ padding: '15px', marginTop: '10px' }}>
             {loading ? 'Syncing...' : 'Save to Cloud'}
-          </button>
+          </MagneticButton>
         </form>
       </div>
     </div>
@@ -129,7 +134,7 @@ function NotificationsModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="overlay" onClick={onClose}>
       <div className="modal-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
-        <button onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>×</button>
+        <MagneticButton onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>×</MagneticButton>
         <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '20px' }}>Educational Updates</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           {notifications.map((n, i) => (
@@ -154,7 +159,7 @@ function PrivacyModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="overlay" onClick={onClose}>
       <div className="modal-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
-        <button onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>×</button>
+        <MagneticButton onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>×</MagneticButton>
         <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '20px' }}>Privacy & Security</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
           {Object.entries(labels).map(([key, label]) => {
@@ -185,7 +190,7 @@ function HelpModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="overlay" onClick={onClose}>
       <div className="modal-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
-        <button onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>×</button>
+        <MagneticButton onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>×</MagneticButton>
         <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '20px' }}>Help Center & FAQs</h2>
         {FAQS.map((faq, i) => (
           <div key={i} className="faq-item">
@@ -221,6 +226,27 @@ export default function Profile() {
   };
 
   const appliedCount = (currentUser?.appliedCount as number) || 0;
+  
+  const matchAnalytics = React.useMemo(() => {
+    const answers = currentUser?.quizResults?.answers;
+    if (!answers) return null;
+    const { all } = getRecommendations(universities, answers as any, 8);
+    if (all.length === 0) return null;
+
+    const branchAvg = Math.round(all.reduce((acc, u) => acc + u.breakdown.branchPct, 0) / all.length);
+    const budgetAvg = Math.round(all.reduce((acc, u) => acc + u.breakdown.budgetPct, 0) / all.length);
+    const locationAvg = Math.round(all.reduce((acc, u) => acc + u.breakdown.locationPct, 0) / all.length);
+    const typeAvg = Math.round(all.reduce((acc, u) => acc + u.breakdown.typePct, 0) / all.length);
+    const rankAvg = Math.round(all.reduce((acc, u) => acc + u.breakdown.rankPct, 0) / all.length);
+
+    return [
+      { subject: 'Branch Match', score: branchAvg },
+      { subject: 'Budget Fit', score: budgetAvg },
+      { subject: 'Location Preference', score: locationAvg },
+      { subject: 'College Type', score: typeAvg },
+      { subject: 'Rank Match', score: rankAvg },
+    ];
+  }, [currentUser?.quizResults?.answers]);
   
 
   const handleAvatarClick = () => fileInputRef.current?.click();
@@ -272,17 +298,20 @@ export default function Profile() {
 
       {/* Profile Header */}
       <div style={{ background: 'var(--gradient)', padding: '48px 24px 32px', textAlign: 'center', position: 'relative' }}>
-        <div 
+        <motion.div 
           onClick={handleAvatarClick}
+          whileHover={{ scale: 1.05, rotateY: 10 }}
+          whileTap={{ scale: 0.95 }}
           style={{
             width: '100px', height: '100px', borderRadius: '50%',
             background: '#fff', margin: '0 auto 16px',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: '36px', fontWeight: '900', color: 'var(--primary)',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.2), 0 0 30px rgba(16,185,129,0.2)',
             cursor: 'pointer', position: 'relative', overflow: 'hidden',
             border: '4px solid rgba(255,255,255,0.3)',
-            opacity: uploading ? 0.6 : 1
+            opacity: uploading ? 0.6 : 1,
+            transformStyle: 'preserve-3d',
           }}
         >
           {profile.avatar ? (
@@ -299,7 +328,7 @@ export default function Profile() {
           {uploading && (
             <div className="spinner" style={{ position: 'absolute', width: '20px', height: '20px', border: '2px solid #fff', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
           )}
-        </div>
+        </motion.div>
         
         <h1 style={{ color: '#fff', fontSize: '24px', fontWeight: '900', marginBottom: '6px' }}>{profile.name}</h1>
         <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '14px', marginBottom: '20px', maxWidth: '280px', margin: '0 auto 20px' }}>
@@ -358,16 +387,49 @@ export default function Profile() {
               </div>
             </div>
 
-            {wishlist.length > 0 && (
+            {/* Dynamic Match Analytics Chart */}
+            {matchAnalytics && (
+              <div style={{ marginBottom: '24px' }}>
+                <h2 style={{ fontSize: '18px', fontWeight: '900', marginBottom: '14px' }}>📊 Preference Fit Analytics</h2>
+                <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-lg)', padding: '20px', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' }}>
+                  <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px', fontWeight: '600' }}>Your match affinity percentages based on your last quiz answers</p>
+                  <div style={{ width: '100%', height: '240px' }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RadarChart cx="50%" cy="50%" outerRadius="75%" data={matchAnalytics}>
+                        <PolarGrid stroke="#e2e8f0" />
+                        <PolarAngleAxis dataKey="subject" tick={{ fill: '#475569', fontSize: 11, fontWeight: 700 }} />
+                        <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                        <Radar name="Affinities" dataKey="score" stroke="var(--primary)" fill="var(--primary)" fillOpacity={0.3} />
+                      </RadarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {wishlist.length > 0 ? (
               <div style={{ marginBottom: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
                   <h2 style={{ fontSize: '18px', fontWeight: '900' }}>❤️ My Wishlist</h2>
-                  <span style={{ fontSize: '13px', color: 'var(--primary)', fontWeight: '700' }}>See All</span>
+                  <span onClick={() => navigate('/wishlist')} style={{ fontSize: '13px', color: 'var(--primary)', fontWeight: '700', cursor: 'pointer' }}>See All</span>
                 </div>
                 <div className="scroll-row">
                   {wishlist.map(uni => (
-                    <UniversityCard key={uni.id} university={uni} compact />
+                    <SpotlightCard key={uni.id}>
+                      <UniversityCard university={uni} compact />
+                    </SpotlightCard>
                   ))}
+                </div>
+              </div>
+            ) : (
+              <div style={{ marginBottom: '24px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                  <h2 style={{ fontSize: '18px', fontWeight: '900' }}>❤️ My Wishlist</h2>
+                </div>
+                <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-lg)', padding: '32px', textAlign: 'center', border: '1.5px dashed var(--border)' }}>
+                  <FloatingEmoji3D emoji="💭" size={40} />
+                  <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: '16px', fontWeight: '600' }}>Your wishlist is empty. Start exploring!</p>
+                  <MagneticButton onClick={() => navigate('/search')} className="btn btn-ghost" style={{ marginTop: '12px', fontSize: '13px' }}>Explore Colleges</MagneticButton>
                 </div>
               </div>
             )}
@@ -379,7 +441,7 @@ export default function Profile() {
             <h2 style={{ fontSize: '18px', fontWeight: '900', marginBottom: '14px' }}>Account Settings</h2>
         <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)', marginBottom: '24px', border: '1px solid var(--border)' }}>
           {quickActions.map((action, i) => (
-            <button
+            <MagneticButton
               key={i}
               onClick={() => setModal(action.modal)}
               style={{
@@ -398,7 +460,7 @@ export default function Profile() {
                 <span style={{ fontWeight: '700', fontSize: '15px', color: 'var(--text-main)', display: 'block' }}>{action.label}</span>
               </div>
               <span style={{ color: 'var(--text-muted)', fontSize: '20px' }}>›</span>
-            </button>
+            </MagneticButton>
           ))}
         </div>
  
@@ -420,7 +482,7 @@ export default function Profile() {
               </p>
               
               <div style={{ display: 'flex', gap: '12px' }}>
-                <button
+                <MagneticButton
                   onClick={() => setTheme('light')}
                   style={{
                     flex: 1,
@@ -440,9 +502,9 @@ export default function Profile() {
                   }}
                 >
                   <Sun size={16} /> Light
-                </button>
+                </MagneticButton>
                 
-                <button
+                <MagneticButton
                   onClick={() => setTheme('dark')}
                   style={{
                     flex: 1,
@@ -462,12 +524,12 @@ export default function Profile() {
                   }}
                 >
                   <Moon size={16} /> Dark
-                </button>
+                </MagneticButton>
               </div>
             </div>
 
             {/* Sign Out */}
-            <button
+            <MagneticButton
               onClick={handleSignOut}
               style={{
                 width: '100%', padding: '18px', background: '#fff1f2', color: '#e11d48',
@@ -480,7 +542,7 @@ export default function Profile() {
               onMouseOut={e => e.currentTarget.style.background = '#fff1f2'}
             >
               <LogOut size={20} /> Sign Out
-            </button>
+            </MagneticButton>
           </div>
         </div>
       </div>

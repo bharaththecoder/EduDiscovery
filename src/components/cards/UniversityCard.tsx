@@ -4,6 +4,7 @@ import { Heart, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useToast } from '@/contexts/ToastContext';
+import { ConfettiExplosion, AnimatedCounter3D } from '@/components/Animation3DComponents';
 
 const FALLBACK = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQ4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM2QzNCRkYiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwMEQ0RkYiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjQ4MCIgZmlsbD0idXJsKCNnKSIvPjx0ZXh0IHg9IjQwMCIgeT0iMjQwIiBmb250LWZhbWlseT0iSW50ZXIsc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0OCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjMpIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIj7wn4qZPC90ZXh0Pjwvc3ZnPg==';
 
@@ -27,8 +28,8 @@ export default function UniversityCard({ university, compact = false, reasons = 
   const { toggleWishlist, isWishlisted } = useWishlist();
   const { showToast } = useToast();
   const saved      = isWishlisted(university.id);
-  const [imgSrc, setImgSrc] = useState(university.image || FALLBACK);
-  const [showAllReasons, setShowAllReasons] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   // 3D Tilt Effect State
   const [tilt, setTilt] = useState({ x: 0, y: 0, scale: 1, translateY: 0 });
@@ -43,34 +44,44 @@ export default function UniversityCard({ university, compact = false, reasons = 
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    setIsHovered(true);
     if (isMobile) return;
     const card = e.currentTarget;
     const box = card.getBoundingClientRect();
     const x = e.clientX - box.left - box.width / 2;
     const y = e.clientY - box.top - box.height / 2;
     
-    // Rotate maximum 4 degrees on either axis (subtle 3D effect)
+    // Rotate maximum 4 degrees on either axis for a subtle premium 3D effect
     const rX = -(y / (box.height / 2)) * 4;
     const rY = (x / (box.width / 2)) * 4;
     
     setTilt({ 
       x: rY, 
       y: rX, 
-      scale: compact ? 1.012 : 1.018, 
-      translateY: compact ? -4 : -6 
+      scale: compact ? 1.008 : 1.012, 
+      translateY: compact ? -3 : -5 
     });
   };
 
   const handleMouseLeave = () => {
+    setIsHovered(false);
     if (isMobile) return;
     setTilt({ x: 0, y: 0, scale: 1, translateY: 0 });
   };
 
   const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
+    const nextSaved = !saved;
     toggleWishlist(university);
     showToast(saved ? 'Removed from wishlist' : 'Saved to wishlist! ❤️', saved ? 'info' : 'success');
+    if (nextSaved) {
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 2000);
+    }
   };
+
+  const [imgSrc, setImgSrc] = useState(university.image || FALLBACK);
+  const [showAllReasons, setShowAllReasons] = useState(false);
 
   const handleClick = () => navigate(`/university/${university.id}`);
 
@@ -89,10 +100,17 @@ export default function UniversityCard({ university, compact = false, reasons = 
         }}
       >
         <div style={{ position: 'relative', height: '120px', flexShrink: 0, overflow: 'hidden', borderTopLeftRadius: 'var(--radius-md)', borderTopRightRadius: 'var(--radius-md)' }}>
+          {showConfetti && <ConfettiExplosion count={15} />}
           <img
             src={imgSrc} alt={university.name}
             onError={() => setImgSrc(FALLBACK)}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            style={{ 
+              width: '100%', 
+              height: '100%', 
+              objectFit: 'cover',
+              transform: isHovered ? 'scale(1.06)' : 'scale(1)',
+              transition: 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)'
+            }}
             loading="lazy"
           />
           {university.naac && (
@@ -128,7 +146,7 @@ export default function UniversityCard({ university, compact = false, reasons = 
             <MapPin size={10} /> {university.city}
           </div>
           <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-            {university.tags.slice(0, 2).map((tag: string) => (
+            {(university.tags || []).slice(0, 2).map((tag: string) => (
               <motion.span 
                 key={tag} 
                 whileHover={{ scale: 1.05, y: -1 }}
@@ -143,6 +161,8 @@ export default function UniversityCard({ university, compact = false, reasons = 
       </div>
     );
   }
+
+
 
   // ─── Full Card ────────────────────────────────────────────────
   return (
@@ -162,25 +182,32 @@ export default function UniversityCard({ university, compact = false, reasons = 
       }}
     >
       {/* Image */}
-      <div style={{ position: 'relative', aspectRatio: '16/9', overflow: 'hidden', flexShrink: 0, borderTopLeftRadius: 'var(--radius-lg)', borderTopRightRadius: 'var(--radius-lg)' }}>
+      <div style={{ position: 'relative', aspectRatio: '16/10', maxHeight: '160px', overflow: 'hidden', flexShrink: 0, borderTopLeftRadius: 'var(--radius-lg)', borderTopRightRadius: 'var(--radius-lg)' }}>
+        {showConfetti && <ConfettiExplosion count={20} />}
         <img
           src={imgSrc} alt={university.name}
           onError={() => setImgSrc(FALLBACK)}
-          style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
+          style={{ 
+            width: '100%', 
+            height: '100%', 
+            objectFit: 'cover', 
+            transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+            transition: 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)'
+          }}
           loading="lazy"
         />
         {/* Gradient overlay */}
         <div style={{
           position: 'absolute', inset: 0,
-          background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 55%)',
+          background: 'linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 60%)',
         }} />
 
         {/* NAAC Badge */}
         {university.naac && (
           <div style={{
-            position: 'absolute', top: '10px', left: '10px',
-            background: '#0F172A', color: '#ffffff', padding: '5px 10px',
-            borderRadius: 'var(--radius-full)', fontWeight: '800', fontSize: '11px',
+            position: 'absolute', top: '8px', left: '8px',
+            background: '#0F172A', color: '#ffffff', padding: '4px 8px',
+            borderRadius: 'var(--radius-full)', fontWeight: '800', fontSize: '10px',
             letterSpacing: '0.5px', zIndex: 10
           }}>
             NAAC {university.naac}
@@ -189,34 +216,34 @@ export default function UniversityCard({ university, compact = false, reasons = 
 
         {/* Wishlist button */}
         <motion.button 
-          whileHover={{ scale: 1.15 }}
-          whileTap={{ scale: 0.85 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           transition={{ type: "spring", stiffness: 450, damping: 15 }}
           onClick={handleToggle} 
           style={{
-            position: 'absolute', top: '9px', right: '9px',
+            position: 'absolute', top: '7px', right: '7px',
             background: 'rgba(255,255,255,0.92)', border: 'none',
-            borderRadius: '50%', width: '34px', height: '34px',
+            borderRadius: '50%', width: '30px', height: '30px',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
             zIndex: 10,
           }}
         >
-          <Heart size={16} fill={saved ? 'var(--accent)' : 'none'} color={saved ? 'var(--accent)' : '#666'} />
+          <Heart size={14} fill={saved ? 'var(--accent)' : 'none'} color={saved ? 'var(--accent)' : '#666'} />
         </motion.button>
 
         {/* Name on image bottom */}
-        <div style={{ position: 'absolute', bottom: '10px', left: '12px', right: '48px' }}>
-          <p style={{ color: '#fff', fontSize: '14px', fontWeight: '800', lineHeight: 1.25, textShadow: '0 1px 6px rgba(0,0,0,0.5)' }}>
+        <div style={{ position: 'absolute', bottom: '8px', left: '10px', right: '40px' }}>
+          <p style={{ color: '#fff', fontSize: '13px', fontWeight: '800', lineHeight: 1.2, textShadow: '0 1px 6px rgba(0,0,0,0.5)' }}>
             {university.name}
           </p>
         </div>
       </div>
 
       {/* Body */}
-      <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--text-muted)', fontSize: '12px' }}>
-          <MapPin size={12} /> {university.city}, {university.state}
+      <div style={{ padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-muted)', fontSize: '11px' }}>
+          <MapPin size={11} /> {university.city}, {university.state}
         </div>
 
         {university.nirf && university.nirf !== '—' && (
@@ -226,7 +253,7 @@ export default function UniversityCard({ university, compact = false, reasons = 
         )}
 
         <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
-          {university.tags.slice(0, 4).map((tag: string) => (
+          {(university.tags || []).slice(0, 4).map((tag: string) => (
             <motion.span 
               key={tag} 
               whileHover={{ scale: 1.05, y: -1 }}
@@ -307,12 +334,12 @@ export default function UniversityCard({ university, compact = false, reasons = 
         <div style={{ flex: 1 }} />
 
         <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+          whileHover={{ scale: 1.03, y: -2 }}
+          whileTap={{ scale: 0.97 }}
           transition={{ type: "spring", stiffness: 500, damping: 25 }}
           onClick={handleClick}
-          className="btn btn-primary btn-sm btn-full"
-          style={{ marginTop: '4px' }}
+          className="btn btn-primary btn-sm btn-full shine-on-hover"
+          style={{ marginTop: '4px', position: 'relative', overflow: 'hidden' }}
         >
           View Details
         </motion.button>
@@ -326,16 +353,18 @@ function BreakdownRow({ label, value, color }: { label: string; value: number; c
     <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span style={{ fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)' }}>{label}</span>
-        <span style={{ fontSize: '11px', fontWeight: '800', color: color }}>{value}%</span>
+        <span style={{ fontSize: '11px', fontWeight: '800', color: color, display: 'flex', alignItems: 'center' }}>
+          <AnimatedCounter3D value={value} duration={1} />%
+        </span>
       </div>
-      <div style={{ width: '100%', height: '5px', background: '#f3f4f6', borderRadius: '999px', overflow: 'hidden' }}>
+      <div style={{ width: '100%', height: '5px', background: 'var(--bg)', borderRadius: '999px', overflow: 'hidden' }}>
         <div 
+          className="progress-fill-animate"
           style={{ 
             width: `${value}%`, 
             height: '100%', 
-            background: color, 
+            background: `linear-gradient(90deg, ${color}88, ${color})`,
             borderRadius: '999px',
-            transition: 'width 0.8s ease-out'
           }} 
         />
       </div>
@@ -346,14 +375,14 @@ function BreakdownRow({ label, value, color }: { label: string; value: number; c
 export function UniversityCardSkeleton({ compact = false }: { compact?: boolean }) {
   if (compact) {
     return (
-      <div className="compact-card animate-pulse" style={{ background: 'var(--surface)', height: '210px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
-        <div style={{ height: '120px', background: 'var(--border)', opacity: 0.15, borderTopLeftRadius: 'var(--radius-md)', borderTopRightRadius: 'var(--radius-md)' }} />
+      <div className="compact-card" style={{ background: 'var(--surface)', height: '210px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', overflow: 'hidden' }}>
+        <div className="shimmer-block" style={{ height: '120px' }} />
         <div style={{ padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <div style={{ height: '14px', width: '70%', background: 'var(--border)', borderRadius: '4px' }} />
-          <div style={{ height: '10px', width: '40%', background: 'var(--border)', borderRadius: '4px' }} />
+          <div className="shimmer-block" style={{ height: '14px', width: '70%', borderRadius: '4px' }} />
+          <div className="shimmer-block" style={{ height: '10px', width: '40%', borderRadius: '4px' }} />
           <div style={{ display: 'flex', gap: '4px' }}>
-            <div style={{ height: '16px', width: '40px', background: 'var(--border)', borderRadius: '999px' }} />
-            <div style={{ height: '16px', width: '50px', background: 'var(--border)', borderRadius: '999px' }} />
+            <div className="shimmer-block" style={{ height: '16px', width: '40px', borderRadius: '999px' }} />
+            <div className="shimmer-block" style={{ height: '16px', width: '50px', borderRadius: '999px' }} />
           </div>
         </div>
       </div>
@@ -361,22 +390,22 @@ export function UniversityCardSkeleton({ compact = false }: { compact?: boolean 
   }
 
   return (
-    <div className="animate-pulse" style={{ borderRadius: 'var(--radius-lg)', background: 'var(--surface)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', height: '400px' }}>
-      <div style={{ aspectRatio: '16/9', background: 'var(--border)', opacity: 0.15, borderTopLeftRadius: 'var(--radius-lg)', borderTopRightRadius: 'var(--radius-lg)' }} />
+    <div style={{ borderRadius: 'var(--radius-lg)', background: 'var(--surface)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', height: '400px', overflow: 'hidden' }}>
+      <div className="shimmer-block" style={{ aspectRatio: '16/9' }} />
       <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
-        <div style={{ height: '12px', width: '50%', background: 'var(--border)', borderRadius: '4px' }} />
-        <div style={{ height: '18px', width: '80%', background: 'var(--border)', borderRadius: '4px' }} />
+        <div className="shimmer-block" style={{ height: '12px', width: '50%', borderRadius: '4px' }} />
+        <div className="shimmer-block" style={{ height: '18px', width: '80%', borderRadius: '4px' }} />
         <div style={{ display: 'flex', gap: '6px' }}>
-          <div style={{ height: '18px', width: '50px', background: 'var(--border)', borderRadius: '999px' }} />
-          <div style={{ height: '18px', width: '60px', background: 'var(--border)', borderRadius: '999px' }} />
-          <div style={{ height: '18px', width: '55px', background: 'var(--border)', borderRadius: '999px' }} />
+          <div className="shimmer-block" style={{ height: '18px', width: '50px', borderRadius: '999px' }} />
+          <div className="shimmer-block" style={{ height: '18px', width: '60px', borderRadius: '999px' }} />
+          <div className="shimmer-block" style={{ height: '18px', width: '55px', borderRadius: '999px' }} />
         </div>
         <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <div style={{ height: '12px', width: '90%', background: 'var(--border)', borderRadius: '4px' }} />
-          <div style={{ height: '12px', width: '85%', background: 'var(--border)', borderRadius: '4px' }} />
+          <div className="shimmer-block" style={{ height: '12px', width: '90%', borderRadius: '4px' }} />
+          <div className="shimmer-block" style={{ height: '12px', width: '85%', borderRadius: '4px' }} />
         </div>
         <div style={{ flex: 1 }} />
-        <div style={{ height: '36px', width: '100%', background: 'var(--border)', borderRadius: 'var(--radius-sm)' }} />
+        <div className="shimmer-block" style={{ height: '36px', width: '100%', borderRadius: 'var(--radius-sm)' }} />
       </div>
     </div>
   );

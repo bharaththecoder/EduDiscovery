@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
 import Navbar from './Navbar';
 import BottomNav from './BottomNav';
 import AICounselor from '@/components/chat/AICounselor';
@@ -10,21 +10,7 @@ export default function Layout() {
   const location = useLocation();
   const [isNavigating, setIsNavigating] = useState(false);
 
-  // Dynamic Ambient Cursor Glow (Desktop only)
-  const cursorX = useMotionValue(-150);
-  const cursorY = useMotionValue(-150);
-  const springConfig = { damping: 30, stiffness: 200, mass: 0.6 };
-  const cursorXSpring = useSpring(cursorX, springConfig);
-  const cursorYSpring = useSpring(cursorY, springConfig);
 
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      cursorX.set(e.clientX - 150);
-      cursorY.set(e.clientY - 150);
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [cursorX, cursorY]);
 
   // Route Change Progress Bar
   useEffect(() => {
@@ -60,21 +46,7 @@ export default function Layout() {
         />
       )}
 
-      {/* Feature 1: Dynamic Ambient Cursor Glow (Desktop only) */}
-      <motion.div
-        style={{
-          position: 'fixed',
-          left: cursorXSpring,
-          top: cursorYSpring,
-          width: '300px',
-          height: '300px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(0, 135, 90, 0.16) 0%, rgba(16, 185, 129, 0.05) 50%, rgba(0, 135, 90, 0) 80%)',
-          pointerEvents: 'none',
-          zIndex: 0,
-        }}
-        className="hidden lg:block"
-      />
+
 
       <Navbar />
       <main
@@ -92,7 +64,18 @@ export default function Layout() {
         }}
         className="main-scroll-area"
       >
-        <Outlet />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 12, scale: 0.99 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -12, scale: 0.99 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </main>
       <BottomNav />
       <AICounselor />
