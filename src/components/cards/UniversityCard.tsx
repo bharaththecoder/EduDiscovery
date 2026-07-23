@@ -112,6 +112,7 @@ export default function UniversityCard({ university, compact = false, reasons = 
               transition: 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)'
             }}
             loading="lazy"
+            decoding="async"
           />
           {university.naac && (
             <div style={{
@@ -195,6 +196,7 @@ export default function UniversityCard({ university, compact = false, reasons = 
             transition: 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)'
           }}
           loading="lazy"
+          decoding="async"
         />
         {/* Gradient overlay */}
         <div style={{

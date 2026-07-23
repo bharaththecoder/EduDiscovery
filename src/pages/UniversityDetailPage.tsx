@@ -401,7 +401,7 @@ export default function UniversityDetail() {
   useEffect(() => {
     if (resolvedUniversity) {
       window.scrollTo(0, 0);
-      document.title = `${resolvedUniversity.name} (${resolvedUniversity.shortName || resolvedUniversity.id}) | EduDiscovery AP`;
+      document.title = `${resolvedUniversity.name} (${resolvedUniversity.shortName || resolvedUniversity.city}) - Fees, Placements & Admission 2026 | EduDiscovery AP`;
     }
     if (currentUser?.id && resolvedUniversity) {
       trackView(currentUser.id, {

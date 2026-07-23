@@ -308,13 +308,21 @@ export function ParallaxImage({
   const [offset, setOffset] = useState(0);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      if (!ref.current) return;
-      const rect = ref.current.getBoundingClientRect();
-      const scrollPercent = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
-      setOffset(scrollPercent * 100 * speed);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (ref.current) {
+            const rect = ref.current.getBoundingClientRect();
+            const scrollPercent = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+            setOffset(scrollPercent * 100 * speed);
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [speed]);
 
@@ -323,6 +331,8 @@ export function ParallaxImage({
       <img
         src={src}
         alt={alt}
+        loading="lazy"
+        decoding="async"
         style={{
           width: '100%',
           height: '120%',

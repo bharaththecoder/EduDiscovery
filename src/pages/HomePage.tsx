@@ -161,7 +161,7 @@ export default function Home() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
-    document.title = "Home | EduDiscovery AP";
+    document.title = "Explore Top Andhra Pradesh Colleges 2026 | EduDiscovery";
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);

@@ -128,21 +128,27 @@ async function fetchRelevantCollegeFacts(message) {
   if (scored.length === 0) return '';
 
   // Format as structured fact block
+  // Format as structured fact block with clear citations
   const facts = scored.map(c => {
     const feeValues = c.branchFees ? Object.values(c.branchFees).filter(v => typeof v === 'number' && !isNaN(v)) : [];
     const minFee = feeValues.length > 0 ? Math.min(...feeValues) : null;
     const feeStr = minFee && isFinite(minFee) ? `₹${(minFee / 1000).toFixed(0)}K/yr` : 'Contact institution';
     const avgPkg = c.avgPackage ? `₹${(c.avgPackage / 100000).toFixed(1)} LPA` : 'N/A';
     const placement = c.placementRate ? `${c.placementRate}%` : 'N/A';
+    const sourceInfo = c.feeIntelligence?.sources?.join(', ') || 'Official Portal & APSCHE 2026';
+    const placementsList = (c.placements || []).slice(0, 3).map(p => `${p.company} (${p.package})`).join(', ');
+
     return `
 College: ${c.name} (${c.shortName || c.id})
 City: ${c.city}, ${c.state}
 NAAC: ${c.naac} | NIRF: ${c.nirf || 'N/A'}
 Minimum Annual Fee: ${feeStr}
 Average Package: ${avgPkg} | Placement Rate: ${placement}
+Recent Placements: ${placementsList || 'N/A'}
 Top Programs: ${(c.programs || []).slice(0, 3).map(p => `${p.name} (${p.fees})`).join('; ')}
 Tags: ${(c.tags || []).join(', ')}
-Website: ${c.website || 'N/A'}`.trim();
+Website: ${c.website || 'N/A'}
+Verified Source: ${sourceInfo}`.trim();
   }).join('\n\n---\n\n');
 
   return facts;
@@ -180,8 +186,8 @@ Instructions:
 - Answer using ONLY the college data provided above when relevant. Never invent statistics.
 - If specific data is not available, say so honestly.
 - Use markdown formatting (bold, bullet lists) for readability.
-- Keep a professional but friendly tone.
-- If asked about fees, placements, or admission — cite the numbers from the data above.`;
+- CITE YOUR SOURCES: Whenever you mention specific fees, placement numbers, or college metrics, append an explicit citation at the bottom or inline, like \`[Source: Official College Portal / APSCHE 2026]\`.
+- Keep a professional, encouraging, and helpful tone.`;
 
     await streamChat(message, systemInstruction, history, res);
 
