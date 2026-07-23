@@ -10,11 +10,14 @@ interface ToastContextType {
   showToast: (message: string, type?: 'info' | 'success' | 'error', duration?: number) => void;
 }
 
-const ToastContext = createContext<ToastContextType | null>(null);
+const defaultToastContext: ToastContextType = {
+  showToast: () => {},
+};
+
+const ToastContext = createContext<ToastContextType>(defaultToastContext);
 export const useToast = (): ToastContextType => {
   const ctx = useContext(ToastContext);
-  if (!ctx) throw new Error('useToast must be used within ToastProvider');
-  return ctx;
+  return ctx || defaultToastContext;
 };
 
 let toastId = 0;

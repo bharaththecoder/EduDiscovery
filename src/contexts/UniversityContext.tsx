@@ -11,7 +11,13 @@ interface UniversityContextType {
   getUniversityById: (id: string) => Promise<University | undefined>;
 }
 
-const UniversityContext = createContext<UniversityContextType | undefined>(undefined);
+const defaultUniversityContext: UniversityContextType = {
+  universities: localUniversities,
+  loading: false,
+  getUniversityById: async (id: string) => localUniversities.find(u => u.id === id),
+};
+
+const UniversityContext = createContext<UniversityContextType>(defaultUniversityContext);
 
 export function UniversityProvider({ children }: { children: React.ReactNode }) {
   const [universities, setUniversities] = useState<University[]>(localUniversities);
@@ -78,8 +84,5 @@ export function UniversityProvider({ children }: { children: React.ReactNode }) 
 
 export function useUniversities() {
   const context = useContext(UniversityContext);
-  if (!context) {
-    throw new Error('useUniversities must be used within a UniversityProvider');
-  }
-  return context;
+  return context || defaultUniversityContext;
 }

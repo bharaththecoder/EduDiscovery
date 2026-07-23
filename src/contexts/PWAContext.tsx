@@ -7,7 +7,14 @@ interface PWAContextType {
   installApp: () => Promise<boolean>;
 }
 
-const PWAContext = createContext<PWAContextType | undefined>(undefined);
+const defaultPWAContext: PWAContextType = {
+  deferredPrompt: null,
+  isInstallable: false,
+  isStandalone: false,
+  installApp: async () => false,
+};
+
+const PWAContext = createContext<PWAContextType>(defaultPWAContext);
 
 export const PWAProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -27,16 +34,12 @@ export const PWAProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     checkStandalone();
 
     const handleBeforeInstallPrompt = (e: Event) => {
-      // Prevent the default mini-infobar from appearing on mobile
       e.preventDefault();
-      // Stash the event so it can be triggered later.
       setDeferredPrompt(e);
       setIsInstallable(true);
-      console.log('PWA: beforeinstallprompt event fired and captured');
     };
 
     const handleAppInstalled = () => {
-      console.log('PWA: App installed successfully');
       setDeferredPrompt(null);
       setIsInstallable(false);
       setIsStandalone(true);
@@ -52,19 +55,11 @@ export const PWAProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
 
   const installApp = async (): Promise<boolean> => {
-    if (!deferredPrompt) {
-      console.warn('PWA: Install prompt not available.');
-      return false;
-    }
+    if (!deferredPrompt) return false;
 
-    // Show the install prompt dialog
     deferredPrompt.prompt();
-
-    // Wait for the user to respond to the prompt
     const { outcome } = await deferredPrompt.userChoice;
-    console.log(`PWA: User response to install prompt: ${outcome}`);
-
-    // Reset prompt event
+    
     setDeferredPrompt(null);
     setIsInstallable(false);
 
@@ -80,8 +75,5 @@ export const PWAProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
 export const usePWA = () => {
   const context = useContext(PWAContext);
-  if (context === undefined) {
-    throw new Error('usePWA must be used within a PWAProvider');
-  }
-  return context;
+  return context || defaultPWAContext;
 };

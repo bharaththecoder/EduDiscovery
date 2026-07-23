@@ -27,7 +27,22 @@ interface CounselorContextType {
   setPendingPrompt: (prompt: string | null) => void;
 }
 
-const CounselorContext = createContext<CounselorContextType | undefined>(undefined);
+const defaultCounselorContext: CounselorContextType = {
+  quizContext: null,
+  messages: [],
+  addMessage: () => {},
+  clearMessages: () => {},
+  isLoading: false,
+  setIsLoading: () => {},
+  error: null,
+  setError: () => {},
+  isOpen: false,
+  setIsOpen: () => {},
+  pendingPrompt: null,
+  setPendingPrompt: () => {},
+};
+
+const CounselorContext = createContext<CounselorContextType>(defaultCounselorContext);
 
 export function CounselorProvider({ children }: { children: React.ReactNode }) {
   const { currentUser } = useAuth();
@@ -59,17 +74,15 @@ export function CounselorProvider({ children }: { children: React.ReactNode }) {
     setMessages([initialMessage]);
     localStorage.removeItem('edudiscovery_counselor_chat');
   };
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [pendingPrompt, setPendingPrompt] = useState<string | null>(null);
-
-  // Get quiz data from localStorage or currentUser profile
   const [quizContext, setQuizContext] = useState<any>(null);
 
   useEffect(() => {
     const loadContext = () => {
-      // Priority 1: localStorage (most recent/immediate)
       const savedAnswers = localStorage.getItem('edu_quiz_answers');
       let answers: QuizAnswers | null = null;
       
@@ -148,8 +161,5 @@ export function CounselorProvider({ children }: { children: React.ReactNode }) {
 
 export function useCounselor() {
   const context = useContext(CounselorContext);
-  if (!context) {
-    throw new Error('useCounselor must be used within a CounselorProvider');
-  }
-  return context;
+  return context || defaultCounselorContext;
 }

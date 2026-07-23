@@ -10,11 +10,16 @@ interface WishlistContextType {
   isWishlisted: (id: string) => boolean;
 }
 
-const WishlistContext = createContext<WishlistContextType | null>(null);
+const defaultWishlistContext: WishlistContextType = {
+  wishlist: [],
+  toggleWishlist: async () => {},
+  isWishlisted: () => false,
+};
+
+const WishlistContext = createContext<WishlistContextType>(defaultWishlistContext);
 export const useWishlist = (): WishlistContextType => {
   const ctx = useContext(WishlistContext);
-  if (!ctx) throw new Error('useWishlist must be used within WishlistProvider');
-  return ctx;
+  return ctx || defaultWishlistContext;
 };
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {

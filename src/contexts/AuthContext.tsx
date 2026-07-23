@@ -37,12 +37,21 @@ interface AuthContextType {
   profileStrength: number;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const defaultAuthContext: AuthContextType = {
+  currentUser: null,
+  signup: async () => {},
+  login: async () => {},
+  logout: async () => {},
+  loginWithGoogle: async () => {},
+  updateUserDoc: async () => {},
+  profileStrength: 0,
+};
+
+const AuthContext = createContext<AuthContextType>(defaultAuthContext);
 
 export const useAuth = (): AuthContextType => {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
-  return ctx;
+  return ctx || defaultAuthContext;
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
