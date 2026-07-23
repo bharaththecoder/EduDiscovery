@@ -49,7 +49,7 @@ export function predictAdmission(
     let selectivity = 3; // default
     const naac = uni.naac || 'B';
     const nirf = uni.nirf || '';
-    const hasTopNirf = nirf.includes('#') && parseInt(nirf.replace(/[^0-9]/g, '')) < 150;
+    const hasTopNirf = String(nirf).includes('#') && parseInt(String(nirf).replace(/[^0-9]/g, '')) < 150;
 
     if (naac === 'A++' && hasTopNirf) selectivity = 9;
     else if (naac === 'A++' || hasTopNirf) selectivity = 8;

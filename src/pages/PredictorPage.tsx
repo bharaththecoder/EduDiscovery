@@ -418,7 +418,7 @@ export default function PredictorPage() {
   const initialRank = urlRank
     ? parseInt(urlRank) || 20000
     : currentUser?.quizResults?.answers?.rank
-      ? parseInt(currentUser.quizResults.answers.rank.replace(/[^0-9]/g, '')) || 25000
+      ? parseInt(String(currentUser.quizResults.answers.rank).replace(/[^0-9]/g, '')) || 25000
       : 20000;
 
   const [exam, setExam] = useState<'EAPCET' | 'ICET'>('EAPCET');
