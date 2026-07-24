@@ -110,7 +110,7 @@
     --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .dark, body.dark {
+  .dark, body.dark, [data-theme='dark'] {
     /* Dark Mode Overrides (Obsidian Spruce Forest) */
     --bg: #07100D;           /* Deep spruce obsidian */
     --surface: #0E1815;      /* Spruce dark card surface */
@@ -1561,4 +1561,125 @@ h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.3px; }
   -webkit-background-clip: text;
   background-clip: text;
 }
+
+/* ── SKELETON SHIMMER ───────────────────────────────────────── */
+@keyframes shimmer-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--surface-hover, rgba(255, 255, 255, 0.05));
+  border-radius: 0.5rem;
+}
+
+.skeleton-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    rgba(255, 255, 255, 0.08) 20%,
+    rgba(255, 255, 255, 0.18) 60%,
+    rgba(255, 255, 255, 0)
+  );
+  animation: shimmer-sweep 1.8s infinite;
+}
+
+[data-theme='light'] .skeleton-shimmer::after {
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    rgba(255, 255, 255, 0.4) 20%,
+    rgba(255, 255, 255, 0.7) 60%,
+    rgba(255, 255, 255, 0)
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   📱 MOBILE VIEWPORT SMOOTHING & HARDWARE ACCELERATION
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  --bottom-nav-clearance: calc(76px + env(safe-area-inset-bottom, 12px));
+}
+
+html, body {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Enable hardware acceleration for fluid inertia scrolling */
+.main-scroll-area {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+@media (min-width: 768px) {
+  .main-scroll-area {
+    padding-bottom: 0 !important;
+  }
+}
+
+/* Mobile-friendly Touch Targets & Active States */
+@media (max-width: 768px) {
+  button, input, select, a {
+    touch-action: manipulation;
+  }
+
+  /* Prevent address bar jumpiness on mobile viewports */
+  .mobile-dvh {
+    min-height: 100dvh;
+  }
+
+  /* Smooth Horizontal Scroll Rows with touch momentum */
+  .scroll-row {
+    padding: 16px 16px 24px !important;
+    margin: 0 -16px 0 !important;
+    scroll-padding: 0 16px;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  /* Hide scrollbars cleanly on mobile */
+  .scroll-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Touch device active feedback */
+  button:active, a:active {
+    opacity: 0.88;
+  }
+
+  /* Optimize backdrop-filter blur on mobile GPUs for 60/120fps smooth scrolling */
+  .bottom-nav,
+  header,
+  nav {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    transform: translate3d(0, 0, 0);
+  }
+
+  /* Promote cards to GPU layers to prevent paint lag on scroll */
+  .glow-up, .compact-card {
+    transform: translateZ(0);
+  }
+
+  /* Prevent page horizontal layout jitter */
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+}
+
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Search, User, Compass, Heart } from 'lucide-react';
+import { Home, Search, Sparkles, Heart, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function BottomNav() {
@@ -10,6 +10,7 @@ export default function BottomNav() {
   const items = [
     { label: 'Home', icon: Home, path: '/home' },
     { label: 'Search', icon: Search, path: '/search' },
+    { label: 'Predictor', icon: Sparkles, path: '/predictor' },
     { label: 'Wishlist', icon: Heart, path: '/wishlist' },
     { label: 'Profile', icon: User, path: '/profile' },
   ];
@@ -23,13 +24,13 @@ export default function BottomNav() {
             key={path} 
             className={`nav-item ${active ? 'active' : ''}`} 
             onClick={() => navigate(path)}
-            whileTap={{ scale: 0.9 }}
-            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.88 }}
+            transition={{ type: "spring", stiffness: 450, damping: 20 }}
           >
             <div style={{
               position: 'relative',
-              borderRadius: '12px',
-              padding: '6px 12px',
+              borderRadius: '14px',
+              padding: '5px 10px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -40,16 +41,17 @@ export default function BottomNav() {
                   style={{
                     position: 'absolute',
                     inset: 0,
-                    borderRadius: '12px',
+                    borderRadius: '14px',
                     background: 'var(--primary-light)',
+                    border: '1px solid rgba(16, 185, 129, 0.2)',
                     zIndex: 0,
                   }}
-                  transition={{ type: 'spring', stiffness: 380, damping: 26 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 28 }}
                 />
               )}
-              <Icon size={20} style={{ position: 'relative', zIndex: 1, color: active ? 'var(--primary)' : 'inherit' }} />
+              <Icon size={19} style={{ position: 'relative', zIndex: 1, color: active ? 'var(--primary)' : 'inherit' }} />
             </div>
-            <span>{label}</span>
+            <span style={{ fontSize: '10.5px', fontWeight: active ? '800' : '600' }}>{label}</span>
           </motion.button>
         );
       })}

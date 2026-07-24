@@ -11,12 +11,13 @@ import { collection, addDoc, doc, increment, updateDoc, query, where, orderBy, o
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { trackView } from '@/services/activityTracker';
-import { computeFitScore } from '@/utils/intelligenceEngine';
+import { computeFitScore, computeFeeTrends } from '@/utils/intelligenceEngine';
 import { useCounselor } from '@/contexts/CounselorContext';
 import { Sparkles as SparklesIcon, TrendingUp, CheckCircle2 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HolographicBadge, AnimatedCounter3D, ParallaxImage, SpotlightCard, MagneticButton, WaveDivider, RippleButton, FloatingEmoji3D } from '@/components/Animation3DComponents';
+import { UniversityDetailSkeleton } from '@/components/ui/UniversityDetailSkeleton';
 
 function CollegeFitScore({ university }: { university: University }) {
   const { currentUser } = useAuth();
@@ -222,7 +223,7 @@ function ReviewsSection({ universityId }: { universityId: string }) {
             <div key={r.id} style={{ borderBottom: '1px solid var(--border)', paddingBottom: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
                 <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                  {r.userPhoto ? <img src={r.userPhoto} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{r.userName?.[0]}</span>}
+                  {r.userPhoto ? <img src={r.userPhoto} alt="Reviewer" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{r.userName?.[0]}</span>}
                 </div>
                 <div>
                   <div style={{ fontWeight: '600', fontSize: '13px' }}>{r.userName}</div>
@@ -369,6 +370,13 @@ export default function UniversityDetail() {
   const { setIsOpen, setPendingPrompt } = useCounselor();
   const [showApply, setShowApply] = useState(false);
   const [showApply2, setShowApply2] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
+
+  useEffect(() => {
+    setPageLoading(true);
+    const timer = setTimeout(() => setPageLoading(false), 200);
+    return () => clearTimeout(timer);
+  }, [id]);
 
   const handleAskAI = () => {
     if (!resolvedUniversity) return;
@@ -380,6 +388,25 @@ export default function UniversityDetail() {
 
   // Fallback: If not found, try replacing %20 or spaces with hyphens (common URL mismatch)
   const resolvedUniversity = university || (id ? getUniversityById(id.replace(/[\s%20]+/g, '-')) : undefined);
+
+  useEffect(() => {
+    if (resolvedUniversity) {
+      window.scrollTo(0, 0);
+      document.title = `${resolvedUniversity.name} (${resolvedUniversity.shortName || resolvedUniversity.city}) - Fees, Placements & Admission 2026 | EduDiscovery AP`;
+    }
+    if (currentUser?.id && resolvedUniversity) {
+      trackView(currentUser.id, {
+        id: resolvedUniversity.id,
+        name: resolvedUniversity.name,
+        image: resolvedUniversity.image,
+        city: resolvedUniversity.city
+      });
+    }
+  }, [currentUser?.id, resolvedUniversity]);
+
+  if (pageLoading) {
+    return <UniversityDetailSkeleton />;
+  }
 
   if (!resolvedUniversity) {
     return (
@@ -397,21 +424,6 @@ export default function UniversityDetail() {
     toggleWishlist(resolvedUniversity);
     showToast(saved ? 'Removed from wishlist' : 'Saved to wishlist! ❤️', saved ? 'info' : 'success');
   };
-
-  useEffect(() => {
-    if (resolvedUniversity) {
-      window.scrollTo(0, 0);
-      document.title = `${resolvedUniversity.name} (${resolvedUniversity.shortName || resolvedUniversity.city}) - Fees, Placements & Admission 2026 | EduDiscovery AP`;
-    }
-    if (currentUser?.id && resolvedUniversity) {
-      trackView(currentUser.id, {
-        id: resolvedUniversity.id,
-        name: resolvedUniversity.name,
-        image: resolvedUniversity.image,
-        city: resolvedUniversity.city
-      });
-    }
-  }, [currentUser?.id, resolvedUniversity]);
 
   const handleBrochure = () => showToast('📄 Brochure downloaded!', 'success');
 
@@ -525,13 +537,12 @@ export default function UniversityDetail() {
             <CollegeFitScore university={resolvedUniversity} />
 
             {/* Annual Fee Trends Chart */}
-            {resolvedUniversity.feeIntelligence?.trends && (
-              <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-md)', padding: '20px', marginBottom: '24px', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' }}>
-                <h2 style={{ fontSize: '16px', fontWeight: '800', marginBottom: '2px', color: 'var(--text-main)' }}>📈 Annual Fee Trends</h2>
-                <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '16px', fontWeight: '600' }}>Convener Quota tuition fee trend over the last few years</p>
-                <div style={{ width: '100%', height: '180px' }}>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={Object.entries(resolvedUniversity.feeIntelligence.trends).map(([year, fee]) => ({ year, fee }))}>
+            <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-md)', padding: '20px', marginBottom: '24px', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' }}>
+              <h2 style={{ fontSize: '16px', fontWeight: '800', marginBottom: '2px', color: 'var(--text-main)' }}>📈 Annual Fee Trends</h2>
+              <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '16px', fontWeight: '600' }}>Historical and projected fee trends (Convener Quota)</p>
+              <div style={{ width: '100%', height: '180px' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={computeFeeTrends(resolvedUniversity)}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} />
                       <XAxis dataKey="year" tick={{ fill: '#475569', fontSize: 10, fontWeight: 700 }} />
                       <YAxis tick={{ fill: '#475569', fontSize: 10 }} />
@@ -544,7 +555,6 @@ export default function UniversityDetail() {
                   </ResponsiveContainer>
                 </div>
               </div>
-            )}
 
             {/* Scholarship Eligibility */}
             <ScholarshipEligibility university={resolvedUniversity} />
@@ -700,7 +710,7 @@ function PlacementsSection({ resolvedUniversity }: { resolvedUniversity: Univers
                      onError={(e) => { 
                        (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjY2JjYmNiIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTIgMjJsMjAtMCI+PC9wYXRoPjxwYXRoIGQ9Ik0xMiAyTDQgMTJWMjJIMjBWMTJMMTIgMiI+PC9wYXRoPjwvc3ZnPg=='; 
                      }}
-                     alt={p.company} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                     alt={`${p.company} logo`} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               </div>
               <div>
                 <div style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-main)' }}>{p.company}</div>
@@ -728,8 +738,8 @@ function AcademicProgramsSection({ resolvedUniversity }: { resolvedUniversity: U
   else if (resolvedUniversity.id === 'amrita-ap') convenerLabel = "AEEE Fee";
   else if (resolvedUniversity.id === 'gitam') convenerLabel = "GAT Fee";
 
-  const addSuffix = (fee: string) => {
-    if (!fee || fee === '—' || fee === 'N/A') return fee;
+  const addSuffix = (fee?: string) => {
+    if (!fee || fee === '—' || fee === 'N/A') return fee || '—';
     const lower = fee.toLowerCase();
     if (lower.includes('sem')) return fee;
     if (lower.includes('yr') || lower.includes('year')) return fee;

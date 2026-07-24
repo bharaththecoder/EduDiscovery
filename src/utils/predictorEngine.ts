@@ -1,3 +1,5 @@
+import { University, Program } from '@/types';
+
 export interface PredictionResult {
   collegeId: string;
   collegeName: string;
@@ -8,6 +10,7 @@ export interface PredictionResult {
   chance: 'High' | 'Medium' | 'Low';
   color: string;
   estimatedCutoff: number;
+  probabilityPercent?: number;
 }
 
 function isEligibleEAPCET(branchName: string): boolean {
@@ -34,7 +37,7 @@ function isEligibleICET(branchName: string): boolean {
 }
 
 export function predictAdmission(
-  universities: any[],
+  universities: University[],
   exam: 'EAPCET' | 'ICET',
   rank: number,
   category: string,
@@ -116,20 +119,35 @@ export function predictAdmission(
 
       const finalEstimatedCutoff = Math.round(baseCutoff * categoryMultiplier * genderMultiplier * roundMultiplier);
 
-      // 5. Predict Chance
+      // 5. Predict Chance using Logistic Regression (Sigmoid)
       let chance: 'High' | 'Medium' | 'Low' = 'Low';
       let quota: 'Convener Quota' | 'Management Quota' = 'Convener Quota';
       let color = '#EF4444';
 
-      if (rank <= finalEstimatedCutoff * 0.85) {
+      const x = (rank - finalEstimatedCutoff) / finalEstimatedCutoff;
+      const k = 12; // Steepness of the sigmoid curve
+      const admissionProb = 1 / (1 + Math.exp(k * x));
+      const probabilityPercent = Math.round(admissionProb * 100);
+
+      if (admissionProb >= 0.70) {
         chance = 'High';
         color = '#10B981';
-      } else if (rank <= finalEstimatedCutoff * 1.15) {
+      } else if (admissionProb >= 0.30) {
         chance = 'Medium';
         color = '#F59E0B';
       } else {
         // If rank is too high, check if management quota is possible
-        const minFee = uni.branchFees?.[branch] || 150000;
+        let minFee = uni.branchFees?.[branch];
+        if (!minFee) {
+          const prog = uni.programs?.find((p: Program) => p.name?.toLowerCase().includes(branch.toLowerCase()));
+          if (prog) {
+            let f = parseInt((prog.fees || '').replace(/[^0-9]/g, '')) || 0;
+            if (f === 0 && prog.mgmtFees) f = parseInt((prog.mgmtFees || '').replace(/[^0-9]/g, '')) || 0;
+            if (f > 0) minFee = f;
+          }
+        }
+        if (!minFee) minFee = 150000;
+
         if (minFee > 0) {
           quota = 'Management Quota';
           chance = 'High'; // Management quota seats are usually guaranteed if fees can be paid
@@ -149,17 +167,17 @@ export function predictAdmission(
         quota,
         chance,
         color,
-        estimatedCutoff: finalEstimatedCutoff
+        estimatedCutoff: finalEstimatedCutoff,
+        probabilityPercent: quota === 'Management Quota' ? 85 : probabilityPercent
       });
     });
   });
 
-  // Sort by chance (High -> Medium -> Low), then estimated cutoff
+  // Sort by probability (descending), then estimated cutoff
   return predictions.sort((a, b) => {
-    const chanceScore = { 'High': 3, 'Medium': 2, 'Low': 1 };
-    const aScore = chanceScore[a.chance] + (a.quota === 'Convener Quota' ? 0.5 : 0);
-    const bScore = chanceScore[b.chance] + (b.quota === 'Convener Quota' ? 0.5 : 0);
-    if (bScore !== aScore) return bScore - aScore;
+    const pA = a.probabilityPercent || 0;
+    const pB = b.probabilityPercent || 0;
+    if (pB !== pA) return pB - pA;
     return a.estimatedCutoff - b.estimatedCutoff;
   });
 }

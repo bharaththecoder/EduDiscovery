@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { ArrowLeft, Share2, Sparkles, AlertCircle, TrendingUp, Compass, SlidersHorizontal, BookOpen, Star, RefreshCw, Layers } from 'lucide-react';
 import UniversityCard from '@/components/cards/UniversityCard';
 import { useAuth } from '@/contexts/AuthContext';
 import { universities } from '@/data/universities';
-import { getRecommendations } from '@/utils/quizAgent';
+import { getRecommendations, type ScoredUniversity } from '@/utils/quizAgent';
 import {
   Trophy, RotateCcw, CloudCheck, Cloud,
-  Filter, ChevronDown, ChevronUp, Sparkles,
-  BookOpen, MapPin, Wallet, Award, GraduationCap,
-  Star, Shield, Zap
+  MapPin, Wallet, Award, GraduationCap,
+  Shield, Zap, Filter, ChevronUp, ChevronDown
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { QuizAnswers } from '@/utils/quizAgent';
@@ -170,7 +170,7 @@ function SectionHeader({ icon, title, subtitle, count }: { icon: React.ReactNode
 }
 
 // ─── Filter Panel ─────────────────────────────────────────────
-function FilterPanel({ source, onFilter }: { source: any[]; onFilter: (f: any[]) => void }) {
+function FilterPanel({ source, onFilter }: { source: ScoredUniversity[]; onFilter: (f: ScoredUniversity[]) => void }) {
   const [open, setOpen] = useState(false);
   const [maxFee, setMaxFee] = useState(500000);
   const [naacFilter, setNaacFilter] = useState<string[]>([]);
@@ -265,7 +265,7 @@ function FilterPanel({ source, onFilter }: { source: any[]; onFilter: (f: any[])
 }
 
 // ─── College Result Card ──────────────────────────────────────
-function ResultCard({ uni, rank }: { uni: any; rank: number }) {
+function ResultCard({ uni, rank }: { uni: ScoredUniversity; rank: number }) {
   const medals = ['🥇', '🥈', '🥉'];
   const medal = medals[rank] || `#${rank + 1}`;
 
@@ -307,7 +307,7 @@ export default function QuizResult() {
   const [isSyncing, setIsSyncing] = useState(false);
   const [isSynced, setIsSynced] = useState(false);
   const [showAnalyzing, setShowAnalyzing] = useState(true);
-  const [filtered, setFiltered] = useState<any[] | null>(null);
+  const [filtered, setFiltered] = useState<ScoredUniversity[] | null>(null);
 
   // AI Personalization State
   const [aiReasoning, setAiReasoning] = useState<string | null>(null);
@@ -320,7 +320,10 @@ export default function QuizResult() {
     [answers]
   );
 
-  useEffect(() => { setTimeout(() => setShowAnalyzing(false), 2700); }, []);
+  useEffect(() => {
+    const timer = setTimeout(() => setShowAnalyzing(false), 2700);
+    return () => clearTimeout(timer);
+  }, []);
 
   const hasFetchedRef = useRef(false);
 
@@ -376,9 +379,9 @@ export default function QuizResult() {
   if (showAnalyzing) return <AnalyzingScreen />;
 
   const displayAll = filtered ?? all;
-  const displayDream = displayAll.filter((u: any) => u.category === 'dream');
-  const displayMatch = displayAll.filter((u: any) => u.category === 'match');
-  const displaySafe = displayAll.filter((u: any) => u.category === 'safe');
+  const displayDream = displayAll.filter((u: ScoredUniversity) => u.category === 'dream');
+  const displayMatch = displayAll.filter((u: ScoredUniversity) => u.category === 'match');
+  const displaySafe = displayAll.filter((u: ScoredUniversity) => u.category === 'safe');
 
   const answerLabels: Record<string, string> = {
     priority: '⭐ Priority', branch: '📚 Course', budget: '💰 Budget',

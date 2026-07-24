@@ -47,7 +47,11 @@ function computeIntelligenceScore(college) {
   const fees = feeValues.length > 0
     ? Math.min(...feeValues)
     : college.programs
-      ? Math.min(...college.programs.map(p => parseInt((p.fees || '').replace(/[^0-9]/g, '')) || 100000).filter(f => f > 0))
+      ? Math.min(...college.programs.map(p => {
+          let f = parseInt((p.fees || '').replace(/[^0-9]/g, '')) || 0;
+          if (f === 0 && p.mgmtFees) f = parseInt((p.mgmtFees || '').replace(/[^0-9]/g, '')) || 0;
+          return f || 100000;
+        }).filter(f => f > 0))
       : 100000;
   const avgPackage = college.avgPackage || 500000;
   const placementRate = college.placementRate || 65;
@@ -121,7 +125,11 @@ export default async function searchHandler(req, res) {
         const fees = feeValues.length > 0
           ? Math.min(...feeValues)
           : c.programs
-            ? Math.min(...(c.programs || []).map(p => parseInt((p.fees || '').replace(/[^0-9]/g, '')) || Infinity).filter(f => f < Infinity))
+            ? Math.min(...(c.programs || []).map(p => {
+                let f = parseInt((p.fees || '').replace(/[^0-9]/g, '')) || 0;
+                if (f === 0 && p.mgmtFees) f = parseInt((p.mgmtFees || '').replace(/[^0-9]/g, '')) || 0;
+                return f || Infinity;
+              }).filter(f => f < Infinity))
             : Infinity;
         return fees <= budgetMax * 1.2; // 20% buffer
       });
@@ -144,8 +152,8 @@ export default async function searchHandler(req, res) {
       console.log(`[Search-AI] Identified target city intent: "${matchedCity}" in query: "${query}"`);
     }
 
-    // 4. Compute cosine similarity + intelligence boost
-    const scoredColleges = collegePool.map(college => {
+    // 4. Compute raw scores for RRF
+    let scoredColleges = collegePool.map(college => {
       let semanticScore = 0.5;
       if (queryEmbedding && college.embedding) {
         semanticScore = cosineSimilarity(queryEmbedding, college.embedding);
@@ -153,23 +161,36 @@ export default async function searchHandler(req, res) {
         semanticScore = keywordMatchScore(query, college);
       }
 
-      const intellScore = computeIntelligenceScore(college) / 10; // normalize 0-1
-      
-      // Blended baseline: 70% semantic/keyword match + 30% ROI intelligence score
-      let combinedScore = semanticScore * 0.7 + intellScore * 0.3;
+      const intellScore = computeIntelligenceScore(college);
+      const isCityMatch = matchedCity && college.city && college.city.toLowerCase() === matchedCity;
 
-      // Apply massive city intent boost if city matches search query
-      if (matchedCity && college.city && college.city.toLowerCase() === matchedCity) {
-        combinedScore += 0.8; // High priority boost to bubble up matched city colleges
-      }
-
-      const { embedding, ...collegeData } = college;
-      return { ...collegeData, matchScore: semanticScore, intelligenceScore: Math.round(intellScore * 10), combinedScore };
+      return { ...college, semanticScore, intellScore, isCityMatch };
     });
 
-    // 5. Sort by combined score and take top 5
-    scoredColleges.sort((a, b) => b.combinedScore - a.combinedScore);
-    const topResults = scoredColleges.slice(0, 5).map(({ combinedScore, ...rest }) => rest);
+    // Sort by Semantic Score
+    scoredColleges.sort((a, b) => b.semanticScore - a.semanticScore);
+    scoredColleges.forEach((c, idx) => c.semanticRank = idx + 1);
+
+    // Sort by Intelligence Score
+    scoredColleges.sort((a, b) => b.intellScore - a.intellScore);
+    scoredColleges.forEach((c, idx) => c.intellRank = idx + 1);
+
+    // Apply Reciprocal Rank Fusion (RRF)
+    const k = 60; // Standard RRF constant
+    scoredColleges = scoredColleges.map(c => {
+      let rrfScore = (1 / (k + c.semanticRank)) + (1 / (k + c.intellRank));
+      if (c.isCityMatch) {
+        rrfScore += (1 / (k + 1)); // Massive boost for exact city matches
+      }
+      return { ...c, rrfScore };
+    });
+
+    // 5. Sort by RRF score and take top 5
+    scoredColleges.sort((a, b) => b.rrfScore - a.rrfScore);
+    const topResults = scoredColleges.slice(0, 5).map(c => {
+      const { embedding, semanticScore, intellScore, semanticRank, intellRank, isCityMatch, rrfScore, ...rest } = c;
+      return { ...rest, matchScore: semanticScore, intelligenceScore: Math.round(intellScore), combinedScore: rrfScore };
+    });
 
     // 6. AI reasoning for top result using OpenRouter/Gemini unified generateText
     let reasoning = "";

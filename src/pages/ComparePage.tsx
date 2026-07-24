@@ -4,12 +4,14 @@ import { Link } from 'react-router-dom';
 import { useUniversities } from '@/contexts/UniversityContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, BarChart, Bar } from 'recharts';
+import { getUniversityById, universities as allUniversities } from '@/data/universities';
+import { University, Facility } from '@/types';
 import { computeROI, computeValueScore } from '@/utils/intelligenceEngine';
 import { Sparkles, TrendingUp, DollarSign, Trophy } from 'lucide-react';
 import { useToast } from '@/contexts/ToastContext';
 import { motion } from 'framer-motion';
-import { GlassTiltPanel, HolographicBadge, Perspective3DCardFoldOut } from '@/components/Animation3DComponents';
+import { HolographicBadge } from '@/components/Animation3DComponents';
 
 function ScoreBar({ label, value, color, icon }: { label: string, value: number, color: string, icon: React.ReactNode }) {
   return (
@@ -27,7 +29,7 @@ function ScoreBar({ label, value, color, icon }: { label: string, value: number,
   );
 }
 
-function AIVerdict({ colleges }: { colleges: any[] }) {
+function AIVerdict({ colleges }: { colleges: University[] }) {
   if (colleges.length < 2) return null;
 
   const verdict = React.useMemo(() => {
@@ -35,6 +37,8 @@ function AIVerdict({ colleges }: { colleges: any[] }) {
     const scores = colleges.map(c => ({
       id: c.id,
       name: c.shortName || c.name,
+      roi: computeROI(c),
+      value: computeValueScore(c),
       avg: (computeROI(c) + computeValueScore(c)) / 2
     }));
     scores.sort((a, b) => b.avg - a.avg);
@@ -45,9 +49,9 @@ function AIVerdict({ colleges }: { colleges: any[] }) {
 
     let text = "";
     if (gap < 0.5) {
-      text = `It's a very close call between ${winner.name} and ${runnerUp.name}. ${winner.name} marginally leads in overall value-for-money.`;
+      text = `It's an exceptionally close call between ${winner.name} and ${runnerUp.name}. ${winner.name} marginally edges out with an ROI score of ${winner.roi.toFixed(1)}/10 and a Value score of ${winner.value.toFixed(1)}/10.`;
     } else {
-      text = `${winner.name} is the clear winner for students prioritizing a balance of placements and ROI.`;
+      text = `${winner.name} is the clear mathematical winner for students prioritizing a balance of placements and ROI, securing an impressive Value score of ${winner.value.toFixed(1)}/10 compared to ${runnerUp.name}'s ${runnerUp.value.toFixed(1)}/10.`;
     }
 
     return { winner, text };
@@ -103,11 +107,11 @@ export default function ComparePage() {
   }, []);
 
   const { universities, loading: loadingColleges } = useUniversities();
-  const [selectedColleges, setSelectedColleges] = useState<(any | null)[]>([null, null]);
+  const [selectedColleges, setSelectedColleges] = useState<(University | null)[]>([null, null]);
   const [chartType, setChartType] = useState<'overall' | 'placements' | 'fees'>('overall');
   const { showToast } = useToast() as { showToast: (msg: string, type: string) => void };
 
-  const validColleges = selectedColleges.filter(Boolean);
+  const validColleges = selectedColleges.filter((c): c is University => c !== null);
 
   const handleShare = () => {
     if (validColleges.length === 0) return;
@@ -115,7 +119,7 @@ export default function ComparePage() {
     let report = `⚖️ EDUDISCOVERY AP - COLLEGE COMPARISON REPORT\n`;
     report += `==============================================\n\n`;
     
-    validColleges.forEach((c: any, idx: number) => {
+    validColleges.forEach((c: University, idx: number) => {
       const minFee = c.branchFees ? Math.min(...(Object.values(c.branchFees) as number[])) : 100000;
       report += `${idx + 1}. ${c.name} (${c.shortName || c.id})\n`;
       report += `   - City: ${c.city}\n`;
@@ -130,7 +134,7 @@ export default function ComparePage() {
   };
 
   const generatePlacementData = () => {
-    const validColleges = selectedColleges.filter(c => c !== null);
+    const validColleges = selectedColleges.filter((c): c is University => c !== null);
     return validColleges.map(c => ({
       name: c.shortName || c.name.slice(0, 10),
       "Avg Package (LPA)": c.avgPackage ? c.avgPackage / 100000 : 0,
@@ -139,7 +143,7 @@ export default function ComparePage() {
   };
 
   const generateFeeData = () => {
-    const validColleges = selectedColleges.filter(c => c !== null);
+    const validColleges = selectedColleges.filter((c): c is University => c !== null);
     const branchesSet = new Set<string>();
     validColleges.forEach(c => {
       if (c.branchFees) {
@@ -149,7 +153,7 @@ export default function ComparePage() {
     const branches = Array.from(branchesSet);
 
     return branches.map(branch => {
-      const dataPoint: any = { branch };
+      const dataPoint: Record<string, string | number> = { branch };
       validColleges.forEach(c => {
         const feeVal = c.branchFees?.[branch];
         dataPoint[c.shortName || c.name.slice(0, 10)] = feeVal ? feeVal / 1000 : 0;
@@ -183,9 +187,10 @@ export default function ComparePage() {
 
   // Helper to find the lowest fee for a specific branch among selected colleges
   const getLowestFeeForBranch = (branch: string) => {
-    const fees = selectedColleges
-      .filter(c => c && c.branchFees && c.branchFees[branch])
-      .map(c => c.branchFees[branch]);
+    const valid = selectedColleges.filter((c): c is University => c !== null);
+    const fees = valid
+      .filter(c => c.branchFees && c.branchFees[branch] !== undefined)
+      .map(c => c.branchFees![branch] as number);
 
     if (fees.length < 2) return null;
     return Math.min(...fees);
@@ -193,32 +198,37 @@ export default function ComparePage() {
 
   // Generate Radar Data dynamically
   const generateRadarData = () => {
-    const validColleges = selectedColleges.filter(c => c !== null);
+    const validColleges = selectedColleges.filter((c): c is University => c !== null);
     if (validColleges.length === 0) return [];
 
     const categories = ['Placements', 'ROI', 'Infrastructure', 'Academics', 'Reputation'];
 
-    return categories.map((cat, i) => {
-      const dataPoint: any = { subject: cat };
+    return categories.map((cat) => {
+      const dataPoint: Record<string, string | number> = { subject: cat };
       validColleges.forEach((c) => {
-        // Mocking some stats out of 10 based on naac & string length just to make it dynamic
-        let val = 7;
-        if (c.naac === 'A++') val += 2;
-        else if (c.naac === 'A+') val += 1.5;
-        else if (c.naac === 'A') val += 1;
-
-        // Randomization based on string name length and category idx to create varied charts
-        const seed = (c.name.length + i) % 4;
-        const finalVal = Math.min(10, val + seed - 1);
-
-        // ROI calculation based on fee vs rank
-        if (cat === 'ROI') {
-          const firstFee = c.branchFees ? Object.values(c.branchFees)[0] as number : 200000;
-          const isCheap = firstFee < 100000;
-          dataPoint[c.shortName || c.name.slice(0, 10)] = isCheap ? 9 : 6.5 + seed;
-        } else {
-          dataPoint[c.shortName || c.name.slice(0, 10)] = finalVal;
+        let val = 0;
+        
+        if (cat === 'Placements') {
+          val = (c.placementRate || 60) / 10;
+        } else if (cat === 'ROI') {
+          val = computeROI(c);
+        } else if (cat === 'Infrastructure') {
+          const acres = c.acres || 20;
+          val = 5 + (Math.min(acres, 100) / 100) * 5;
+        } else if (cat === 'Academics') {
+          const naacValues: Record<string, number> = { 'A++': 10, 'A+': 9, 'A': 8, 'B++': 7, 'B+': 6, 'B': 5 };
+          const naacScore = naacValues[c.naac] || 5;
+          const strScore = (c.ratio ? 1 : 0);
+          val = Math.min(10, naacScore + strScore);
+        } else if (cat === 'Reputation') {
+          const naacValues: Record<string, number> = { 'A++': 9, 'A+': 8, 'A': 7, 'B++': 6, 'B+': 5, 'B': 4 };
+          const nirf = c.nirf || '';
+          const hasTopNirf = nirf.includes('#') && parseInt(nirf.replace(/[^0-9]/g, '')) < 100;
+          val = naacValues[c.naac] || 5;
+          if (hasTopNirf) val = 10;
         }
+
+        dataPoint[c.shortName || c.name.slice(0, 10)] = Math.min(10, Math.max(1, Number(val.toFixed(1))));
       });
       return dataPoint;
     });
@@ -264,10 +274,7 @@ export default function ComparePage() {
               </div>
 
               {selected ? (
-                <Perspective3DCardFoldOut
-                  active={!!selected}
-                  style={{ flex: 1, marginTop: '12px' }}
-                >
+                <div style={{ flex: 1, marginTop: '12px', display: 'flex', flexDirection: 'column' }}>
                 <Card className="neon-border" style={{ flex: 1, borderRadius: '16px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                   <div style={{ height: '140px', overflow: 'hidden' }}>
                     <img src={selected.image} alt={selected.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -283,8 +290,12 @@ export default function ComparePage() {
                     <div>
                       <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '0.5px' }}>Match Score</div>
                       <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '20px' }}>
-                        <Badge style={{ background: 'var(--primary)', color: 'white', fontWeight: 800, padding: '4px 10px' }}>{selected.match || 70}% Match</Badge>
-                        <Badge variant="outline" style={{ fontWeight: 600 }}>NAAC {selected.naac}</Badge>
+                        <motion.div whileHover={{ scale: 1.05 }}>
+                          <Badge style={{ background: 'var(--primary)', color: 'white', fontWeight: 800, padding: '4px 10px', fontSize: '13px', border: '1px solid var(--primary-glow)' }}>
+                            {selected.match || 70}% Match
+                          </Badge>
+                        </motion.div>
+                        <Badge variant="outline" style={{ fontWeight: 700, borderColor: 'var(--primary-glow)', color: 'var(--primary)' }}>NAAC {selected.naac}</Badge>
                       </div>
 
                       <ScoreBar
@@ -306,7 +317,7 @@ export default function ComparePage() {
                       <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', marginBottom: '10px', letterSpacing: '0.5px' }}>Branch-wise Fees (/yr)</div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         {selected.branchFees ? (
-                          Object.entries(selected.branchFees).map(([branch, fee]: [string, any]) => {
+                          Object.entries(selected.branchFees).map(([branch, fee]) => {
                             if (fee === undefined || fee === null) return null;
                             const lowest = getLowestFeeForBranch(branch);
                             const isLowest = lowest !== null && fee === lowest;
@@ -336,7 +347,7 @@ export default function ComparePage() {
                       <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '0.5px' }}>Campus & Facilities</div>
                       <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '10px' }}>{selected.acres || 'N/A'} Acres</div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        {(selected.facilities || []).slice(0, 3).map((f: any, i: number) => (
+                        {(selected.facilities || []).slice(0, 3).map((f: Facility, i: number) => (
                           <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#475569' }}>
                             <CheckCircle2 size={14} style={{ color: 'var(--primary)' }} />
                             <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.name}</span>
@@ -351,7 +362,7 @@ export default function ComparePage() {
 
                   </CardContent>
                 </Card>
-                </Perspective3DCardFoldOut>
+                </div>
               ) : (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.98 }}
@@ -397,7 +408,7 @@ export default function ComparePage() {
       {/* Advanced Chart Comparison */}
       {validColleges.length > 1 && (
         <>
-          <GlassTiltPanel className="mt-8 border-slate-200 overflow-hidden shadow-md rounded-[24px]">
+          <div className="mt-8 border border-slate-200 overflow-hidden shadow-md rounded-[24px] bg-white">
             <div className="bg-slate-50/50 border-b border-slate-100 px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <CardTitle className="text-lg font-black text-slate-800">Visual Performance Analysis</CardTitle>
@@ -506,7 +517,7 @@ export default function ComparePage() {
                 </ResponsiveContainer>
               </div>
             </CardContent>
-          </GlassTiltPanel>
+          </div>
 
           <AIVerdict colleges={validColleges} />
         </>

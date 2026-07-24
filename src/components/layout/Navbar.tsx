@@ -70,7 +70,7 @@ export default function Navbar() {
                   <motion.span
                     whileHover={{ scale: 1.06, color: 'var(--primary)' }}
                     whileTap={{ scale: 0.95 }}
-                    style={{ display: 'inline-block' }}
+                    style={{ display: 'inline-block', color: isActive ? 'var(--primary)' : 'var(--text-main)' }}
                   >
                     {link.label}
                   </motion.span>
@@ -231,70 +231,98 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
-      {menuOpen && (
-        <div className="md:hidden absolute w-full" style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)', boxShadow: 'var(--shadow-md)' }}>
-          <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {navLinks.map((link) => (
-               <button
-                 key={link.path}
-                 onClick={() => { navigate(link.path); setMenuOpen(false); }}
-                 style={{
-                   padding: '12px 16px', borderRadius: '8px', textAlign: 'left',
-                   background: location.pathname === link.path ? 'var(--primary-light)' : 'transparent',
-                   color: location.pathname === link.path ? 'var(--primary)' : 'var(--text-main)',
-                   fontWeight: '600'
-                 }}
-               >
-                 {link.label}
-               </button>
-            ))}
-            
-            {isInstallable && (
-              <>
-                <button
+      {/* Mobile Menu Dropdown with Smooth Animation */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0, y: -10 }}
+            animate={{ opacity: 1, height: 'auto', y: 0 }}
+            exit={{ opacity: 0, height: 0, y: -10 }}
+            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+            className="md:hidden absolute w-full overflow-hidden" 
+            style={{ 
+              background: 'var(--surface-glass)', 
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              borderBottom: '1px solid var(--border)', 
+              boxShadow: 'var(--shadow-lg)',
+              zIndex: 99
+            }}
+          >
+            <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {navLinks.map((link) => (
+                 <motion.button
+                   key={link.path}
+                   whileTap={{ scale: 0.97 }}
+                   onClick={() => { navigate(link.path); setMenuOpen(false); }}
+                   style={{
+                     padding: '12px 16px', borderRadius: '12px', textAlign: 'left',
+                     background: location.pathname === link.path ? 'var(--primary-light)' : 'transparent',
+                     color: location.pathname === link.path ? 'var(--primary)' : 'var(--text-main)',
+                     fontWeight: '700',
+                     border: 'none',
+                     cursor: 'pointer'
+                   }}
+                 >
+                   {link.label}
+                 </motion.button>
+              ))}
+              
+              {isInstallable && (
+                <motion.button
+                  whileTap={{ scale: 0.97 }}
                   onClick={() => { installApp(); setMenuOpen(false); }}
                   style={{
-                    padding: '12px 16px', borderRadius: '8px', textAlign: 'left',
+                    padding: '12px 16px', borderRadius: '12px', textAlign: 'left',
                     color: 'var(--primary)', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '12px',
-                    background: 'var(--primary-light)'
+                    background: 'var(--primary-light)',
+                    border: '1px solid rgba(16, 185, 129, 0.2)',
+                    cursor: 'pointer'
                   }}
                 >
                   <Download size={18} /> Install App Version
-                </button>
-              </>
-            )}
+                </motion.button>
+              )}
 
-            <div className="divider" style={{ margin: '12px 0' }} />
-            
-             <button
-                 onClick={() => { navigate('/profile'); setMenuOpen(false); }}
-                 style={{
-                   padding: '12px 16px', borderRadius: '8px', textAlign: 'left',
-                   color: 'var(--text-main)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '12px'
-                 }}
-               >
-                 <div style={{
-                  width: '28px', height: '28px', borderRadius: '50%', background: 'var(--gradient)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '12px'
-                 }}>
-                   {currentUser?.photoURL ? <img src={currentUser.photoURL} alt="Avatar" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : avatarLetter}
-                 </div>
-                 My Profile
-             </button>
+              <div className="divider" style={{ margin: '8px 0', opacity: 0.5 }} />
+              
+               <motion.button
+                   whileTap={{ scale: 0.97 }}
+                   onClick={() => { navigate('/profile'); setMenuOpen(false); }}
+                   style={{
+                     padding: '12px 16px', borderRadius: '12px', textAlign: 'left',
+                     color: 'var(--text-main)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '12px',
+                     background: 'transparent',
+                     border: 'none',
+                     cursor: 'pointer'
+                   }}
+                 >
+                   <div style={{
+                    width: '28px', height: '28px', borderRadius: '50%', background: 'var(--gradient)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '12px'
+                   }}>
+                     {currentUser?.photoURL ? <img src={currentUser.photoURL} alt="Avatar" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : avatarLetter}
+                   </div>
+                   My Profile
+               </motion.button>
 
-             <button
-                 onClick={() => { handleLogout(); setMenuOpen(false); }}
-                 style={{
-                   padding: '12px 16px', borderRadius: '8px', textAlign: 'left',
-                   color: 'var(--accent)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '12px'
-                 }}
-               >
-                 <LogOut size={18} /> Sign Out
-             </button>
-          </div>
-        </div>
-      )}
+               <motion.button
+                   whileTap={{ scale: 0.97 }}
+                   onClick={() => { handleLogout(); setMenuOpen(false); }}
+                   style={{
+                     padding: '12px 16px', borderRadius: '12px', textAlign: 'left',
+                     color: '#ef4444', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '12px',
+                     background: 'transparent',
+                     border: 'none',
+                     cursor: 'pointer'
+                   }}
+                 >
+                   <LogOut size={18} /> Sign Out
+               </motion.button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

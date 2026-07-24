@@ -5,20 +5,13 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // Gemini Setup
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "dummy_key");
 
 export default async function seedHandler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-embedding-001" });
-
-    // Dynamic import of the universities dataset
-    // We import it as a standard TS/JS module, but since it's TS, it might be tricky in pure node.
-    // Instead, we will send the universities data directly from the client during the seed request,
-    // OR we just assume it's pre-populated on the client side. Let's just have the client send the array.
-    
-    const { colleges } = req.body;
+    const { colleges } = req.body || {};
     if (!colleges || !Array.isArray(colleges)) {
       return res.status(400).json({ error: "Please provide 'colleges' array in request body." });
     }

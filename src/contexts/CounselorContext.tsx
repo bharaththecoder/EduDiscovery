@@ -12,8 +12,8 @@ interface Message {
   timestamp: Date;
 }
 
-interface CounselorContextType {
-  quizContext: any;
+export interface CounselorContextType {
+  quizContext: Record<string, unknown> | null;
   messages: Message[];
   addMessage: (text: string, sender: 'user' | 'ai') => void;
   clearMessages: () => void;
@@ -58,7 +58,7 @@ export function CounselorProvider({ children }: { children: React.ReactNode }) {
     if (cached) {
       try {
         const list = JSON.parse(cached);
-        return list.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) }));
+        return list.map((m: Message) => ({ ...m, timestamp: new Date(m.timestamp) }));
       } catch (e) {
         console.warn('Failed to parse cached chat messages:', e);
       }
@@ -79,7 +79,7 @@ export function CounselorProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [pendingPrompt, setPendingPrompt] = useState<string | null>(null);
-  const [quizContext, setQuizContext] = useState<any>(null);
+  const [quizContext, setQuizContext] = useState<Record<string, unknown> | null>(null);
 
   useEffect(() => {
     const loadContext = () => {

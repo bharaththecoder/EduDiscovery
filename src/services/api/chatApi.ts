@@ -1,6 +1,6 @@
 export interface ChatRequest {
   message: string;
-  context: any;
+  context: Record<string, unknown>;
   history: { sender: 'user' | 'ai'; text: string }[];
   onChunk?: (text: string) => void;
 }
@@ -65,8 +65,7 @@ export async function sendChatMessage(request: ChatRequest) {
     }
 
     return { reply: fullResponse };
-  } catch (error: any) {
-    console.error('Error in sendChatMessage:', error);
+  } catch (error: unknown) {
     throw error;
   }
 }

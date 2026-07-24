@@ -88,10 +88,12 @@ export default function UniversityCard({ university, compact = false, reasons = 
   // ─── Compact Card (horizontal scroll on mobile, grid on desktop) ───
   if (compact) {
     return (
-      <div
+      <motion.div
         onClick={handleClick}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
+        whileTap={{ scale: 0.97 }}
+        transition={{ type: "spring", stiffness: 450, damping: 25 }}
         className="compact-card glow-up"
         style={{
           transform: isMobile ? 'none' : `perspective(1000px) translateY(${tilt.translateY}px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) scale(${tilt.scale})`,
@@ -159,7 +161,7 @@ export default function UniversityCard({ university, compact = false, reasons = 
             ))}
           </div>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
@@ -167,10 +169,12 @@ export default function UniversityCard({ university, compact = false, reasons = 
 
   // ─── Full Card ────────────────────────────────────────────────
   return (
-    <div
+    <motion.div
       onClick={handleClick}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      whileTap={{ scale: 0.98 }}
+      transition={{ type: "spring", stiffness: 450, damping: 25 }}
       className="glow-up"
       style={{
         borderRadius: 'var(--radius-lg)', 
@@ -346,7 +350,7 @@ export default function UniversityCard({ university, compact = false, reasons = 
           View Details
         </motion.button>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -374,41 +378,5 @@ function BreakdownRow({ label, value, color }: { label: string; value: number; c
   );
 }
 
-export function UniversityCardSkeleton({ compact = false }: { compact?: boolean }) {
-  if (compact) {
-    return (
-      <div className="compact-card" style={{ background: 'var(--surface)', height: '210px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', overflow: 'hidden' }}>
-        <div className="shimmer-block" style={{ height: '120px' }} />
-        <div style={{ padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <div className="shimmer-block" style={{ height: '14px', width: '70%', borderRadius: '4px' }} />
-          <div className="shimmer-block" style={{ height: '10px', width: '40%', borderRadius: '4px' }} />
-          <div style={{ display: 'flex', gap: '4px' }}>
-            <div className="shimmer-block" style={{ height: '16px', width: '40px', borderRadius: '999px' }} />
-            <div className="shimmer-block" style={{ height: '16px', width: '50px', borderRadius: '999px' }} />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div style={{ borderRadius: 'var(--radius-lg)', background: 'var(--surface)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', height: '400px', overflow: 'hidden' }}>
-      <div className="shimmer-block" style={{ aspectRatio: '16/9' }} />
-      <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
-        <div className="shimmer-block" style={{ height: '12px', width: '50%', borderRadius: '4px' }} />
-        <div className="shimmer-block" style={{ height: '18px', width: '80%', borderRadius: '4px' }} />
-        <div style={{ display: 'flex', gap: '6px' }}>
-          <div className="shimmer-block" style={{ height: '18px', width: '50px', borderRadius: '999px' }} />
-          <div className="shimmer-block" style={{ height: '18px', width: '60px', borderRadius: '999px' }} />
-          <div className="shimmer-block" style={{ height: '18px', width: '55px', borderRadius: '999px' }} />
-        </div>
-        <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <div className="shimmer-block" style={{ height: '12px', width: '90%', borderRadius: '4px' }} />
-          <div className="shimmer-block" style={{ height: '12px', width: '85%', borderRadius: '4px' }} />
-        </div>
-        <div style={{ flex: 1 }} />
-        <div className="shimmer-block" style={{ height: '36px', width: '100%', borderRadius: 'var(--radius-sm)' }} />
-      </div>
-    </div>
-  );
-}
+import { UniversityCardSkeleton } from './UniversityCardSkeleton';
+export { UniversityCardSkeleton };

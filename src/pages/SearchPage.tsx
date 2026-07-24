@@ -186,13 +186,10 @@ export default function SearchPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'transparent' }} onClick={() => setShowSuggestions(false)}>
-      {/* Redesigned Premium Sticky Header */}
+      {/* Redesigned Premium Header (Scrollable) */}
       <div
         className="w-full"
         style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 40,
           background: 'linear-gradient(180deg, var(--bg) 0%, var(--bg-glass-fade) 85%, transparent 100%)',
           backdropFilter: 'blur(16px)',
           padding: '24px 20px 16px',

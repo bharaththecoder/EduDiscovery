@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronRight, Sparkles, LayoutGrid, Newspaper, Clock, Zap, Laptop, Banknote, MapPin, Search, Scale, Compass, Heart, Target, BarChart2 } from 'lucide-react';
+import { ArrowRight, Search, MapPin, Laptop, Award, Compass, Sparkles, LogOut, ChevronRight, Calculator, CheckCircle2, TrendingUp, Building2, ExternalLink, Calendar, Users, X, Activity, Cpu, Code, Target, Clock, AlertTriangle, ShieldCheck, Banknote, LayoutGrid, Newspaper, Zap, Heart, BarChart2 } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { newsArticles } from '@/data/news';
 import { useUniversities } from '@/contexts/UniversityContext';
 import UniversityCard, { UniversityCardSkeleton } from '@/components/cards/UniversityCard';
 import { getActivity } from '@/services/activityTracker';
-import { ActivityEvent, University } from '@/types';
+import { ActivityEvent, University, NewsArticle } from '@/types';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { WaveDivider, HolographicBadge, MagneticButton, SpotlightCard, NeonCard, ParallaxImage } from '@/components/Animation3DComponents';
+
 // ─── News Modal ───────────────────────────────────────────────
-function NewsModal({ article, onClose }: { article: any; onClose: () => void }) {
+function NewsModal({ article, onClose }: { article: NewsArticle; onClose: () => void }) {
   const paragraphs = article.content.split('\n\n').filter(Boolean);
   return (
     <div className="overlay" onClick={onClose}>
@@ -144,7 +145,7 @@ export default function Home() {
   const { currentUser } = useAuth();
   const { wishlist } = useWishlist();
   const { universities, loading: loadingColleges } = useUniversities();
-  const [activeNews, setActiveNews] = useState<any>(null);
+  const [activeNews, setActiveNews] = useState<NewsArticle | null>(null);
   const [recentViews, setRecentViews] = useState<ActivityEvent[]>([]);
   const [quickRank, setQuickRank] = useState<string>('');
 
@@ -204,15 +205,17 @@ export default function Home() {
   const topUniversities = useMemo(() => {
     if (loadingColleges || universities.length === 0) return [];
     
-    let matches: any[] = [];
+    let matches: University[] = [];
     if (currentUser?.quizResults?.topMatches?.length) {
       const uniMap = new Map(universities.map(u => [u.id, u]));
       matches = currentUser.quizResults.topMatches
-        .map((match: any) => {
+        .map((match: { id: string, name: string, match: number }) => {
           const uni = uniMap.get(match.id);
           return uni ? { ...uni, match: match.match } : null;
         })
-        .filter(Boolean);
+        .filter((m): m is University & { match: number } => m !== null);
+
+      setQuickRank(currentUser.quizResults.answers.rank as string);
     }
     
     if (matches.length === 0) {
@@ -362,8 +365,10 @@ export default function Home() {
                   background: 'var(--surface-glass)', backdropFilter: 'blur(16px)', border: '1px solid var(--border)', borderRadius: '16px', padding: '16px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: 'var(--shadow-sm)'
                 }}
               >
-                <Scale size={24} color="var(--primary)" />
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                <BarChart2 size={24} color="var(--primary)" />
                 <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-main)' }}>Compare</span>
+                </div>
               </motion.div>
               <motion.div
                 whileHover={{ scale: 1.02, y: -2 }}
@@ -478,7 +483,7 @@ export default function Home() {
             ) : (
               <>
                 <div className="scroll-row md:hidden">
-                  {topUniversities.map((uni: any) => (
+                  {topUniversities.map((uni: University) => (
                     <div key={uni.id}>
                       <UniversityCard university={uni} compact />
                     </div>
@@ -492,7 +497,7 @@ export default function Home() {
                   viewport={{ once: true, margin: "-40px" }}
                   className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
                 >
-                  {topUniversities.map((uni: any) => (
+                  {topUniversities.map((uni: University) => (
                     <motion.div key={uni.id} variants={itemVariants}>
                       <UniversityCard university={uni} />
                     </motion.div>
@@ -594,7 +599,7 @@ export default function Home() {
             viewport={{ once: true, margin: "-40px" }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
-            {newsArticles.slice(0, 3).map((article: any, idx: number) => (
+            {newsArticles.slice(0, 3).map((article: NewsArticle, idx: number) => (
               <motion.div
                 key={article.id}
                 variants={itemVariants}

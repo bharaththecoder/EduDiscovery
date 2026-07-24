@@ -8,12 +8,14 @@ interface WishlistContextType {
   wishlist: University[];
   toggleWishlist: (university: University) => Promise<void>;
   isWishlisted: (id: string) => boolean;
+  clearWishlist: () => Promise<void>;
 }
 
 const defaultWishlistContext: WishlistContextType = {
   wishlist: [],
   toggleWishlist: async () => {},
   isWishlisted: () => false,
+  clearWishlist: async () => {},
 };
 
 const WishlistContext = createContext<WishlistContextType>(defaultWishlistContext);
@@ -75,10 +77,26 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const clearWishlist = async () => {
+    setWishlist([]);
+    localStorage.setItem('wishlist', JSON.stringify([]));
+
+    if (!currentUser || !db || !db.app) return;
+
+    const userRef = doc(db, 'users', currentUser.id);
+    try {
+      await updateDoc(userRef, {
+        wishlist: []
+      });
+    } catch (error) {
+      console.error("Wishlist clear sync error:", error);
+    }
+  };
+
   const isWishlisted = (id: string) => wishlist.some((u) => u.id === id);
 
   return (
-    <WishlistContext.Provider value={{ wishlist, toggleWishlist, isWishlisted }}>
+    <WishlistContext.Provider value={{ wishlist, toggleWishlist, isWishlisted, clearWishlist }}>
       {children}
     </WishlistContext.Provider>
   );

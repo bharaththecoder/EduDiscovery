@@ -52,9 +52,16 @@ export default async function recommendHandler(req, res) {
     const scored = universities.map(uni => {
       let score = 0;
 
-      // Tag overlap with viewed colleges
-      const tagOverlap = (uni.tags || []).filter(t => affinityTags.has(t)).length;
-      score += tagOverlap * 15;
+      // Tag overlap using Jaccard Similarity Coefficient
+      const uniTags = new Set(uni.tags || []);
+      let intersection = 0;
+      for (const t of uniTags) {
+        if (affinityTags.has(t)) intersection++;
+      }
+      const union = new Set([...affinityTags, ...uniTags]).size;
+      const jaccardScore = union === 0 ? 0 : intersection / union;
+      
+      score += jaccardScore * 100; // Scaled Jaccard points
 
       // City affinity
       if (affinityCities.has(uni.city)) score += 20;
@@ -67,20 +74,29 @@ export default async function recommendHandler(req, res) {
 
       // NAAC bonus
       const naacBonus = { 'A++': 20, 'A+': 15, 'A': 10, 'B++': 5, 'B+': 3 };
-      score += naacBonus[uni.naac] || 0;
+      score += naacBonus[uni.naac || ''] || 0;
 
       // ROI bonus (inline compute)
       let minFee = 100000;
+      let minVal = Infinity;
       if (uni.branchFees) {
-        let minVal = Infinity;
         for (const k in uni.branchFees) {
           const v = uni.branchFees[k];
           if (typeof v === 'number' && !isNaN(v) && v < minVal) {
             minVal = v;
           }
         }
-        if (minVal !== Infinity) minFee = minVal;
+      } else if (uni.programs) {
+        for (const p of uni.programs) {
+          let f = 0;
+          if (p.fees) f = parseInt(p.fees.replace(/[^0-9]/g, '')) || 0;
+          if (f === 0 && p.mgmtFees) f = parseInt(p.mgmtFees.replace(/[^0-9]/g, '')) || 0;
+          if (f > 0 && f < minVal) {
+            minVal = f;
+          }
+        }
       }
+      if (minVal !== Infinity) minFee = minVal;
       const avgPackage = uni.avgPackage || 500000;
       const roi = minFee > 0 && isFinite(minFee) ? avgPackage / (minFee * 4) : 1;
       score += Math.min(15, Math.round(roi * 5));

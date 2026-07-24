@@ -96,11 +96,14 @@ export default function ChatWindow() {
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95, y: 30 }}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="fixed bottom-0 md:bottom-6 right-0 md:right-6 w-full md:w-[380px] h-[calc(100vh-100px)] md:h-[calc(100vh-140px)] max-h-[620px] bg-slate-50 dark:bg-slate-950 md:bg-white/95 md:backdrop-blur-xl rounded-t-[2.2rem] md:rounded-t-[2.2rem] md:rounded-b-[1.5rem] shadow-[0_24px_80px_-15px_rgba(0,135,90,0.15)] dark:shadow-[0_24px_80px_-15px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden z-50 border border-slate-100/80 dark:border-slate-800/80"
+      className="fixed bottom-0 md:bottom-6 right-0 md:right-6 w-full md:w-[380px] h-[calc(100dvh-70px)] md:h-[calc(100vh-140px)] max-h-[640px] bg-slate-50 dark:bg-slate-950 md:bg-white/95 md:backdrop-blur-xl rounded-t-[2.2rem] md:rounded-t-[2.2rem] md:rounded-b-[1.5rem] shadow-[0_24px_80px_-15px_rgba(0,135,90,0.25)] dark:shadow-[0_24px_80px_-15px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden z-[1000] border border-slate-100/80 dark:border-slate-800/80"
     >
+      {/* Mobile Drag Indicator Handle */}
+      <div className="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mt-2.5 mb-1 md:hidden opacity-60 shrink-0" />
+
       {/* Concept 3: Premium Insta-Style Header */}
       <div 
-        className="px-5 py-4 flex items-center justify-between shrink-0 border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-10"
+        className="px-5 py-3.5 flex items-center justify-between shrink-0 border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-10"
         style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}
       >
         <div className="flex items-center gap-3">

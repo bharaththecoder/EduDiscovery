@@ -135,16 +135,23 @@ export function VelocityText({
 
   useEffect(() => {
     let lastTime = performance.now();
+    let ticking = false;
     const handleScroll = () => {
-      const now = performance.now();
-      const delta = (now - lastTime) / 1000;
-      const scrollDelta = window.scrollY - lastScroll.current;
-      const v = scrollDelta / delta;
-      setVelocity(Math.max(-20, Math.min(20, v * 0.001)));
-      lastScroll.current = window.scrollY;
-      lastTime = now;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const now = performance.now();
+          const delta = Math.max((now - lastTime) / 1000, 0.016);
+          const scrollDelta = window.scrollY - lastScroll.current;
+          const v = scrollDelta / delta;
+          setVelocity(Math.max(-12, Math.min(12, v * 0.0005)));
+          lastScroll.current = window.scrollY;
+          lastTime = now;
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -681,12 +688,16 @@ export function AnimatedCounter3D({
   value,
   suffix = '',
   label,
-  duration = 2
+  duration = 2,
+  style = {},
+  className = ''
 }: {
   value: number | string;
   suffix?: string;
   label?: string;
   duration?: number;
+  style?: React.CSSProperties;
+  className?: string;
 }) {
   const [count, setCount] = useState(0);
   const numericValue = typeof value === 'number' ? value : parseInt(String(value).replace(/[^0-9]/g, '')) || 0;
@@ -700,7 +711,7 @@ export function AnimatedCounter3D({
     }
 
     const totalMiliseconds = duration * 1000;
-    const incrementTime = Math.max(Math.floor(totalMiliseconds / end), 20);
+    const incrementTime = Math.max(Math.floor(totalMiliseconds / Math.max(end, 1)), 20);
     
     const timer = setInterval(() => {
       start += 1;
@@ -711,12 +722,20 @@ export function AnimatedCounter3D({
     return () => clearInterval(timer);
   }, [numericValue, duration]);
 
+  if (!label) {
+    return (
+      <span className={className} style={style}>
+        {count}{suffix}
+      </span>
+    );
+  }
+
   return (
-    <div style={{ textAlign: 'center' }}>
+    <div className={className} style={{ textAlign: 'center', ...style }}>
       <div style={{ fontSize: '32px', fontWeight: '900', color: 'var(--text-main)' }}>
         {count}{suffix}
       </div>
-      {label && <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>{label}</div>}
+      <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>{label}</div>
     </div>
   );
 }

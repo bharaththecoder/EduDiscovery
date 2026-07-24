@@ -53,11 +53,7 @@ export default function Layout() {
         style={{
           flex: 1,
           width: '100%',
-          overflowY: 'auto',
-          overflowX: 'hidden',
-          /* Reserve space for the fixed bottom nav on mobile (64px) +
-             extra breathing room. On md+ the bottom nav is hidden so
-             this padding is zeroed via the CSS class below. */
+          /* Reserve space for the fixed bottom nav on mobile */
           paddingBottom: 'var(--bottom-nav-clearance, 80px)',
           position: 'relative',
           zIndex: 1,

@@ -1,7 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+interface BeforeInstallPromptEvent extends Event {
+  prompt(): Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
+
 interface PWAContextType {
-  deferredPrompt: any;
+  deferredPrompt: BeforeInstallPromptEvent | null;
   isInstallable: boolean;
   isStandalone: boolean;
   installApp: () => Promise<boolean>;
@@ -17,16 +22,15 @@ const defaultPWAContext: PWAContextType = {
 const PWAContext = createContext<PWAContextType>(defaultPWAContext);
 
 export const PWAProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstallable, setIsInstallable] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
     // Check if already running in standalone mode (installed app)
     const checkStandalone = () => {
-      const isStandaloneMode = 
-        window.matchMedia('(display-mode: standalone)').matches ||
-        (navigator as any).standalone ||
+      const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches ||
+        ('standalone' in navigator && !!(navigator as { standalone?: boolean }).standalone) ||
         document.referrer.includes('android-app://');
       setIsStandalone(!!isStandaloneMode);
     };
@@ -35,7 +39,7 @@ export const PWAProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e);
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
       setIsInstallable(true);
     };
 

@@ -2,6 +2,7 @@
 // EduDiscovery — Smart Quiz Decision Agent 
 // Adaptive weights + Dream/Safe categorization + breakdowns
 // ============================================================
+import { University, Program } from '@/types';
 
 export interface QuizAnswers {
   branch: string | string[];
@@ -26,8 +27,7 @@ export interface ScoreBreakdown {
   rankPct: number;
 }
 
-export interface ScoredUniversity {
-  id: string;
+export interface ScoredUniversity extends University {
   score: number;
   matchPercent: number;
   reasons: string[];
@@ -62,7 +62,7 @@ function getWeights(priority?: string | string[]) {
 }
 
 // ─── Branch Scoring ──────────────────────────────────────────
-export function scoreBranch(university: any, branch: string | string[], maxW: number): { score: number; reason: string } {
+export function scoreBranch(university: University, branch: string | string[], maxW: number): { score: number; reason: string } {
   if (!branch) return { score: Math.round(maxW * 0.5), reason: '' };
   if (Array.isArray(branch)) {
     return branch.reduce((best, b) => {
@@ -82,8 +82,9 @@ export function scoreBranch(university: any, branch: string | string[], maxW: nu
     'law & humanities':             ['law', 'll.b', 'ba', 'b.a', 'arts', 'history'],
   };
 
-  const keywords = branchMap[branchStr.toLowerCase()] || [branchStr.toLowerCase()];  const tagMatch  = keywords.some(k => university.tags?.some((t: string) => t.toLowerCase().includes(k)));
-  const progMatch = keywords.some(k => university.programs?.some((p: any) => p.name?.toLowerCase().includes(k)));
+  const keywords = branchMap[branchStr.toLowerCase()] || [branchStr.toLowerCase()];
+  const tagMatch  = keywords.some(k => university.tags?.some((t: string) => t.toLowerCase().includes(k)));
+  const progMatch = keywords.some(k => university.programs?.some((p: Program) => p.name?.toLowerCase().includes(k)));
   const brMatch   = keywords.some(k => university.branches?.some((br: string) => br.toLowerCase().includes(k)));
 
   // Hard filter: if NO branch match at all → score 0 (strict exclusion)
@@ -95,7 +96,7 @@ export function scoreBranch(university: any, branch: string | string[], maxW: nu
 }
 
 // ─── Budget Scoring ──────────────────────────────────────────
-export function scoreBudget(university: any, budget: string | string[], maxW: number): { score: number; reason: string } {
+export function scoreBudget(university: University, budget: string | string[], maxW: number): { score: number; reason: string } {
   if (!budget) return { score: Math.round(maxW * 0.5), reason: '' };
   if (Array.isArray(budget)) {
     return budget.reduce((best, b) => {
@@ -108,11 +109,15 @@ export function scoreBudget(university: any, budget: string | string[], maxW: nu
   if (university.programs) {
     for (let i = 0; i < university.programs.length; i++) {
       const p = university.programs[i];
+      let f = 0;
       if (p.fees) {
-        const f = parseInt(p.fees.replace(/[^0-9]/g, '')) || 0;
-        if (f > 0 && f < minFee) {
-          minFee = f;
-        }
+        f = parseInt(p.fees.replace(/[^0-9]/g, '')) || 0;
+      }
+      if (f === 0 && p.mgmtFees) {
+        f = parseInt(p.mgmtFees.replace(/[^0-9]/g, '')) || 0;
+      }
+      if (f > 0 && f < minFee) {
+        minFee = f;
       }
     }
   }
@@ -147,7 +152,7 @@ export function scoreBudget(university: any, budget: string | string[], maxW: nu
 }
 
 // ─── Location Scoring (distance-aware tiers) ──────────────────
-export function scoreLocation(university: any, location: string | string[], maxW: number): { score: number; reason: string } {
+export function scoreLocation(university: University, location: string | string[], maxW: number): { score: number; reason: string } {
   if (!location) return { score: Math.round(maxW * 0.5), reason: '' };
   if (Array.isArray(location)) {
     return location.reduce((best, loc) => {
@@ -224,7 +229,7 @@ export function scoreLocation(university: any, location: string | string[], maxW
 }
 
 // ─── College Type Scoring ─────────────────────────────────────
-export function scoreType(university: any, type: string | string[], maxW: number): { score: number; reason: string } {
+export function scoreType(university: University, type: string | string[], maxW: number): { score: number; reason: string } {
   if (!type) return { score: Math.round(maxW * 0.5), reason: '' };
   if (Array.isArray(type)) {
     return type.reduce((best, t) => {
@@ -240,29 +245,34 @@ export function scoreType(university: any, type: string | string[], maxW: number
   const tid = university.id;
   const t = typeStr.toLowerCase();
 
+  const isPrivate = pvt.includes(tid) || university.about?.toLowerCase().includes('private') || university.tags?.some((tag: string) => tag.toLowerCase().includes('private'));
+  const isGov = gov.includes(tid) || university.about?.toLowerCase().includes('government') || university.about?.toLowerCase().includes('state university');
+  const isAuto = auto.includes(tid) || university.about?.toLowerCase().includes('autonomous') || university.tags?.some((tag: string) => tag.toLowerCase().includes('autonomous'));
+  const isDeemed = pvt.includes(tid) || university.about?.toLowerCase().includes('deemed') || university.tags?.some((tag: string) => tag.toLowerCase().includes('deemed'));
+
   if (t.includes('private')) {
-    if (pvt.includes(tid)) return { score: maxW,                    reason: 'Private university with strong placement record' };
-    if (auto.includes(tid)) return { score: Math.round(maxW * 0.5), reason: '' };
+    if (isPrivate) return { score: maxW,                    reason: 'Private institution with strong infrastructure' };
+    if (isAuto) return { score: Math.round(maxW * 0.5), reason: '' };
     return { score: Math.round(maxW * 0.2), reason: '' };
   }
   if (t.includes('government')) {
-    if (gov.includes(tid))  return { score: maxW,                    reason: 'Government/state university with affordable fees' };
+    if (isGov)  return { score: maxW,                    reason: 'Government/state university with affordable fees' };
     return { score: Math.round(maxW * 0.2), reason: '' };
   }
   if (t.includes('autonomous')) {
-    if (auto.includes(tid)) return { score: maxW,                    reason: 'Autonomous college — specialized engineering focus' };
-    if (pvt.includes(tid))  return { score: Math.round(maxW * 0.5), reason: '' };
+    if (isAuto) return { score: maxW,                    reason: 'Autonomous college — specialized engineering focus' };
+    if (isPrivate)  return { score: Math.round(maxW * 0.5), reason: '' };
     return { score: Math.round(maxW * 0.3), reason: '' };
   }
   if (t.includes('deemed')) {
-    if (pvt.includes(tid))  return { score: maxW,                    reason: 'Deemed university with strong research culture' };
+    if (isDeemed)  return { score: maxW,                    reason: 'Deemed university with strong research culture' };
     return { score: Math.round(maxW * 0.3), reason: '' };
   }
   return { score: Math.round(maxW * 0.5), reason: '' };
 }
 
 // ─── Rank Scoring ─────────────────────────────────────────────
-export function scoreRank(university: any, rank: string | string[], maxW: number): { score: number; reason: string } {
+export function scoreRank(university: University, rank: string | string[], maxW: number): { score: number; reason: string } {
   if (!rank) return { score: Math.round(maxW * 0.5), reason: '' };
   if (Array.isArray(rank)) {
     return rank.reduce((best, r) => {
@@ -294,7 +304,7 @@ export function scoreRank(university: any, rank: string | string[], maxW: number
 }
 
 // ─── Main Scoring Engine ──────────────────────────────────────
-export function scoreUniversity(university: any, answers: QuizAnswers): ScoredUniversity {
+export function scoreUniversity(university: University, answers: QuizAnswers): ScoredUniversity {
   const W = getWeights(answers.priority);
 
   const branchResult   = scoreBranch(university, answers.branch, W.branch);
@@ -307,11 +317,11 @@ export function scoreUniversity(university: any, answers: QuizAnswers): ScoredUn
   const maxScore   = W.branch + W.budget + W.location + W.type + W.rank;
   const matchPercent = Math.min(Math.round((totalScore / maxScore) * 100), 99);
 
-  // Strict: if branch is a total mismatch AND budget is way over, exclude
+  // Strict: if branch is a total mismatch, exclude completely
   const branchFail  = branchResult.score === 0;
-  const budgetFail  = budgetResult.score <= Math.round(W.budget * 0.05);
-  if (branchFail && budgetFail) {
+  if (branchFail) {
     return {
+      ...university,
       id: university.id, score: 0, matchPercent: 0,
       reasons: [],
       category: 'safe',
@@ -327,6 +337,7 @@ export function scoreUniversity(university: any, answers: QuizAnswers): ScoredUn
     matchPercent >= 55 ? 'match' : 'safe';
 
   return {
+    ...university,
     id: university.id,
     score: totalScore,
     matchPercent,
@@ -338,17 +349,17 @@ export function scoreUniversity(university: any, answers: QuizAnswers): ScoredUn
       location: locationResult.score,
       type:     typeResult.score,
       rank:     rankResult.score,
-      branchPct:   Math.round((branchResult.score   / W.branch)   * 100),
-      budgetPct:   Math.round((budgetResult.score   / W.budget)   * 100),
-      locationPct: Math.round((locationResult.score / W.location) * 100),
-      typePct:     Math.round((typeResult.score     / W.type)     * 100),
-      rankPct:     Math.round((rankResult.score     / W.rank)     * 100),
+      branchPct:   Math.round((branchResult.score   / (W.branch || 1))   * 100),
+      budgetPct:   Math.round((budgetResult.score   / (W.budget || 1))   * 100),
+      locationPct: Math.round((locationResult.score / (W.location || 1)) * 100),
+      typePct:     Math.round((typeResult.score     / (W.type || 1))     * 100),
+      rankPct:     Math.round((rankResult.score     / (W.rank || 1))     * 100),
     },
   };
 }
 
 // ─── Categorized Recommendations ─────────────────────────────
-export function getRecommendations(universities: any[], answers: QuizAnswers, count = 10) {
+export function getRecommendations(universities: University[], answers: QuizAnswers, count = 10) {
   const scored = universities
     .map(uni => {
       const s = scoreUniversity(uni, answers);
