@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useUniversities } from '@/contexts/UniversityContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { predictAdmission, PredictionResult } from '@/utils/predictorEngine';
+import { parseRankToNumber } from '@/utils/intelligenceEngine';
 import { Link } from 'react-router-dom';
 import { RadarSweep, HolographicBadge, ConfettiExplosion, SpotlightCard, NeonCard, MagneticButton, ConfettiButton, AnimatedCounter3D } from '@/components/Animation3DComponents';
 
@@ -416,10 +417,8 @@ export default function PredictorPage() {
   const queryParams = new URLSearchParams(window.location.search);
   const urlRank = queryParams.get('rank');
   const initialRank = urlRank
-    ? parseInt(urlRank) || 20000
-    : currentUser?.quizResults?.answers?.rank
-      ? parseInt(String(currentUser.quizResults.answers.rank).replace(/[^0-9]/g, '')) || 25000
-      : 20000;
+    ? parseRankToNumber(urlRank)
+    : parseRankToNumber(currentUser?.quizResults?.answers?.rank);
 
   const [exam, setExam] = useState<'EAPCET' | 'ICET'>('EAPCET');
   const [rank, setRank] = useState<number>(initialRank);
@@ -431,6 +430,12 @@ export default function PredictorPage() {
   const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => { setBranch('All'); }, [exam]);
+
+  useEffect(() => {
+    if (!urlRank && currentUser?.quizResults?.answers?.rank) {
+      setRank(parseRankToNumber(currentUser.quizResults.answers.rank));
+    }
+  }, [urlRank, currentUser?.quizResults?.answers?.rank]);
 
   const predictions = useMemo(() => {
     if (!rank || rank <= 0 || loadingColleges) return [];

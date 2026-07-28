@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCounselor } from '@/contexts/CounselorContext';
 import { sendChatMessage } from '@/services/api/chatApi';
 import { Send, X, Sparkles, Trash2 } from 'lucide-react';
@@ -16,6 +17,7 @@ const cleanText = (text: string) => {
 };
 
 export default function ChatWindow() {
+  const navigate = useNavigate();
   const {
     messages,
     addMessage,
@@ -49,7 +51,7 @@ export default function ChatWindow() {
     }
   }, [input]);
 
-  const handleSend = async (text: string) => {
+  const handleSend = useCallback(async (text: string) => {
     if (!text.trim() || isLoading) return;
 
     const userMessage = text.trim();
@@ -81,7 +83,7 @@ export default function ChatWindow() {
       setError(err.message || 'Sorry, I couldn\'t fetch details. Please try again.');
       setIsLoading(false);
     }
-  };
+  }, [addMessage, isLoading, messages, quizContext, setError, setIsLoading]);
 
   useEffect(() => {
     if (pendingPrompt) {
@@ -170,7 +172,7 @@ export default function ChatWindow() {
             </p>
             {!quizContext && (
               <button 
-                onClick={() => { setIsOpen(false); window.location.href = '/quiz'; }}
+                onClick={() => { setIsOpen(false); navigate('/quiz'); }}
                 className="mt-6 px-8 py-3 bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] text-white text-[13px] font-extrabold rounded-full hover:shadow-[0_8px_20px_rgba(0,135,90,0.25)] transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
               >
                 Start Preference Quiz

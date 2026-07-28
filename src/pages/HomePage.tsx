@@ -10,6 +10,7 @@ import { getActivity } from '@/services/activityTracker';
 import { ActivityEvent, University, NewsArticle } from '@/types';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { WaveDivider, HolographicBadge, MagneticButton, SpotlightCard, NeonCard, ParallaxImage } from '@/components/Animation3DComponents';
+import { parseRankToNumber } from '@/utils/intelligenceEngine';
 
 // ─── News Modal ───────────────────────────────────────────────
 function NewsModal({ article, onClose }: { article: NewsArticle; onClose: () => void }) {
@@ -147,12 +148,22 @@ export default function Home() {
   const { universities, loading: loadingColleges } = useUniversities();
   const [activeNews, setActiveNews] = useState<NewsArticle | null>(null);
   const [recentViews, setRecentViews] = useState<ActivityEvent[]>([]);
-  const [quickRank, setQuickRank] = useState<string>('');
+  const [quickRank, setQuickRank] = useState<string>(() => {
+    const r = currentUser?.quizResults?.answers?.rank;
+    return r ? String(parseRankToNumber(r)) : '';
+  });
+
+  useEffect(() => {
+    if (currentUser?.quizResults?.answers?.rank) {
+      setQuickRank(String(parseRankToNumber(currentUser.quizResults.answers.rank)));
+    }
+  }, [currentUser?.quizResults?.answers?.rank]);
 
   const handleQuickPredict = (e: React.FormEvent) => {
     e.preventDefault();
     if (quickRank) {
-      navigate(`/predictor?rank=${quickRank}`);
+      const numRank = parseRankToNumber(quickRank);
+      navigate(`/predictor?rank=${numRank}`);
     } else {
       navigate('/predictor');
     }
@@ -214,8 +225,6 @@ export default function Home() {
           return uni ? { ...uni, match: match.match } : null;
         })
         .filter((m): m is University & { match: number } => m !== null);
-
-      setQuickRank(currentUser.quizResults.answers.rank as string);
     }
     
     if (matches.length === 0) {

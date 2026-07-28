@@ -29,6 +29,36 @@ const naacPlacementRate: Record<string, number> = {
   'B':   42,
 };
 
+// ─── Universal Rank Parser ───────────────────────────────────
+export function parseRankToNumber(rankVal: any): number {
+  if (rankVal === undefined || rankVal === null || rankVal === '') return 20000;
+  if (typeof rankVal === 'number' && !isNaN(rankVal)) {
+    return rankVal > 0 ? rankVal : 20000;
+  }
+  const str = (Array.isArray(rankVal) ? String(rankVal[0]) : String(rankVal)).toLowerCase();
+  
+  if (str.includes('top 5,000') || str.includes('under 5000') || str.includes('top 5000') || str.includes('high competitive')) {
+    return 3000;
+  }
+  if (str.includes('5,000') && (str.includes('20,000') || str.includes('good rank'))) {
+    return 12000;
+  }
+  if (str.includes('20,000') && (str.includes('60,000') || str.includes('average rank'))) {
+    return 40000;
+  }
+  if (str.includes('60,000+') || str.includes('above 60,000') || str.includes('management') || str.includes('wide cutoff')) {
+    return 80000;
+  }
+  
+  const cleaned = str.replace(/[^0-9]/g, '');
+  const parsed = parseInt(cleaned, 10);
+  if (!isNaN(parsed) && parsed > 0 && parsed <= 500000) {
+    return parsed;
+  }
+  
+  return 20000;
+}
+
 // ─── Rank tier → EAPCET rank (approximate midpoint) ──────────
 const rankTierValues: Record<string, number> = {
   'top 5,000 (high competitive)':          3000,
@@ -166,8 +196,7 @@ export function computeFitScore(
 
   // 2. Rank Matrix Score (0 to 1)
   if (rankTier) {
-    const safeRank = Array.isArray(rankTier) ? rankTier[0] : rankTier;
-    const rankValue = rankTierValues[String(safeRank).toLowerCase()] ?? 40000;
+    const rankValue = parseRankToNumber(rankTier);
     const nirf = uni.nirf || '';
     const hasTopNirf = nirf.includes('#') && parseInt(nirf.replace(/[^0-9]/g, '')) < 100;
 

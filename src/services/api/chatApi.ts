@@ -1,6 +1,6 @@
 export interface ChatRequest {
   message: string;
-  context: Record<string, unknown>;
+  context: Record<string, unknown> | null;
   history: { sender: 'user' | 'ai'; text: string }[];
   onChunk?: (text: string) => void;
 }

@@ -3,6 +3,7 @@
 // Adaptive weights + Dream/Safe categorization + breakdowns
 // ============================================================
 import { University, Program } from '@/types';
+import { parseRankToNumber } from '@/utils/intelligenceEngine';
 
 export interface QuizAnswers {
   branch: string | string[];
@@ -280,22 +281,20 @@ export function scoreRank(university: University, rank: string | string[], maxW:
       return res.score > best.score ? res : best;
     }, { score: -1, reason: '' });
   }
-  const rankStr = rank as string;
+  const rankNum = parseRankToNumber(rank);
   const naac    = university.naac;
   const hasNirf = university.nirf !== '—' && university.nirf !== '';
 
-  const r = rankStr.toLowerCase();
-
-  if (r.includes('top 5,000')) {
+  if (rankNum <= 5000) {
     if (naac === 'A++' && hasNirf) return { score: maxW,                    reason: `NAAC ${naac} + NIRF ranked — ideal for top rankers` };
     if (['A++', 'A+'].includes(naac)) return { score: Math.round(maxW * 0.82), reason: `NAAC ${naac} — competitive institution` };
     return { score: Math.round(maxW * 0.25), reason: '' };
   }
-  if (r.includes('5,000')) {
+  if (rankNum <= 20000) {
     if (['A++', 'A+', 'A'].includes(naac)) return { score: maxW,                    reason: `NAAC ${naac} — great fit for your rank` };
     return { score: Math.round(maxW * 0.55), reason: '' };
   }
-  if (r.includes('20,000')) {
+  if (rankNum <= 60000) {
     if (['A', 'A+', 'B+'].includes(naac)) return { score: maxW,                    reason: `NAAC ${naac} — accessible at your rank` };
     return { score: Math.round(maxW * 0.60), reason: '' };
   }

@@ -21,8 +21,9 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   handleReset = () => {
+    window.history.pushState({}, '', '/home');
+    window.dispatchEvent(new PopStateEvent('popstate'));
     this.setState({ hasError: false, error: null });
-    window.location.href = '/home';
   };
 
   render() {

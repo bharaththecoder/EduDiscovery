@@ -162,15 +162,9 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-html { 
-  scroll-behavior: smooth; 
-  zoom: 0.9;
-}
-
-@media (min-width: 1024px) {
-  html {
-    zoom: 1.1;
-  }
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
 }
 
 body {
