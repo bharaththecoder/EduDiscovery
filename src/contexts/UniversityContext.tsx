@@ -57,7 +57,7 @@ export function UniversityProvider({ children }: { children: React.ReactNode }) 
     loadColleges();
   }, []);
 
-  const getUniversityById = async (id: string): Promise<University | undefined> => {
+  const getUniversityById = React.useCallback(async (id: string): Promise<University | undefined> => {
     // Check memory cache first
     const cached = universities.find(u => u.id === id);
     if (cached) return cached;
@@ -73,10 +73,12 @@ export function UniversityProvider({ children }: { children: React.ReactNode }) 
       console.error("Error getting university by ID:", e);
     }
     return undefined;
-  };
+  }, [universities]);
+
+  const value = React.useMemo(() => ({ universities, loading, getUniversityById }), [universities, loading, getUniversityById]);
 
   return (
-    <UniversityContext.Provider value={{ universities, loading, getUniversityById }}>
+    <UniversityContext.Provider value={value}>
       {children}
     </UniversityContext.Provider>
   );

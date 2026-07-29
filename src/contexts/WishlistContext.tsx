@@ -55,7 +55,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     return () => unsubscribe();
   }, [currentUser]);
 
-  const toggleWishlist = async (university: University) => {
+  const toggleWishlist = React.useCallback(async (university: University) => {
     const isSaved = wishlist.some(u => u.id === university.id);
     const newWishlist = isSaved
       ? wishlist.filter(u => u.id !== university.id)
@@ -75,9 +75,9 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error("Wishlist sync error:", error);
     }
-  };
+  }, [wishlist, currentUser]);
 
-  const clearWishlist = async () => {
+  const clearWishlist = React.useCallback(async () => {
     setWishlist([]);
     localStorage.setItem('wishlist', JSON.stringify([]));
 
@@ -91,12 +91,14 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error("Wishlist clear sync error:", error);
     }
-  };
+  }, [currentUser]);
 
-  const isWishlisted = (id: string) => wishlist.some((u) => u.id === id);
+  const isWishlisted = React.useCallback((id: string) => wishlist.some((u) => u.id === id), [wishlist]);
+
+  const value = React.useMemo(() => ({ wishlist, toggleWishlist, isWishlisted, clearWishlist }), [wishlist, toggleWishlist, isWishlisted, clearWishlist]);
 
   return (
-    <WishlistContext.Provider value={{ wishlist, toggleWishlist, isWishlisted, clearWishlist }}>
+    <WishlistContext.Provider value={value}>
       {children}
     </WishlistContext.Provider>
   );

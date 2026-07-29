@@ -16,11 +16,44 @@ class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
+  componentDidMount() {
+    // Intentionally empty. We manage reload state using timestamps in componentDidCatch
+    // to prevent infinite reload loops that cause a blank white screen.
+  }
+
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error('[ErrorBoundary]', error, info.componentStack);
+    
+    const errorMsg = error.message || '';
+    if (
+      errorMsg.includes('useContext') || 
+      errorMsg.includes('useRef') ||
+      errorMsg.includes('Invalid hook call') ||
+      errorMsg.includes('reading \'use') ||
+      errorMsg.includes('Failed to fetch dynamically imported module')
+    ) {
+      const now = Date.now();
+      const lastErrorTime = parseInt(sessionStorage.getItem('edudiscovery_error_time') || '0', 10);
+      let reloadCount = parseInt(sessionStorage.getItem('edudiscovery_error_reload') || '0', 10);
+
+      // If it's been more than 10 seconds since the last error, reset the circuit breaker
+      if (now - lastErrorTime > 10000) {
+        reloadCount = 0;
+      }
+
+      if (reloadCount < 2) {
+        sessionStorage.setItem('edudiscovery_error_reload', (reloadCount + 1).toString());
+        sessionStorage.setItem('edudiscovery_error_time', now.toString());
+        // Small delay to prevent rapid-fire browser lockups
+        setTimeout(() => window.location.reload(), 150);
+        return;
+      }
+    }
   }
 
   handleReset = () => {
+    sessionStorage.removeItem('edudiscovery_error_reload');
+    sessionStorage.removeItem('edudiscovery_error_time');
     window.history.pushState({}, '', '/home');
     window.dispatchEvent(new PopStateEvent('popstate'));
     this.setState({ hasError: false, error: null });

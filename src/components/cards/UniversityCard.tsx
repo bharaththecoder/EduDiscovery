@@ -22,7 +22,7 @@ interface Props {
 }
 
 
-export default function UniversityCard({ university, compact = false, reasons = [], breakdown }: Props) {
+const UniversityCard = React.memo(({ university, compact = false, reasons = [], breakdown }: Props) => {
 
   const navigate  = useNavigate();
   const { toggleWishlist, isWishlisted } = useWishlist();
@@ -33,15 +33,7 @@ export default function UniversityCard({ university, compact = false, reasons = 
 
   // 3D Tilt Effect State
   const [tilt, setTilt] = useState({ x: 0, y: 0, scale: 1, translateY: 0 });
-
-  // Detect mobile viewport (below 768px) to disable popup/tilt effects
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     setIsHovered(true);
@@ -352,7 +344,9 @@ export default function UniversityCard({ university, compact = false, reasons = 
       </div>
     </motion.div>
   );
-}
+});
+
+export default UniversityCard;
 
 function BreakdownRow({ label, value, color }: { label: string; value: number; color: string }) {
   return (

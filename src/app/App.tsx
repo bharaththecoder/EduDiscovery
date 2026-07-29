@@ -37,28 +37,19 @@ const ProtectedLayout = () => {
 
 const LoadingScreen = () => (
   <div style={{
-    height: '100vh', display: 'flex', flexDirection: 'column',
+    position: 'fixed', inset: 0, display: 'flex', flexDirection: 'column',
     alignItems: 'center', justifyContent: 'center',
-    background: 'var(--bg)', gap: '16px',
+    background: 'var(--bg)', gap: '16px', zIndex: 9999,
   }}>
     <div style={{
-      width: '60px', height: '60px',
-      background: 'var(--gradient)',
-      borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%',
-      animation: 'morphSpin 2s ease-in-out infinite',
-      boxShadow: '0 8px 30px var(--primary-glow)',
+      width: '40px', height: '40px', border: '3px solid var(--primary-light)',
+      borderTopColor: 'var(--primary)', borderRadius: '50%',
+      animation: 'spin 1s linear infinite'
     }} />
-    <p style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: '700', letterSpacing: '1px' }}>
-      Loading EduDiscovery...
+    <p style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-muted)', margin: 0 }}>
+      Initializing EduDiscovery...
     </p>
-    <style>{`
-      @keyframes morphSpin {
-        0%,100% { border-radius:60% 40% 30% 70%/60% 30% 70% 40%; transform:rotate(0deg) scale(1); }
-        25% { border-radius:30% 70% 70% 30%/30% 30% 70% 70%; transform:rotate(90deg) scale(1.1); }
-        50% { border-radius:50% 50% 30% 70%/25% 75% 25% 75%; transform:rotate(180deg) scale(0.9); }
-        75% { border-radius:70% 30% 50% 50%/40% 60% 40% 60%; transform:rotate(270deg) scale(1.05); }
-      }
-    `}</style>
+    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
   </div>
 );
 

@@ -7,13 +7,13 @@ import { useWishlist } from '@/contexts/WishlistContext';
 import { getUniversityById } from '@/data/universities';
 import { db } from '@/services/firebase';
 import { Review, University, UserProfile } from '@/types';
-import { collection, addDoc, doc, increment, updateDoc, query, where, orderBy, onSnapshot, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, doc, increment, updateDoc, query, where, orderBy, onSnapshot, serverTimestamp, deleteDoc } from 'firebase/firestore';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { trackView } from '@/services/activityTracker';
 import { computeFitScore, computeFeeTrends } from '@/utils/intelligenceEngine';
 import { useCounselor } from '@/contexts/CounselorContext';
-import { Sparkles as SparklesIcon, TrendingUp, CheckCircle2 } from 'lucide-react';
+import { Sparkles as SparklesIcon, TrendingUp, CheckCircle2, MessageSquare, Star, Trash2 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HolographicBadge, AnimatedCounter3D, ParallaxImage, SpotlightCard, MagneticButton, WaveDivider, RippleButton, FloatingEmoji3D } from '@/components/Animation3DComponents';
@@ -160,6 +160,7 @@ function ReviewsSection({ universityId }: { universityId: string }) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [text, setText] = useState('');
   const [rating, setRating] = useState(5);
+  const [hoverRating, setHoverRating] = useState(0);
   const [loading, setLoading] = useState(true);
   const { currentUser } = useAuth() as { currentUser: UserProfile | null };
   const { showToast } = useToast() as { showToast: (msg: string, type: string) => void };
@@ -195,71 +196,166 @@ function ReviewsSection({ universityId }: { universityId: string }) {
     try {
       await addDoc(collection(db, 'reviews'), {
         universityId,
-        userId: currentUser.id,
-        userName: currentUser.name,
+        userId: currentUser.id || 'unknown',
+        userName: currentUser.name || 'Anonymous Student',
         userPhoto: currentUser.photoURL || null,
         text,
         rating,
         createdAt: serverTimestamp(),
-        isVerified: true
+        isVerified: true,
+        helpful: 0,
+        helpfulBy: []
       });
       setText('');
       setRating(5);
-      showToast('Review posted!', 'success');
-    } catch (err) {
-      console.error(err);
-      showToast('Error posting review', 'error');
+      setHoverRating(0);
+      showToast('Review posted! 🎉', 'success');
+    } catch (err: any) {
+      console.error("Review submission error:", err);
+      showToast(err?.message || 'Error posting review', 'error');
+    }
+  };
+
+  const handleDeleteReview = async (reviewId: string) => {
+    if (!window.confirm('Are you sure you want to delete your review?')) return;
+    try {
+      await deleteDoc(doc(db, 'reviews', reviewId));
+      showToast('Review deleted', 'info');
+    } catch (err: any) {
+      console.error("Delete review error:", err);
+      showToast(err?.message || 'Error deleting review', 'error');
     }
   };
 
   return (
-    <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-md)', padding: '20px', boxShadow: 'var(--shadow-sm)' }}>
-      <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '16px' }}>💬 Student Reviews</h2>
-
-      {loading ? <p>Loading reviews...</p> : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
-          {reviews.length === 0 ? <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>No reviews yet. Be the first!</p> : null}
-          {reviews.map(r => (
-            <div key={r.id} style={{ borderBottom: '1px solid var(--border)', paddingBottom: '16px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                  {r.userPhoto ? <img src={r.userPhoto} alt="Reviewer" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{r.userName?.[0]}</span>}
-                </div>
-                <div>
-                  <div style={{ fontWeight: '600', fontSize: '13px' }}>{r.userName}</div>
-                  <div style={{ fontSize: '11px', color: 'var(--primary)' }}>{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</div>
-                </div>
-              </div>
-              <p style={{ fontSize: '14px', color: 'var(--text-main)', lineHeight: 1.5 }}>{r.text}</p>
-            </div>
-          ))}
+    <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-lg)', padding: '24px', boxShadow: 'var(--shadow-md)', position: 'relative', overflow: 'hidden' }}>
+      {/* Decorative blurred blob */}
+      <div style={{ position: 'absolute', top: -50, right: -50, width: 150, height: 150, background: 'var(--primary-light)', filter: 'blur(50px)', borderRadius: '50%', opacity: 0.5, pointerEvents: 'none' }} />
+      
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px', position: 'relative' }}>
+        <div style={{ padding: '8px', background: 'var(--primary-light)', borderRadius: '10px', color: 'var(--primary)' }}>
+          <MessageSquare size={20} />
         </div>
-      )}
+        <h2 style={{ fontSize: '20px', fontWeight: '800', margin: 0 }}>Student Reviews</h2>
+      </div>
 
-      {currentUser ? (
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <div style={{ fontSize: '13px', fontWeight: 600 }}>Leave a review</div>
-          <select value={rating} onChange={e => setRating(Number(e.target.value))} style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text-main)', outline: 'none' }}>
-            <option value={5}>5 Stars - Excellent</option>
-            <option value={4}>4 Stars - Good</option>
-            <option value={3}>3 Stars - Average</option>
-            <option value={2}>2 Stars - Poor</option>
-            <option value={1}>1 Star - Terrible</option>
-          </select>
-          <textarea
-            value={text}
-            onChange={e => setText(e.target.value)}
-            placeholder="Share your experience..."
-            rows={3}
-            style={{ padding: '12px', borderRadius: '12px', border: '1px solid var(--border)', fontSize: '14px', width: '100%', resize: 'none', background: 'var(--surface)', color: 'var(--text-main)', outline: 'none' }}
-          />
-          <Button type="submit" style={{ width: '100%', fontWeight: 700 }}>Post Review</Button>
-        </form>
+      {loading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '40px 0' }}>
+          <div style={{ width: '30px', height: '30px', border: '3px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+        </div>
       ) : (
-        <div style={{ textAlign: 'center', padding: '16px', background: 'var(--bg)', borderRadius: '12px' }}>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Login to leave a review</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '32px', position: 'relative' }}>
+          {reviews.length === 0 ? (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: 'center', padding: '40px 20px', background: 'var(--surface-hover)', borderRadius: '16px', border: '1px dashed var(--border)' }}>
+              <MessageSquare size={36} strokeWidth={1.5} style={{ margin: '0 auto 12px', color: 'var(--primary)', opacity: 0.6 }} />
+              <p style={{ color: 'var(--text-main)', fontSize: '16px', fontWeight: 700 }}>No reviews yet</p>
+              <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: '4px' }}>Be the first to share your experience!</p>
+            </motion.div>
+          ) : null}
+          
+          <AnimatePresence>
+            {reviews.map(r => (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                key={r.id} 
+                style={{ background: 'var(--bg)', borderRadius: '16px', padding: '20px', border: '1px solid var(--border)', position: 'relative', overflow: 'hidden', boxShadow: 'var(--shadow-sm)' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '14px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', color: '#fff', fontWeight: 700, fontSize: '18px', boxShadow: '0 4px 10px rgba(16,185,129,0.2)' }}>
+                      {r.userPhoto ? <img src={r.userPhoto} alt="Reviewer" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span>{r.userName?.[0]}</span>}
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: '700', fontSize: '15px', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        {r.userName}
+                        {r.isVerified && <CheckCircle2 size={14} color="var(--primary)" />}
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Verified Student</div>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', gap: '2px' }}>
+                      {[1, 2, 3, 4, 5].map(star => (
+                        <Star key={star} size={16} fill={star <= r.rating ? '#F59E0B' : 'none'} color={star <= r.rating ? '#F59E0B' : 'var(--border)'} />
+                      ))}
+                    </div>
+                    {currentUser?.id === r.userId && (
+                      <button
+                        onClick={() => handleDeleteReview(r.id)}
+                        style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}
+                        title="Delete your review"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <p style={{ fontSize: '14.5px', color: 'var(--text-main)', lineHeight: 1.6, margin: 0 }}>{r.text}</p>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       )}
+
+      <div style={{ background: 'var(--bg)', borderRadius: '16px', padding: '24px', border: '1px solid var(--border)', position: 'relative' }}>
+        {currentUser ? (
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-main)' }}>Leave a Review</div>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <motion.div key={star} whileHover={{ scale: 1.2, rotate: 5 }} whileTap={{ scale: 0.9 }}>
+                    <Star
+                      size={24}
+                      fill={(hoverRating || rating) >= star ? '#F59E0B' : 'none'}
+                      color={(hoverRating || rating) >= star ? '#F59E0B' : 'var(--border)'}
+                      style={{ cursor: 'pointer', transition: 'color 0.2s' }}
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(0)}
+                      onClick={() => setRating(star)}
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+            
+            <textarea
+              value={text}
+              onChange={e => setText(e.target.value)}
+              placeholder="How was your experience with this college? Academics, placements, campus life..."
+              rows={4}
+              style={{ 
+                padding: '16px', borderRadius: '12px', border: '1px solid var(--border)', 
+                fontSize: '14.5px', width: '100%', resize: 'none', background: 'var(--surface)', 
+                color: 'var(--text-main)', outline: 'none', transition: 'var(--transition)'
+              }}
+              onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+              onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
+            />
+            <motion.button 
+              type="submit" 
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+              className="btn btn-primary animate-glow-breathe" 
+              style={{ width: '100%', padding: '14px', borderRadius: '12px', border: 'none', cursor: 'pointer', fontWeight: 600 }}
+            >
+              Post Review
+            </motion.button>
+          </form>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '24px 16px' }}>
+            <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'var(--surface-hover)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+              <Users size={28} color="var(--text-muted)" />
+            </div>
+            <p style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-main)' }}>Join the community</p>
+            <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '20px', marginTop: '6px' }}>Log in to share your thoughts and help others make informed decisions.</p>
+            <MagneticButton onClick={() => window.location.href = '/'} className="btn btn-ghost" style={{ border: '1px solid var(--border)', borderRadius: '12px', padding: '12px 28px' }}>
+              Login to Review
+            </MagneticButton>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -370,13 +466,6 @@ export default function UniversityDetail() {
   const { setIsOpen, setPendingPrompt } = useCounselor();
   const [showApply, setShowApply] = useState(false);
   const [showApply2, setShowApply2] = useState(false);
-  const [pageLoading, setPageLoading] = useState(true);
-
-  useEffect(() => {
-    setPageLoading(true);
-    const timer = setTimeout(() => setPageLoading(false), 200);
-    return () => clearTimeout(timer);
-  }, [id]);
 
   const handleAskAI = () => {
     if (!resolvedUniversity) return;
@@ -403,10 +492,6 @@ export default function UniversityDetail() {
       });
     }
   }, [currentUser?.id, resolvedUniversity]);
-
-  if (pageLoading) {
-    return <UniversityDetailSkeleton />;
-  }
 
   if (!resolvedUniversity) {
     return (
@@ -443,13 +528,26 @@ export default function UniversityDetail() {
         }} />
 
         {/* Back */}
-        <button onClick={() => navigate(-1)} style={{
-          position: 'absolute', top: '20px', left: '16px',
-          background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)',
-          border: '1px solid rgba(255,255,255,0.3)',
-          borderRadius: '50%', width: '40px', height: '40px',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff',
-        }}>
+        <button 
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            // Prevent the visual scroll jump caused by Framer Motion's mode="wait" and browser scroll restoration
+            document.documentElement.style.scrollBehavior = 'auto';
+            
+            if (window.history.length > 2) {
+              navigate(-1);
+            } else {
+              navigate('/search');
+            }
+          }} 
+          style={{
+            position: 'absolute', top: '20px', left: '16px',
+            background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(255,255,255,0.3)',
+            borderRadius: '50%', width: '40px', height: '40px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff',
+          }}>
           <ArrowLeft size={20} />
         </button>
 

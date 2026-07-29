@@ -145,7 +145,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
-  const signup = async (email: string, password: string, name: string) => {
+  const signup = React.useCallback(async (email: string, password: string, name: string) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       if (userCredential.user) {
@@ -155,18 +155,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error) {
       throw error;
     }
-  };
+  }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = React.useCallback(async (email: string, password: string) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       return userCredential.user;
     } catch (error) {
       throw error;
     }
-  };
+  }, []);
 
-  const loginWithGoogle = async () => {
+  const loginWithGoogle = React.useCallback(async () => {
     try {
       googleProvider.setCustomParameters({
         prompt: "select_account"
@@ -177,17 +177,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.error("Google login error:", error);
       throw error;
     }
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = React.useCallback(async () => {
     try {
       await signOut(auth);
     } catch (error) {
       console.error("Logout Error:", error);
     }
-  };
+  }, []);
 
-  const updateUserDoc = async (data: Record<string, unknown>) => {
+  const updateUserDoc = React.useCallback(async (data: Record<string, unknown>) => {
     if (!currentUser) return;
     try {
       const userDocRef = doc(db, 'users', currentUser.id);
@@ -196,7 +196,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.error("Error updating user doc:", error);
       throw error;
     }
-  };
+  }, [currentUser]);
 
   const calculateProfileStrength = (user: AppUser | null) => {
     if (!user) return 0;
@@ -209,7 +209,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return Math.min(score, 100);
   };
 
-  const value: AuthContextType = {
+  const value: AuthContextType = React.useMemo(() => ({
     currentUser,
     signup,
     login,
@@ -217,7 +217,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     loginWithGoogle,
     updateUserDoc,
     profileStrength: calculateProfileStrength(currentUser),
-  };
+  }), [currentUser, signup, login, logout, loginWithGoogle, updateUserDoc]);
 
   return (
     <AuthContext.Provider value={value}>

@@ -444,10 +444,8 @@ export default function Home() {
           >
             <SectionRow icon={<Zap size={18} />} title="Recommended for You" />
             {loadingRecs ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {(isMobile ? [1, 2] : [1, 2, 3, 4]).map(i => (
-                  <UniversityCardSkeleton key={i} />
-                ))}
+              <div className="h-48 flex items-center justify-center">
+                <span className="text-slate-400 text-sm font-medium animate-pulse">Loading recommendations...</span>
               </div>
             ) : (
               <motion.div 
@@ -484,10 +482,8 @@ export default function Home() {
 
           <div className="top-matches-container">
             {loadingColleges ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {(isMobile ? [1, 2] : [1, 2, 3, 4]).map(i => (
-                  <UniversityCardSkeleton key={i} />
-                ))}
+              <div className="h-48 flex items-center justify-center">
+                <span className="text-slate-400 text-sm font-medium animate-pulse">Loading top matches...</span>
               </div>
             ) : (
               <>
