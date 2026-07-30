@@ -255,9 +255,9 @@ export default function Home() {
         }}>
           {/* Main Hero Panel */}
           <div style={{
-            background: 'var(--surface-glass-heavy)',
-            backdropFilter: 'blur(24px)',
-            WebkitBackdropFilter: 'blur(24px)',
+            background: isMobile ? 'var(--surface)' : 'var(--surface-glass-heavy)',
+            backdropFilter: isMobile ? 'none' : 'blur(24px)',
+            WebkitBackdropFilter: isMobile ? 'none' : 'blur(24px)',
             borderRadius: 'var(--radius-lg)',
             border: '1px solid rgba(255, 255, 255, 0.1)',
             padding: '40px 32px',
@@ -266,7 +266,8 @@ export default function Home() {
             boxShadow: 'var(--shadow-md)',
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            transform: 'translateZ(0)'
           }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative', zIndex: 2 }}>
               <HolographicBadge>
@@ -298,9 +299,9 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] gap-5">
             {/* Predictor Widget */}
             <div style={{
-              background: 'var(--surface-glass)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
+              background: isMobile ? 'var(--surface)' : 'var(--surface-glass)',
+              backdropFilter: isMobile ? 'none' : 'blur(20px)',
+              WebkitBackdropFilter: isMobile ? 'none' : 'blur(20px)',
               borderRadius: 'var(--radius-lg)',
               border: '1px solid var(--border)',
               padding: '24px',
@@ -360,7 +361,7 @@ export default function Home() {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigate('/search')}
                 style={{
-                  background: 'var(--surface-glass)', backdropFilter: 'blur(16px)', border: '1px solid var(--border)', borderRadius: '16px', padding: '16px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: 'var(--shadow-sm)'
+                  background: isMobile ? 'var(--surface)' : 'var(--surface-glass)', backdropFilter: isMobile ? 'none' : 'blur(16px)', border: '1px solid var(--border)', borderRadius: '16px', padding: '16px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: 'var(--shadow-sm)'
                 }}
               >
                 <Search size={24} color="var(--primary)" />
@@ -371,7 +372,7 @@ export default function Home() {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigate('/compare')}
                 style={{
-                  background: 'var(--surface-glass)', backdropFilter: 'blur(16px)', border: '1px solid var(--border)', borderRadius: '16px', padding: '16px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: 'var(--shadow-sm)'
+                  background: isMobile ? 'var(--surface)' : 'var(--surface-glass)', backdropFilter: isMobile ? 'none' : 'blur(16px)', border: '1px solid var(--border)', borderRadius: '16px', padding: '16px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: 'var(--shadow-sm)'
                 }}
               >
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
@@ -384,7 +385,7 @@ export default function Home() {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigate('/quiz')}
                 style={{
-                  background: 'var(--surface-glass)', backdropFilter: 'blur(16px)', border: '1px solid var(--border)', borderRadius: '16px', padding: '16px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: 'var(--shadow-sm)'
+                  background: isMobile ? 'var(--surface)' : 'var(--surface-glass)', backdropFilter: isMobile ? 'none' : 'blur(16px)', border: '1px solid var(--border)', borderRadius: '16px', padding: '16px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: 'var(--shadow-sm)'
                 }}
               >
                 <Compass size={24} color="var(--primary)" />
@@ -395,7 +396,7 @@ export default function Home() {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigate('/wishlist')}
                 style={{
-                  background: 'var(--surface-glass)', backdropFilter: 'blur(16px)', border: '1px solid var(--border)', borderRadius: '16px', padding: '16px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: 'var(--shadow-sm)'
+                  background: isMobile ? 'var(--surface)' : 'var(--surface-glass)', backdropFilter: isMobile ? 'none' : 'blur(16px)', border: '1px solid var(--border)', borderRadius: '16px', padding: '16px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: 'var(--shadow-sm)'
                 }}
               >
                 <Heart size={24} color="var(--primary)" />

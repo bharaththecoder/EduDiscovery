@@ -90,7 +90,8 @@ const UniversityCard = React.memo(({ university, compact = false, reasons = [], 
         style={{
           transform: isMobile ? 'none' : `perspective(1000px) translateY(${tilt.translateY}px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) scale(${tilt.scale})`,
           transition: isMobile ? 'none' : 'transform 0.22s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.22s ease, border-color 0.22s ease',
-          transformStyle: isMobile ? 'flat' : 'preserve-3d',
+          transformStyle: 'flat',
+          willChange: isMobile ? 'auto' : 'transform',
         }}
       >
         <div style={{ position: 'relative', height: '120px', flexShrink: 0, overflow: 'hidden', borderTopLeftRadius: 'var(--radius-md)', borderTopRightRadius: 'var(--radius-md)' }}>
@@ -175,7 +176,8 @@ const UniversityCard = React.memo(({ university, compact = false, reasons = [], 
         display: 'flex', flexDirection: 'column', height: '100%',
         transform: isMobile ? 'none' : `perspective(1000px) translateY(${tilt.translateY}px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) scale(${tilt.scale})`,
         transition: isMobile ? 'none' : 'transform 0.22s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.22s ease, border-color 0.22s ease',
-        transformStyle: isMobile ? 'flat' : 'preserve-3d',
+        transformStyle: 'flat',
+        willChange: isMobile ? 'auto' : 'transform',
       }}
     >
       {/* Image */}

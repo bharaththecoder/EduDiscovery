@@ -19,6 +19,7 @@ export interface AppUser {
   bio?: string;
   city?: string;
   tags?: string[];
+  isNewUser?: boolean;
   quizResults?: {
     answers: Record<string, string>;
     topMatches: { id: string; name: string; match: number }[];
@@ -82,29 +83,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         };
 
         // Immediately set base user so UI can start rendering if needed
-        // but keep loading true if we want to wait for Firestore
         setCurrentUser(baseUser);
 
         const userDocRef = doc(db, 'users', user.uid);
-        
-        try {
-          const snap = await getDoc(userDocRef);
-          if (!snap.exists()) {
-            await setDoc(userDocRef, {
-              name: baseUser.name,
-              email: baseUser.email,
-              bio: 'Aspiring Engineer • AP Student',
-              tags: ["Early Action", "Stem Scholar"],
-              updatedAt: new Date().toISOString()
-            }, { merge: true });
-          }
-        } catch (error) {
-          console.error("Error checking/seeding user doc:", error);
-          // Don't block app initialization on Firestore errors
-          setLoading(false);
-          return;
-        }
 
+        // Start listening to the snapshot immediately.
+        // If the document doesn't exist, we will seed it in the background asynchronously without blocking the UI loading state.
         unsubscribeFirestore = onSnapshot(userDocRef, {
           next: (docSnap) => {
             if (docSnap.exists()) {
@@ -114,6 +98,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               } as AppUser);
             } else {
               setCurrentUser(baseUser);
+              // Seed document asynchronously without blocking
+              setDoc(userDocRef, {
+                name: baseUser.name,
+                email: baseUser.email,
+                bio: 'Aspiring Engineer • AP Student',
+                tags: ["Early Action", "Stem Scholar"],
+                isNewUser: true,
+                updatedAt: new Date().toISOString()
+              }, { merge: true }).catch(err => {
+                console.error("Error seeding user doc:", err);
+              });
             }
             setLoading(false);
           },
@@ -123,10 +118,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           }
         });
 
-        // Fail-safe: if Firestore hasn't responded in 1.5 seconds, stop loading
+        // Fail-safe: if Firestore hasn't responded in 800ms, stop loading
         timeout = setTimeout(() => {
           setLoading(false);
-        }, 1500);
+        }, 800);
 
       } else {
         setCurrentUser(null);

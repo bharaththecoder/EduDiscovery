@@ -25,7 +25,7 @@ const ProtectedLayout = () => {
 
   if (!currentUser) return <Navigate to="/" replace />;
 
-  const needsQuiz = !currentUser.quizResults;
+  const needsQuiz = currentUser.isNewUser && !currentUser.quizResults;
   const isOnQuizFlow = location.pathname === '/quiz' || location.pathname === '/quiz-result';
 
   if (needsQuiz && !isOnQuizFlow) {

@@ -219,6 +219,7 @@ export default function SearchPage() {
             <form
               onSubmit={handleSubmit}
               style={{
+                width: '100%',
                 background: 'var(--search-bg)',
                 border: '2px solid var(--search-border)',
                 borderRadius: '20px',
@@ -264,6 +265,7 @@ export default function SearchPage() {
                 onFocus={() => query.length >= 2 && setShowSuggestions(true)}
                 style={{
                   flex: 1,
+                  minWidth: 0,
                   padding: '12px 8px',
                   fontSize: '15px',
                   outline: 'none',

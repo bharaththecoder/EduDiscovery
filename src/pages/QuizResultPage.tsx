@@ -343,6 +343,7 @@ export default function QuizResult() {
               completedAt: new Date().toISOString(),
             },
             preferences: answers,
+            isNewUser: false,
           });
           setIsSynced(true);
         } catch { /* silent */ }

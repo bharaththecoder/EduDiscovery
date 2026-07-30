@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useToast } from '@/contexts/ToastContext';
-import { ChevronDown, ChevronUp, Bell, Shield, HelpCircle, Edit3, LogOut, Camera, Sun, Moon } from 'lucide-react';
+import { ChevronDown, ChevronUp, Bell, Shield, HelpCircle, Edit3, LogOut, Camera, Sun, Moon, Megaphone, FileText, GraduationCap, Heart, Sparkles, Rocket, BarChart3, FolderHeart } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import UniversityCard from '@/components/cards/UniversityCard';
@@ -12,7 +12,7 @@ import { getRecommendations } from '@/utils/quizAgent';
 import { universities } from '@/data/universities';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import { motion } from 'framer-motion';
-import { OrbitRing, AnimatedCounter3D, HolographicBadge, MagneticButton, SpotlightCard, FloatingEmoji3D } from '@/components/Animation3DComponents';
+import { OrbitRing, AnimatedCounter3D, HolographicBadge, SpotlightCard, FloatingEmoji3D } from '@/components/Animation3DComponents';
 
 const FAQS = [
   { q: 'How does the completion score work?', a: 'Your profile score is calculated based on how much information you have shared. A complete profile (Photo, Bio, Tags, and Base Info) helps us provide better college recommendations.' },
@@ -67,7 +67,7 @@ function EditModal({ currentUser, onClose }: { currentUser: any; onClose: () => 
   return (
     <div className="overlay" onClick={onClose}>
       <div className="modal-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
-        <MagneticButton onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', zIndex: 10 }}>×</MagneticButton>
+        <button onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', zIndex: 10 }}>×</button>
         <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '20px' }}>Edit Profile</h2>
         
         <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -94,7 +94,7 @@ function EditModal({ currentUser, onClose }: { currentUser: any; onClose: () => 
             <label style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '8px', display: 'block' }}>Professional Tags</label>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {AVAILABLE_TAGS.map(tag => (
-                <MagneticButton
+                <button
                   key={tag}
                   type="button"
                   onClick={() => toggleTag(tag)}
@@ -111,14 +111,14 @@ function EditModal({ currentUser, onClose }: { currentUser: any; onClose: () => 
                   }}
                 >
                   {tag}
-                </MagneticButton>
+                </button>
               ))}
             </div>
           </div>
 
-          <MagneticButton type="submit" disabled={loading} className="btn btn-primary btn-full" style={{ padding: '15px', marginTop: '10px' }}>
+          <button type="submit" disabled={loading} className="btn btn-primary btn-full" style={{ padding: '15px', marginTop: '10px' }}>
             {loading ? 'Syncing...' : 'Save to Cloud'}
-          </MagneticButton>
+          </button>
         </form>
       </div>
     </div>
@@ -127,19 +127,19 @@ function EditModal({ currentUser, onClose }: { currentUser: any; onClose: () => 
 
 function NotificationsModal({ onClose }: { onClose: () => void }) {
   const notifications = [
-    { icon: '📢', text: 'AP EAPCET 2024: Final phase allotment results are out. Check your status now.', time: 'Just now', color: 'var(--primary)' },
-    { icon: '📜', text: 'Jnanabhumi Portal open for 2024-25 Fee Reimbursement applications.', time: '3 hours ago', color: 'var(--accent)' },
-    { icon: '🎓', text: 'Vidyadhan Scholarship: Meritorious students (10th/Inter) can apply via Sarojini Damodaran Foundation.', time: 'Yesterday', color: '#8b5cf6' },
+    { icon: <Megaphone size={24} color="var(--primary)" />, text: 'AP EAPCET 2024: Final phase allotment results are out. Check your status now.', time: 'Just now', color: 'var(--primary)' },
+    { icon: <FileText size={24} color="var(--accent)" />, text: 'Jnanabhumi Portal open for 2024-25 Fee Reimbursement applications.', time: '3 hours ago', color: 'var(--accent)' },
+    { icon: <GraduationCap size={24} color="#8b5cf6" />, text: 'Vidyadhan Scholarship: Meritorious students (10th/Inter) can apply via Sarojini Damodaran Foundation.', time: 'Yesterday', color: '#8b5cf6' },
   ];
   return (
     <div className="overlay" onClick={onClose}>
       <div className="modal-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
-        <MagneticButton onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>×</MagneticButton>
+        <button onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>×</button>
         <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '20px' }}>Educational Updates</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           {notifications.map((n, i) => (
             <div key={i} style={{ display: 'flex', gap: '14px', alignItems: 'flex-start', padding: '16px', background: 'var(--bg)', borderRadius: 'var(--radius-md)', border: `1px solid ${n.color}44` }}>
-              <div style={{ fontSize: '24px' }}>{n.icon}</div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{n.icon}</div>
               <div>
                 <p style={{ fontWeight: '600', fontSize: '14px', marginBottom: '4px', lineHeight: '1.4' }}>{n.text}</p>
                 <p style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{n.time}</p>
@@ -159,7 +159,7 @@ function PrivacyModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="overlay" onClick={onClose}>
       <div className="modal-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
-        <MagneticButton onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>×</MagneticButton>
+        <button onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>×</button>
         <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '20px' }}>Privacy & Security</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
           {Object.entries(labels).map(([key, label]) => {
@@ -190,7 +190,7 @@ function HelpModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="overlay" onClick={onClose}>
       <div className="modal-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
-        <MagneticButton onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>×</MagneticButton>
+        <button onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>×</button>
         <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '20px' }}>Help Center & FAQs</h2>
         {FAQS.map((faq, i) => (
           <div key={i} className="faq-item">
@@ -230,23 +230,38 @@ export default function Profile() {
   const matchAnalytics = React.useMemo(() => {
     const answers = currentUser?.quizResults?.answers;
     if (!answers) return null;
-    const { all } = getRecommendations(universities, answers as any, 8);
-    if (all.length === 0) return null;
 
-    const branchAvg = Math.round(all.reduce((acc, u) => acc + u.breakdown.branchPct, 0) / all.length);
-    const budgetAvg = Math.round(all.reduce((acc, u) => acc + u.breakdown.budgetPct, 0) / all.length);
-    const locationAvg = Math.round(all.reduce((acc, u) => acc + u.breakdown.locationPct, 0) / all.length);
-    const typeAvg = Math.round(all.reduce((acc, u) => acc + u.breakdown.typePct, 0) / all.length);
-    const rankAvg = Math.round(all.reduce((acc, u) => acc + u.breakdown.rankPct, 0) / all.length);
+    let targetColleges: any[] = [];
+    let isBasedOnWishlist = false;
 
-    return [
-      { subject: 'Branch Match', score: branchAvg },
-      { subject: 'Budget Fit', score: budgetAvg },
-      { subject: 'Location Preference', score: locationAvg },
-      { subject: 'College Type', score: typeAvg },
-      { subject: 'Rank Match', score: rankAvg },
-    ];
-  }, [currentUser?.quizResults?.answers]);
+    if (wishlist.length > 0) {
+      const { all } = getRecommendations(wishlist, answers as any, wishlist.length);
+      targetColleges = all;
+      isBasedOnWishlist = true;
+    } else {
+      const { all } = getRecommendations(universities, answers as any, 8);
+      targetColleges = all;
+    }
+    
+    if (targetColleges.length === 0) return null;
+
+    const branchAvg = Math.round(targetColleges.reduce((acc, u) => acc + (u.breakdown?.branchPct || 0), 0) / targetColleges.length);
+    const budgetAvg = Math.round(targetColleges.reduce((acc, u) => acc + (u.breakdown?.budgetPct || 0), 0) / targetColleges.length);
+    const locationAvg = Math.round(targetColleges.reduce((acc, u) => acc + (u.breakdown?.locationPct || 0), 0) / targetColleges.length);
+    const typeAvg = Math.round(targetColleges.reduce((acc, u) => acc + (u.breakdown?.typePct || 0), 0) / targetColleges.length);
+    const rankAvg = Math.round(targetColleges.reduce((acc, u) => acc + (u.breakdown?.rankPct || 0), 0) / targetColleges.length);
+
+    return {
+      isBasedOnWishlist,
+      data: [
+        { subject: 'Branch Match', score: branchAvg },
+        { subject: 'Budget Fit', score: budgetAvg },
+        { subject: 'Location Preference', score: locationAvg },
+        { subject: 'College Type', score: typeAvg },
+        { subject: 'Rank Match', score: rankAvg },
+      ]
+    };
+  }, [currentUser?.quizResults?.answers, wishlist, universities]);
   
 
   const handleAvatarClick = () => fileInputRef.current?.click();
@@ -357,8 +372,8 @@ export default function Profile() {
             {/* Stats */}
             <div className="stats-grid" style={{ marginBottom: '24px' }}>
           {[
-            { label: 'Applications', value: appliedCount, icon: '📜' },
-            { label: 'Wishlist', value: wishlist.length, icon: '❤️' },
+            { label: 'Applications', value: appliedCount, icon: <FileText size={30} color="var(--primary)" /> },
+            { label: 'Wishlist', value: wishlist.length, icon: <Heart size={30} color="#e11d48" /> },
           ].map((s, i) => (
             <div key={i} className="stat-card" style={{ padding: '20px' }}>
               <div style={{ fontSize: '24px', marginBottom: '8px' }}>{s.icon}</div>
@@ -370,14 +385,14 @@ export default function Profile() {
 
             {/* Daily Insights */}
             <div style={{ marginBottom: '24px' }}>
-              <h2 style={{ fontSize: '18px', fontWeight: '900', marginBottom: '14px' }}>✨ Daily Insights</h2>
+              <h2 style={{ fontSize: '18px', fontWeight: '900', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}><Sparkles size={20} color="#f59e0b" /> Daily Insights</h2>
               <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-lg)', padding: '20px', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' }}>
                  <p style={{ fontSize: '14px', lineHeight: 1.6, color: 'var(--text-main)', marginBottom: '12px' }}>
                    Based on your profile as an <strong>{profile.bio}</strong> and your tags, we recommend checking out Early Action deadlines for autonomous institutions. Specifically, colleges ranked in the Top 5000 are increasingly looking for <em>{profile.tags[1] || 'well-rounded'}</em> applicants this week.
                  </p>
                  <div style={{ background: 'var(--primary-light)', padding: '12px 16px', borderRadius: '12px', display: 'flex', gap: '12px', alignItems: 'center' }}>
-                    <div style={{ background: '#fff', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <span style={{ fontSize: '18px' }}>🚀</span>
+                    <div style={{ background: '#fff', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: 'var(--shadow-sm)' }}>
+                      <Rocket size={16} color="var(--primary)" />
                     </div>
                     <div>
                       <div style={{ fontSize: '12px', fontWeight: '800', color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>Action Item</div>
@@ -390,12 +405,14 @@ export default function Profile() {
             {/* Dynamic Match Analytics Chart */}
             {matchAnalytics && (
               <div style={{ marginBottom: '24px' }}>
-                <h2 style={{ fontSize: '18px', fontWeight: '900', marginBottom: '14px' }}>📊 Preference Fit Analytics</h2>
+                <h2 style={{ fontSize: '18px', fontWeight: '900', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}><BarChart3 size={20} color="var(--primary)" /> Preference Fit Analytics</h2>
                 <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-lg)', padding: '20px', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' }}>
-                  <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px', fontWeight: '600' }}>Your match affinity percentages based on your last quiz answers</p>
+                  <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px', fontWeight: '600' }}>
+                    {matchAnalytics.isBasedOnWishlist ? 'Your match affinity percentages based on your wishlisted colleges' : 'Your match affinity percentages based on your top recommended colleges'}
+                  </p>
                   <div style={{ width: '100%', height: '240px' }}>
                     <ResponsiveContainer width="100%" height="100%">
-                      <RadarChart cx="50%" cy="50%" outerRadius="75%" data={matchAnalytics}>
+                      <RadarChart cx="50%" cy="50%" outerRadius="75%" data={matchAnalytics.data}>
                         <PolarGrid stroke="#e2e8f0" />
                         <PolarAngleAxis dataKey="subject" tick={{ fill: '#475569', fontSize: 11, fontWeight: 700 }} />
                         <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
@@ -410,7 +427,7 @@ export default function Profile() {
             {wishlist.length > 0 ? (
               <div style={{ marginBottom: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                  <h2 style={{ fontSize: '18px', fontWeight: '900' }}>❤️ My Wishlist</h2>
+                  <h2 style={{ fontSize: '18px', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '8px' }}><Heart size={20} fill="#e11d48" color="#e11d48" /> My Wishlist</h2>
                   <span onClick={() => navigate('/wishlist')} style={{ fontSize: '13px', color: 'var(--primary)', fontWeight: '700', cursor: 'pointer' }}>See All</span>
                 </div>
                 <div className="scroll-row">
@@ -424,12 +441,12 @@ export default function Profile() {
             ) : (
               <div style={{ marginBottom: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                  <h2 style={{ fontSize: '18px', fontWeight: '900' }}>❤️ My Wishlist</h2>
+                  <h2 style={{ fontSize: '18px', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '8px' }}><Heart size={20} fill="#e11d48" color="#e11d48" /> My Wishlist</h2>
                 </div>
                 <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-lg)', padding: '32px', textAlign: 'center', border: '1.5px dashed var(--border)' }}>
-                  <FloatingEmoji3D emoji="💭" size={40} />
+                  <FolderHeart size={48} strokeWidth={1} color="var(--text-muted)" style={{ margin: '0 auto' }} />
                   <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: '16px', fontWeight: '600' }}>Your wishlist is empty. Start exploring!</p>
-                  <MagneticButton onClick={() => navigate('/search')} className="btn btn-ghost" style={{ marginTop: '12px', fontSize: '13px' }}>Explore Colleges</MagneticButton>
+                  <button onClick={() => navigate('/search')} className="btn btn-ghost" style={{ marginTop: '12px', fontSize: '13px' }}>Explore Colleges</button>
                 </div>
               </div>
             )}
@@ -441,7 +458,7 @@ export default function Profile() {
             <h2 style={{ fontSize: '18px', fontWeight: '900', marginBottom: '14px' }}>Account Settings</h2>
         <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)', marginBottom: '24px', border: '1px solid var(--border)' }}>
           {quickActions.map((action, i) => (
-            <MagneticButton
+            <button
               key={i}
               onClick={() => setModal(action.modal)}
               style={{
@@ -460,7 +477,7 @@ export default function Profile() {
                 <span style={{ fontWeight: '700', fontSize: '15px', color: 'var(--text-main)', display: 'block' }}>{action.label}</span>
               </div>
               <span style={{ color: 'var(--text-muted)', fontSize: '20px' }}>›</span>
-            </MagneticButton>
+            </button>
           ))}
         </div>
  
@@ -482,7 +499,7 @@ export default function Profile() {
               </p>
               
               <div style={{ display: 'flex', gap: '12px' }}>
-                <MagneticButton
+                <button
                   onClick={() => setTheme('light')}
                   style={{
                     flex: 1,
@@ -502,9 +519,9 @@ export default function Profile() {
                   }}
                 >
                   <Sun size={16} /> Light
-                </MagneticButton>
+                </button>
                 
-                <MagneticButton
+                <button
                   onClick={() => setTheme('dark')}
                   style={{
                     flex: 1,
@@ -524,25 +541,25 @@ export default function Profile() {
                   }}
                 >
                   <Moon size={16} /> Dark
-                </MagneticButton>
+                </button>
               </div>
             </div>
 
             {/* Sign Out */}
-            <MagneticButton
+            <button
               onClick={handleSignOut}
               style={{
-                width: '100%', padding: '18px', background: '#fff1f2', color: '#e11d48',
-                borderRadius: 'var(--radius-lg)', border: '1.5px solid #fecdd3',
+                width: '100%', padding: '18px', background: 'var(--color-destructive-light, #fee2e2)', color: 'var(--color-destructive)',
+                borderRadius: 'var(--radius-lg)', border: '1.5px solid var(--color-destructive-border, #fecaca)',
                 fontWeight: '900', fontSize: '15px', display: 'flex', alignItems: 'center',
                 justifyContent: 'center', gap: '10px', cursor: 'pointer',
                 transition: 'all 0.2s'
               }}
-              onMouseOver={e => e.currentTarget.style.background = '#ffe4e6'}
-              onMouseOut={e => e.currentTarget.style.background = '#fff1f2'}
+              onMouseOver={e => e.currentTarget.style.background = 'var(--color-destructive-hover, #fecaca)'}
+              onMouseOut={e => e.currentTarget.style.background = 'var(--color-destructive-light, #fee2e2)'}
             >
               <LogOut size={20} /> Sign Out
-            </MagneticButton>
+            </button>
           </div>
         </div>
       </div>
