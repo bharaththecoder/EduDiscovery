@@ -573,10 +573,17 @@ export default function PredictorPage() {
                   <div style={{ position: 'relative', marginTop: '8px' }}>
                     <input
                       type="number"
-                      value={rank || ''}
+                      min="1"
+                      max={exam === 'EAPCET' ? 150000 : 75000}
+                      value={rank > 0 ? rank : ''}
                       onChange={e => {
-                        const val = parseInt(e.target.value) || 0;
-                        setRank(Math.min(val, exam === 'EAPCET' ? 120000 : 60000));
+                        const parsed = parseInt(e.target.value, 10);
+                        if (isNaN(parsed) || parsed <= 0) {
+                          setRank(0);
+                        } else {
+                          const maxLimit = exam === 'EAPCET' ? 150000 : 75000;
+                          setRank(Math.min(parsed, maxLimit));
+                        }
                       }}
                       placeholder="e.g. 15000"
                       style={{

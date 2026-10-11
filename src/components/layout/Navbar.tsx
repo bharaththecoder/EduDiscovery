@@ -196,6 +196,7 @@ export default function Navbar() {
         <div className="md:hidden flex items-center gap-3">
           <button 
             onClick={toggleTheme} 
+            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
             style={{
               background: 'var(--primary-light)', 
               width: '34px', 
@@ -225,7 +226,13 @@ export default function Navbar() {
               </motion.div>
             </AnimatePresence>
           </button>
-          <button onClick={() => setMenuOpen(!menuOpen)} style={{ color: 'var(--text-main)', padding: '4px', background: 'transparent', border: 'none', cursor: 'pointer' }}>
+          <button 
+            onClick={() => setMenuOpen(!menuOpen)} 
+            aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-nav-dropdown"
+            style={{ color: 'var(--text-main)', padding: '4px', background: 'transparent', border: 'none', cursor: 'pointer' }}
+          >
             {menuOpen ? <X size={26} /> : <Menu size={26} />}
           </button>
         </div>
