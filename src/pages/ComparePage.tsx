@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Search, MapPin, CheckCircle2, Share2, Trash2, ArrowLeftRight, Check, X, ShieldAlert, Award, GraduationCap, Building2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useUniversities } from '@/contexts/UniversityContext';
+import { useCounselor } from '@/contexts/CounselorContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, BarChart, Bar } from 'recharts';
@@ -30,6 +31,7 @@ function ScoreBar({ label, value, color, icon }: { label: string, value: number,
 }
 
 function AIVerdict({ colleges }: { colleges: University[] }) {
+  const { setIsOpen, setPendingPrompt } = useCounselor();
   if (colleges.length < 2) return null;
 
   const verdict = React.useMemo(() => {
@@ -92,9 +94,33 @@ function AIVerdict({ colleges }: { colleges: University[] }) {
         {verdict.text} Our intelligence engine analyzed the package-to-fee ratio and historical placement rates across all branches.
       </p>
 
-      <div style={{ display: 'flex', gap: '16px', marginTop: '24px' }}>
-        <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }} className="btn btn-primary" style={{ background: '#fff', color: 'var(--primary)', border: 'none' }}>View Detailed Analysis</motion.button>
-        <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }} style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', padding: '12px 24px', borderRadius: '99px', fontWeight: '700', fontSize: '14px' }}>Talk to a Mentor</motion.button>
+      <div style={{ display: 'flex', gap: '16px', marginTop: '24px', flexWrap: 'wrap' }}>
+        <motion.button
+          onClick={() => {
+            const chartSection = document.getElementById('comparison-charts-section');
+            if (chartSection) {
+              chartSection.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+          whileHover={{ scale: 1.05, y: -2 }}
+          whileTap={{ scale: 0.97 }}
+          className="btn btn-primary"
+          style={{ background: '#fff', color: 'var(--primary)', border: 'none', cursor: 'pointer' }}
+        >
+          View Detailed Charts
+        </motion.button>
+        <motion.button
+          onClick={() => {
+            const names = colleges.map(c => c.shortName || c.name).join(' vs ');
+            setPendingPrompt(`Can you provide an in-depth comparative breakdown between ${names}? Consider placements, branch options, and fee structures.`);
+            setIsOpen(true);
+          }}
+          whileHover={{ scale: 1.05, y: -2 }}
+          whileTap={{ scale: 0.97 }}
+          style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', padding: '12px 24px', borderRadius: '99px', fontWeight: '700', fontSize: '14px', cursor: 'pointer' }}
+        >
+          Talk to AI Counselor
+        </motion.button>
       </div>
     </motion.div>
   );
@@ -106,14 +132,35 @@ export default function ComparePage() {
     document.title = "Compare Colleges | EduDiscovery AP";
   }, []);
 
+  const [searchParams] = useSearchParams();
+  const lastCollegesParamRef = React.useRef<string | null>(null);
   const { universities, loading: loadingColleges } = useUniversities();
   const [selectedColleges, setSelectedColleges] = useState<(University | null)[]>([null, null]);
   const [chartType, setChartType] = useState<'overall' | 'placements' | 'fees'>('overall');
   const { showToast } = useToast() as { showToast: (msg: string, type: string) => void };
 
+  // Parse 'colleges' query parameter from URL (e.g. ?colleges=vit-ap,srm-ap)
+  React.useEffect(() => {
+    const collegesParam = searchParams.get('colleges');
+    if (collegesParam && collegesParam !== lastCollegesParamRef.current && universities.length > 0) {
+      lastCollegesParamRef.current = collegesParam;
+      const ids = collegesParam.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+      const matched = ids
+        .map(id => universities.find(u => u.id.toLowerCase() === id || u.shortName?.toLowerCase() === id))
+        .filter((u): u is University => !!u);
+      if (matched.length > 0) {
+        const slots: (University | null)[] = [...matched];
+        while (slots.length < 2) {
+          slots.push(null);
+        }
+        setSelectedColleges(slots.slice(0, 3));
+      }
+    }
+  }, [searchParams, universities]);
+
   const validColleges = selectedColleges.filter((c): c is University => c !== null);
 
-  const handleShare = () => {
+  const handleShare = async () => {
     if (validColleges.length === 0) return;
     
     let report = `⚖️ EDUDISCOVERY AP - COLLEGE COMPARISON REPORT\n`;
@@ -129,8 +176,26 @@ export default function ComparePage() {
       report += `   - Minimum Tuition Fee: ₹${minFee.toLocaleString()}/yr\n\n`;
     });
     
-    navigator.clipboard.writeText(report);
-    showToast('📋 Comparison summary copied to clipboard!', 'success');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(report);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = report;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        if (!successful) throw new Error('Fallback execCommand copy failed');
+      }
+      showToast('📋 Comparison summary copied to clipboard!', 'success');
+    } catch (err) {
+      console.error('Clipboard copy error:', err);
+      showToast('⚠️ Could not copy report to clipboard. Please copy manually.', 'error');
+    }
   };
 
   const generatePlacementData = () => {
@@ -408,7 +473,7 @@ export default function ComparePage() {
       {/* Advanced Chart Comparison */}
       {validColleges.length > 1 && (
         <>
-          <div className="mt-8 border border-slate-200 overflow-hidden shadow-md rounded-[24px] bg-white">
+          <div id="comparison-charts-section" className="mt-8 border border-slate-200 overflow-hidden shadow-md rounded-[24px] bg-white">
             <div className="bg-slate-50/50 border-b border-slate-100 px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <CardTitle className="text-lg font-black text-slate-800">Visual Performance Analysis</CardTitle>

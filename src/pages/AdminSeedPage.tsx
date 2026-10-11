@@ -1,26 +1,39 @@
 import React, { useState } from 'react';
 import { universities } from '@/data/universities';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Database, Terminal, Cpu, CheckCircle2, Sparkles } from 'lucide-react';
+import { Database, Terminal, Cpu, CheckCircle2, Sparkles, ShieldAlert } from 'lucide-react';
 import { MagneticButton, HolographicBadge, ConfettiExplosion, SpotlightCard, InteractiveFluidParticles } from '@/components/Animation3DComponents';
+import { useAuth } from '@/contexts/AuthContext';
+import { auth } from '@/services/firebase';
 
 export default function AdminSeed() {
+  const { currentUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
 
   const seedDatabase = async () => {
+    if (!auth.currentUser) {
+      setLogs(['❌ Error: You must be signed in with an authorized administrator account to run seeding.']);
+      return;
+    }
+
     setLoading(true);
-    setLogs(['🚀 Handshaking with backend API...', '🔍 Fetching local college database schema (45+ universities)...']);
+    setLogs(['🚀 Handshaking with backend API with administrator token...', '🔍 Fetching local college database schema (45+ universities)...']);
     
     try {
-      // Simulate step-by-step connection logs before starting fetch
+      // Obtain fresh Firebase ID Token for server-side verification
+      const idToken = await auth.currentUser.getIdToken(true);
+
       await new Promise(resolve => setTimeout(resolve, 800));
       setLogs(prev => [...prev, '⚡ Pushing colleges data stream to Firestore...']);
       
-      const response = await fetch('http://localhost:3001/api/seed', {
+      const response = await fetch('/api/seed', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`,
+        },
         body: JSON.stringify({ colleges: universities })
       });
       
@@ -130,9 +143,29 @@ export default function AdminSeed() {
                 Pushes the full catalog of universities to Firebase and invokes the Gemini API to compute vectors. This may take up to 30 seconds to complete.
               </p>
 
+              {!currentUser && (
+                <div style={{
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  padding: '12px 16px',
+                  borderRadius: '12px',
+                  marginBottom: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  color: '#EF4444',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  textAlign: 'left'
+                }}>
+                  <ShieldAlert size={20} style={{ flexShrink: 0 }} />
+                  <span>Administrative authentication required. Please sign in with an authorized Google account holding admin privileges to run vector seeding.</span>
+                </div>
+              )}
+
               <MagneticButton
                 onClick={seedDatabase}
-                disabled={loading}
+                disabled={loading || !currentUser}
                 className="btn btn-primary shine-on-hover animate-glow-breathe"
                 style={{
                   padding: '16px 40px',
@@ -143,7 +176,8 @@ export default function AdminSeed() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '8px',
-                  cursor: loading ? 'not-allowed' : 'pointer'
+                  cursor: (loading || !currentUser) ? 'not-allowed' : 'pointer',
+                  opacity: (!currentUser && !loading) ? 0.6 : 1
                 }}
               >
                 {loading ? (

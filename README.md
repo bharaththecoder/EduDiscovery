@@ -3,7 +3,7 @@
 > **The smartest AI-powered college discovery & decision platform in Andhra Pradesh.**  
 > Semantic AI search, RAG counselor chat, side-by-side comparison matrix, EAPCET rank predictor, and smart wishlist management — built for modern students.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-edudiscovery.vercel.app-black?style=for-the-badge&logo=vercel)](https://edu-discovery.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-edu--discovery.vercel.app-black?style=for-the-badge&logo=vercel)](https://edu-discovery.vercel.app)
 &nbsp;
 [![React](https://img.shields.io/badge/React%2019-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite%208-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)

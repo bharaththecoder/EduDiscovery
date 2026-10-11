@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { streamChat } from "./aiHelper.js";
 import admin, { db } from "./firebaseAdmin.js";
+import { applyRateLimit } from "./rateLimiter.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -159,13 +160,21 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // ── Abuse Protection: Serverless Rate Limiting ───────────────
+  const allowed = await applyRateLimit(req, res, { prefix: 'chat', limit: 15, windowSeconds: 60 });
+  if (!allowed) return;
+
   try {
     const { message, context, history = [] } = req.body;
 
     if (!message) {
       return res.status(400).json({ reply: "Message is required" });
     }
-
+    if (typeof message !== 'string' || message.length > 2000) {
+      return res.status(400).json({ reply: "Message must be a string under 2000 characters" });
+    }
+    // Cap history to prevent prompt stuffing
+    const safeHistory = Array.isArray(history) ? history.slice(-20) : [];
     // ── RAG: Fetch relevant college facts ─────────────────────
     const collegeFacts = await fetchRelevantCollegeFacts(message);
 
@@ -189,7 +198,7 @@ Instructions:
 - CITE YOUR SOURCES: Whenever you mention specific fees, placement numbers, or college metrics, append an explicit citation at the bottom or inline, like \`[Source: Official College Portal / APSCHE 2026]\`.
 - Keep a professional, encouraging, and helpful tone.`;
 
-    await streamChat(message, systemInstruction, history, res);
+    await streamChat(message, systemInstruction, safeHistory, res);
 
   } catch (error) {
     console.error("Chat API Error:", error);

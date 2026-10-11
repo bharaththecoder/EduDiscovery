@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { generateText } from "./aiHelper.js";
 import { db } from "./firebaseAdmin.js";
+import { applyRateLimit } from "./rateLimiter.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -77,9 +78,18 @@ function parseBudgetMax(budgetStr) {
 export default async function searchHandler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
+  // ── Abuse Protection: Serverless Rate Limiting ───────────────
+  const allowed = await applyRateLimit(req, res, { prefix: 'search', limit: 30, windowSeconds: 60 });
+  if (!allowed) return;
+
   try {
-    const { query, budget, branch } = req.body;
-    if (!query) return res.status(400).json({ error: "Query is required" });
+    const { query, budget, branch, city } = req.body || {};
+    if (!query || typeof query !== 'string' || !query.trim()) {
+      return res.status(400).json({ error: "A valid non-empty search query is required." });
+    }
+    if (query.trim().length > 500) {
+      return res.status(400).json({ error: "Query must be under 500 characters." });
+    }
 
     // 1. Generate embedding for user query with fallback handling
     let queryEmbedding = null;
@@ -88,7 +98,7 @@ export default async function searchHandler(req, res) {
     try {
       if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_actual_key_here') {
         const embedModel = genAI.getGenerativeModel({ model: "gemini-embedding-001" });
-        const result = await embedModel.embedContent(query);
+        const result = await embedModel.embedContent(query.trim());
         queryEmbedding = result.embedding.values;
       } else {
         embedError = "No Gemini API Key available for text embedding.";
@@ -113,14 +123,16 @@ export default async function searchHandler(req, res) {
       return res.status(500).json({ error: "No colleges found in database. Please run the seeder." });
     }
 
-    // 3. Apply intent-based pre-filters
+    // 3. Apply intent-based constraints strictly (never bypass or reset when matches are few)
     const budgetMax = parseBudgetMax(budget);
-    const branchLower = branch ? branch.toLowerCase() : null;
+    const branchLower = branch ? branch.toLowerCase().trim() : null;
+    const explicitCityLower = city ? city.toLowerCase().trim() : null;
 
     let collegePool = cachedColleges;
 
+    // Hard filter: Budget constraint
     if (budgetMax) {
-      const budgetFiltered = collegePool.filter(c => {
+      collegePool = collegePool.filter(c => {
         const feeValues = c.branchFees ? Object.values(c.branchFees).filter(v => typeof v === 'number' && !isNaN(v)) : [];
         const fees = feeValues.length > 0
           ? Math.min(...feeValues)
@@ -130,26 +142,42 @@ export default async function searchHandler(req, res) {
                 if (f === 0 && p.mgmtFees) f = parseInt((p.mgmtFees || '').replace(/[^0-9]/g, '')) || 0;
                 return f || Infinity;
               }).filter(f => f < Infinity))
-            : Infinity;
-        return fees <= budgetMax * 1.2; // 20% buffer
+            : (c.tuitionFee || Infinity);
+        return fees <= budgetMax;
       });
-      if (budgetFiltered.length >= 3) collegePool = budgetFiltered;
     }
 
+    // Hard filter: Branch constraint
     if (branchLower) {
-      const branchFiltered = collegePool.filter(c => {
-        const searchStr = [...(c.tags || []), ...(c.branches || []), c.name || ''].join(' ').toLowerCase();
+      collegePool = collegePool.filter(c => {
+        const branchList = (c.branches || []).map(b => b.toLowerCase());
+        const programList = (c.programs || []).map(p => (p.name || '').toLowerCase());
+        const tagList = (c.tags || []).map(t => t.toLowerCase());
+        const searchStr = `${c.name || ''} ${tagList.join(' ')} ${branchList.join(' ')} ${programList.join(' ')}`.toLowerCase();
         return searchStr.includes(branchLower);
       });
-      if (branchFiltered.length >= 2) collegePool = branchFiltered;
     }
 
-    // Dynamically resolve all unique cities from database rather than maintaining a hardcoded list
+    // Hard filter: City constraint
     const uniqueCities = [...new Set(cachedColleges.map(c => c.city ? c.city.toLowerCase() : '').filter(Boolean))];
     const lowerQuery = query.toLowerCase();
-    const matchedCity = uniqueCities.find(c => lowerQuery.includes(c));
-    if (matchedCity) {
-      console.log(`[Search-AI] Identified target city intent: "${matchedCity}" in query: "${query}"`);
+    const detectedCity = uniqueCities.find(c => lowerQuery.includes(c));
+    const targetCity = explicitCityLower || detectedCity;
+
+    if (targetCity) {
+      const cityFiltered = collegePool.filter(c => c.city && c.city.toLowerCase() === targetCity);
+      // Preserve city constraint if explicitly provided or requested with "in <city>"
+      if (explicitCityLower || lowerQuery.includes(`in ${targetCity}`) || lowerQuery.includes(`at ${targetCity}`)) {
+        collegePool = cityFiltered;
+      }
+    }
+
+    // Zero-match handling: return clear, user-facing explanation instead of silent fallback
+    if (collegePool.length === 0) {
+      return res.status(200).json({
+        results: [],
+        reasoning: "No colleges in our database meet all of your specified criteria (budget limit, branch, and location). Try increasing your budget limit or expanding your branch preferences."
+      });
     }
 
     // 4. Compute raw scores for RRF
@@ -162,7 +190,7 @@ export default async function searchHandler(req, res) {
       }
 
       const intellScore = computeIntelligenceScore(college);
-      const isCityMatch = matchedCity && college.city && college.city.toLowerCase() === matchedCity;
+      const isCityMatch = targetCity && college.city && college.city.toLowerCase() === targetCity;
 
       return { ...college, semanticScore, intellScore, isCityMatch };
     });
@@ -210,6 +238,6 @@ Briefly explain in 2-3 sentences why this college is the best match. Be enthusia
 
   } catch (error) {
     console.error("Search API Error:", error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: "Search failed. Please try again." });
   }
 }

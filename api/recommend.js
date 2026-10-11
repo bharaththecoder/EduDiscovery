@@ -4,26 +4,48 @@
 // ============================================================
 import dotenv from 'dotenv';
 import admin, { db } from './firebaseAdmin.js';
+import { applyRateLimit } from './rateLimiter.js';
 
 dotenv.config();
 
 export default async function recommendHandler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
+  // ── Abuse Protection: Serverless Rate Limiting ───────────────
+  const allowed = await applyRateLimit(req, res, { prefix: 'recommend', limit: 20, windowSeconds: 60 });
+  if (!allowed) return;
+
   try {
-    const { userId, universities } = req.body;
+    const { universities } = req.body || {};
 
     if (!universities || !Array.isArray(universities)) {
       return res.status(400).json({ error: 'universities array required' });
     }
 
-    // 1. Fetch user activity
+    // 1. Authenticate caller strictly via Firebase ID token (reject caller-supplied userId)
+    let authenticatedUserId = null;
+    const authHeader = req.headers.authorization;
+
+    if (authHeader) {
+      if (!authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Malformed authorization header. Expected Bearer <token>' });
+      }
+      const idToken = authHeader.split('Bearer ')[1];
+      try {
+        const decoded = await admin.auth().verifyIdToken(idToken);
+        authenticatedUserId = decoded.uid;
+      } catch (tokenErr) {
+        return res.status(401).json({ error: 'Invalid or expired authorization token' });
+      }
+    }
+
+    // 2. Fetch user activity ONLY for verified authenticated user
     let recentViews = [];
     let recentSearches = [];
 
-    if (userId) {
+    if (authenticatedUserId) {
       try {
-        const snap = await db.collection('user_activity').doc(userId).get();
+        const snap = await db.collection('user_activity').doc(authenticatedUserId).get();
         if (snap.exists) {
           const data = snap.data();
           recentViews = data.recentViews || [];

@@ -4,7 +4,8 @@ import { ArrowLeft, Heart, Download, ExternalLink, Users, Building2, Award, Book
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import { useWishlist } from '@/contexts/WishlistContext';
-import { getUniversityById } from '@/data/universities';
+import { useUniversities } from '@/contexts/UniversityContext';
+import { getUniversityById as getStaticUniversityById } from '@/data/universities';
 import { db } from '@/services/firebase';
 import { Review, University, UserProfile } from '@/types';
 import { collection, addDoc, doc, increment, updateDoc, query, where, orderBy, onSnapshot, serverTimestamp, deleteDoc } from 'firebase/firestore';
@@ -461,22 +462,73 @@ export default function UniversityDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { currentUser } = useAuth();
+  const { universities, loading: loadingColleges, getUniversityById: getUniversityFromContext } = useUniversities();
   const { showToast } = useToast() as { showToast: (msg: string, type: string) => void };
   const { toggleWishlist, isWishlisted } = useWishlist() as { toggleWishlist: (u: University) => void, isWishlisted: (id: string) => boolean };
   const { setIsOpen, setPendingPrompt } = useCounselor();
   const [showApply, setShowApply] = useState(false);
   const [showApply2, setShowApply2] = useState(false);
+  const [asyncUniversity, setAsyncUniversity] = useState<University | null>(null);
+  const [isFetchingDirect, setIsFetchingDirect] = useState(false);
+
+  // Normalize ID: decodeURIComponent in case of URL-encoded characters (e.g. %20 or spaces)
+  const normalizedId = React.useMemo(() => {
+    if (!id) return '';
+    try {
+      return decodeURIComponent(id).trim();
+    } catch (e) {
+      return id.trim();
+    }
+  }, [id]);
+
+  // 1. Synchronously resolve from in-memory context or static dataset
+  const syncUniversity = React.useMemo(() => {
+    if (!normalizedId) return undefined;
+    
+    // Check in-memory context first (exact match, case-insensitive, or hyphenated)
+    const fromContext = universities.find(u => 
+      u.id === normalizedId || 
+      u.id.toLowerCase() === normalizedId.toLowerCase()
+    );
+    if (fromContext) return fromContext;
+
+    // Check static dataset
+    const fromStatic = getStaticUniversityById(normalizedId);
+    if (fromStatic) return fromStatic;
+
+    // Check fallback with spaces/hyphens without corrupting valid hyphens
+    const hyphenated = normalizedId.replace(/\s+/g, '-');
+    return (
+      universities.find(u => u.id === hyphenated) ||
+      getStaticUniversityById(hyphenated)
+    );
+  }, [universities, normalizedId]);
+
+  // 2. If not found in memory, query Firestore directly via context's async lookup
+  useEffect(() => {
+    let isCancelled = false;
+    if (!syncUniversity && normalizedId) {
+      setIsFetchingDirect(true);
+      getUniversityFromContext(normalizedId).then(found => {
+        if (!isCancelled && found) {
+          setAsyncUniversity(found);
+        }
+      }).catch(err => {
+        console.warn('[UniversityDetail] Direct doc fetch error:', err);
+      }).finally(() => {
+        if (!isCancelled) setIsFetchingDirect(false);
+      });
+    }
+    return () => { isCancelled = true; };
+  }, [syncUniversity, normalizedId, getUniversityFromContext]);
+
+  const resolvedUniversity = syncUniversity || asyncUniversity || undefined;
 
   const handleAskAI = () => {
     if (!resolvedUniversity) return;
     setPendingPrompt(`Tell me about the placements, fees, and campus of ${resolvedUniversity.name}`);
     setIsOpen(true);
   };
-
-  const university = getUniversityById(id || "") as University | undefined;
-
-  // Fallback: If not found, try replacing %20 or spaces with hyphens (common URL mismatch)
-  const resolvedUniversity = university || (id ? getUniversityById(id.replace(/[\s%20]+/g, '-')) : undefined);
 
   useEffect(() => {
     if (resolvedUniversity) {
@@ -493,11 +545,19 @@ export default function UniversityDetail() {
     }
   }, [currentUser?.id, resolvedUniversity]);
 
+  // Show skeleton while data is still loading
+  if ((loadingColleges || isFetchingDirect) && !resolvedUniversity) {
+    return <UniversityDetailSkeleton />;
+  }
+
   if (!resolvedUniversity) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '16px' }}>
         <div style={{ fontSize: '48px' }}>😕</div>
         <h2>University not found</h2>
+        <p style={{ color: 'var(--text-muted)', fontSize: '14px', maxWidth: '400px', textAlign: 'center' }}>
+          We could not locate a university matching ID "{normalizedId}". It may have been renamed or removed.
+        </p>
         <button className="btn btn-primary" onClick={() => navigate('/search')}>Back to Search</button>
       </div>
     );

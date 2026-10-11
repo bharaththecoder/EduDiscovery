@@ -12,8 +12,9 @@ export default function Layout() {
 
 
 
-  // Route Change Progress Bar
+  // Route Change Progress Bar & Scroll Restoration
   useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     setIsNavigating(true);
     const timer = setTimeout(() => setIsNavigating(false), 500);
     return () => clearTimeout(timer);

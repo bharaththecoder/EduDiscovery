@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Block admin and API paths from crawlers
+Disallow: /admin/
+Disallow: /api/
+Disallow: /quiz-result
+
+Sitemap: https://edu-discovery.vercel.app/sitemap.xml

@@ -1,0 +1,19 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ─────────────────────────────────────────────────────────────
+    // User Profile Pictures
+    // Read: Publicly viewable by other students in reviews and community.
+    // Write: Strictly restricted to authenticated owner, max size 2MB,
+    //        must be an image mime-type (image/*).
+    // ─────────────────────────────────────────────────────────────
+    match /profile_pictures/{userId} {
+      allow read: if true;
+      allow write: if request.auth != null 
+                    && request.auth.uid == userId
+                    && request.resource.size <= 2 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+    }
+  }
+}

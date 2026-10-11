@@ -1,0 +1,86 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // 1. Colleges Catalog
+    // Read: Publicly accessible by all prospective students.
+    // Write: Strictly forbidden to clients. Seeding is only executed
+    //        server-side via Firebase Admin SDK with administrative privileges.
+    // ─────────────────────────────────────────────────────────────
+    match /colleges/{collegeId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // 2. User Profiles & User Private Subcollections
+    // Read/Write: Strictly scoped to the authenticated owner.
+    // Prevents reading or writing another user's profile, wishlist, or private chats.
+    // ─────────────────────────────────────────────────────────────
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+
+      match /chat_history/{messageId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      match /searches/{searchId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // 3. User Activity (Recommendation Tracking)
+    // Read/Write: Only the authenticated owner can access their activity stream.
+    // ─────────────────────────────────────────────────────────────
+    match /user_activity/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // 4. Student Reviews
+    // Read: Publicly accessible on university detail pages.
+    // Create: Any authenticated student can post a review under their own UID.
+    // Update: Only the original author can edit; ownership cannot be changed.
+    // Delete: Only the original author can delete.
+    // ─────────────────────────────────────────────────────────────
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if isAuthenticated() 
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.text is string
+                    && request.resource.data.text.size() > 0
+                    && request.resource.data.text.size() <= 2000;
+      allow update: if isAuthenticated() 
+                    && resource.data.userId == request.auth.uid
+                    && request.resource.data.userId == resource.data.userId
+                    && request.resource.data.text is string
+                    && request.resource.data.text.size() <= 2000;
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // 5. College Applications
+    // Create: Authenticated students can submit an application under their UID.
+    // Read: Only the applicant can view their application status.
+    // Update/Delete: Forbidden to clients (cannot tamper status, decision, or record).
+    // ─────────────────────────────────────────────────────────────
+    match /applications/{applicationId} {
+      allow create: if isAuthenticated() 
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.status == 'pending';
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+  }
+}

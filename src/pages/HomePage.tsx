@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Search, MapPin, Laptop, Award, Compass, Sparkles, LogOut, ChevronRight, Calculator, CheckCircle2, TrendingUp, Building2, ExternalLink, Calendar, Users, X, Activity, Cpu, Code, Target, Clock, AlertTriangle, ShieldCheck, Banknote, LayoutGrid, Newspaper, Zap, Heart, BarChart2 } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
+import { auth } from '@/services/firebase';
 import { newsArticles } from '@/data/news';
 import { useUniversities } from '@/contexts/UniversityContext';
 import UniversityCard, { UniversityCardSkeleton } from '@/components/cards/UniversityCard';
@@ -184,33 +185,81 @@ export default function Home() {
   const savedCount = wishlist.length;
   const quizCompleted = currentUser?.quizResults ? '100%' : 'Pending';
 
+  const lastFetchedSignature = React.useRef<string>('');
+
   useEffect(() => {
+    let isCancelled = false;
+    const controller = new AbortController();
+
     async function fetchData() {
       if (!currentUser?.id) return;
 
       // 1. Get recent views
-      const activity = await getActivity(currentUser.id);
-      setRecentViews(activity.recentViews || []);
+      try {
+        const activity = await getActivity(currentUser.id);
+        if (!isCancelled) {
+          setRecentViews(activity.recentViews || []);
+        }
+      } catch (err) {
+        console.warn('Failed to load recent activity:', err);
+      }
 
       // 2. Get recommendations (only if colleges are loaded)
       if (loadingColleges || universities.length === 0) return;
+
+      // Prevent duplicate fetches with identical parameters
+      const signature = `${currentUser.id}_${universities.length}`;
+      if (lastFetchedSignature.current === signature) return;
+
       setLoadingRecs(true);
       try {
+        const idToken = auth.currentUser ? await auth.currentUser.getIdToken() : null;
         const response = await fetch('/api/recommend', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: currentUser.id, universities })
+          headers: {
+            'Content-Type': 'application/json',
+            ...(idToken ? { 'Authorization': `Bearer ${idToken}` } : {})
+          },
+          body: JSON.stringify({
+            universities: universities.map(u => ({
+              id: u.id,
+              name: u.name,
+              shortName: u.shortName,
+              city: u.city,
+              state: u.state,
+              tuitionFee: u.tuitionFee,
+              avgPackage: u.avgPackage,
+              placementRate: u.placementRate,
+              naac: u.naac,
+              tags: u.tags
+            }))
+          }),
+          signal: controller.signal
         });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        setRecommendations(data.recommendations || []);
-      } catch (err) {
-        console.error('Failed to fetch recommendations:', err);
+        if (!isCancelled) {
+          setRecommendations(data.recommendations || []);
+          lastFetchedSignature.current = signature;
+        }
+      } catch (err: any) {
+        if (err.name !== 'AbortError') {
+          console.error('Failed to fetch recommendations:', err);
+        }
       } finally {
-        setLoadingRecs(false);
+        if (!isCancelled) {
+          setLoadingRecs(false);
+        }
       }
     }
+
     fetchData();
-  }, [currentUser?.id, universities, loadingColleges]);
+
+    return () => {
+      isCancelled = true;
+      controller.abort();
+    };
+  }, [currentUser?.id, universities.length, loadingColleges]);
 
   // Pull cloud-synced quiz results, fall back to best-match sort
   const topUniversities = useMemo(() => {
