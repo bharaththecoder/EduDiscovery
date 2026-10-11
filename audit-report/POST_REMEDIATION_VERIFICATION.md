@@ -194,4 +194,4 @@ Both pre-launch infrastructure steps have been successfully executed:
   Deploys directly to Google Cloud Firestore (`edudiscovery-9cff0`). Rules compiled and published live with 0 errors via `npx firebase-tools deploy --only firestore:rules --project edudiscovery-9cff0`.
 - [x] **Action 2: Provision Free Upstash Redis for Serverless Abuse Protection**  
   Free Redis instance created at Upstash and configured in Vercel project `edu-discovery` with `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`.
-- [ ] **Final Step**: Click **Redeploy** in the Vercel notification toast (or push a commit) so Vercel builds with the new environment variables.
+- [x] **Final Step**: Click **Redeploy** in the Vercel notification toast (or push a commit) so Vercel builds with the new environment variables.
