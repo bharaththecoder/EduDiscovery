@@ -120,7 +120,7 @@ export interface UserProfile {
   appliedCount?: number;
   quizResults?: QuizResults;
   preferences?: UserPreferences;
-  wishlist?: University[];
+  wishlist?: string[] | University[];
   updatedAt?: string;
 }
 
