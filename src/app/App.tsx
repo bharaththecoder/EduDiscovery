@@ -5,24 +5,51 @@ import Layout from '@/components/layout/Layout';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
-// Lazy loading route components for performance
-const LandingPage = lazy(() => import('@/pages/LandingPage'));
-const HomePage = lazy(() => import('@/pages/HomePage'));
-const SearchPage = lazy(() => import('@/pages/SearchPage'));
-const ComparePage = lazy(() => import('@/pages/ComparePage'));
-const UniversityDetailPage = lazy(() => import('@/pages/UniversityDetailPage'));
-const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
-const QuizPage = lazy(() => import('@/pages/QuizPage'));
-const QuizResultPage = lazy(() => import('@/pages/QuizResultPage'));
-const AdminSeedPage = lazy(() => import('@/pages/AdminSeedPage'));
-const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
-const WishlistPage = lazy(() => import('@/pages/WishlistPage'));
-const PredictorPage = lazy(() => import('@/pages/PredictorPage'));
+// Resilient lazy loader that retries cleanly if Vite HMR or browser chunk cache fails
+function lazyWithRetry<T extends React.ComponentType<any>>(
+  factory: () => Promise<{ default: T }>
+) {
+  return lazy(async () => {
+    const key = 'edudiscovery_chunk_retry';
+    try {
+      const component = await factory();
+      sessionStorage.removeItem(key);
+      return component;
+    } catch (error: any) {
+      const isDynamicImportError =
+        error?.message?.includes('Failed to fetch dynamically imported module') ||
+        error?.message?.includes('Importing a module script failed') ||
+        error?.name === 'TypeError';
+
+      const hasRetried = sessionStorage.getItem(key);
+      if (isDynamicImportError && !hasRetried) {
+        sessionStorage.setItem(key, 'true');
+        window.location.reload();
+        return new Promise(() => {});
+      }
+      throw error;
+    }
+  });
+}
+
+const LandingPage = lazyWithRetry(() => import('@/pages/LandingPage'));
+const HomePage = lazyWithRetry(() => import('@/pages/HomePage'));
+const SearchPage = lazyWithRetry(() => import('@/pages/SearchPage'));
+const ComparePage = lazyWithRetry(() => import('@/pages/ComparePage'));
+const UniversityDetailPage = lazyWithRetry(() => import('@/pages/UniversityDetailPage'));
+const ProfilePage = lazyWithRetry(() => import('@/pages/ProfilePage'));
+const QuizPage = lazyWithRetry(() => import('@/pages/QuizPage'));
+const QuizResultPage = lazyWithRetry(() => import('@/pages/QuizResultPage'));
+const AdminSeedPage = lazyWithRetry(() => import('@/pages/AdminSeedPage'));
+const NotFoundPage = lazyWithRetry(() => import('@/pages/NotFoundPage'));
+const WishlistPage = lazyWithRetry(() => import('@/pages/WishlistPage'));
+const PredictorPage = lazyWithRetry(() => import('@/pages/PredictorPage'));
 
 const ProtectedLayout = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, loading } = useAuth();
   const location = useLocation();
 
+  if (loading) return <LoadingScreen />;
   if (!currentUser) return <Navigate to="/" replace />;
 
   const needsQuiz = currentUser.isNewUser && !currentUser.quizResults;
@@ -109,17 +136,21 @@ function App() {
               {/* Public */}
               <Route path="/" element={currentUser ? <Navigate to="/home" replace /> : <LandingPage />} />
 
-              {/* Protected Area Setup: Wrapped with ProtectedLayout */}
-              <Route element={<ProtectedLayout />}>
-                <Route path="/home" element={<HomePage />} />
+              {/* Public Discovery Routes: College search, profiles, compare, predictor, and guest shortlists */}
+              <Route element={<Layout />}>
                 <Route path="/search" element={<SearchPage />} />
                 <Route path="/compare" element={<ComparePage />} />
                 <Route path="/university/:id" element={<UniversityDetailPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/predictor" element={<PredictorPage />} />
                 <Route path="/wishlist" element={<WishlistPage />} />
+              </Route>
+
+              {/* Protected Student Account Setup: Wrapped with ProtectedLayout */}
+              <Route element={<ProtectedLayout />}>
+                <Route path="/home" element={<HomePage />} />
+                <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/quiz" element={<QuizPage />} />
                 <Route path="/quiz-result" element={<QuizResultPage />} />
-                <Route path="/predictor" element={<PredictorPage />} />
                 <Route path="/admin/seed-colleges" element={<AdminSeedPage />} />
               </Route>
 

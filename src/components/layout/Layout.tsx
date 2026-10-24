@@ -5,6 +5,7 @@ import Navbar from './Navbar';
 import BottomNav from './BottomNav';
 import AICounselor from '@/components/chat/AICounselor';
 import PWAInstallBanner from './PWAInstallBanner';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 export default function Layout() {
   const location = useLocation();
@@ -70,7 +71,9 @@ export default function Layout() {
             transition={{ duration: 0.2, ease: "easeOut" }}
             style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}
           >
-            <Outlet />
+            <ErrorBoundary fallbackTitle="View Recovery">
+              <Outlet />
+            </ErrorBoundary>
           </motion.div>
         </AnimatePresence>
       </main>

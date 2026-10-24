@@ -5,6 +5,7 @@ import { motion, Variants } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { auth } from '@/services/firebase';
 import { newsArticles } from '@/data/news';
+import { fetchLiveEamcetNews } from '@/services/newsService';
 import { useUniversities } from '@/contexts/UniversityContext';
 import UniversityCard, { UniversityCardSkeleton } from '@/components/cards/UniversityCard';
 import { getActivity } from '@/services/activityTracker';
@@ -18,27 +19,69 @@ function NewsModal({ article, onClose }: { article: NewsArticle; onClose: () => 
   const paragraphs = article.content.split('\n\n').filter(Boolean);
   return (
     <div className="overlay" onClick={onClose}>
-      <div className="modal-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative', maxHeight: '85vh' }}>
+      <div className="modal-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative', maxHeight: '85vh', maxWidth: '640px', width: '92%' }}>
         <button onClick={onClose} style={{
           position: 'absolute', top: '16px', right: '16px',
           background: 'var(--primary-light)', color: 'var(--primary)',
           width: '32px', height: '32px', borderRadius: '50%',
           display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px',
+          border: 'none', cursor: 'pointer'
         }}>×</button>
 
-        <NeonCard style={{ background: article.categoryColor + '15', color: article.categoryColor, fontSize: '11px', fontWeight: '800', marginBottom: '12px', letterSpacing: '1px' }}>
-          {article.category}
-        </NeonCard>
-        <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '8px', lineHeight: 1.3 }}>{article.title}</h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '20px' }}>
-          {article.date} · {article.readTime}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', flexWrap: 'wrap' }}>
+          <NeonCard style={{ background: article.categoryColor + '15', color: article.categoryColor, fontSize: '11px', fontWeight: '800', letterSpacing: '1px', padding: '4px 10px', borderRadius: '8px' }}>
+            {article.category}
+          </NeonCard>
+          {article.source && (
+            <span style={{ fontSize: '11px', fontWeight: '700', background: 'var(--primary-light)', color: 'var(--primary)', padding: '4px 10px', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <ShieldCheck size={12} /> {article.source}
+            </span>
+          )}
+          <span style={{ fontSize: '11px', fontWeight: '800', background: 'rgba(16,185,129,0.12)', color: '#10B981', padding: '4px 8px', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10B981' }} /> Real-Time EAPCET
+          </span>
+        </div>
+
+        <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '8px', lineHeight: 1.35, color: 'var(--text-main)' }}>{article.title}</h2>
+        <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Calendar size={13} /> {article.date} · <Clock size={13} /> {article.readTime}
         </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '24px' }}>
           {paragraphs.map((para: string, i: number) => {
             if (para.startsWith('**') && para.endsWith('**'))
-              return <h3 key={i} style={{ fontWeight: '800', fontSize: '15px', marginTop: '8px' }}>{para.slice(2, -2)}</h3>;
+              return <h3 key={i} style={{ fontWeight: '800', fontSize: '15px', marginTop: '6px', color: 'var(--text-main)' }}>{para.slice(2, -2)}</h3>;
             return <p key={i} style={{ fontSize: '14px', lineHeight: 1.7, color: 'var(--text-main)' }}>{para}</p>;
           })}
+        </div>
+
+        {/* Modal Action Links */}
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
+          {article.url && (
+            <a 
+              href={article.url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={{
+                background: 'var(--primary)', color: '#fff', padding: '10px 18px', borderRadius: '10px',
+                fontSize: '13px', fontWeight: '700', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px'
+              }}
+            >
+              Read Full Story on {article.source || 'Publisher'} <ExternalLink size={14} />
+            </a>
+          )}
+          <a 
+            href="https://cets.apsche.ap.gov.in" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{
+              background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text-main)',
+              padding: '10px 16px', borderRadius: '10px', fontSize: '13px', fontWeight: '700',
+              textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px'
+            }}
+          >
+            APSCHE Portal <ExternalLink size={14} />
+          </a>
         </div>
       </div>
     </div>
@@ -148,6 +191,28 @@ export default function Home() {
   const { wishlist } = useWishlist();
   const { universities, loading: loadingColleges } = useUniversities();
   const [activeNews, setActiveNews] = useState<NewsArticle | null>(null);
+  const [liveNews, setLiveNews] = useState<NewsArticle[]>(newsArticles);
+  const [loadingNews, setLoadingNews] = useState<boolean>(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadNews() {
+      try {
+        setLoadingNews(true);
+        const data = await fetchLiveEamcetNews();
+        if (isMounted && data && data.length > 0) {
+          setLiveNews(data);
+        }
+      } catch (err) {
+        console.warn('[HomePage] Failed fetching real news, keeping fallback:', err);
+      } finally {
+        if (isMounted) setLoadingNews(false);
+      }
+    }
+    loadNews();
+    return () => { isMounted = false; };
+  }, []);
+
   const [recentViews, setRecentViews] = useState<ActivityEvent[]>([]);
   const [quickRank, setQuickRank] = useState<string>(() => {
     const r = currentUser?.quizResults?.answers?.rank;
@@ -213,7 +278,7 @@ export default function Home() {
 
       setLoadingRecs(true);
       try {
-        const idToken = auth.currentUser ? await auth.currentUser.getIdToken() : null;
+        const idToken = auth?.currentUser ? await auth.currentUser.getIdToken() : null;
         const response = await fetch('/api/recommend', {
           method: 'POST',
           headers: {
@@ -270,6 +335,7 @@ export default function Home() {
       const uniMap = new Map(universities.map(u => [u.id, u]));
       matches = currentUser.quizResults.topMatches
         .map((match: { id: string, name: string, match: number }) => {
+          if (!match?.id) return null;
           const uni = uniMap.get(match.id);
           return uni ? { ...uni, match: match.match } : null;
         })
@@ -277,7 +343,7 @@ export default function Home() {
     }
     
     if (matches.length === 0) {
-      matches = [...universities].sort((a, b) => b.match - a.match).slice(0, 6);
+      matches = [...universities].sort((a, b) => (b.match || 0) - (a.match || 0)).slice(0, 6);
     }
     return matches;
   }, [currentUser?.quizResults?.topMatches, universities, loadingColleges]);
@@ -286,7 +352,7 @@ export default function Home() {
     if (loadingColleges || universities.length === 0 || recentViews.length === 0) return [];
     const uniMap = new Map(universities.map(u => [u.id, u]));
     return recentViews
-      .map(item => uniMap.get(item.collegeId))
+      .map(item => (item?.collegeId ? uniMap.get(item.collegeId) : null))
       .filter(Boolean) as University[];
   }, [recentViews, universities, loadingColleges]);
 
@@ -332,13 +398,13 @@ export default function Home() {
               {/* Preference capsules */}
               <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '4px' }}>
                 <span style={{ fontSize: '12px', fontWeight: '700', background: 'var(--surface-glass)', padding: '6px 14px', borderRadius: '99px', border: '1px solid var(--border)', display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--text-main)' }}>
-                  <Laptop size={14} style={{ color: 'var(--primary)' }} /> {currentUser?.quizResults?.answers?.branch || (currentUser?.branchPreference as string) || 'Any Stream'}
+                  <Laptop size={14} style={{ color: 'var(--primary)' }} /> {typeof currentUser?.quizResults?.answers?.branch === 'string' ? currentUser.quizResults.answers.branch : (currentUser?.branchPreference as string) || 'Any Stream'}
                 </span>
                 <span style={{ fontSize: '12px', fontWeight: '700', background: 'var(--surface-glass)', padding: '6px 14px', borderRadius: '99px', border: '1px solid var(--border)', display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--text-main)' }}>
-                  <Banknote size={14} style={{ color: 'var(--primary)' }} /> {currentUser?.quizResults?.answers?.budget || 'Any Budget'}
+                  <Banknote size={14} style={{ color: 'var(--primary)' }} /> {typeof currentUser?.quizResults?.answers?.budget === 'string' ? currentUser.quizResults.answers.budget : 'Any Budget'}
                 </span>
                 <span style={{ fontSize: '12px', fontWeight: '700', background: 'var(--surface-glass)', padding: '6px 14px', borderRadius: '99px', border: '1px solid var(--border)', display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--text-main)' }}>
-                  <MapPin size={14} style={{ color: 'var(--primary)' }} /> {currentUser?.quizResults?.answers?.location || 'Any Region'}
+                  <MapPin size={14} style={{ color: 'var(--primary)' }} /> {typeof currentUser?.quizResults?.answers?.location === 'string' ? currentUser.quizResults.answers.location : 'Any Region'}
                 </span>
               </div>
             </div>
@@ -646,7 +712,30 @@ export default function Home() {
           transition={{ type: "spring", stiffness: 120, damping: 15 }}
           style={{ marginBottom: '40px' }}
         >
-          <SectionRow icon={<Newspaper size={18} />} title="Latest for Students" />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{
+                width: '36px', height: '36px', borderRadius: '10px',
+                background: 'var(--primary-light)', display: 'flex',
+                alignItems: 'center', justifyContent: 'center', color: 'var(--primary)',
+              }}>
+                <Newspaper size={18} />
+              </div>
+              <h2 className="wave-underline" style={{ fontSize: '20px', fontWeight: '900', color: 'var(--text-main)', display: 'inline-block' }}>Latest for Students</h2>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{
+                display: 'inline-flex', alignItems: 'center', gap: '6px',
+                fontSize: '11px', fontWeight: '800', background: 'rgba(16, 185, 129, 0.1)',
+                color: '#10B981', padding: '5px 12px', borderRadius: '999px',
+                border: '1px solid rgba(16, 185, 129, 0.25)', letterSpacing: '0.4px'
+              }}>
+                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#10B981', display: 'inline-block', boxShadow: '0 0 8px #10B981' }} />
+                LIVE EAPCET 2026 FEED
+              </span>
+            </div>
+          </div>
+
           <motion.div 
             variants={containerVariants}
             initial="hidden"
@@ -654,7 +743,7 @@ export default function Home() {
             viewport={{ once: true, margin: "-40px" }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
-            {newsArticles.slice(0, 3).map((article: NewsArticle, idx: number) => (
+            {liveNews.slice(0, 3).map((article: NewsArticle) => (
               <motion.div
                 key={article.id}
                 variants={itemVariants}
@@ -671,14 +760,24 @@ export default function Home() {
                   perspective: '600px',
                 }}
               >
-                <div style={{ display: 'inline-block', padding: '4px 10px', borderRadius: '999px', background: article.categoryColor + '18', color: article.categoryColor, fontSize: '11px', fontWeight: '800', marginBottom: '12px', letterSpacing: '0.5px', alignSelf: 'flex-start' }}>
-                  {article.category}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'inline-block', padding: '4px 10px', borderRadius: '999px', background: article.categoryColor + '18', color: article.categoryColor, fontSize: '11px', fontWeight: '800', letterSpacing: '0.5px' }}>
+                    {article.category}
+                  </div>
+                  {article.source && (
+                    <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', background: 'var(--bg)', padding: '3px 8px', borderRadius: '6px', border: '1px solid var(--border)' }}>
+                      {article.source}
+                    </span>
+                  )}
                 </div>
-                <h3 style={{ fontSize: '15px', fontWeight: '800', lineHeight: 1.4, marginBottom: '8px' }}>{article.title}</h3>
+
+                <h3 style={{ fontSize: '15px', fontWeight: '800', lineHeight: 1.4, marginBottom: '8px', color: 'var(--text-main)' }}>{article.title}</h3>
                 <p style={{ color: 'var(--text-muted)', fontSize: '13px', lineHeight: 1.55, marginBottom: '14px', flex: 1 }}>{article.summary}</p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: '8px', borderTop: '1px solid var(--border)' }}>
                   <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{article.date} · {article.readTime}</span>
-                  <motion.span whileHover={{ x: 4 }} style={{ color: 'var(--primary)', fontWeight: '700', fontSize: '13px' }}>Read →</motion.span>
+                  <motion.span whileHover={{ x: 4 }} style={{ color: 'var(--primary)', fontWeight: '700', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    Read Story →
+                  </motion.span>
                 </div>
               </motion.div>
             ))}

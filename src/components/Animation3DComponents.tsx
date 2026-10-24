@@ -298,6 +298,8 @@ export function ConfettiButton({
 
 // ── PARALLAX IMAGE ──────────────────────────────────────────────
 /** Image with parallax scroll effect */
+const FALLBACK_CAMPUS_HERO = "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=1600&q=80";
+
 export function ParallaxImage({
   src,
   alt = '',
@@ -313,6 +315,11 @@ export function ParallaxImage({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [offset, setOffset] = useState(0);
+  const [imgSrc, setImgSrc] = useState(src || FALLBACK_CAMPUS_HERO);
+
+  useEffect(() => {
+    setImgSrc(src || FALLBACK_CAMPUS_HERO);
+  }, [src]);
 
   useEffect(() => {
     let ticking = false;
@@ -336,10 +343,11 @@ export function ParallaxImage({
   return (
     <div ref={ref} className={className} style={{ overflow: 'hidden', ...style }}>
       <img
-        src={src}
+        src={imgSrc}
         alt={alt}
         loading="lazy"
         decoding="async"
+        onError={() => setImgSrc(FALLBACK_CAMPUS_HERO)}
         style={{
           width: '100%',
           height: '120%',

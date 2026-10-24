@@ -43,25 +43,24 @@ export default function PWAInstallBanner() {
           transition={{ type: 'spring', damping: 25, stiffness: 350 }}
           style={{
             position: 'fixed',
-            bottom: 'calc(var(--bottom-nav-clearance, 80px) + 16px)',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 90,
-            width: 'calc(100% - 32px)',
-            maxWidth: '500px',
-            background: 'var(--surface-glass)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid var(--border)',
-            boxShadow: '0 20px 40px rgba(16, 185, 129, 0.15), var(--shadow-sm)',
+            bottom: 'calc(var(--bottom-nav-clearance, 80px) + 12px)',
+            left: 0,
+            right: 0,
+            margin: '0 auto',
+            zIndex: 85,
+            width: 'calc(100% - 24px)',
+            maxWidth: '460px',
+            background: 'var(--surface)',
+            border: '1.5px solid var(--border)',
+            boxShadow: 'var(--shadow-lg), 0 16px 36px rgba(0, 0, 0, 0.12)',
             borderRadius: '20px',
-            padding: '16px',
+            padding: '12px 14px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            gap: '12px',
+            gap: '10px',
           }}
-          className="md:left-8 md:translate-x-0 md:bottom-8"
+          className="md:left-8 md:right-auto md:margin-0 md:bottom-8"
         >
           {/* Content Left: Icon & Text */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -119,23 +118,26 @@ export default function PWAInstallBanner() {
             </button>
             <button 
               onClick={handleDismiss}
+              aria-label="Dismiss installation banner"
               style={{
-                width: '32px',
-                height: '32px',
+                width: '36px',
+                height: '36px',
                 borderRadius: '50%',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: 'var(--text-muted)',
-                background: 'rgba(120, 120, 120, 0.15)',
+                background: 'var(--primary-light)',
+                border: 'none',
+                cursor: 'pointer',
                 transition: 'var(--transition)'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(15, 23, 42, 0.1)';
-                e.currentTarget.style.color = 'var(--text-main)';
+                e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)';
+                e.currentTarget.style.color = '#ef4444';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(15, 23, 42, 0.05)';
+                e.currentTarget.style.background = 'var(--primary-light)';
                 e.currentTarget.style.color = 'var(--text-muted)';
               }}
             >

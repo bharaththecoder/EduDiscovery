@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 
 type Theme = 'light' | 'dark';
 
@@ -39,15 +39,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  const toggleTheme = React.useCallback(() => {
+  const toggleTheme = useCallback(() => {
     setThemeState((prev) => (prev === 'light' ? 'dark' : 'light'));
   }, []);
 
-  const setTheme = React.useCallback((newTheme: Theme) => {
+  const setTheme = useCallback((newTheme: Theme) => {
     setThemeState(newTheme);
   }, []);
 
-  const value = React.useMemo(() => ({ theme, toggleTheme, setTheme }), [theme, toggleTheme, setTheme]);
+  const value = useMemo(() => ({ theme, toggleTheme, setTheme }), [theme, toggleTheme, setTheme]);
 
   return (
     <ThemeContext.Provider value={value}>
@@ -57,6 +57,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useTheme() {
-  const context = useContext(ThemeContext);
-  return context || defaultThemeContext;
+  try {
+    const context = useContext(ThemeContext);
+    return context || defaultThemeContext;
+  } catch (err) {
+    console.warn('[useTheme] Context resolution fallback:', err);
+    return defaultThemeContext;
+  }
 }

@@ -6,19 +6,21 @@ import { useToast } from '@/contexts/ToastContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useUniversities } from '@/contexts/UniversityContext';
 import { getUniversityById as getStaticUniversityById } from '@/data/universities';
-import { db } from '@/services/firebase';
+import { db, isFirestoreReady } from '@/services/firebase';
 import { Review, University, UserProfile } from '@/types';
 import { collection, addDoc, doc, increment, updateDoc, query, where, orderBy, onSnapshot, serverTimestamp, deleteDoc } from 'firebase/firestore';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { trackView } from '@/services/activityTracker';
-import { computeFitScore, computeFeeTrends } from '@/utils/intelligenceEngine';
+import { computeFitScore } from '@/utils/intelligenceEngine';
 import { useCounselor } from '@/contexts/CounselorContext';
 import { Sparkles as SparklesIcon, TrendingUp, CheckCircle2, MessageSquare, Star, Trash2 } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HolographicBadge, AnimatedCounter3D, ParallaxImage, SpotlightCard, MagneticButton, WaveDivider, RippleButton, FloatingEmoji3D } from '@/components/Animation3DComponents';
 import { UniversityDetailSkeleton } from '@/components/ui/UniversityDetailSkeleton';
+import { updatePageMetadata } from '@/services/metadataService';
+import FeeCutoffAnalytics from '@/components/analytics/FeeCutoffAnalytics';
+import { getUniversityFacilities, EnrichedFacility } from '@/data/facilitiesData';
 
 function CollegeFitScore({ university }: { university: University }) {
   const { currentUser } = useAuth();
@@ -38,7 +40,7 @@ function CollegeFitScore({ university }: { university: University }) {
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       whileHover={{ y: -4 }}
       className="glow-up neon-border" style={{
-      background: 'white',
+      background: 'var(--surface)',
       borderRadius: 'var(--radius-lg)',
       padding: '24px',
       boxShadow: 'var(--shadow-md)',
@@ -78,7 +80,7 @@ function CollegeFitScore({ university }: { university: University }) {
         </div>
       </div>
 
-      <div style={{ height: '8px', background: '#F1F5F9', borderRadius: '4px', marginBottom: '20px', overflow: 'hidden' }}>
+      <div style={{ height: '8px', background: 'var(--chip-bg)', borderRadius: '4px', marginBottom: '20px', overflow: 'hidden' }}>
         <div style={{
           height: '100%',
           width: `${fit.probability}%`,
@@ -167,33 +169,65 @@ function ReviewsSection({ universityId }: { universityId: string }) {
   const { showToast } = useToast() as { showToast: (msg: string, type: string) => void };
 
   React.useEffect(() => {
-    const q = query(
-      collection(db, 'reviews'),
-      where('universityId', '==', universityId) // Removing orderBy('createdAt', 'desc') temporarily unless index exists
-    );
-    const unsubscribe = onSnapshot(q, {
-      next: (snapshot) => {
-        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Review[];
-        // Client side sort if missing index
-        data.sort((a, b) => {
-          const t1 = (a.createdAt as any)?.seconds || 0;
-          const t2 = (b.createdAt as any)?.seconds || 0;
-          return t2 - t1;
-        });
-        setReviews(data);
-        setLoading(false);
-      },
-      error: (err) => {
-        console.error("Firestore reviews error:", err);
-        setLoading(false);
-      }
-    });
-    return () => unsubscribe();
+    if (!isFirestoreReady(db)) {
+      setLoading(false);
+      return;
+    }
+    try {
+      const q = query(
+        collection(db, 'reviews'),
+        where('universityId', '==', universityId)
+      );
+      const unsubscribe = onSnapshot(q, {
+        next: (snapshot) => {
+          const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Review[];
+          // Client side sort if missing index
+          data.sort((a, b) => {
+            const t1 = (a.createdAt as any)?.seconds || 0;
+            const t2 = (b.createdAt as any)?.seconds || 0;
+            return t2 - t1;
+          });
+          setReviews(data);
+          setLoading(false);
+        },
+        error: (err) => {
+          console.warn("[Reviews] Firestore reviews query warning:", err);
+          setLoading(false);
+        }
+      });
+      return () => unsubscribe();
+    } catch (err) {
+      console.warn("[Reviews] Listener initialization warning:", err);
+      setLoading(false);
+    }
   }, [universityId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentUser || !text.trim()) return;
+
+    if (!isFirestoreReady(db)) {
+      const demoReview: Review = {
+        id: 'review-' + Date.now(),
+        universityId,
+        userId: currentUser.id || 'student',
+        userName: currentUser.name || 'Anonymous Student',
+        userPhoto: currentUser.photoURL || null,
+        text,
+        rating,
+        createdAt: { seconds: Math.floor(Date.now() / 1000) } as any,
+        isVerified: true,
+        helpful: 0,
+        helpfulBy: []
+      };
+      setReviews(prev => [demoReview, ...prev]);
+      setText('');
+      setRating(5);
+      setHoverRating(0);
+      showToast('Review posted! 🎉', 'success');
+      return;
+    }
+
     try {
       await addDoc(collection(db, 'reviews'), {
         universityId,
@@ -219,6 +253,11 @@ function ReviewsSection({ universityId }: { universityId: string }) {
 
   const handleDeleteReview = async (reviewId: string) => {
     if (!window.confirm('Are you sure you want to delete your review?')) return;
+    if (!isFirestoreReady(db)) {
+      setReviews(prev => prev.filter(r => r.id !== reviewId));
+      showToast('Review deleted', 'info');
+      return;
+    }
     try {
       await deleteDoc(doc(db, 'reviews', reviewId));
       showToast('Review deleted', 'info');
@@ -371,12 +410,27 @@ function ApplyModal({ university, onClose, onSuccess }: { university: University
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentUser) return;
 
     setLoading(true);
     try {
+      if (!isFirestoreReady(db)) {
+        setSubmitted(true);
+        onSuccess();
+        setTimeout(() => { onClose(); }, 2000);
+        return;
+      }
+
       // 1. Save application record
       await addDoc(collection(db, 'applications'), {
         userId: currentUser.id,
@@ -408,12 +462,18 @@ function ApplyModal({ university, onClose, onSuccess }: { university: University
   return (
     <div className="overlay" onClick={onClose}>
       <div className="modal-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
-        <button onClick={onClose} style={{
-          position: 'absolute', top: '16px', right: '16px',
-          background: 'var(--primary-light)', color: 'var(--primary)',
-          width: '32px', height: '32px', borderRadius: '50%',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px',
-        }}>×</button>
+        <button
+          onClick={onClose}
+          aria-label="Close application form"
+          className="tap-target-44"
+          style={{
+            position: 'absolute', top: '16px', right: '16px',
+            background: 'var(--primary-light)', color: 'var(--primary)',
+            width: '44px', height: '44px', borderRadius: '50%',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px',
+            border: 'none', cursor: 'pointer',
+          }}
+        >×</button>
 
         {submitted ? (
           <div style={{ textAlign: 'center', padding: '24px 0' }}>
@@ -484,15 +544,28 @@ export default function UniversityDetail() {
   // 1. Synchronously resolve from in-memory context or static dataset
   const syncUniversity = React.useMemo(() => {
     if (!normalizedId) return undefined;
+    const cleanId = normalizedId.toLowerCase().replace(/[^a-z0-9]/g, '');
     
-    // Check in-memory context first (exact match, case-insensitive, or hyphenated)
-    const fromContext = universities.find(u => 
-      u.id === normalizedId || 
-      u.id.toLowerCase() === normalizedId.toLowerCase()
-    );
+    // Check in-memory context first (exact match, case-insensitive, code, shortName, or stripped)
+    const fromContext = universities.find(u => {
+      const uId = u.id.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const uCode = (u.code || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const uShort = (u.shortName || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const uName = (u.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+      return (
+        u.id === normalizedId || 
+        u.id.toLowerCase() === normalizedId.toLowerCase() ||
+        uId === cleanId ||
+        (uCode && uCode === cleanId) ||
+        (uShort && uShort === cleanId) ||
+        (cleanId.length >= 3 && uId.includes(cleanId)) ||
+        (cleanId.length >= 4 && uName.includes(cleanId))
+      );
+    });
     if (fromContext) return fromContext;
 
-    // Check static dataset
+    // Check static dataset with similar resilience
     const fromStatic = getStaticUniversityById(normalizedId);
     if (fromStatic) return fromStatic;
 
@@ -533,7 +606,13 @@ export default function UniversityDetail() {
   useEffect(() => {
     if (resolvedUniversity) {
       window.scrollTo(0, 0);
-      document.title = `${resolvedUniversity.name} (${resolvedUniversity.shortName || resolvedUniversity.city}) - Fees, Placements & Admission 2026 | EduDiscovery AP`;
+      updatePageMetadata({
+        title: `${resolvedUniversity.name} (${resolvedUniversity.shortName || resolvedUniversity.city}) - Fees, Placements & Admission 2026 | EduDiscovery AP`,
+        description: `Comprehensive institution guide for ${resolvedUniversity.name}: NAAC ${resolvedUniversity.naac}, annual fees, top recruiters, verified placement packages, and campus life details in ${resolvedUniversity.city}, Andhra Pradesh.`,
+        image: resolvedUniversity.image,
+        url: window.location.href,
+        type: 'article',
+      });
     }
     if (currentUser?.id && resolvedUniversity) {
       trackView(currentUser.id, {
@@ -601,24 +680,32 @@ export default function UniversityDetail() {
               navigate('/search');
             }
           }} 
+          aria-label="Back to search"
+          className="tap-target-44"
           style={{
             position: 'absolute', top: '20px', left: '16px',
             background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)',
             border: '1px solid rgba(255,255,255,0.3)',
-            borderRadius: '50%', width: '40px', height: '40px',
+            borderRadius: '50%', width: '44px', height: '44px',
             display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff',
+            cursor: 'pointer',
           }}>
           <ArrowLeft size={20} />
         </button>
 
         {/* Heart */}
-        <button onClick={handleWishlist} style={{
-          position: 'absolute', top: '20px', right: '16px',
-          background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)',
-          border: '1px solid rgba(255,255,255,0.3)',
-          borderRadius: '50%', width: '40px', height: '40px',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
+        <button
+          onClick={handleWishlist}
+          aria-label={saved ? 'Remove from wishlist' : 'Add to wishlist'}
+          className="tap-target-44"
+          style={{
+            position: 'absolute', top: '20px', right: '16px',
+            background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(255,255,255,0.3)',
+            borderRadius: '50%', width: '44px', height: '44px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer',
+          }}>
           <Heart size={20} fill={saved ? '#FF6B6B' : 'none'} color={saved ? '#FF6B6B' : '#fff'} />
         </button>
 
@@ -637,12 +724,94 @@ export default function UniversityDetail() {
       </div>
 
       <div className="page" style={{ paddingTop: '24px' }}>
+        {/* Mobile Quick Action Buttons */}
+        <div className="block lg:hidden mb-6">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <MagneticButton
+                onClick={() => setShowApply(true)}
+                className="btn btn-primary animate-glow-breathe"
+                style={{ flex: 1, padding: '14px', borderRadius: '12px' }}
+              >
+                Apply Now
+              </MagneticButton>
+              <MagneticButton
+                onClick={handleBrochure}
+                className="btn btn-ghost"
+                style={{ flex: 1, padding: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', borderRadius: '12px' }}>
+                <Download size={16} /> Brochure
+              </MagneticButton>
+            </div>
+            <button 
+              onClick={handleAskAI} 
+              className="glow-up"
+              style={{ 
+                width: '100%', 
+                padding: '14px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                gap: '8px', 
+                border: '1.5px solid var(--primary)', 
+                background: 'var(--surface)',
+                color: 'var(--primary)', 
+                fontWeight: '800',
+                borderRadius: '999px',
+                cursor: 'pointer',
+                fontSize: '15px',
+                boxShadow: 'var(--shadow-sm)',
+                transition: 'all 0.2s'
+              }}
+            >
+              <SparklesIcon size={16} /> Ask AI about this College
+            </button>
+          </div>
+        </div>
+
+        {/* Top Executive Metric Ribbon */}
+        <UniversityMetricRibbon university={resolvedUniversity} />
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-          {/* Sidebar (Right on Desktop, Top on Mobile) */}
-          <div className="lg:col-span-1 order-1 lg:order-2 flex flex-col gap-6">
-            {/* Action Buttons */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
+          {/* Main Content Column (Full/2-Col Desktop Width for Data & Cutoffs) */}
+          <div className="lg:col-span-2 order-1 lg:order-1 flex flex-col gap-6">
+
+            {/* Academic Programs with dynamic collapsible state */}
+            <AcademicProgramsSection resolvedUniversity={resolvedUniversity} />
+
+            {/* Defensible Fee, Cutoff and Placement Analytics (Wide Desktop Canvas) */}
+            <FeeCutoffAnalytics university={resolvedUniversity} />
+
+            <WaveDivider />
+
+            {/* The Living Ecosystem (Real Campus Facilities) */}
+            <FacilitiesSection resolvedUniversity={resolvedUniversity} />
+
+            <WaveDivider />
+            
+            {/* Recent Placements */}
+            {resolvedUniversity.placements && resolvedUniversity.placements.length > 0 && (
+              <>
+                <PlacementsSection resolvedUniversity={resolvedUniversity} />
+                <WaveDivider />
+              </>
+            )}
+
+            {/* Faculty - Viewport Staggered & Floating micro-animations */}
+            <FacultySection resolvedUniversity={resolvedUniversity} />
+
+            {/* Community Reviews */}
+            <div style={{ marginBottom: '24px' }}>
+              <ReviewsSection universityId={resolvedUniversity.id} />
+            </div>
+
+          </div>
+
+          {/* Action Sidebar (Right on Desktop, Below Core Analytics on Mobile) */}
+          <div className="lg:col-span-1 order-2 lg:order-2 flex flex-col gap-6">
+
+            {/* Desktop Action Buttons */}
+            <div className="hidden lg:flex" style={{ flexDirection: 'column', gap: '10px' }}>
               <div style={{ display: 'flex', gap: '10px' }}>
                 <MagneticButton
                   onClick={() => setShowApply(true)}
@@ -694,62 +863,19 @@ export default function UniversityDetail() {
             {/* AI Fit Score */}
             <CollegeFitScore university={resolvedUniversity} />
 
-            {/* Annual Fee Trends Chart */}
-            <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-md)', padding: '20px', marginBottom: '24px', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' }}>
-              <h2 style={{ fontSize: '16px', fontWeight: '800', marginBottom: '2px', color: 'var(--text-main)' }}>📈 Annual Fee Trends</h2>
-              <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '16px', fontWeight: '600' }}>Historical and projected fee trends (Convener Quota)</p>
-              <div style={{ width: '100%', height: '180px' }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={computeFeeTrends(resolvedUniversity)}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                      <XAxis dataKey="year" tick={{ fill: '#475569', fontSize: 10, fontWeight: 700 }} />
-                      <YAxis tick={{ fill: '#475569', fontSize: 10 }} />
-                      <Tooltip 
-                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', padding: '8px 12px' }}
-                        formatter={(value) => [`₹${Number(value).toLocaleString()}`, 'Fee']} 
-                      />
-                      <Line type="monotone" dataKey="fee" stroke="var(--primary)" strokeWidth={3} activeDot={{ r: 5 }} dot={{ r: 3 }} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-
             {/* Scholarship Eligibility */}
             <ScholarshipEligibility university={resolvedUniversity} />
 
-            {/* Stats Row */}
-            <div style={{
-              display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: '8px', marginBottom: '24px',
-              background: 'var(--surface)', borderRadius: 'var(--radius-md)',
-              padding: '16px', boxShadow: 'var(--shadow-sm)',
-            }}>
-              {[
-                { icon: <Building2 size={20} color="var(--primary)" />, value: resolvedUniversity.established, label: 'Founded' },
-                { icon: '🌿', value: resolvedUniversity.acres, label: 'Acres' },
-                { icon: <Users size={20} color="var(--primary)" />, value: resolvedUniversity.ratio, label: 'S:F Ratio' },
-                { icon: <Award size={20} color="var(--primary)" />, value: resolvedUniversity.naac, label: 'NAAC' },
-              ].map((stat, i) => (
-                <div key={i} style={{ textAlign: 'center' }}>
-                  <div style={{ marginBottom: '4px', display: 'flex', justifyContent: 'center' }}>
-                    {typeof stat.icon === 'string' ? <span style={{ fontSize: '20px' }}>{stat.icon}</span> : stat.icon}
-                  </div>
-                  <div style={{ fontWeight: '800', fontSize: '14px', color: 'var(--text-main)' }}>{stat.value}</div>
-                  <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '600', textTransform: 'uppercase' }}>{stat.label}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* About */}
-            <SpotlightCard style={{ background: 'var(--surface)', borderRadius: 'var(--radius-md)', padding: '20px', marginBottom: '20px', boxShadow: 'var(--shadow-sm)' }}>
-              <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '12px' }}>About</h2>
-              <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.7 }}>{resolvedUniversity.about}</p>
+            {/* About the Institution */}
+            <SpotlightCard style={{ background: 'var(--surface)', borderRadius: 'var(--radius-md)', padding: '22px', boxShadow: 'var(--shadow-sm)', border: '1.5px solid var(--border)' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '12px', color: 'var(--text-main)' }}>About {resolvedUniversity.shortName || resolvedUniversity.name}</h2>
+              <p style={{ color: 'var(--text-muted)', fontSize: '13.5px', lineHeight: 1.7, margin: 0 }}>{resolvedUniversity.about}</p>
               {resolvedUniversity.website && (
                 <a href={resolvedUniversity.website} target="_blank" rel="noopener noreferrer" style={{
                   display: 'inline-flex', alignItems: 'center', gap: '6px',
-                  marginTop: '12px', color: 'var(--primary)', fontWeight: '600', fontSize: '13px',
+                  marginTop: '16px', color: 'var(--primary)', fontWeight: '700', fontSize: '13px',
                 }}>
-                  <ExternalLink size={14} /> Visit Official Website
+                  <ExternalLink size={14} /> Visit Official Portal
                 </a>
               )}
             </SpotlightCard>
@@ -796,8 +922,8 @@ export default function UniversityDetail() {
                   <Navigation size={22} fill="var(--primary)" />
                 </div>
                 <div>
-                  <div style={{ fontWeight: '800', color: 'var(--text-main)', fontSize: '16px', marginBottom: '2px' }}>Navigate to Campus</div>
-                  <div style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: '600' }}>Open in Google Maps</div>
+                  <div style={{ fontWeight: '800', color: 'var(--text-main)', fontSize: '15px', marginBottom: '2px' }}>Navigate to Campus</div>
+                  <div style={{ color: 'var(--text-muted)', fontSize: '12.5px', fontWeight: '600' }}>{resolvedUniversity.city}, AP · Google Maps</div>
                 </div>
               </div>
               <div style={{ color: 'var(--primary)', display: 'flex', alignItems: 'center' }}>
@@ -805,45 +931,25 @@ export default function UniversityDetail() {
               </div>
             </div>
 
-            {/* Bottom CTA */}
-            <div style={{ background: 'var(--dark-card)', borderRadius: 'var(--radius-lg)', padding: '28px 20px', textAlign: 'center' }}>
-              <h2 style={{ color: '#fff', fontSize: '20px', fontWeight: '800', marginBottom: '8px' }}>Ready to Ignite Your Future?</h2>
-              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', marginBottom: '20px' }}>Over 2,000 students joined {resolvedUniversity.shortName} last year.</p>
+            {/* Bottom Counselor Assistance CTA */}
+            <div style={{ background: 'var(--dark-card)', borderRadius: 'var(--radius-lg)', padding: '26px 20px', textAlign: 'center', boxShadow: 'var(--shadow-md)' }}>
+              <div style={{ fontSize: '32px', marginBottom: '8px' }}>🎓</div>
+              <h2 style={{ color: '#fff', fontSize: '19px', fontWeight: '800', marginBottom: '8px' }}>Need Guidance for 2026 Admissions?</h2>
+              <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px', lineHeight: 1.5, marginBottom: '20px' }}>
+                Connect with verified AP EAPCET counseling specialists for rank verification and seat allotment strategies.
+              </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <RippleButton onClick={() => setShowApply2(true)} className="btn btn-primary btn-full" style={{ borderRadius: '12px' }}>Apply for Admission</RippleButton>
-                <RippleButton onClick={() => showToast('📞 Counselor will call you within 24 hours!', 'success')} style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '12px', padding: '14px', fontWeight: '600', fontSize: '15px', cursor: 'pointer', width: '100%' }}>Contact Counselors</RippleButton>
+                <RippleButton onClick={() => setShowApply2(true)} className="btn btn-primary btn-full" style={{ borderRadius: '12px', padding: '14px' }}>
+                  Apply for Admission
+                </RippleButton>
+                <RippleButton onClick={() => showToast('📞 Counselor callback requested! We will reach out shortly.', 'success')} style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', border: '1px solid rgba(255,255,255,0.25)', borderRadius: '12px', padding: '12px', fontWeight: '600', fontSize: '14px', cursor: 'pointer', width: '100%' }}>
+                  Request Free Callback
+                </RippleButton>
               </div>
             </div>
-          </div>
-
-          {/* Main Content (Left on Desktop, Bottom on Mobile) */}
-          <div className="lg:col-span-2 order-2 lg:order-1 flex flex-col gap-6">
-
-            {/* Academic Programs with dynamic collapsible state */}
-            <AcademicProgramsSection resolvedUniversity={resolvedUniversity} />
-
-            <WaveDivider />
-            
-            {/* Recent Placements */}
-            {resolvedUniversity.placements && resolvedUniversity.placements.length > 0 && (
-              <>
-                <PlacementsSection resolvedUniversity={resolvedUniversity} />
-                <WaveDivider />
-              </>
-            )}
-
-            {/* Faculty - Viewport Staggered & Floating micro-animations */}
-            <FacultySection resolvedUniversity={resolvedUniversity} />
-
-            {/* Facilities - Staggered entrance and scale-pop hovers */}
-            <FacilitiesSection resolvedUniversity={resolvedUniversity} />
-
-            {/* Community Reviews */}
-            <div style={{ marginBottom: '24px' }}>
-              <ReviewsSection universityId={resolvedUniversity.id} />
-            </div>
 
           </div>
+
         </div>
       </div>
 
@@ -889,12 +995,10 @@ function AcademicProgramsSection({ resolvedUniversity }: { resolvedUniversity: U
   const [collapsed, setCollapsed] = useState(true);
   const visiblePrograms = collapsed ? resolvedUniversity.programs.slice(0, 3) : resolvedUniversity.programs;
 
-  let convenerLabel = "Convener Fee";
-  if (resolvedUniversity.id === 'srm-ap') convenerLabel = "SRMJEE Fee";
-  else if (resolvedUniversity.id === 'vit-ap') convenerLabel = "VITEEE Fee";
-  else if (resolvedUniversity.id === 'kl-university') convenerLabel = "KLEEE Fee";
-  else if (resolvedUniversity.id === 'amrita-ap') convenerLabel = "AEEE Fee";
-  else if (resolvedUniversity.id === 'gitam') convenerLabel = "GAT Fee";
+  const isPvt = (resolvedUniversity.category || '').includes('Deemed') || (resolvedUniversity.category || '').includes('Private');
+  const isGovt = (resolvedUniversity.category || '').includes('Govt') || (resolvedUniversity.category || '').includes('State');
+  const catAPct = resolvedUniversity.categoryAQuotaPercent || (isPvt ? 35 : (isGovt ? 100 : 70));
+  const catBPct = resolvedUniversity.categoryBQuotaPercent || (isPvt ? 65 : (isGovt ? 0 : 30));
 
   const addSuffix = (fee?: string) => {
     if (!fee || fee === '—' || fee === 'N/A') return fee || '—';
@@ -908,21 +1012,31 @@ function AcademicProgramsSection({ resolvedUniversity }: { resolvedUniversity: U
     <SpotlightCard style={{ background: 'var(--surface)', borderRadius: 'var(--radius-md)', overflow: 'hidden', marginBottom: '20px', boxShadow: 'var(--shadow-sm)' }}>
       <div style={{ padding: '20px 20px 12px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h2 style={{ fontSize: '18px', fontWeight: '800', margin: 0 }}>🎓 Academic Programs</h2>
-          <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px', margin: 0 }}>Review the fee structure below</p>
+          <h2 style={{ fontSize: '18px', fontWeight: '800', margin: 0 }}>🎓 Academic Programs &amp; Fee Structure</h2>
+
         </div>
         <HolographicBadge style={{ textTransform: 'none' }}>
           {resolvedUniversity.programs.length} Courses
         </HolographicBadge>
       </div>
-      <div style={{ overflowX: 'auto' }}>
+      <div className="horizontal-scroll-container scroll-fade-edge" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
         <table className="programs-table">
           <thead>
             <tr>
               <th>Program</th>
               <th>Duration</th>
-              <th>{convenerLabel}</th>
-              <th>Management Fee</th>
+              <th style={{ color: 'var(--primary)' }}>
+                Convenor Fee
+                <span style={{ display: 'block', fontSize: '10.5px', fontWeight: '600', color: 'var(--text-muted)', textTransform: 'none' }}>
+                  {catAPct}% Quota via EAPCET
+                </span>
+              </th>
+              <th style={{ color: 'var(--accent)' }}>
+                Management Fee
+                <span style={{ display: 'block', fontSize: '10.5px', fontWeight: '600', color: 'var(--text-muted)', textTransform: 'none' }}>
+                  {catBPct > 0 ? `${catBPct}% Quota Merit` : 'Govt (No Mgmt Quota)'}
+                </span>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -1017,29 +1131,206 @@ function FacultySection({ resolvedUniversity }: { resolvedUniversity: University
   );
 }
 
-function FacilitiesSection({ resolvedUniversity }: { resolvedUniversity: University }) {
+function UniversityMetricRibbon({ university }: { university: University }) {
+  const isPvt = (university.category || '').includes('Deemed') || (university.category || '').includes('Private');
+  const isGovt = (university.category || '').includes('Govt') || (university.category || '').includes('State');
+  
+  const catAPct = university.categoryAQuotaPercent || (isPvt ? 35 : (isGovt ? 100 : 70));
+  const catBPct = university.categoryBQuotaPercent || (isPvt ? 65 : (isGovt ? 0 : 30));
+
+  const convenerFee = university.convenerFee 
+    ? `₹${(university.convenerFee).toLocaleString('en-IN')}`
+    : (university.fees || '₹45,000');
+  
+  const mgmtFee = university.mgmtFee && university.mgmtFee > 0
+    ? `₹${(university.mgmtFee).toLocaleString('en-IN')}`
+    : (catBPct > 0 ? (university.mgmtFees || '₹2,50,000') : 'Govt (No Mgmt)');
+
+  const region = university.region || (
+    ['Tirupati', 'Anantapur', 'Kurnool', 'Kadapa', 'Nellore', 'Chittoor'].includes(university.city) 
+      ? 'SVU Region' 
+      : 'AU Region'
+  );
+
+  const stats = [
+    { label: 'Category', value: university.category?.replace(' College', '').replace(' University', '') || 'Autonomous', icon: '🏛️', sub: `${catAPct}% Conv. / ${catBPct}% Mgmt` },
+    { label: 'NAAC Rating', value: university.naac || 'Grade A+', icon: '🏆', sub: 'National Accreditation', highlight: true },
+    { label: 'Founded', value: `${university.established || 1980}`, icon: '📅', sub: 'Established Year' },
+    { label: 'Campus Area', value: `${university.acres || 50} Acres`, icon: '🌿', sub: 'Campus Land Area' },
+    { label: 'Faculty Ratio', value: university.ratio || '1:15', icon: '👥', sub: 'Student-to-Faculty' },
+    { label: 'AP Region', value: region, icon: '📍', sub: 'EAPCET Local Area' },
+    { label: 'Convenor Fee', value: convenerFee, icon: '💳', sub: `${catAPct}% Quota via EAPCET`, primary: true },
+    { label: 'Management Fee', value: mgmtFee, icon: '💎', sub: catBPct > 0 ? `${catBPct}% Merit Seats` : '100% Convenor', accent: true },
+  ];
+
   return (
-    <div style={{ marginBottom: '24px' }}>
-      <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '14px' }}>🌳 The Living Ecosystem</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-        {resolvedUniversity.facilities.map((f, i) => (
-          <motion.div 
-            key={f.name}
-            initial={{ opacity: 0, scale: 0.96, y: 20 }}
-            whileInView={{ opacity: 1, scale: 1, y: 0 }}
-            viewport={{ once: true, margin: '-20px' }}
-            transition={{ type: 'spring', stiffness: 180, damping: 20, delay: i * 0.06 }}
-            whileHover={{ y: -4, scale: 1.02, boxShadow: 'var(--shadow-md)', borderColor: 'var(--primary)' }}
+    <div style={{
+      background: 'var(--surface)',
+      borderRadius: 'var(--radius-lg)',
+      padding: '16px',
+      border: '1.5px solid var(--border)',
+      boxShadow: 'var(--shadow-sm)',
+      marginBottom: '28px',
+    }}>
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+        {stats.map((s, idx) => (
+          <div
+            key={idx}
             style={{
-              background: 'var(--surface)', borderRadius: 'var(--radius-md)',
-              padding: '16px', boxShadow: 'var(--shadow-sm)',
-              border: '1.5px solid var(--border)',
-              transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '12px 8px',
+              background: s.primary 
+                ? 'var(--primary-light)' 
+                : (s.highlight ? 'rgba(245, 158, 11, 0.08)' : 'var(--bg)'),
+              borderRadius: '12px',
+              border: s.primary 
+                ? '1.5px solid var(--primary-glow)' 
+                : '1px solid var(--border)',
+              textAlign: 'center',
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
             }}
           >
-            <div style={{ fontSize: '24px', marginBottom: '8px' }}>{f.icon}</div>
-            <div style={{ fontWeight: '700', fontSize: '13px', marginBottom: '4px', color: 'var(--text-main)' }}>{f.name}</div>
-            <div style={{ color: 'var(--text-muted)', fontSize: '11px', lineHeight: 1.5 }}>{f.desc}</div>
+            <div style={{ fontSize: '20px', marginBottom: '6px' }}>{s.icon}</div>
+            <div style={{
+              fontSize: '13px',
+              fontWeight: '900',
+              color: s.primary ? 'var(--primary)' : (s.accent ? 'var(--accent)' : 'var(--text-main)'),
+              lineHeight: 1.2,
+              width: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap'
+            }}>
+              {s.value}
+            </div>
+            <div style={{
+              fontSize: '10px',
+              fontWeight: '800',
+              color: 'var(--text-muted)',
+              textTransform: 'uppercase',
+              marginTop: '4px',
+              letterSpacing: '0.4px',
+              width: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap'
+            }}>
+              {s.label}
+            </div>
+            <div style={{
+              fontSize: '9.5px',
+              color: 'var(--text-muted)',
+              marginTop: '2px',
+              width: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap'
+            }}>
+              {s.sub}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function FacilitiesSection({ resolvedUniversity }: { resolvedUniversity: University }) {
+  const facilities: EnrichedFacility[] = React.useMemo(() => {
+    return getUniversityFacilities(resolvedUniversity);
+  }, [resolvedUniversity]);
+
+  return (
+    <div style={{ marginBottom: '28px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <div>
+          <h2 style={{ fontSize: '20px', fontWeight: '900', margin: 0, display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-main)' }}>
+            <span>🌳 The Living Ecosystem</span>
+          </h2>
+          <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>
+            Verified campus infrastructure, research laboratories, and student facilities
+          </p>
+        </div>
+        <HolographicBadge style={{ textTransform: 'none' }}>
+          {facilities.length} Verified Facilities
+        </HolographicBadge>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '14px' }}>
+        {facilities.map((f, i) => (
+          <motion.div 
+            key={f.name}
+            initial={{ opacity: 0, scale: 0.96, y: 16 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            viewport={{ once: true, margin: '-20px' }}
+            transition={{ type: 'spring', stiffness: 200, damping: 20, delay: i * 0.05 }}
+            whileHover={{ y: -4, scale: 1.01, boxShadow: 'var(--shadow-md)', borderColor: 'var(--primary)' }}
+            style={{
+              background: 'var(--surface)',
+              borderRadius: 'var(--radius-md)',
+              padding: '18px',
+              boxShadow: 'var(--shadow-sm)',
+              border: '1.5px solid var(--border)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              transition: 'border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease',
+            }}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                <div style={{
+                  width: '42px',
+                  height: '42px',
+                  borderRadius: '12px',
+                  background: 'var(--primary-light)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '22px'
+                }}>
+                  {f.icon}
+                </div>
+                {f.category && (
+                  <span style={{
+                    fontSize: '11px',
+                    fontWeight: '700',
+                    padding: '3px 8px',
+                    borderRadius: '99px',
+                    background: 'var(--chip-bg)',
+                    color: 'var(--text-muted)'
+                  }}>
+                    {f.category}
+                  </span>
+                )}
+              </div>
+              <div style={{ fontWeight: '800', fontSize: '14.5px', marginBottom: '6px', color: 'var(--text-main)', lineHeight: 1.3 }}>
+                {f.name}
+              </div>
+              <div style={{ color: 'var(--text-muted)', fontSize: '12.5px', lineHeight: 1.55 }}>
+                {f.desc}
+              </div>
+            </div>
+
+            {f.highlight && (
+              <div style={{
+                marginTop: '12px',
+                paddingTop: '10px',
+                borderTop: '1px solid var(--border)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontSize: '11.5px',
+                fontWeight: '700',
+                color: 'var(--primary)'
+              }}>
+                <span>✓</span>
+                <span>{f.highlight}</span>
+              </div>
+            )}
           </motion.div>
         ))}
       </div>

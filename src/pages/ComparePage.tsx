@@ -32,9 +32,10 @@ function ScoreBar({ label, value, color, icon }: { label: string, value: number,
 
 function AIVerdict({ colleges }: { colleges: University[] }) {
   const { setIsOpen, setPendingPrompt } = useCounselor();
-  if (colleges.length < 2) return null;
 
   const verdict = React.useMemo(() => {
+    if (colleges.length < 2) return null;
+
     // Decision logic: Highest average of ROI + ValueScore
     const scores = colleges.map(c => ({
       id: c.id,
@@ -58,6 +59,8 @@ function AIVerdict({ colleges }: { colleges: University[] }) {
 
     return { winner, text };
   }, [colleges]);
+
+  if (!verdict) return null;
 
   return (
     <motion.div
@@ -132,8 +135,9 @@ export default function ComparePage() {
     document.title = "Compare Colleges | EduDiscovery AP";
   }, []);
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const lastCollegesParamRef = React.useRef<string | null>(null);
+  const isInitialMount = React.useRef(true);
   const { universities, loading: loadingColleges } = useUniversities();
   const [selectedColleges, setSelectedColleges] = useState<(University | null)[]>([null, null]);
   const [chartType, setChartType] = useState<'overall' | 'placements' | 'fees'>('overall');
@@ -157,6 +161,20 @@ export default function ComparePage() {
       }
     }
   }, [searchParams, universities]);
+
+  // Synchronize URL query params whenever selected comparison slots change
+  React.useEffect(() => {
+    if (isInitialMount.current) {
+      if (universities.length > 0) {
+        isInitialMount.current = false;
+      }
+      return;
+    }
+    const ids = selectedColleges.filter((c): c is University => c !== null).map(c => c.id).join(',');
+    if (ids && ids !== searchParams.get('colleges')) {
+      setSearchParams({ colleges: ids }, { replace: true });
+    }
+  }, [selectedColleges, setSearchParams, searchParams, universities.length]);
 
   const validColleges = selectedColleges.filter((c): c is University => c !== null);
 
@@ -305,16 +323,16 @@ export default function ComparePage() {
   return (
     <div className="page" style={{ paddingBottom: '40px' }}>
       <div className="pt-6 pb-2 md:pt-10 mb-4 border-b border-border text-center md:text-left">
-        <h1 className="wave-underline" style={{ fontSize: '24px', fontWeight: '900', margin: 0, color: 'var(--primary)', display: 'inline-block' }}>Compare Colleges</h1>
+        <h1 className="wave-underline" style={{ fontSize: 'clamp(22px, 4vw, 28px)', fontWeight: '900', margin: 0, color: 'var(--primary)', display: 'inline-block' }}>Compare Colleges</h1>
         <p style={{ color: 'var(--text-muted)', marginTop: '8px', fontSize: '14px' }}>
           Select up to 3 colleges for detailed side-by-side branch-wise fee comparisons.
         </p>
       </div>
 
       <div style={{ padding: '0 0 24px 0' }}>
-        <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '16px', scrollbarWidth: 'none' }} className="no-scrollbar">
+        <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '16px', scrollbarWidth: 'none' }} className="no-scrollbar horizontal-scroll-container">
           {selectedColleges.map((selected, idx) => (
-            <div key={idx} style={{ minWidth: '300px', flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div key={idx} style={{ minWidth: 'clamp(270px, 78vw, 320px)', flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span className="label">College {idx + 1}</span>
                 {selectedColleges.length > 2 && (
@@ -378,7 +396,7 @@ export default function ComparePage() {
                     </div>
 
                     {/* Branch-wise Fees Section */}
-                    <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '12px', border: '1px solid #f1f5f9' }}>
+                    <div style={{ background: 'var(--chip-bg)', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}>
                       <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', marginBottom: '10px', letterSpacing: '0.5px' }}>Branch-wise Fees (/yr)</div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         {selected.branchFees ? (
@@ -388,13 +406,13 @@ export default function ComparePage() {
                             const isLowest = lowest !== null && fee === lowest;
                             return (
                               <div key={branch} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <span style={{ fontSize: '13px', color: '#64748b', fontWeight: 500 }}>{branch}</span>
+                                <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 500 }}>{branch}</span>
                                 <span style={{
                                   fontSize: '13px',
                                   fontWeight: 700,
-                                  color: isLowest ? '#10b981' : '#1e293b',
+                                  color: isLowest ? 'var(--primary)' : 'var(--text-main)',
                                   padding: isLowest ? '2px 8px' : '0',
-                                  background: isLowest ? '#f0fdf4' : 'transparent',
+                                  background: isLowest ? 'rgba(16, 185, 129, 0.12)' : 'transparent',
                                   borderRadius: '6px'
                                 }}>
                                   ₹{Number(fee).toLocaleString()}
@@ -413,7 +431,7 @@ export default function ComparePage() {
                       <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '10px' }}>{selected.acres || 'N/A'} Acres</div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         {(selected.facilities || []).slice(0, 3).map((f: Facility, i: number) => (
-                          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#475569' }}>
+                          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: 'var(--text-muted)' }}>
                             <CheckCircle2 size={14} style={{ color: 'var(--primary)' }} />
                             <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.name}</span>
                           </div>
@@ -473,11 +491,25 @@ export default function ComparePage() {
       {/* Advanced Chart Comparison */}
       {validColleges.length > 1 && (
         <>
-          <div id="comparison-charts-section" className="mt-8 border border-slate-200 overflow-hidden shadow-md rounded-[24px] bg-white">
-            <div className="bg-slate-50/50 border-b border-slate-100 px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div
+            id="comparison-charts-section"
+            className="mt-8 overflow-hidden shadow-md rounded-[24px]"
+            style={{
+              background: 'var(--surface)',
+              border: '1.5px solid var(--border)',
+              scrollMarginTop: '80px',
+            }}
+          >
+            <div
+              className="px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+              style={{
+                background: 'var(--surface-hover)',
+                borderBottom: '1px solid var(--border)',
+              }}
+            >
               <div>
-                <CardTitle className="text-lg font-black text-slate-800">Visual Performance Analysis</CardTitle>
-                <p className="text-sm font-medium text-slate-500 mt-1">Multi-dimensional comparison matrix generated via Recharts data.</p>
+                <CardTitle style={{ fontSize: '18px', fontWeight: 900, color: 'var(--text-main)' }}>Visual Performance Analysis</CardTitle>
+                <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-muted)', marginTop: '4px' }}>Multi-dimensional comparison matrix generated via Recharts data.</p>
               </div>
               <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                 <button
@@ -502,17 +534,33 @@ export default function ComparePage() {
                   <Share2 size={13} /> Copy Report
                 </button>
               </div>
-              <div className="flex bg-slate-100 p-1 rounded-xl self-start sm:self-auto">
+              <div
+                className="self-start sm:self-auto"
+                style={{
+                  display: 'flex',
+                  background: 'var(--chip-bg)',
+                  padding: '4px',
+                  borderRadius: '12px',
+                  border: '1px solid var(--border)',
+                  gap: '2px',
+                }}
+              >
                 {(['overall', 'placements', 'fees'] as const).map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setChartType(tab)}
-                    style={{ cursor: 'pointer' }}
-                    className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${
-                      chartType === tab
-                        ? 'bg-white text-slate-800 shadow-sm'
-                        : 'text-slate-500 hover:text-slate-800'
-                    }`}
+                    style={{
+                      cursor: 'pointer',
+                      padding: '6px 14px',
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      borderRadius: '8px',
+                      transition: 'all 0.15s ease',
+                      border: 'none',
+                      background: chartType === tab ? 'var(--surface)' : 'transparent',
+                      color: chartType === tab ? 'var(--primary)' : 'var(--text-muted)',
+                      boxShadow: chartType === tab ? 'var(--shadow-sm)' : 'none',
+                    }}
                   >
                     {tab === 'overall' ? 'Overall' : tab === 'placements' ? 'Placements' : 'Fees'}
                   </button>

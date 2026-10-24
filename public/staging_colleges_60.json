@@ -1,0 +1,2522 @@
+[
+  {
+    "id": "srm-ap",
+    "name": "SRM University AP",
+    "shortName": "SRM AP",
+    "code": "SRMAP",
+    "city": "Amaravati",
+    "established": 2017,
+    "acres": 180,
+    "ratio": "1:12",
+    "naac": "A++",
+    "nirf": "#12 (Univ, 2024)",
+    "category": "Deemed / Private",
+    "convenerFee": 250000,
+    "mgmtFee": 350000,
+    "branchFees": {
+      "CSE": 350000,
+      "AI/ML/DS": 350000,
+      "IT": 300000,
+      "ECE": 280000,
+      "EEE": 250000,
+      "Mechanical": 250000,
+      "Civil": 250000
+    },
+    "avgPackage": 1200000,
+    "placementRate": 91,
+    "placements": [
+      {
+        "company": "Amazon",
+        "package": "50 LPA",
+        "year": 2026
+      },
+      {
+        "company": "PayPal",
+        "package": "34 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS Digital",
+        "package": "7.5 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "vit-ap",
+    "name": "VIT-AP University",
+    "shortName": "VIT-AP",
+    "code": "VITAP",
+    "city": "Amaravati",
+    "established": 2017,
+    "acres": 200,
+    "ratio": "1:15",
+    "naac": "A++",
+    "nirf": "#11 (Univ, 2024)",
+    "category": "Deemed / Private",
+    "convenerFee": 195000,
+    "mgmtFee": 300000,
+    "branchFees": {
+      "CSE": 295000,
+      "AI/ML/DS": 295000,
+      "IT": 245000,
+      "ECE": 195000,
+      "EEE": 195000,
+      "Mechanical": 195000,
+      "Civil": 195000
+    },
+    "avgPackage": 900000,
+    "placementRate": 86,
+    "placements": [
+      {
+        "company": "Microsoft",
+        "package": "44 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Intel",
+        "package": "22 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Cognizant",
+        "package": "6.5 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "gitam",
+    "name": "GITAM University",
+    "shortName": "GITAM",
+    "code": "GITAM",
+    "city": "Visakhapatnam",
+    "established": 1980,
+    "acres": 100,
+    "ratio": "1:14",
+    "naac": "A+",
+    "nirf": "#67 (Univ, 2024)",
+    "category": "Deemed / Private",
+    "convenerFee": 220000,
+    "mgmtFee": 380000,
+    "branchFees": {
+      "CSE": 380000,
+      "AI/ML/DS": 380000,
+      "IT": 320000,
+      "ECE": 280000,
+      "EEE": 220000,
+      "Mechanical": 220000,
+      "Civil": 220000
+    },
+    "avgPackage": 900000,
+    "placementRate": 84,
+    "placements": [
+      {
+        "company": "Adobe",
+        "package": "46 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Amazon",
+        "package": "32 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS Ninja",
+        "package": "4.5 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "kl-university",
+    "name": "KL University (KLEF)",
+    "shortName": "KLU",
+    "code": "KLEF",
+    "city": "Vijayawada",
+    "established": 1980,
+    "acres": 100,
+    "ratio": "1:13",
+    "naac": "A++",
+    "nirf": "#28 (Univ, 2024)",
+    "category": "Deemed / Private",
+    "convenerFee": 240000,
+    "mgmtFee": 360000,
+    "branchFees": {
+      "CSE": 360000,
+      "AI/ML/DS": 360000,
+      "IT": 310000,
+      "ECE": 270000,
+      "EEE": 240000,
+      "Mechanical": 240000,
+      "Civil": 240000
+    },
+    "avgPackage": 850000,
+    "placementRate": 87,
+    "placements": [
+      {
+        "company": "Cisco",
+        "package": "52 LPA",
+        "year": 2026
+      },
+      {
+        "company": "ServiceNow",
+        "package": "33 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "5.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "vignan-university",
+    "name": "Vignan University",
+    "shortName": "Vignan",
+    "code": "VFSTR",
+    "city": "Guntur",
+    "established": 1997,
+    "acres": 104,
+    "ratio": "1:15",
+    "naac": "A+",
+    "nirf": "#88 (Univ, 2024)",
+    "category": "Deemed / Private",
+    "convenerFee": 160000,
+    "mgmtFee": 240000,
+    "branchFees": {
+      "CSE": 240000,
+      "AI/ML/DS": 240000,
+      "IT": 200000,
+      "ECE": 180000,
+      "EEE": 160000,
+      "Mechanical": 160000,
+      "Civil": 160000
+    },
+    "avgPackage": 650000,
+    "placementRate": 75,
+    "placements": [
+      {
+        "company": "TCS Digital",
+        "package": "11.7 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Accenture",
+        "package": "6.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Wipro",
+        "package": "4.5 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "amrita-ap",
+    "name": "Amrita Vishwa Vidyapeetham – AP",
+    "shortName": "Amrita AP",
+    "code": "AMRITA",
+    "city": "Amaravati",
+    "established": 2018,
+    "acres": 100,
+    "ratio": "1:12",
+    "naac": "A++",
+    "nirf": "#7 (Univ, 2024)",
+    "category": "Deemed / Private",
+    "convenerFee": 200000,
+    "mgmtFee": 320000,
+    "branchFees": {
+      "CSE": 320000,
+      "AI/ML/DS": 320000,
+      "IT": 280000,
+      "ECE": 250000,
+      "EEE": 200000,
+      "Mechanical": 200000,
+      "Civil": 200000
+    },
+    "avgPackage": 1100000,
+    "placementRate": 89,
+    "placements": [
+      {
+        "company": "Cisco",
+        "package": "45 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Bosch",
+        "package": "16 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS",
+        "package": "5.5 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "nri-institute",
+    "name": "Dr. RVR NRI University",
+    "shortName": "NRIU",
+    "code": "NRIT",
+    "city": "Vijayawada",
+    "established": 2008,
+    "acres": 20,
+    "ratio": "1:15",
+    "naac": "A",
+    "nirf": "—",
+    "category": "Deemed / Private",
+    "convenerFee": 60000,
+    "mgmtFee": 180000,
+    "branchFees": {
+      "CSE": 180000,
+      "AI/ML/DS": 180000,
+      "IT": 180000,
+      "ECE": 180000,
+      "EEE": 150000,
+      "Mechanical": 150000,
+      "Civil": 150000
+    },
+    "avgPackage": 600000,
+    "placementRate": 72,
+    "placements": [
+      {
+        "company": "TCS Digital",
+        "package": "25 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "4.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Wipro",
+        "package": "4.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "krea-university-sri-city",
+    "name": "Krea University",
+    "shortName": "Krea",
+    "code": "KREA",
+    "city": "Sri City",
+    "established": 2018,
+    "acres": 40,
+    "ratio": "1:10",
+    "naac": "A",
+    "nirf": "—",
+    "category": "Deemed / Private",
+    "convenerFee": 875000,
+    "mgmtFee": 1200000,
+    "branchFees": {
+      "CSE": 1200000,
+      "AI/ML/DS": 1200000,
+      "Economics": 875000,
+      "Data Science": 1000000
+    },
+    "avgPackage": 1000000,
+    "placementRate": 88,
+    "placements": [
+      {
+        "company": "Amazon",
+        "package": "18 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Goldman Sachs",
+        "package": "16 LPA",
+        "year": 2026
+      },
+      {
+        "company": "McKinsey",
+        "package": "14 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "centurion-university-vizianagaram",
+    "name": "Centurion University (CUTM)",
+    "shortName": "CUTM AP",
+    "code": "CUTMAP",
+    "city": "Vizianagaram",
+    "established": 2017,
+    "acres": 50,
+    "ratio": "1:15",
+    "naac": "A",
+    "nirf": "—",
+    "category": "Deemed / Private",
+    "convenerFee": 70000,
+    "mgmtFee": 210000,
+    "branchFees": {
+      "CSE": 210000,
+      "AI/ML/DS": 210000,
+      "Aerospace": 180000,
+      "ECE": 150000,
+      "EEE": 120000,
+      "Mechanical": 120000,
+      "Civil": 120000
+    },
+    "avgPackage": 500000,
+    "placementRate": 70,
+    "placements": [
+      {
+        "company": "Infosys",
+        "package": "50 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS",
+        "package": "7.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Capgemini",
+        "package": "4.5 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "annamacharya-university-rajampet",
+    "name": "Annamacharya University",
+    "shortName": "Annamacharya",
+    "code": "AETR",
+    "city": "Rajampet",
+    "established": 1998,
+    "acres": 30,
+    "ratio": "1:15",
+    "naac": "A",
+    "nirf": "—",
+    "category": "Deemed / Private",
+    "convenerFee": 75000,
+    "mgmtFee": 225000,
+    "branchFees": {
+      "CSE": 225000,
+      "AI/ML/DS": 225000,
+      "IT": 180000,
+      "ECE": 160000,
+      "EEE": 140000,
+      "Mechanical": 140000,
+      "Civil": 140000
+    },
+    "avgPackage": 400000,
+    "placementRate": 60,
+    "placements": [
+      {
+        "company": "Infosys",
+        "package": "7.2 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS",
+        "package": "6.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Wipro",
+        "package": "4.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "sssihl-prasanthi-nilayam",
+    "name": "Sri Sathya Sai Institute (SSSIHL)",
+    "shortName": "SSSIHL",
+    "code": "SSSIHL",
+    "city": "Prasanthi Nilayam",
+    "established": 1981,
+    "acres": 100,
+    "ratio": "1:8",
+    "naac": "A++",
+    "nirf": "—",
+    "category": "Deemed / Free Trust",
+    "convenerFee": 0,
+    "mgmtFee": 0,
+    "branchFees": {
+      "CSE": 0,
+      "AI/ML/DS": 0,
+      "Sciences": 0,
+      "Management": 0
+    },
+    "avgPackage": 700000,
+    "placementRate": 75,
+    "placements": [
+      {
+        "company": "TCS",
+        "package": "12.6 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "7.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Wipro",
+        "package": "5.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "vr-siddhartha",
+    "name": "V.R. Siddhartha Engineering College",
+    "shortName": "VRSEC",
+    "code": "VRSE",
+    "city": "Vijayawada",
+    "established": 1977,
+    "acres": 24,
+    "ratio": "1:15",
+    "naac": "A+",
+    "nirf": "#141 (Engg, 2024)",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 77000,
+    "mgmtFee": 231000,
+    "branchFees": {
+      "CSE": 77000,
+      "AI/ML/DS": 77000,
+      "IT": 77000,
+      "ECE": 77000,
+      "EEE": 77000,
+      "Mechanical": 77000,
+      "Civil": 77000
+    },
+    "avgPackage": 550000,
+    "placementRate": 70,
+    "placements": [
+      {
+        "company": "Amazon",
+        "package": "44 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Cisco",
+        "package": "24 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS Digital",
+        "package": "7.5 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "gvpce-visakhapatnam",
+    "name": "Gayatri Vidya Parishad (GVPCE)",
+    "shortName": "GVPCE",
+    "code": "GVPV",
+    "city": "Visakhapatnam",
+    "established": 1996,
+    "acres": 21,
+    "ratio": "1:15",
+    "naac": "A",
+    "nirf": "#160 (Engg, 2024)",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 79000,
+    "mgmtFee": 237000,
+    "branchFees": {
+      "CSE": 79000,
+      "AI/ML/DS": 79000,
+      "IT": 79000,
+      "ECE": 79000,
+      "EEE": 79000,
+      "Mechanical": 79000,
+      "Civil": 79000
+    },
+    "avgPackage": 550000,
+    "placementRate": 70,
+    "placements": [
+      {
+        "company": "Amazon",
+        "package": "44 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS Digital",
+        "package": "9.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Cognizant",
+        "package": "5.5 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "rvrjcce-guntur",
+    "name": "RVR & JC College of Engineering",
+    "shortName": "RVR&JC",
+    "code": "RVRJ",
+    "city": "Guntur",
+    "established": 1985,
+    "acres": 37,
+    "ratio": "1:15",
+    "naac": "A+",
+    "nirf": "201-250 (Engg)",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 72000,
+    "mgmtFee": 216000,
+    "branchFees": {
+      "CSE": 72000,
+      "AI/ML/DS": 72000,
+      "IT": 72000,
+      "ECE": 72000,
+      "EEE": 72000,
+      "Mechanical": 72000,
+      "Civil": 72000
+    },
+    "avgPackage": 500000,
+    "placementRate": 69,
+    "placements": [
+      {
+        "company": "TCS Digital",
+        "package": "20 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "8.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Wipro",
+        "package": "4.5 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "gmrit-rajam",
+    "name": "GMR Institute of Technology",
+    "shortName": "GMRIT",
+    "code": "GMRV",
+    "city": "Rajam",
+    "established": 1997,
+    "acres": 117,
+    "ratio": "1:15",
+    "naac": "A",
+    "nirf": "201-250 (Engg)",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 76600,
+    "mgmtFee": 229800,
+    "branchFees": {
+      "CSE": 76600,
+      "AI/ML/DS": 76600,
+      "IT": 76600,
+      "ECE": 76600,
+      "EEE": 76600,
+      "Mechanical": 76600,
+      "Civil": 76600
+    },
+    "avgPackage": 480000,
+    "placementRate": 68,
+    "placements": [
+      {
+        "company": "TCS Digital",
+        "package": "8.64 LPA",
+        "year": 2026
+      },
+      {
+        "company": "L&T Tech",
+        "package": "6.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Cognizant",
+        "package": "4.5 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "lbrce-mylavaram",
+    "name": "Lakireddy Bali Reddy College of Engg.",
+    "shortName": "LBRCE",
+    "code": "LBRC",
+    "city": "Mylavaram",
+    "established": 1998,
+    "acres": 60,
+    "ratio": "1:15",
+    "naac": "A",
+    "nirf": "201-250 (Engg)",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 74700,
+    "mgmtFee": 224100,
+    "branchFees": {
+      "CSE": 74700,
+      "AI/ML/DS": 74700,
+      "IT": 74700,
+      "ECE": 74700,
+      "EEE": 74700,
+      "Mechanical": 74700,
+      "Civil": 74700
+    },
+    "avgPackage": 420000,
+    "placementRate": 63,
+    "placements": [
+      {
+        "company": "Infosys",
+        "package": "7.56 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS",
+        "package": "6.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Wipro",
+        "package": "4.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "bec-bapatla",
+    "name": "Bapatla Engineering College",
+    "shortName": "BEC",
+    "code": "BAPL",
+    "city": "Bapatla",
+    "established": 1981,
+    "acres": 30,
+    "ratio": "1:15",
+    "naac": "A",
+    "nirf": "—",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 68000,
+    "mgmtFee": 204000,
+    "branchFees": {
+      "CSE": 68000,
+      "AI/ML/DS": 68000,
+      "IT": 68000,
+      "ECE": 68000,
+      "EEE": 68000,
+      "Mechanical": 68000,
+      "Civil": 68000
+    },
+    "avgPackage": 430000,
+    "placementRate": 64,
+    "placements": [
+      {
+        "company": "TCS",
+        "package": "7.74 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "6.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Tech Mahindra",
+        "package": "4.2 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "vitb-bhimavaram",
+    "name": "Vishnu Institute of Technology",
+    "shortName": "VITB",
+    "code": "VITB",
+    "city": "Bhimavaram",
+    "established": 2008,
+    "acres": 100,
+    "ratio": "1:15",
+    "naac": "A++",
+    "nirf": "201-250 (Engg)",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 70000,
+    "mgmtFee": 210000,
+    "branchFees": {
+      "CSE": 70000,
+      "AI/ML/DS": 70000,
+      "IT": 70000,
+      "ECE": 70000,
+      "EEE": 70000,
+      "Mechanical": 70000,
+      "Civil": 70000
+    },
+    "avgPackage": 430000,
+    "placementRate": 63,
+    "placements": [
+      {
+        "company": "TCS Digital",
+        "package": "7.74 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Accenture",
+        "package": "6.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Capgemini",
+        "package": "4.2 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "vvit-guntur",
+    "name": "Vasireddy Venkatadri Inst. of Tech.",
+    "shortName": "VVIT",
+    "code": "VVIT",
+    "city": "Guntur",
+    "established": 2007,
+    "acres": 25,
+    "ratio": "1:15",
+    "naac": "A",
+    "nirf": "—",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 65000,
+    "mgmtFee": 195000,
+    "branchFees": {
+      "CSE": 65000,
+      "AI/ML/DS": 65000,
+      "IT": 65000,
+      "ECE": 65000,
+      "EEE": 65000,
+      "Mechanical": 65000,
+      "Civil": 65000
+    },
+    "avgPackage": 410000,
+    "placementRate": 61,
+    "placements": [
+      {
+        "company": "TCS",
+        "package": "7.38 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "5.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Wipro",
+        "package": "4.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "gec-gudlavalleru",
+    "name": "Seshadri Rao Gudlavalleru Engg. College",
+    "shortName": "GEC",
+    "code": "GDLV",
+    "city": "Gudlavalleru",
+    "established": 1998,
+    "acres": 25,
+    "ratio": "1:15",
+    "naac": "A+",
+    "nirf": "—",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 73000,
+    "mgmtFee": 219000,
+    "branchFees": {
+      "CSE": 73000,
+      "AI/ML/DS": 73000,
+      "IT": 73000,
+      "ECE": 73000,
+      "EEE": 73000,
+      "Mechanical": 73000,
+      "Civil": 73000
+    },
+    "avgPackage": 450000,
+    "placementRate": 65,
+    "placements": [
+      {
+        "company": "Infosys",
+        "package": "8.1 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS",
+        "package": "6.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Cognizant",
+        "package": "4.5 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "srkrec-bhimavaram",
+    "name": "Sagi Ramakrishnam Raju Engg. College",
+    "shortName": "SRKR",
+    "code": "SRKR",
+    "city": "Bhimavaram",
+    "established": 1980,
+    "acres": 30,
+    "ratio": "1:15",
+    "naac": "A",
+    "nirf": "201-250 (Engg)",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 75000,
+    "mgmtFee": 225000,
+    "branchFees": {
+      "CSE": 75000,
+      "AI/ML/DS": 75000,
+      "IT": 75000,
+      "ECE": 75000,
+      "EEE": 75000,
+      "Mechanical": 75000,
+      "Civil": 75000
+    },
+    "avgPackage": 420000,
+    "placementRate": 63,
+    "placements": [
+      {
+        "company": "TCS Digital",
+        "package": "7.56 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "6.2 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Wipro",
+        "package": "4.2 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "aitam-tekkali",
+    "name": "Aditya Inst. of Tech. and Mgmt.",
+    "shortName": "AITAM",
+    "code": "AITM",
+    "city": "Tekkali",
+    "established": 2001,
+    "acres": 40,
+    "ratio": "1:15",
+    "naac": "A+",
+    "nirf": "—",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 68000,
+    "mgmtFee": 204000,
+    "branchFees": {
+      "CSE": 68000,
+      "AI/ML/DS": 68000,
+      "IT": 68000,
+      "ECE": 68000,
+      "EEE": 68000,
+      "Mechanical": 68000,
+      "Civil": 68000
+    },
+    "avgPackage": 410000,
+    "placementRate": 61,
+    "placements": [
+      {
+        "company": "TCS",
+        "package": "7.38 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "5.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Cognizant",
+        "package": "4.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "svecw-bhimavaram",
+    "name": "Shri Vishnu Engg. College for Women",
+    "shortName": "SVECW",
+    "code": "VDCW",
+    "city": "Bhimavaram",
+    "established": 2001,
+    "acres": 100,
+    "ratio": "1:15",
+    "naac": "A",
+    "nirf": "201-250 (Engg)",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 70000,
+    "mgmtFee": 210000,
+    "branchFees": {
+      "CSE": 70000,
+      "AI/ML/DS": 70000,
+      "IT": 70000,
+      "ECE": 70000,
+      "EEE": 70000,
+      "Mechanical": 70000,
+      "Civil": 70000
+    },
+    "avgPackage": 400000,
+    "placementRate": 60,
+    "placements": [
+      {
+        "company": "Infosys",
+        "package": "7.2 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS",
+        "package": "6.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Capgemini",
+        "package": "4.2 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "nec-narasaraopeta",
+    "name": "Narasaraopeta Engineering College",
+    "shortName": "NEC",
+    "code": "NRTE",
+    "city": "Narasaraopeta",
+    "established": 1998,
+    "acres": 40,
+    "ratio": "1:15",
+    "naac": "A+",
+    "nirf": "—",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 62000,
+    "mgmtFee": 186000,
+    "branchFees": {
+      "CSE": 62000,
+      "AI/ML/DS": 62000,
+      "IT": 62000,
+      "ECE": 62000,
+      "EEE": 62000,
+      "Mechanical": 62000,
+      "Civil": 62000
+    },
+    "avgPackage": 380000,
+    "placementRate": 58,
+    "placements": [
+      {
+        "company": "TCS",
+        "package": "6.84 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "5.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Tech Mahindra",
+        "package": "3.8 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "pec-surampalem",
+    "name": "Pragati Engineering College",
+    "shortName": "PEC",
+    "code": "PRAG",
+    "city": "Surampalem",
+    "established": 2001,
+    "acres": 25,
+    "ratio": "1:15",
+    "naac": "A",
+    "nirf": "—",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 65000,
+    "mgmtFee": 195000,
+    "branchFees": {
+      "CSE": 65000,
+      "AI/ML/DS": 65000,
+      "IT": 65000,
+      "ECE": 65000,
+      "EEE": 65000,
+      "Mechanical": 65000,
+      "Civil": 65000
+    },
+    "avgPackage": 360000,
+    "placementRate": 55,
+    "placements": [
+      {
+        "company": "Infosys",
+        "package": "6.48 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS",
+        "package": "5.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Wipro",
+        "package": "3.6 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "aliet-vijayawada",
+    "name": "Andhra Loyola Inst. of Engg. & Tech.",
+    "shortName": "ALIET",
+    "code": "ALIE",
+    "city": "Vijayawada",
+    "established": 2008,
+    "acres": 20,
+    "ratio": "1:15",
+    "naac": "A",
+    "nirf": "—",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 60000,
+    "mgmtFee": 180000,
+    "branchFees": {
+      "CSE": 60000,
+      "AI/ML/DS": 60000,
+      "IT": 60000,
+      "ECE": 60000,
+      "EEE": 60000,
+      "Mechanical": 60000,
+      "Civil": 60000
+    },
+    "avgPackage": 450000,
+    "placementRate": 64,
+    "placements": [
+      {
+        "company": "TCS",
+        "package": "8.1 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "6.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Cognizant",
+        "package": "4.2 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "mvgrce-vizianagaram",
+    "name": "MVGR College of Engineering",
+    "shortName": "MVGRCE",
+    "code": "MVGR",
+    "city": "Vizianagaram",
+    "established": 1997,
+    "acres": 43,
+    "ratio": "1:15",
+    "naac": "A",
+    "nirf": "—",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 76900,
+    "mgmtFee": 230700,
+    "branchFees": {
+      "CSE": 76900,
+      "AI/ML/DS": 76900,
+      "IT": 76900,
+      "ECE": 76900,
+      "EEE": 76900,
+      "Mechanical": 76900,
+      "Civil": 76900
+    },
+    "avgPackage": 380000,
+    "placementRate": 58,
+    "placements": [
+      {
+        "company": "TCS",
+        "package": "6.84 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "5.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Wipro",
+        "package": "3.8 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "liet-rajam",
+    "name": "Lendi Inst. of Engg. and Technology",
+    "shortName": "LIET",
+    "code": "LEND",
+    "city": "Rajam",
+    "established": 2008,
+    "acres": 20,
+    "ratio": "1:15",
+    "naac": "A+",
+    "nirf": "—",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 62300,
+    "mgmtFee": 186900,
+    "branchFees": {
+      "CSE": 62300,
+      "AI/ML/DS": 62300,
+      "IT": 62300,
+      "ECE": 62300,
+      "EEE": 62300,
+      "Mechanical": 62300,
+      "Civil": 62300
+    },
+    "avgPackage": 370000,
+    "placementRate": 56,
+    "placements": [
+      {
+        "company": "TCS",
+        "package": "6.66 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "5.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Tech Mahindra",
+        "package": "3.6 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "qiscet-ongole",
+    "name": "QIS College of Engg. and Tech.",
+    "shortName": "QISCET",
+    "code": "QISB",
+    "city": "Ongole",
+    "established": 1998,
+    "acres": 30,
+    "ratio": "1:15",
+    "naac": "A+",
+    "nirf": "—",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 62000,
+    "mgmtFee": 186000,
+    "branchFees": {
+      "CSE": 62000,
+      "AI/ML/DS": 62000,
+      "IT": 62000,
+      "ECE": 62000,
+      "EEE": 62000,
+      "Mechanical": 62000,
+      "Civil": 62000
+    },
+    "avgPackage": 380000,
+    "placementRate": 57,
+    "placements": [
+      {
+        "company": "TCS",
+        "package": "6.84 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "5.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Wipro",
+        "package": "3.8 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "kiet-kakinada",
+    "name": "Kakinada Inst. of Engg. and Tech.",
+    "shortName": "KIET",
+    "code": "KIET",
+    "city": "Kakinada",
+    "established": 2001,
+    "acres": 25,
+    "ratio": "1:15",
+    "naac": "B++",
+    "nirf": "—",
+    "category": "Affiliated / APHERMC",
+    "convenerFee": 60000,
+    "mgmtFee": 180000,
+    "branchFees": {
+      "CSE": 60000,
+      "AI/ML/DS": 60000,
+      "IT": 60000,
+      "ECE": 60000,
+      "EEE": 60000,
+      "Mechanical": 60000,
+      "Civil": 60000
+    },
+    "avgPackage": 420000,
+    "placementRate": 62,
+    "placements": [
+      {
+        "company": "Infosys",
+        "package": "7.56 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS",
+        "package": "5.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Cognizant",
+        "package": "4.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "pvpsit-vijayawada",
+    "name": "Prasad V Potluri Siddhartha Inst. of Tech.",
+    "shortName": "PVPSIT",
+    "code": "PVPS",
+    "city": "Vijayawada",
+    "established": 1998,
+    "acres": 20,
+    "ratio": "1:15",
+    "naac": "A+",
+    "nirf": "—",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 105000,
+    "mgmtFee": 315000,
+    "branchFees": {
+      "CSE": 105000,
+      "AI/ML/DS": 105000,
+      "IT": 105000,
+      "ECE": 105000,
+      "EEE": 105000,
+      "Mechanical": 105000,
+      "Civil": 105000
+    },
+    "avgPackage": 600000,
+    "placementRate": 75,
+    "placements": [
+      {
+        "company": "TCS Digital",
+        "package": "10.8 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "7.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Wipro",
+        "package": "4.5 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "raghu-engineering-visakhapatnam",
+    "name": "Raghu Engineering College",
+    "shortName": "REC",
+    "code": "RAGH",
+    "city": "Visakhapatnam",
+    "established": 2001,
+    "acres": 40,
+    "ratio": "1:15",
+    "naac": "A+",
+    "nirf": "—",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 85000,
+    "mgmtFee": 255000,
+    "branchFees": {
+      "CSE": 85000,
+      "AI/ML/DS": 85000,
+      "IT": 85000,
+      "ECE": 85000,
+      "EEE": 85000,
+      "Mechanical": 85000,
+      "Civil": 85000
+    },
+    "avgPackage": 550000,
+    "placementRate": 70,
+    "placements": [
+      {
+        "company": "TCS Digital",
+        "package": "9.9 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Amazon",
+        "package": "14 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Cognizant",
+        "package": "4.5 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "sietk-puttur",
+    "name": "Siddharth Inst. of Engg. & Tech.",
+    "shortName": "SIETK",
+    "code": "SIET",
+    "city": "Puttur",
+    "established": 2001,
+    "acres": 30,
+    "ratio": "1:15",
+    "naac": "A+",
+    "nirf": "—",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 75000,
+    "mgmtFee": 225000,
+    "branchFees": {
+      "CSE": 75000,
+      "AI/ML/DS": 75000,
+      "IT": 75000,
+      "ECE": 75000,
+      "EEE": 75000,
+      "Mechanical": 75000,
+      "Civil": 75000
+    },
+    "avgPackage": 500000,
+    "placementRate": 68,
+    "placements": [
+      {
+        "company": "Infosys",
+        "package": "9.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS",
+        "package": "6.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Wipro",
+        "package": "4.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "svec-tadepalligudem",
+    "name": "Sri Vasavi Engineering College",
+    "shortName": "SVEC",
+    "code": "VASV",
+    "city": "Tadepalligudem",
+    "established": 2001,
+    "acres": 25,
+    "ratio": "1:15",
+    "naac": "A",
+    "nirf": "—",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 77200,
+    "mgmtFee": 231600,
+    "branchFees": {
+      "CSE": 77200,
+      "AI/ML/DS": 77200,
+      "IT": 77200,
+      "ECE": 77200,
+      "EEE": 77200,
+      "Mechanical": 77200,
+      "Civil": 77200
+    },
+    "avgPackage": 450000,
+    "placementRate": 68,
+    "placements": [
+      {
+        "company": "TCS Digital",
+        "package": "10.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "6.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Cognizant",
+        "package": "4.2 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "svce-tirupati",
+    "name": "Sri Venkateswara College of Engg.",
+    "shortName": "SVCE",
+    "code": "SVET",
+    "city": "Tirupati",
+    "established": 2007,
+    "acres": 20,
+    "ratio": "1:15",
+    "naac": "A",
+    "nirf": "201-300",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 58000,
+    "mgmtFee": 250000,
+    "branchFees": {
+      "CSE": 58000,
+      "AI/ML/DS": 58000,
+      "IT": 58000,
+      "ECE": 58000,
+      "EEE": 58000,
+      "Mechanical": 58000,
+      "Civil": 58000
+    },
+    "avgPackage": 550000,
+    "placementRate": 78,
+    "placements": [
+      {
+        "company": "Wipro",
+        "package": "11.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS",
+        "package": "7.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "5.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "aec-surampalem",
+    "name": "Aditya Engineering College",
+    "shortName": "AEC",
+    "code": "ADTP",
+    "city": "Surampalem",
+    "established": 2001,
+    "acres": 180,
+    "ratio": "1:15",
+    "naac": "A+",
+    "nirf": "—",
+    "category": "Autonomous / APHERMC",
+    "convenerFee": 70000,
+    "mgmtFee": 210000,
+    "branchFees": {
+      "CSE": 70000,
+      "AI/ML/DS": 70000,
+      "IT": 70000,
+      "ECE": 70000,
+      "EEE": 70000,
+      "Mechanical": 70000,
+      "Civil": 70000
+    },
+    "avgPackage": 400000,
+    "placementRate": 62,
+    "placements": [
+      {
+        "company": "Infosys",
+        "package": "7.2 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS",
+        "package": "6.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "DXC Technology",
+        "package": "4.2 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "andhra-university",
+    "name": "Andhra University",
+    "shortName": "AU",
+    "code": "ANDU",
+    "city": "Visakhapatnam",
+    "established": 1926,
+    "acres": 422,
+    "ratio": "1:15",
+    "naac": "A++",
+    "nirf": "#43 (Univ, 2024)",
+    "category": "State Govt University",
+    "convenerFee": 35000,
+    "mgmtFee": 120000,
+    "branchFees": {
+      "CSE": 35000,
+      "AI/ML/DS": 35000,
+      "IT": 35000,
+      "ECE": 35000,
+      "EEE": 35000,
+      "Mechanical": 35000,
+      "Civil": 35000
+    },
+    "avgPackage": 600000,
+    "placementRate": 68,
+    "placements": [
+      {
+        "company": "TCS Digital",
+        "package": "10.8 LPA",
+        "year": 2026
+      },
+      {
+        "company": "L&T",
+        "package": "8.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Wipro",
+        "package": "5.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "sv-university",
+    "name": "Sri Venkateswara University",
+    "shortName": "SVU",
+    "code": "SVUC",
+    "city": "Tirupati",
+    "established": 1954,
+    "acres": 1000,
+    "ratio": "1:14",
+    "naac": "A+",
+    "nirf": "#60 (Univ, 2024)",
+    "category": "State Govt University",
+    "convenerFee": 30000,
+    "mgmtFee": 100000,
+    "branchFees": {
+      "CSE": 30000,
+      "AI/ML/DS": 30000,
+      "IT": 30000,
+      "ECE": 30000,
+      "EEE": 30000,
+      "Mechanical": 30000,
+      "Civil": 30000
+    },
+    "avgPackage": 500000,
+    "placementRate": 64,
+    "placements": [
+      {
+        "company": "Wipro",
+        "package": "9.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "6.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS",
+        "package": "5.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "jntuk",
+    "name": "JNTU Kakinada",
+    "shortName": "JNTUK",
+    "code": "JNUK",
+    "city": "Kakinada",
+    "established": 1946,
+    "acres": 110,
+    "ratio": "1:15",
+    "naac": "A+",
+    "nirf": "101-150 (Engg)",
+    "category": "State Technical Univ",
+    "convenerFee": 35000,
+    "mgmtFee": 100000,
+    "branchFees": {
+      "CSE": 35000,
+      "AI/ML/DS": 35000,
+      "IT": 35000,
+      "ECE": 35000,
+      "EEE": 35000,
+      "Mechanical": 35000,
+      "Civil": 35000
+    },
+    "avgPackage": 500000,
+    "placementRate": 65,
+    "placements": [
+      {
+        "company": "TCS Digital",
+        "package": "9.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Cognizant",
+        "package": "6.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "4.5 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "jntua-anantapur",
+    "name": "JNTU Anantapur",
+    "shortName": "JNTUA",
+    "code": "JNUA",
+    "city": "Anantapur",
+    "established": 1946,
+    "acres": 155,
+    "ratio": "1:15",
+    "naac": "A",
+    "nirf": "151-200 (Engg)",
+    "category": "State Technical Univ",
+    "convenerFee": 35000,
+    "mgmtFee": 100000,
+    "branchFees": {
+      "CSE": 35000,
+      "AI/ML/DS": 35000,
+      "IT": 35000,
+      "ECE": 35000,
+      "EEE": 35000,
+      "Mechanical": 35000,
+      "Civil": 35000
+    },
+    "avgPackage": 450000,
+    "placementRate": 62,
+    "placements": [
+      {
+        "company": "Infosys",
+        "package": "8.1 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS",
+        "package": "6.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Wipro",
+        "package": "4.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "acharya-nagarjuna-university",
+    "name": "Acharya Nagarjuna University",
+    "shortName": "ANU",
+    "code": "ANUC",
+    "city": "Guntur",
+    "established": 1976,
+    "acres": 293,
+    "ratio": "1:15",
+    "naac": "A",
+    "nirf": "#101 (Univ, 2024)",
+    "category": "State Govt University",
+    "convenerFee": 25000,
+    "mgmtFee": 80000,
+    "branchFees": {
+      "CSE": 25000,
+      "AI/ML/DS": 25000,
+      "IT": 25000,
+      "ECE": 25000,
+      "EEE": 25000,
+      "Mechanical": 25000,
+      "Civil": 25000
+    },
+    "avgPackage": 450000,
+    "placementRate": 60,
+    "placements": [
+      {
+        "company": "TCS",
+        "package": "8.1 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Wipro",
+        "package": "6.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Tech Mahindra",
+        "package": "4.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "aknu-rajamahendravaram",
+    "name": "Adikavi Nannaya University",
+    "shortName": "AKNU",
+    "code": "AKNU",
+    "city": "Rajamahendravaram",
+    "established": 2006,
+    "acres": 100,
+    "ratio": "1:18",
+    "naac": "B",
+    "nirf": "—",
+    "category": "State Govt University",
+    "convenerFee": 20000,
+    "mgmtFee": 60000,
+    "branchFees": {
+      "CSE": 20000,
+      "AI/ML/DS": 20000,
+      "IT": 20000,
+      "ECE": 20000,
+      "EEE": 20000,
+      "Mechanical": 20000,
+      "Civil": 20000
+    },
+    "avgPackage": 380000,
+    "placementRate": 58,
+    "placements": [
+      {
+        "company": "TCS",
+        "package": "6.84 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "5.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Wipro",
+        "package": "3.6 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "sku-anantapur",
+    "name": "Sri Krishnadevaraya University",
+    "shortName": "SKU",
+    "code": "SKUC",
+    "city": "Anantapur",
+    "established": 1981,
+    "acres": 482,
+    "ratio": "1:16",
+    "naac": "B",
+    "nirf": "—",
+    "category": "State Govt University",
+    "convenerFee": 22000,
+    "mgmtFee": 65000,
+    "branchFees": {
+      "CSE": 22000,
+      "AI/ML/DS": 22000,
+      "IT": 22000,
+      "ECE": 22000,
+      "EEE": 22000,
+      "Mechanical": 22000,
+      "Civil": 22000
+    },
+    "avgPackage": 370000,
+    "placementRate": 56,
+    "placements": [
+      {
+        "company": "Infosys",
+        "package": "6.66 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS",
+        "package": "5.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Tech Mahindra",
+        "package": "3.5 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "yvu-kadapa",
+    "name": "Yogi Vemana University",
+    "shortName": "YVU",
+    "code": "YVUC",
+    "city": "Kadapa",
+    "established": 2006,
+    "acres": 452,
+    "ratio": "1:15",
+    "naac": "A",
+    "nirf": "—",
+    "category": "State Govt University",
+    "convenerFee": 18000,
+    "mgmtFee": 50000,
+    "branchFees": {
+      "CSE": 18000,
+      "AI/ML/DS": 18000,
+      "Sciences": 18000,
+      "Humanities": 12000
+    },
+    "avgPackage": 350000,
+    "placementRate": 52,
+    "placements": [
+      {
+        "company": "TCS",
+        "package": "6.3 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Wipro",
+        "package": "4.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Pharma Labs",
+        "package": "3.5 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "vsu-nellore",
+    "name": "Vikrama Simhapuri University",
+    "shortName": "VSU",
+    "code": "VSUN",
+    "city": "Nellore",
+    "established": 2008,
+    "acres": 87,
+    "ratio": "1:16",
+    "naac": "B",
+    "nirf": "—",
+    "category": "State Govt University",
+    "convenerFee": 20000,
+    "mgmtFee": 60000,
+    "branchFees": {
+      "Marine Biology": 20000,
+      "Sciences": 20000,
+      "MBA": 25000,
+      "MCA": 25000
+    },
+    "avgPackage": 360000,
+    "placementRate": 54,
+    "placements": [
+      {
+        "company": "Infosys",
+        "package": "6.48 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS",
+        "package": "4.8 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Local Aquaculture",
+        "package": "3.5 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "ru-kurnool",
+    "name": "Rayalaseema University",
+    "shortName": "RU",
+    "code": "RAYU",
+    "city": "Kurnool",
+    "established": 2008,
+    "acres": 300,
+    "ratio": "1:18",
+    "naac": "B",
+    "nirf": "—",
+    "category": "State Govt University",
+    "convenerFee": 18000,
+    "mgmtFee": 55000,
+    "branchFees": {
+      "CSE": 18000,
+      "ECE": 18000,
+      "Sciences": 15000,
+      "Arts": 10000
+    },
+    "avgPackage": 340000,
+    "placementRate": 50,
+    "placements": [
+      {
+        "company": "TCS",
+        "package": "6.12 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "4.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Wipro",
+        "package": "3.2 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "spmvv-tirupati",
+    "name": "Sri Padmavati Mahila Visvavidyalayam",
+    "shortName": "SPMVV",
+    "code": "SPMV",
+    "city": "Tirupati",
+    "established": 1983,
+    "acres": 138,
+    "ratio": "1:12",
+    "naac": "A+",
+    "nirf": "101-150 (Univ)",
+    "category": "State Women's Univ",
+    "convenerFee": 30000,
+    "mgmtFee": 90000,
+    "branchFees": {
+      "CSE": 30000,
+      "AI/ML/DS": 30000,
+      "ECE": 30000,
+      "Pharmacy": 35000,
+      "Nursing": 25000
+    },
+    "avgPackage": 400000,
+    "placementRate": 60,
+    "placements": [
+      {
+        "company": "Infosys",
+        "package": "7.2 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS",
+        "package": "5.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Apollo Health",
+        "package": "4.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "rgukt-ap",
+    "name": "RGUKT – AP (IIIT Nuzvid)",
+    "shortName": "RGUKT",
+    "code": "RGUK",
+    "city": "Nuzvid",
+    "established": 2008,
+    "acres": 100,
+    "ratio": "1:15",
+    "naac": "B+",
+    "nirf": "—",
+    "category": "State Govt Residential",
+    "convenerFee": 45000,
+    "mgmtFee": 150000,
+    "branchFees": {
+      "CSE": 45000,
+      "AI/ML/DS": 45000,
+      "ECE": 45000,
+      "Mechanical": 45000,
+      "Civil": 45000
+    },
+    "avgPackage": 600000,
+    "placementRate": 72,
+    "placements": [
+      {
+        "company": "TCS Digital",
+        "package": "10.8 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "7.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Wipro",
+        "package": "5.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "krishna-university-machilipatnam",
+    "name": "Krishna University",
+    "shortName": "KRU",
+    "code": "KRUN",
+    "city": "Machilipatnam",
+    "established": 2008,
+    "acres": 104,
+    "ratio": "1:18",
+    "naac": "B+",
+    "nirf": "—",
+    "category": "State Govt University",
+    "convenerFee": 15000,
+    "mgmtFee": 45000,
+    "branchFees": {
+      "B.Sc": 15000,
+      "B.Com": 15000,
+      "MBA": 25000,
+      "Pharmacy": 35000
+    },
+    "avgPackage": 350000,
+    "placementRate": 55,
+    "placements": [
+      {
+        "company": "Tech Mahindra",
+        "package": "10.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS",
+        "package": "5.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "HDFC Bank",
+        "package": "3.5 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "dravidian-university-kuppam",
+    "name": "Dravidian University",
+    "shortName": "DU",
+    "code": "DRAV",
+    "city": "Kuppam",
+    "established": 1997,
+    "acres": 1093,
+    "ratio": "1:10",
+    "naac": "B",
+    "nirf": "—",
+    "category": "State Govt University",
+    "convenerFee": 5000,
+    "mgmtFee": 15000,
+    "branchFees": {
+      "Arts": 5000,
+      "Sciences": 8000,
+      "MBA": 20000,
+      "MCA": 20000
+    },
+    "avgPackage": 300000,
+    "placementRate": 50,
+    "placements": [
+      {
+        "company": "State NGOs",
+        "package": "10.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "TCS BPS",
+        "package": "3.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "School Education",
+        "package": "2.8 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "ntruhs-vijayawada",
+    "name": "Dr. NTR University of Health Sciences",
+    "shortName": "NTRUHS",
+    "code": "NTRU",
+    "city": "Vijayawada",
+    "established": 1986,
+    "acres": 15,
+    "ratio": "1:5",
+    "naac": "A",
+    "nirf": "State Medical Hub",
+    "category": "Govt Medical Univ",
+    "convenerFee": 15000,
+    "mgmtFee": 1200000,
+    "branchFees": {
+      "MBBS": 15000,
+      "MD/MS": 30000,
+      "BDS": 12000,
+      "B.Sc Nursing": 10000
+    },
+    "avgPackage": 800000,
+    "placementRate": 80,
+    "placements": [
+      {
+        "company": "GGH Hospitals",
+        "package": "14.4 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Apollo Health",
+        "package": "9.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "KIMS",
+        "package": "8.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "amc-visakhapatnam",
+    "name": "Andhra Medical College",
+    "shortName": "AMC",
+    "code": "AMCV",
+    "city": "Visakhapatnam",
+    "established": 1923,
+    "acres": 25,
+    "ratio": "1:4",
+    "naac": "A",
+    "nirf": "Estd 1923",
+    "category": "Govt Medical College",
+    "convenerFee": 12000,
+    "mgmtFee": 1200000,
+    "branchFees": {
+      "MBBS": 12000,
+      "MD/MS": 25000,
+      "DM/M.Ch": 35000
+    },
+    "avgPackage": 700000,
+    "placementRate": 74,
+    "placements": [
+      {
+        "company": "King George Hospital",
+        "package": "12.6 LPA",
+        "year": 2026
+      },
+      {
+        "company": "AIIMS Residency",
+        "package": "10.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Care Hospitals",
+        "package": "8.5 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "gmc-guntur",
+    "name": "Guntur Medical College",
+    "shortName": "GMC",
+    "code": "GMCG",
+    "city": "Guntur",
+    "established": 1946,
+    "acres": 25,
+    "ratio": "1:4",
+    "naac": "A",
+    "nirf": "Estd 1946",
+    "category": "Govt Medical College",
+    "convenerFee": 25000,
+    "mgmtFee": 500000,
+    "branchFees": {
+      "MBBS": 25000,
+      "MD/MS": 35000,
+      "Super Specialty": 45000
+    },
+    "avgPackage": 1000000,
+    "placementRate": 95,
+    "placements": [
+      {
+        "company": "GGH Guntur",
+        "package": "12.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Yashoda Hospitals",
+        "package": "10.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Ramesh Hospitals",
+        "package": "8.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "rmc-kakinada",
+    "name": "Rangaraya Medical College",
+    "shortName": "RMC",
+    "code": "RMCK",
+    "city": "Kakinada",
+    "established": 1958,
+    "acres": 30,
+    "ratio": "1:5",
+    "naac": "A",
+    "nirf": "Estd 1958",
+    "category": "Govt Medical College",
+    "convenerFee": 25000,
+    "mgmtFee": 500000,
+    "branchFees": {
+      "MBBS": 25000,
+      "MD/MS": 35000
+    },
+    "avgPackage": 900000,
+    "placementRate": 92,
+    "placements": [
+      {
+        "company": "GGH Kakinada",
+        "package": "11.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Apollo Kakinada",
+        "package": "8.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Medicover",
+        "package": "7.5 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "gsmc-vijayawada",
+    "name": "Govt. Siddhartha Medical College",
+    "shortName": "GSMC",
+    "code": "SMCV",
+    "city": "Vijayawada",
+    "established": 1980,
+    "acres": 20,
+    "ratio": "1:5",
+    "naac": "A",
+    "nirf": "—",
+    "category": "Govt Medical College",
+    "convenerFee": 30000,
+    "mgmtFee": 500000,
+    "branchFees": {
+      "MBBS": 30000,
+      "MD/MS": 40000
+    },
+    "avgPackage": 1000000,
+    "placementRate": 95,
+    "placements": [
+      {
+        "company": "Govt General Hospital",
+        "package": "12.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Manipal Hospital",
+        "package": "9.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Aayush Hospital",
+        "package": "8.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "angrau-guntur",
+    "name": "Acharya N.G. Ranga Agri University",
+    "shortName": "ANGRAU",
+    "code": "AGRU",
+    "city": "Guntur",
+    "established": 1964,
+    "acres": 350,
+    "ratio": "1:10",
+    "naac": "A",
+    "nirf": "ICAR Ranked",
+    "category": "State Agri University",
+    "convenerFee": 28500,
+    "mgmtFee": 85500,
+    "branchFees": {
+      "B.Sc Agriculture": 28500,
+      "B.Tech Agri Engg": 28500,
+      "M.Sc Agri": 25000
+    },
+    "avgPackage": 450000,
+    "placementRate": 62,
+    "placements": [
+      {
+        "company": "Coromandel International",
+        "package": "8.1 LPA",
+        "year": 2026
+      },
+      {
+        "company": "ITC Agri-Business",
+        "package": "6.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Syngenta",
+        "package": "5.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "svvu-tirupati",
+    "name": "Sri Venkateswara Veterinary Univ.",
+    "shortName": "SVVU",
+    "code": "SVVU",
+    "city": "Tirupati",
+    "established": 2005,
+    "acres": 200,
+    "ratio": "1:8",
+    "naac": "A",
+    "nirf": "—",
+    "category": "State Vet University",
+    "convenerFee": 32000,
+    "mgmtFee": 96000,
+    "branchFees": {
+      "B.V.Sc & AH": 32000,
+      "B.Tech Dairy": 32000,
+      "B.F.Sc": 25000
+    },
+    "avgPackage": 480000,
+    "placementRate": 65,
+    "placements": [
+      {
+        "company": "Heritage Foods",
+        "package": "8.64 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Amul India",
+        "package": "6.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Dodla Dairy",
+        "package": "5.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "dsnlu-visakhapatnam",
+    "name": "Damodaram Sanjivayya National Law Univ.",
+    "shortName": "DSNLU",
+    "code": "DSNL",
+    "city": "Visakhapatnam",
+    "established": 2008,
+    "acres": 45,
+    "ratio": "1:10",
+    "naac": "A",
+    "nirf": "BCI Recognized",
+    "category": "National Law Univ",
+    "convenerFee": 150000,
+    "mgmtFee": 300000,
+    "branchFees": {
+      "B.A. LL.B (Hons)": 150000,
+      "LL.M": 80000,
+      "Ph.D": 50000
+    },
+    "avgPackage": 600000,
+    "placementRate": 68,
+    "placements": [
+      {
+        "company": "Shardul Amarchand Mangaldas",
+        "package": "14.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Trilegal",
+        "package": "12.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Cyril Amarchand",
+        "package": "10.0 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "andhra-loyola-college-vijayawada",
+    "name": "Andhra Loyola College",
+    "shortName": "ALC",
+    "code": "ALCV",
+    "city": "Vijayawada",
+    "established": 1953,
+    "acres": 97,
+    "ratio": "1:16",
+    "naac": "A+",
+    "nirf": "151-200 (Colleges)",
+    "category": "Autonomous Degree",
+    "convenerFee": 15000,
+    "mgmtFee": 40000,
+    "branchFees": {
+      "B.Sc (Comp Sci)": 18000,
+      "B.Com (Gen/Comp)": 15000,
+      "BBA": 25000,
+      "BCA": 22000,
+      "MCA": 35000,
+      "MBA": 40000
+    },
+    "avgPackage": 380000,
+    "placementRate": 65,
+    "placements": [
+      {
+        "company": "TCS",
+        "package": "6.0 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Infosys",
+        "package": "4.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "ICICI Bank",
+        "package": "3.8 LPA",
+        "year": 2025
+      }
+    ]
+  },
+  {
+    "id": "pbsiddhartha-college-vijayawada",
+    "name": "PB Siddhartha College of Arts & Sci.",
+    "shortName": "PB Siddhartha",
+    "code": "PBSC",
+    "city": "Vijayawada",
+    "established": 1975,
+    "acres": 10,
+    "ratio": "1:15",
+    "naac": "A+",
+    "nirf": "—",
+    "category": "Autonomous Degree",
+    "convenerFee": 25000,
+    "mgmtFee": 60000,
+    "branchFees": {
+      "B.Sc (Comp Sci)": 28000,
+      "B.Com": 25000,
+      "BBA": 35000,
+      "BCA": 30000,
+      "MCA": 45000,
+      "MBA": 50000
+    },
+    "avgPackage": 380000,
+    "placementRate": 57,
+    "placements": [
+      {
+        "company": "TCS",
+        "package": "9.5 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Wipro",
+        "package": "4.2 LPA",
+        "year": 2026
+      },
+      {
+        "company": "Axis Bank",
+        "package": "3.5 LPA",
+        "year": 2025
+      }
+    ]
+  }
+]

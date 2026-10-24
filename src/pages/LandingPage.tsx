@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Globe, Mail, Eye, EyeOff, Sparkles, GraduationCap, Target, Zap, BookOpen, ArrowRight, Star } from 'lucide-react';
+import { Globe, Mail, Eye, EyeOff, Sparkles, GraduationCap, Target, Zap, BookOpen, ArrowRight, Star, Search } from 'lucide-react';
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
 import { OrbitRing, FloatingEmoji3D, HolographicBadge, AnimatedCounter3D, GlowButton, NeonCard, WaveDivider, InteractiveFluidParticles, MagneticButton, ConfettiButton, SpotlightCard, BounceIn, VelocityText } from '@/components/Animation3DComponents';
 
@@ -178,6 +178,18 @@ export default function Landing() {
     return () => clearTimeout(timeout);
   }, []);
 
+  // Keyboard accessibility: dismiss auth modal on Escape
+  useEffect(() => {
+    if (!showEmailModal) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowEmailModal(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showEmailModal]);
+
   const handleGoogle = async () => {
     try { setLoading(true); await loginWithGoogle(); navigate('/home'); }
     catch { setError('Google sign-in failed. Try email login.'); }
@@ -292,13 +304,22 @@ export default function Landing() {
                 >
                   <Globe size={18} /> Continue with Google <ArrowRight size={16} />
                 </MagneticButton>
-                <MagneticButton
-                  onClick={() => { setShowEmailModal(true); setIsSignup(false); }}
-                  className="btn btn-ghost"
-                  style={{ padding: '16px 24px', fontWeight: '800', fontSize: '15px', gap: '12px', borderRadius: 'var(--radius-full)' }}
-                >
-                  <Mail size={18} /> Continue with Email
-                </MagneticButton>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '10px' }}>
+                  <MagneticButton
+                    onClick={() => { setShowEmailModal(true); setIsSignup(false); }}
+                    className="btn btn-ghost"
+                    style={{ padding: '14px clamp(10px, 3vw, 18px)', fontWeight: '700', fontSize: 'clamp(12px, 3.2vw, 13.5px)', gap: '6px', borderRadius: 'var(--radius-full)' }}
+                  >
+                    <Mail size={16} /> With Email
+                  </MagneticButton>
+                  <MagneticButton
+                    onClick={() => navigate('/search')}
+                    className="btn btn-secondary"
+                    style={{ padding: '14px clamp(10px, 3vw, 18px)', fontWeight: '700', fontSize: 'clamp(12px, 3.2vw, 13.5px)', gap: '6px', borderRadius: 'var(--radius-full)', border: '1.5px solid var(--border)' }}
+                  >
+                    <Search size={16} /> Guest Search
+                  </MagneticButton>
+                </div>
               </motion.div>
 
               {/* Stats */}
@@ -539,7 +560,7 @@ export default function Landing() {
           transition={{ duration: 0.6, delay: 0.1 }}
           style={{ textAlign: 'center', marginTop: '48px' }}
         >
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px' }}>
             <ConfettiButton
               onClick={() => { setShowEmailModal(true); setIsSignup(true); }}
               className="btn btn-primary shine-on-hover animate-glow-breathe"
@@ -549,8 +570,25 @@ export default function Landing() {
               Get Started for Free
               <ArrowRight size={18} />
             </ConfettiButton>
+            <button
+              onClick={() => navigate('/search')}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--primary)',
+                fontWeight: '700',
+                fontSize: '14px',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '4px 8px',
+              }}
+            >
+              <Search size={15} /> Or explore 60+ AP colleges as a guest
+            </button>
           </div>
-          <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '12px', fontWeight: '500' }}>
+          <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '8px', fontWeight: '500' }}>
             No credit card required · 100% Free · Instant Access
           </p>
         </motion.div>
@@ -572,16 +610,24 @@ export default function Landing() {
               exit={{ y: '100%', opacity: 0 }}
               transition={{ type: 'spring', stiffness: 280, damping: 28 }}
               className="modal-sheet"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="auth-modal-title"
               onClick={e => e.stopPropagation()}
               style={{ position: 'relative' }}
             >
-              <button onClick={() => setShowEmailModal(false)} style={{
-                position: 'absolute', top: '20px', right: '20px',
-                background: 'var(--primary-light)', color: 'var(--primary)',
-                width: '32px', height: '32px', borderRadius: '50%',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px',
-                border: 'none', cursor: 'pointer',
-              }}>×</button>
+              <button
+                onClick={() => setShowEmailModal(false)}
+                aria-label="Close dialog"
+                className="tap-target-44"
+                style={{
+                  position: 'absolute', top: '16px', right: '16px',
+                  background: 'var(--primary-light)', color: 'var(--primary)',
+                  width: '44px', height: '44px', borderRadius: '50%',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px',
+                  border: 'none', cursor: 'pointer',
+                }}
+              >×</button>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
                 <div style={{
@@ -591,7 +637,7 @@ export default function Landing() {
                 }}>
                   <Sparkles size={18} color="#fff" />
                 </div>
-                <h2 style={{ fontSize: '22px', fontWeight: '900', margin: 0 }}>
+                <h2 id="auth-modal-title" style={{ fontSize: '22px', fontWeight: '900', margin: 0 }}>
                   {isSignup ? 'Create Account' : 'Welcome Back'}
                 </h2>
               </div>
@@ -602,19 +648,42 @@ export default function Landing() {
               <form onSubmit={handleEmailSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 {isSignup && (
                   <div className="input-wrap">
-                    <input type="text" placeholder="Full Name" value={form.name}
-                      onChange={e => setForm({ ...form, name: e.target.value })} required />
+                    <input
+                      type="text"
+                      placeholder="Full Name"
+                      aria-label="Full Name"
+                      value={form.name}
+                      onChange={e => setForm({ ...form, name: e.target.value })}
+                      required
+                    />
                   </div>
                 )}
                 <div className="input-wrap">
-                  <input type="email" placeholder="Email Address" value={form.email}
-                    onChange={e => setForm({ ...form, email: e.target.value })} required />
+                  <input
+                    type="email"
+                    placeholder="Email Address"
+                    aria-label="Email Address"
+                    value={form.email}
+                    onChange={e => setForm({ ...form, email: e.target.value })}
+                    required
+                  />
                 </div>
                 <div className="input-wrap">
-                  <input type={showPass ? 'text' : 'password'} placeholder="Password"
-                    value={form.password} onChange={e => setForm({ ...form, password: e.target.value })}
-                    required style={{ flex: 1 }} />
-                  <button type="button" onClick={() => setShowPass(!showPass)} style={{ padding: '0 16px', color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>
+                  <input
+                    type={showPass ? 'text' : 'password'}
+                    placeholder="Password"
+                    aria-label="Password"
+                    value={form.password}
+                    onChange={e => setForm({ ...form, password: e.target.value })}
+                    required
+                    style={{ flex: 1 }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPass(!showPass)}
+                    aria-label={showPass ? 'Hide password' : 'Show password'}
+                    style={{ padding: '0 16px', color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}
+                  >
                     {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>

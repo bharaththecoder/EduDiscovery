@@ -29,3 +29,10 @@ serviceAccountKey.json
 *.sln
 *.sw?
 temp_dist
+
+# Scripts, tools, and API testing collections
+scripts/
+postman/
+.postman/
+tests/
+scratch/

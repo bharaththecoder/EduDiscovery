@@ -1,10 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
-import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { doc, onSnapshot, updateDoc, setDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import type { University } from '@/types';
-import { db } from '@/services/firebase';
+import { db, isFirestoreReady } from '@/services/firebase';
 import { useAuth } from './AuthContext';
 import { useUniversities } from './UniversityContext';
 import { universities as fallbackUniversities } from '@/data/universities';
+import { GUEST_STORAGE_KEY, getUserStorageKey, normalizeWishlistIds } from '@/utils/wishlistUtils';
+export { normalizeWishlistIds };
 
 interface WishlistContextType {
   wishlist: University[];
@@ -24,27 +26,20 @@ const defaultWishlistContext: WishlistContextType = {
 
 const WishlistContext = createContext<WishlistContextType>(defaultWishlistContext);
 export const useWishlist = (): WishlistContextType => {
-  const ctx = useContext(WishlistContext);
-  return ctx || defaultWishlistContext;
-};
-
-// Normalize raw wishlist data (extract IDs whether raw items are string IDs or legacy University objects)
-export function normalizeWishlistIds(rawList: unknown): string[] {
-  if (!Array.isArray(rawList)) return [];
-  const ids: string[] = [];
-  for (const item of rawList) {
-    if (typeof item === 'string' && item.trim()) {
-      ids.push(item.trim());
-    } else if (item && typeof item === 'object' && 'id' in item && typeof (item as any).id === 'string') {
-      ids.push((item as any).id.trim());
-    }
+  try {
+    const ctx = useContext(WishlistContext);
+    return ctx || defaultWishlistContext;
+  } catch (err) {
+    console.warn('[useWishlist] Context resolution fallback:', err);
+    return defaultWishlistContext;
   }
-  return Array.from(new Set(ids));
-}
+};
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const { currentUser } = useAuth();
   const { universities } = useUniversities();
+  const lastUserIdRef = useRef<string | null>(null);
+  const isInitialMount = useRef(true);
 
   // Combine dynamic catalog with fallback catalog for exhaustive hydration
   const catalogMap = useMemo(() => {
@@ -54,42 +49,104 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     return map;
   }, [universities]);
 
+  // Initial state derived safely from isolated storage keys
   const [wishlistIds, setWishlistIds] = useState<string[]>(() => {
     try {
-      const local = localStorage.getItem('wishlist_ids');
-      if (local) {
-        return normalizeWishlistIds(JSON.parse(local));
+      if (currentUser?.id) {
+        const userSaved = localStorage.getItem(getUserStorageKey(currentUser.id));
+        if (userSaved) return normalizeWishlistIds(JSON.parse(userSaved));
       }
-      // Check legacy localStorage format if new format is absent
-      const legacy = localStorage.getItem('wishlist');
-      if (legacy) {
-        return normalizeWishlistIds(JSON.parse(legacy));
-      }
+      const guestSaved = localStorage.getItem(GUEST_STORAGE_KEY);
+      if (guestSaved) return normalizeWishlistIds(JSON.parse(guestSaved));
+      // Fallback check for legacy migration
+      const legacy = localStorage.getItem('wishlist_ids');
+      if (legacy) return normalizeWishlistIds(JSON.parse(legacy));
       return [];
     } catch {
       return [];
     }
   });
 
-  // Sync with Firestore user document
+  // Account-safe lifecycle & Firestore sync
   useEffect(() => {
-    if (!db || !currentUser || !db.app) {
+    const currentUid = currentUser?.id || null;
+    const previousUid = lastUserIdRef.current;
+    lastUserIdRef.current = currentUid;
+
+    // Handle user logout (User -> Guest)
+    if (previousUid && !currentUid) {
+      try {
+        const guestSaved = localStorage.getItem(GUEST_STORAGE_KEY);
+        setWishlistIds(guestSaved ? normalizeWishlistIds(JSON.parse(guestSaved)) : []);
+      } catch {
+        setWishlistIds([]);
+      }
       return;
     }
 
-    const userRef = doc(db, 'users', currentUser.id);
-    const unsubscribe = onSnapshot(userRef, (docSnap) => {
-      if (docSnap.exists()) {
-        const rawRemote = docSnap.data().wishlist;
-        const normalized = normalizeWishlistIds(rawRemote);
-        setWishlistIds(normalized);
-        localStorage.setItem('wishlist_ids', JSON.stringify(normalized));
+    // Handle account switch (User A -> User B)
+    if (previousUid && currentUid && previousUid !== currentUid) {
+      try {
+        const newUserSaved = localStorage.getItem(getUserStorageKey(currentUid));
+        setWishlistIds(newUserSaved ? normalizeWishlistIds(JSON.parse(newUserSaved)) : []);
+      } catch {
+        setWishlistIds([]);
       }
-    }, (err) => {
-      console.warn("Firestore wishlist sync error, using local state:", err);
-    });
+    }
 
-    return () => unsubscribe();
+    // Unauthenticated Guest or Firestore Offline: Persist changes strictly to guest cache
+    if (!currentUser || !isFirestoreReady(db)) {
+      return;
+    }
+
+    // Authenticated User: Set up isolated Firestore sync & atomic single-transition merge
+    let unsubscribe: (() => void) | null = null;
+    try {
+      const userRef = doc(db, 'users', currentUser.id);
+
+      // One-time guest-to-account merge on sign-in transition
+      const performGuestMerge = async () => {
+        try {
+          const guestData = localStorage.getItem(GUEST_STORAGE_KEY);
+          const guestIds = guestData ? normalizeWishlistIds(JSON.parse(guestData)) : [];
+
+          if (guestIds.length > 0) {
+            // Atomically union guest favorites into user's document
+            await setDoc(userRef, { wishlist: arrayUnion(...guestIds) }, { merge: true });
+            // Clear guest storage once successfully merged to prevent duplicate replays
+            localStorage.removeItem(GUEST_STORAGE_KEY);
+          }
+        } catch (err) {
+          console.warn('[WishlistSync] Guest merge notice:', err);
+        }
+      };
+
+      performGuestMerge();
+
+      unsubscribe = onSnapshot(userRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const rawRemote = docSnap.data().wishlist;
+          const normalized = normalizeWishlistIds(rawRemote);
+          setWishlistIds(normalized);
+          try {
+            localStorage.setItem(getUserStorageKey(currentUser.id), JSON.stringify(normalized));
+          } catch {}
+        } else {
+          // Handle absent document: create default structure with empty or existing wishlist
+          setDoc(userRef, { wishlist: [] }, { merge: true }).catch(() => {});
+        }
+      }, (err) => {
+        console.warn('[WishlistSync] Firestore snapshot error, using cached local state:', err);
+      });
+    } catch (err) {
+      console.warn('[WishlistSync] Firestore listener setup error, keeping local cache:', err);
+    }
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, [currentUser]);
 
   // Hydrate full University objects from stored IDs in memory
@@ -99,15 +156,24 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
       .filter((u): u is University => u !== undefined);
   }, [wishlistIds, catalogMap]);
 
-  // Keep legacy localStorage in sync for components that might read it directly
+  // Persist current state to appropriate storage cache
   useEffect(() => {
-    try {
-      localStorage.setItem('wishlist_ids', JSON.stringify(wishlistIds));
-      localStorage.setItem('wishlist', JSON.stringify(wishlist));
-    } catch (e) {
-      console.warn("Failed to persist wishlist to localStorage", e);
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
     }
-  }, [wishlistIds, wishlist]);
+    try {
+      if (currentUser?.id) {
+        localStorage.setItem(getUserStorageKey(currentUser.id), JSON.stringify(wishlistIds));
+      } else {
+        localStorage.setItem(GUEST_STORAGE_KEY, JSON.stringify(wishlistIds));
+      }
+      // Also update legacy key for backward compatibility
+      localStorage.setItem('wishlist_ids', JSON.stringify(wishlistIds));
+    } catch (e) {
+      console.warn('[WishlistSync] Failed to persist wishlist to localStorage', e);
+    }
+  }, [wishlistIds, currentUser?.id]);
 
   const toggleWishlist = useCallback(async (university: University) => {
     const isSaved = wishlistIds.includes(university.id);
@@ -118,30 +184,30 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     // Optimistic local state update
     setWishlistIds(nextIds);
 
-    if (!currentUser || !db || !db.app) return;
+    if (!currentUser || !isFirestoreReady(db)) return;
 
-    const userRef = doc(db, 'users', currentUser.id);
     try {
+      const userRef = doc(db, 'users', currentUser.id);
       await updateDoc(userRef, {
         wishlist: isSaved ? arrayRemove(university.id) : arrayUnion(university.id)
       });
     } catch (error) {
-      console.error("Wishlist atomic sync error:", error);
+      console.warn('[WishlistSync] Atomic update notice:', error);
     }
   }, [wishlistIds, currentUser]);
 
   const clearWishlist = useCallback(async () => {
     setWishlistIds([]);
 
-    if (!currentUser || !db || !db.app) return;
+    if (!currentUser || !isFirestoreReady(db)) return;
 
-    const userRef = doc(db, 'users', currentUser.id);
     try {
+      const userRef = doc(db, 'users', currentUser.id);
       await updateDoc(userRef, {
         wishlist: []
       });
     } catch (error) {
-      console.error("Wishlist clear sync error:", error);
+      console.warn('[WishlistSync] Clear notice:', error);
     }
   }, [currentUser]);
 

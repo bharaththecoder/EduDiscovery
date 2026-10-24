@@ -3,7 +3,7 @@
 // Writes user behavior events to Firestore user_activity docs
 // ============================================================
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { db } from './firebase';
+import { db, isFirestoreReady } from './firebase';
 
 interface ActivityEvent {
   collegeId: string;
@@ -40,7 +40,7 @@ export async function trackView(
   userId: string,
   college: { id: string; name: string; image?: string; city?: string }
 ): Promise<void> {
-  if (!userId || !college?.id) return;
+  if (!userId || !college?.id || !isFirestoreReady(db)) return;
   try {
     const ref = doc(db, 'user_activity', userId);
     const snap = await getDoc(ref);
@@ -73,7 +73,7 @@ export async function trackSearch(
   userId: string,
   query: string
 ): Promise<void> {
-  if (!userId || !query?.trim()) return;
+  if (!userId || !query?.trim() || !isFirestoreReady(db)) return;
   try {
     const ref = doc(db, 'user_activity', userId);
     const snap = await getDoc(ref);
@@ -103,7 +103,7 @@ export async function trackSearch(
 
 // ─── Get user activity ────────────────────────────────────────
 export async function getActivity(userId: string): Promise<UserActivity> {
-  if (!userId) return { recentViews: [], recentSearches: [] };
+  if (!userId || !isFirestoreReady(db)) return { recentViews: [], recentSearches: [] };
   try {
     const ref = doc(db, 'user_activity', userId);
     const snap = await getDoc(ref);

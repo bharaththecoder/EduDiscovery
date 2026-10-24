@@ -26,6 +26,24 @@
           document.documentElement.classList.add('dark');
         }
       })();
+      // Automatically clean up any stale Service Workers or CacheStorage in development
+      if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function(regs) {
+            for (var r of regs) { r.unregister(); }
+          }).catch(function() {});
+        }
+        if ('caches' in window) {
+          caches.keys().then(function(keys) {
+            for (var k of keys) { caches.delete(k); }
+          }).catch(function() {});
+        }
+      }
+      // Handle Vite dynamic import chunk miss seamlessly
+      window.addEventListener('vite:preloadError', function(event) {
+        event.preventDefault();
+        window.location.reload();
+      });
     </script>
   </head>
   <body>

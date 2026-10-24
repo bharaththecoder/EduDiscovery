@@ -25,7 +25,10 @@ export default function ChatButton() {
   }, [showTooltip]);
 
   return (
-    <div className="fixed bottom-24 md:bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+    <div
+      className="fixed right-6 z-50 flex flex-col items-end gap-3"
+      style={{ bottom: 'calc(var(--bottom-nav-clearance, 72px) + 16px + env(safe-area-inset-bottom, 0px))' }}
+    >
       <AnimatePresence>
         {!isOpen && showTooltip && (
           <motion.div
@@ -34,12 +37,12 @@ export default function ChatButton() {
             exit={{ opacity: 0, y: 15, scale: 0.9, x: 20 }}
             transition={{ type: 'spring', damping: 20, stiffness: 200, delay: 0.4 }}
             style={{
-              background: 'rgba(255, 255, 255, 0.9)',
+              background: 'var(--surface)',
               backdropFilter: 'blur(12px)',
               padding: '10px 20px',
               borderRadius: '99px',
-              border: '1.5px solid rgba(16, 185, 129, 0.16)',
-              boxShadow: '0 10px 30px rgba(16, 185, 129, 0.08), 0 1px 2px rgba(0,0,0,0.02)',
+              border: '1.5px solid var(--border)',
+              boxShadow: 'var(--shadow-md)',
               marginBottom: '4px',
               cursor: 'pointer',
               display: 'flex',
@@ -105,8 +108,11 @@ export default function ChatButton() {
             localStorage.setItem('hasShownCounselorTooltip', 'true');
           } catch (e) {}
         }}
-        className="relative w-15 h-15 rounded-full flex items-center justify-center text-white border-[2.5px] border-white cursor-pointer"
+        aria-label="Open AI Counselor Chat"
+        className="relative w-14 h-14 rounded-full flex items-center justify-center text-white border-[2.5px] border-white cursor-pointer tap-target-44"
         style={{
+          width: '56px',
+          height: '56px',
           background: 'linear-gradient(135deg, #10B981 0%, #059669 50%, #047857 100%)',
         }}
       >

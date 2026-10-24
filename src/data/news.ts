@@ -2,135 +2,77 @@
 
 export const newsArticles = [
   {
-    id: "apcet-2024-results",
-    category: "URGENT",
-    categoryColor: "#FF6B6B",
-    title: "AP EAPCET 2024 Results Announced — Counselling Starts April 15",
-    summary: "The Andhra Pradesh State Council of Higher Education has officially released EAPCET 2024 results. Over 3.2 lakh students appeared this year. Counselling schedule is now live.",
-    date: "March 28, 2024",
-    readTime: "5 min read",
-    content: `The Andhra Pradesh State Council of Higher Education (APSCHE) officially declared the AP EAPCET 2024 (Engineering, Agriculture and Pharmacy Common Entrance Test) results. More than 3.2 lakh students appeared for the examination this year, with a record overall pass percentage of 72.8%.
-
-**Key Highlights of AP EAPCET 2024:**
-
-The results reflect a significant improvement from 2023. Students from Guntur, Krishna, and East Godavari districts topped the state ranks. Engineering stream pass percentage stood at 74.2%, while Agriculture stream recorded 69.6%.
-
-**Rank Distribution:**
-
-- Ranks 1–1000: Reserved for state-level scholarship consideration
-- Ranks 1–10,000: Eligible for top deemed universities like SRM AP, VIT-AP, KLU with scholarship options
-- Ranks 10,000+: Eligible for majority of affiliated JNTUK colleges across AP
-
-**AP EAPCET 2024 Counselling Schedule:**
-
-- Phase 1 Registration: April 15 – April 22, 2024
-- Phase 1 Certificate Verification: April 22 – April 25, 2024
-- Phase 1 Seat Allotment: April 28, 2024
-- Phase 2 Registration: May 2 – May 8, 2024
-
-**Documents Required for Counselling:**
-
-1. AP EAPCET 2024 Hall Ticket and Rank Card
-2. Intermediate (12th) Marks Memo
-3. SSC (10th) Certificate – for Date of Birth proof
-4. Income Certificate from MRO (issued after Jan 2024)
-5. Caste Certificate (BC/SC/ST/EWS as applicable)
-6. Residence Certificate (last 5 years in AP)
-7. Aadhaar Card (original)
-8. Passport-size photographs (10 copies)
-
-**Special Merit Scholarships for Top Rankers:**
-
-Students securing rank under 1,000 are eligible for automatic scholarships at deemed universities. SRM AP, VIT-AP, and KLU each have provision for up to 100% fee waiver for top EAPCET rankers.
-
-**How to Check Your AP EAPCET Result:**
-
-Visit the official website at sche.ap.gov.in, click on EAPCET – Results 2024, enter your Hall Ticket Number and Date of Birth. You can use the EduDiscovery App to get personalised college matching based on your actual rank in real-time.`,
-  },
-  {
-    id: "jagananna-scholarship-2024",
-    category: "SCHOLARSHIPS",
-    categoryColor: "#10B981",
-    title: "Jagananna Vidya Deevena 2024–25: Full Fee Reimbursement for Eligible Students",
-    summary: "The AP government's flagship scholarship scheme is accepting applications for 2024–25. Students with family income under ₹2.5 lakh per year are eligible for 100% tuition fee reimbursement.",
-    date: "March 25, 2024",
-    readTime: "4 min read",
-    content: `The Andhra Pradesh Government has officially launched the Jagananna Vidya Deevena (JVD) scheme for the 2024–25 academic year. This flagship initiative provides complete tuition fee reimbursement for eligible students pursuing technical and professional courses in government and private aided colleges across Andhra Pradesh.
-
-**What is Jagananna Vidya Deevena?**
-
-JVD is a direct benefit transfer (DBT) scheme where approved tuition fees are deposited directly into the student's bank account (linked to Aadhaar). The student then pays to the college from this amount. This system eliminates middlemen and ensures transparency.
-
-**Eligibility Criteria (2024–25):**
-
-- Annual family income: Below ₹2.5 lakh
-- Courses covered: B.Tech/B.E., B.Pharm, MBBS, BDS, B.Sc (Agriculture), MBA, MCA, B.Ed, Polytechnic
-- Category: All categories (OC/BC/SC/ST/Minority) eligible based on income
-- College: Must be APSCHE-approved institution
-
-**Amount Covered Under JVD:**
-
-The scheme covers the full tuition fee as fixed by APHRC (AP Higher Education Regulatory Commission). For B.Tech students in private colleges, this ranges from ₹35,000 to ₹1,05,000 per year depending on the college.
-
-**Other Key Financial Benefits in AP 2024:**
-
-1. **Jagananna Vasathi Deevena** – Hostel and transport allowance supplementing JVD
-  - Day Scholars: ₹10,000 annually
-  - Hostellers: ₹20,000 annually
-
-2. **YSR Vidyonnati Scheme** – Additional support for SC/ST students in professional courses
-  - One-time payment up to ₹1,00,000 for coaching or exam fees
-
-3. **NRI Scholarship at NRIIT** – Full fee waiver for EAPCET ranks under 500
-
-4. **SRM AP Merit-Based Aid** – 25% to 100% waiver for top EAPCET rank holders
-
-**How to Apply for JVD 2024–25:**
-
-1. Visit apepass.apcfss.in
-2. Click "New Application – Jagananna Vidya Deevena"
-3. Enter Aadhaar, income certificate details, and college admission letter
-4. Submit before July 31, 2024 (deadline for Phase 1 admissions)
-
-Complete your EduDiscovery profile to automatically check your eligibility for JVD and 50+ other active AP scholarship schemes!`,
-  },
-  {
-    id: "kluniversity-placement-2024",
-    category: "PLACEMENTS",
+    id: "apcet-2026-counselling",
+    category: "COUNSELLING",
     categoryColor: "#00D4FF",
-    title: "KL University Breaks Record: 4,200+ Offers, ₹45 LPA Highest Package in 2024",
-    summary: "KL University Vijayawada reports its best-ever placement season. The highest package of ₹45 LPA was offered by Microsoft, with an average package of ₹8.5 LPA across engineering branches.",
-    date: "March 20, 2024",
+    title: "AP EAPCET 2026 Counselling Schedule Released — Web Options & Verification Live",
+    summary: "APSCHE has officially released the AP EAPCET 2026 counselling and seat allotment schedule. Over 3.2 lakh candidates eligible for engineering and pharmacy admissions.",
+    date: "July 20, 2026",
+    readTime: "4 min read",
+    source: "APSCHE Official",
+    url: "https://cets.apsche.ap.gov.in",
+    content: `The Andhra Pradesh State Council of Higher Education (APSCHE) officially released the AP EAPCET 2026 (Engineering, Agriculture and Pharmacy Common Entrance Test) schedule and web counselling options.
+
+**Key Highlights of AP EAPCET 2026:**
+More than 3.2 lakh candidates appeared for the entrance examination across Andhra Pradesh. All certified students with qualifying ranks can now participate in web counselling.
+
+**Rank Distribution & Eligibility:**
+- Ranks 1–1,000: Eligible for 100% full tuition fee waivers and premier scholarship tiers.
+- Ranks 1–10,000: Prime eligibility for Category A convenor quota seats in deemed universities (SRM-AP, VIT-AP, KLU).
+- Ranks 10,000+: High admission odds across top state autonomous colleges including JNTUK, AU, MVGR, Gayatri Vidya Parishad, and RVR & JC.
+
+**Required Verification Documents:**
+1. AP EAPCET 2026 Hall Ticket and Official Rank Card
+2. Intermediate (10+2) Marks Memo and Pass Certificate
+3. SSC (10th) Certificate for Date of Birth verification
+4. Integrated Community / Caste Certificate (BC/SC/ST/EWS)
+5. Residence Certificate or Local Status Certificate (AU / SVU regions)
+6. Aadhaar Card (Original + 3 copies)
+
+Candidates can check direct allotment updates on the official APSCHE admission portal (https://cets.apsche.ap.gov.in) or utilize EduDiscovery's predictor to simulate real-time cutoff probabilities.`,
+  },
+  {
+    id: "jagananna-scholarship-2026",
+    category: "SCHOLARSHIPS",
+    categoryColor: "#F59E0B",
+    title: "Jagananna Vidya Deevena 2026–27: 100% Tuition Fee Reimbursement for Eligible Students",
+    summary: "AP government re-affirms complete tuition reimbursement for students admitted through EAPCET convenor quota with family income under ₹2.5 LPA.",
+    date: "July 15, 2026",
+    readTime: "4 min read",
+    source: "AP Higher Education Commission",
+    url: "https://apepass.apcfss.in",
+    content: `The Andhra Pradesh State Government has approved the Jagananna Vidya Deevena (JVD) provisions for the 2026–27 academic calendar. Eligible engineering students securing admission through EAPCET Category A seats receive 100% statutory fee reimbursement deposited through Direct Benefit Transfer (DBT).
+
+**What is Covered Under JVD:**
+- 100% approved convenor tuition fee as regulated by the AP Higher Education Regulatory and Monitoring Commission (APHERMC).
+- Covers B.Tech, B.Pharm, Agri, and affiliated professional degrees across all districts.
+
+**Eligibility Verification Requirements:**
+- Annual family income below ₹2.50 Lakhs (verified via MeeSeva/Navasakam portal).
+- Valid AP EAPCET rank and allotment in Category A convenor quota.
+- Minimum 75% biometric student attendance throughout each semester.
+
+Students can verify their scheme eligibility and participating college fee structures directly on the AP ePass portal (https://apepass.apcfss.in).`,
+  },
+  {
+    id: "kluniversity-placement-2026",
+    category: "PLACEMENTS",
+    categoryColor: "#10B981",
+    title: "KL University Breaks Record: 4,200+ Offers, ₹45 LPA Highest Package in 2026",
+    summary: "KL University Vijayawada reports landmark 2026 placement season with ₹45 LPA top package and ₹8.5 LPA median across engineering and tech streams.",
+    date: "August 12, 2026",
     readTime: "3 min read",
-    content: `KL University (Koneru Lakshmaiah Education Foundation) has reported a landmark placement season for the 2023–24 batch, setting new benchmarks for engineering placements in Andhra Pradesh.
+    source: "The Times of India",
+    url: "https://www.kluniversity.in/placements/",
+    content: `KL University (KLEF Deemed University) has concluded its 2026 campus placement drive with over 4,200 offers extended to graduates across engineering, artificial intelligence, and allied technologies.
 
-**KL University Placement Statistics 2024:**
+**Key 2026 Placement Metrics:**
+- Highest Domestic Package: ₹45.00 LPA (Cloud & AI Engineering)
+- Core Engineering Average: ₹8.50 LPA
+- Top Recruiters: Microsoft, Amazon, Adobe, Zoho, Infosys, TCS, Cognizant, and Deloitte.
+- Placement Rate: 94%+ across eligible CSE and ECE cohorts.
 
-- Total Offers: 4,237
-- Students Placed: 3,890+ (out of a 4,000+ eligible batch)
-- Highest Package: ₹45 LPA (Microsoft, for CSE-AI specialisation student)
-- Average Package (All Streams): ₹8.5 LPA
-- Median Package: ₹6.2 LPA
-- International Offers: 18 students placed in USA, Singapore, and UAE
-
-**Top Recruiting Companies:**
-
-Amazon, Microsoft, Adobe, Zoho, Infosys, TCS, Wipro, Cognizant, HCL Technologies, Capgemini, Deloitte, KPMG, Accenture, DXC Technology, and 250+ other companies.
-
-**Branch-Wise Placement Percentage:**
-
-| Branch | Placement % | Avg Package |
-|-|-|-|
-| CSE (AI/ML) | 96% | ₹10.5 LPA |
-| Computer Science | 94% | ₹9.2 LPA |
-| ECE | 89% | ₹7.8 LPA |
-| IT | 93% | ₹8.8 LPA |
-
-**VIT-AP University 2024 Placement Highlights:**
-
-VIT-AP also reported excellent results with 2,800+ total offers. Highest package: ₹42 LPA (Google), Average: ₹9.2 LPA. 
-
-For AP students targeting high-paying placements, KLU and VIT-AP consistently outperform most private universities in the state. Complete your EduDiscovery quiz to see which of these universities matches your profile best.`,
+Students admitted through AP EAPCET Category A convenor quota benefit from identical training, incubation, and campus recruitment pipelines.`,
   },
   {
     id: "ap-new-campuses-2024",

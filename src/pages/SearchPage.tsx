@@ -1,8 +1,9 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { Search, SlidersHorizontal, Sparkles, AlertCircle, TrendingUp } from 'lucide-react';
+import { Search, SlidersHorizontal, Sparkles, AlertCircle, TrendingUp, LayoutGrid, Map } from 'lucide-react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import UniversityCard, { UniversityCardSkeleton } from '@/components/cards/UniversityCard';
 import { MagneticButton, SpotlightCard, HolographicBadge } from '@/components/Animation3DComponents';
+import CampusMapExplorer from '@/components/map/CampusMapExplorer';
 import { useUniversities } from '@/contexts/UniversityContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { trackSearch } from '@/services/activityTracker';
@@ -80,6 +81,21 @@ export default function SearchPage() {
   const [aiReasoning, setAiReasoning] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [viewMode, setViewMode] = useState<'grid' | 'map'>(() => {
+    try {
+      return (localStorage.getItem('search_view_mode') as 'grid' | 'map') || 'grid';
+    } catch {
+      return 'grid';
+    }
+  });
+
+  const handleViewModeChange = (mode: 'grid' | 'map') => {
+    setViewMode(mode);
+    try {
+      localStorage.setItem('search_view_mode', mode);
+    } catch {}
+  };
 
   useEffect(() => {
     document.title = "Search & Filter AP Engineering Colleges 2026 | EduDiscovery";
@@ -201,7 +217,7 @@ export default function SearchPage() {
           {/* Top Row: Title, Subtitle, and AI Search Indicator */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-              <h1 className="wave-underline" style={{ fontSize: '26px', fontWeight: '900', letterSpacing: '-0.5px', color: 'var(--text-main)', lineHeight: 1.15, display: 'inline-block' }}>
+              <h1 className="wave-underline" style={{ fontSize: 'clamp(20px, 4vw, 26px)', fontWeight: '900', letterSpacing: '-0.5px', color: 'var(--text-main)', lineHeight: 1.15, display: 'inline-block' }}>
                 Discover Premier <span className="gradient-text" style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #059669 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Education in AP</span> 🎓
               </h1>
               <HolographicBadge>
@@ -210,7 +226,7 @@ export default function SearchPage() {
               </HolographicBadge>
             </div>
             <p style={{ color: 'var(--text-muted)', fontSize: '13.5px', fontWeight: '500', maxWidth: '600px', lineHeight: 1.4 }}>
-              Enter natural questions (e.g. <i>"Top CSE colleges under 5 lakh"</i>) or use the smart tags below to filter instantly.
+              Enter natural questions (e.g. <i>"Top CSE colleges under 5 lakh"</i>)
             </p>
           </div>
 
@@ -254,6 +270,10 @@ export default function SearchPage() {
               {/* Main Input */}
               <input
                 ref={inputRef}
+                id="search-college-input"
+                name="search"
+                aria-label="Search AP colleges or degrees"
+                autoComplete="off"
                 type="text"
                 placeholder="Try: Top CSE colleges under 5 lakh with good placements..."
                 value={query}
@@ -304,21 +324,23 @@ export default function SearchPage() {
               {/* Action Button */}
               <button
                 type="submit"
+                aria-label="Search"
                 disabled={!query.trim() || isLoading}
                 style={{
                   background: 'var(--gradient)',
                   color: '#fff',
                   fontWeight: '800',
                   borderRadius: '16px',
-                  padding: '12px 24px',
-                  fontSize: '14px',
+                  padding: '12px clamp(12px, 3vw, 22px)',
+                  fontSize: 'clamp(13px, 3.2vw, 14px)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
                   boxShadow: '0 4px 14px var(--primary-glow)',
                   transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                   opacity: (!query.trim() || isLoading) ? 0.6 : 1,
-                  cursor: (!query.trim() || isLoading) ? 'not-allowed' : 'pointer'
+                  cursor: (!query.trim() || isLoading) ? 'not-allowed' : 'pointer',
+                  flexShrink: 0
                 }}
                 onMouseOver={e => {
                   if (query.trim() && !isLoading) {
@@ -349,15 +371,21 @@ export default function SearchPage() {
 
             {/* Suggestions Dropdown */}
             {showSuggestions && suggestions.length > 0 && (
-              <div style={{
-                position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0,
-                background: 'var(--dropdown-bg)', borderRadius: '20px', border: '1.5px solid var(--border)',
-                boxShadow: 'var(--shadow-lg)', zIndex: 100, overflow: 'hidden',
-                padding: '6px'
-              }}>
+              <div
+                role="listbox"
+                aria-label="Search suggestions"
+                style={{
+                  position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0,
+                  background: 'var(--dropdown-bg)', borderRadius: '20px', border: '1.5px solid var(--border)',
+                  boxShadow: 'var(--shadow-lg)', zIndex: 100, overflow: 'hidden',
+                  padding: '6px'
+                }}
+              >
                 {suggestions.map((s, i) => (
                   <div
                     key={i}
+                    role="option"
+                    aria-selected={false}
                     onClick={() => { setQuery(s.split(' · ')[0].split(' — ')[0]); setShowSuggestions(false); }}
                     style={{
                       padding: '12px 16px', cursor: 'pointer', fontSize: '14px',
@@ -425,7 +453,7 @@ export default function SearchPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingBottom: '4px' }}>
 
             {/* Filter Row — Cities */}
-            <div className="no-scrollbar" style={{ overflowX: 'auto', display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '4px', scrollbarWidth: 'none' }}>
+            <div className="no-scrollbar horizontal-scroll-container scroll-fade-edge" style={{ overflowX: 'auto', display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '4px', scrollbarWidth: 'none' }}>
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -474,7 +502,7 @@ export default function SearchPage() {
             </div>
 
             {/* Filter Row — Branches */}
-            <div className="no-scrollbar" style={{ overflowX: 'auto', display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '8px', scrollbarWidth: 'none' }}>
+            <div className="no-scrollbar horizontal-scroll-container scroll-fade-edge" style={{ overflowX: 'auto', display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '8px', scrollbarWidth: 'none' }}>
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -554,18 +582,78 @@ export default function SearchPage() {
           </div>
         )}
 
-        {/* Results count */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <p style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: '600' }}>
+        {/* Results count & View Mode Toggle */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: '600', margin: 0 }}>
             {isLoading ? 'Analyzing with AI...' : (
               <>Found <span style={{ color: 'var(--primary)' }}>{displayResults.length}</span> {isAiSearch ? 'intelligent matches' : 'universities'}</>
             )}
           </p>
-          {(activeCities.length > 0 || activeBranches.length > 0) && (
-            <MagneticButton onClick={() => { setActiveCities([]); setActiveBranches([]); }} style={{ color: 'var(--accent)', fontSize: '13px', fontWeight: '700' }}>
-              Clear Filters
-            </MagneticButton>
-          )}
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            {/* View Mode Toggle */}
+            <div style={{
+              display: 'inline-flex',
+              background: 'var(--surface)',
+              borderRadius: '999px',
+              border: '1.5px solid var(--border)',
+              padding: '3px',
+              boxShadow: 'var(--shadow-sm)'
+            }}>
+              <button
+                type="button"
+                onClick={() => handleViewModeChange('grid')}
+                aria-label="Grid view"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 14px',
+                  borderRadius: '999px',
+                  fontSize: '12.5px',
+                  fontWeight: '700',
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: viewMode === 'grid' ? 'var(--primary)' : 'transparent',
+                  color: viewMode === 'grid' ? '#fff' : 'var(--text-muted)',
+                  boxShadow: viewMode === 'grid' ? '0 2px 8px var(--primary-glow)' : 'none',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <LayoutGrid size={14} />
+                <span>Grid</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleViewModeChange('map')}
+                aria-label="Map explorer view"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 14px',
+                  borderRadius: '999px',
+                  fontSize: '12.5px',
+                  fontWeight: '700',
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: viewMode === 'map' ? 'var(--primary)' : 'transparent',
+                  color: viewMode === 'map' ? '#fff' : 'var(--text-muted)',
+                  boxShadow: viewMode === 'map' ? '0 2px 8px var(--primary-glow)' : 'none',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <Map size={14} />
+                <span>Map Explorer</span>
+              </button>
+            </div>
+
+            {(activeCities.length > 0 || activeBranches.length > 0) && (
+              <MagneticButton onClick={() => { setActiveCities([]); setActiveBranches([]); }} style={{ color: 'var(--accent)', fontSize: '13px', fontWeight: '700' }}>
+                Clear Filters
+              </MagneticButton>
+            )}
+          </div>
         </div>
 
         {/* Skeletons */}
@@ -573,15 +661,21 @@ export default function SearchPage() {
           <div className="h-64 flex items-center justify-center">
             <span className="text-slate-400 text-sm font-medium animate-pulse">Loading universities...</span>
           </div>
-        ) : (
-          displayResults.length > 0 ? (
-            <motion.div 
-              variants={containerVariants}
-              initial="hidden"
-              animate="show"
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-            >
-              <AnimatePresence mode="popLayout">
+        ) : viewMode === 'map' ? (
+          /* Interactive Campus Map View */
+          <CampusMapExplorer
+            universities={displayResults}
+            onSelectCity={toggleCity}
+            selectedCity={activeCities[0]}
+          />
+        ) : displayResults.length > 0 ? (
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+          >
+            <AnimatePresence mode="popLayout">
                 {displayResults.map(uni => (
                   <motion.div 
                     key={uni.id} 
@@ -620,8 +714,7 @@ export default function SearchPage() {
                 Reset All
               </MagneticButton>
             </div>
-          )
-        )}
+          )}
       </div>
     </div>
   );

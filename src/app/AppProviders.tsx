@@ -16,13 +16,13 @@ export function AppProviders({ children }: AppProvidersProps) {
     <ThemeProvider>
       <AuthProvider>
         <PWAProvider>
-          <WishlistProvider>
-            <ToastProvider>
-              <UniversityProvider>
+          <UniversityProvider>
+            <WishlistProvider>
+              <ToastProvider>
                 <CounselorProvider>{children}</CounselorProvider>
-              </UniversityProvider>
-            </ToastProvider>
-          </WishlistProvider>
+              </ToastProvider>
+            </WishlistProvider>
+          </UniversityProvider>
         </PWAProvider>
       </AuthProvider>
     </ThemeProvider>

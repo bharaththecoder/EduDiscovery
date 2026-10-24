@@ -5,7 +5,8 @@ import { motion } from 'framer-motion';
 
 export default function BottomNav() {
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const location = useLocation();
+  const pathname = location.pathname;
 
   const items = [
     { label: 'Home', icon: Home, path: '/home' },
@@ -24,6 +25,8 @@ export default function BottomNav() {
             key={path} 
             className={`nav-item ${active ? 'active' : ''}`} 
             onClick={() => navigate(path)}
+            aria-label={label}
+            aria-current={active ? 'page' : undefined}
             whileTap={{ scale: 0.88 }}
             transition={{ type: "spring", stiffness: 450, damping: 20 }}
           >

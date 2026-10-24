@@ -11,7 +11,10 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      injectRegister: 'auto',
+      injectRegister: process.env.NODE_ENV === 'production' ? 'auto' : null,
+      devOptions: {
+        enabled: false,
+      },
       manifest: false,
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
@@ -24,7 +27,30 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-    dedupe: ['react', 'react-dom', 'react-router-dom', 'framer-motion'],
+    dedupe: [
+      'react',
+      'react-dom',
+      'react-router-dom',
+      'framer-motion',
+      'firebase/app',
+      'firebase/firestore',
+      'firebase/auth',
+      'firebase/storage'
+    ],
+  },
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      'react-router-dom',
+      'framer-motion',
+      'lucide-react',
+      'recharts',
+      'firebase/app',
+      'firebase/firestore',
+      'firebase/auth',
+      'firebase/storage'
+    ],
   },
   server: {
     proxy: {

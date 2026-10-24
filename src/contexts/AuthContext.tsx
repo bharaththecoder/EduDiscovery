@@ -8,7 +8,7 @@ import {
   updateProfile
 } from 'firebase/auth';
 import { doc, onSnapshot, setDoc, getDoc } from 'firebase/firestore';
-import { auth, googleProvider, db } from '@/services/firebase';
+import { auth, googleProvider, db, isFirestoreReady } from '@/services/firebase';
 
 // ─── Types ────────────────────────────────────────────────────
 export interface AppUser {
@@ -30,6 +30,7 @@ export interface AppUser {
 
 interface AuthContextType {
   currentUser: AppUser | null;
+  loading: boolean;
   signup: (email: string, password: string, name: string) => Promise<unknown>;
   login: (email: string, password: string) => Promise<unknown>;
   logout: () => Promise<void>;
@@ -40,6 +41,7 @@ interface AuthContextType {
 
 const defaultAuthContext: AuthContextType = {
   currentUser: null,
+  loading: false,
   signup: async () => {},
   login: async () => {},
   logout: async () => {},
@@ -51,8 +53,13 @@ const defaultAuthContext: AuthContextType = {
 const AuthContext = createContext<AuthContextType>(defaultAuthContext);
 
 export const useAuth = (): AuthContextType => {
-  const ctx = useContext(AuthContext);
-  return ctx || defaultAuthContext;
+  try {
+    const ctx = useContext(AuthContext);
+    return ctx || defaultAuthContext;
+  } catch (err) {
+    console.warn('[useAuth] Context resolution fallback:', err);
+    return defaultAuthContext;
+  }
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -85,43 +92,51 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // Immediately set base user so UI can start rendering if needed
         setCurrentUser(baseUser);
 
-        const userDocRef = doc(db, 'users', user.uid);
+        if (isFirestoreReady(db)) {
+          try {
+            const userDocRef = doc(db, 'users', user.uid);
 
-        // Start listening to the snapshot immediately.
-        // If the document doesn't exist, we will seed it in the background asynchronously without blocking the UI loading state.
-        unsubscribeFirestore = onSnapshot(userDocRef, {
-          next: (docSnap) => {
-            if (docSnap.exists()) {
-              setCurrentUser({
-                ...baseUser,
-                ...docSnap.data(),
-              } as AppUser);
-            } else {
-              setCurrentUser(baseUser);
-              // Seed document asynchronously without blocking
-              setDoc(userDocRef, {
-                name: baseUser.name,
-                email: baseUser.email,
-                bio: 'Aspiring Engineer • AP Student',
-                tags: ["Early Action", "Stem Scholar"],
-                isNewUser: true,
-                updatedAt: new Date().toISOString()
-              }, { merge: true }).catch(err => {
-                console.error("Error seeding user doc:", err);
-              });
-            }
-            setLoading(false);
-          },
-          error: (err) => {
-            console.error("Firestore user doc error:", err);
+            unsubscribeFirestore = onSnapshot(userDocRef, {
+              next: (docSnap) => {
+                if (docSnap.exists()) {
+                  setCurrentUser({
+                    ...baseUser,
+                    ...docSnap.data(),
+                  } as AppUser);
+                } else {
+                  setCurrentUser(baseUser);
+                  // Seed document asynchronously without blocking
+                  setDoc(userDocRef, {
+                    name: baseUser.name,
+                    email: baseUser.email,
+                    bio: 'Aspiring Engineer • AP Student',
+                    tags: ["Early Action", "Stem Scholar"],
+                    isNewUser: true,
+                    updatedAt: new Date().toISOString()
+                  }, { merge: true }).catch(err => {
+                    console.warn("[Auth] Error seeding user doc:", err);
+                  });
+                }
+                setLoading(false);
+              },
+              error: (err) => {
+                console.warn("[Auth] Firestore user doc error:", err);
+                setLoading(false);
+              }
+            });
+          } catch (err) {
+            console.warn("[Auth] Failed to attach firestore listener:", err);
             setLoading(false);
           }
-        });
+        } else {
+          // Firestore not available/ready: continue with authenticated baseUser
+          setLoading(false);
+        }
 
-        // Fail-safe: if Firestore hasn't responded in 800ms, stop loading
+        // Fail-safe: if Firestore hasn't responded in 600ms, stop loading
         timeout = setTimeout(() => {
           setLoading(false);
-        }, 800);
+        }, 600);
 
       } else {
         setCurrentUser(null);
@@ -184,11 +199,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const updateUserDoc = React.useCallback(async (data: Record<string, unknown>) => {
     if (!currentUser) return;
+    if (!isFirestoreReady(db)) {
+      setCurrentUser(prev => prev ? ({ ...prev, ...data }) : null);
+      return;
+    }
     try {
       const userDocRef = doc(db, 'users', currentUser.id);
       await setDoc(userDocRef, { ...data, updatedAt: new Date().toISOString() }, { merge: true });
     } catch (error) {
-      console.error("Error updating user doc:", error);
+      console.error("[Auth] Error updating user doc:", error);
       throw error;
     }
   }, [currentUser]);
@@ -206,13 +225,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const value: AuthContextType = React.useMemo(() => ({
     currentUser,
+    loading,
     signup,
     login,
     logout,
     loginWithGoogle,
     updateUserDoc,
     profileStrength: calculateProfileStrength(currentUser),
-  }), [currentUser, signup, login, logout, loginWithGoogle, updateUserDoc]);
+  }), [currentUser, loading, signup, login, logout, loginWithGoogle, updateUserDoc]);
 
   return (
     <AuthContext.Provider value={value}>

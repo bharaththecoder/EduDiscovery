@@ -1,183 +1,231 @@
-import { University, Program } from '@/types';
+// src/utils/predictorEngine.ts
+// Real-world AP EAPCET / ICET Admissions Predictor Engine
+// Driven by authentic APHERMC & APSCHE statutory cutoffs, regional quotas & fee classifications
+
+import { University, BranchCutoff, PlacementRecord } from '@/types';
+import { getCategoryCutoff } from '@/services/collegeQueries';
 
 export interface PredictionResult {
   collegeId: string;
   collegeName: string;
   collegeShortName: string;
+  code?: string;
   city: string;
+  region: 'AU' | 'SVU' | 'Statewide';
   branch: string;
-  quota: 'Convener Quota' | 'Management Quota';
+  quota: 'Convener Quota (Cat-A)' | 'Management Quota (Cat-B)';
+  quotaPercent: number; // e.g. 35 for Deemed, 70 for Affiliated, 100 for Govt
   chance: 'High' | 'Medium' | 'Low';
+  chanceLabel: 'Safe' | 'Target' | 'Reach';
   color: string;
-  estimatedCutoff: number;
-  probabilityPercent?: number;
+  closingCutoff: number;
+  probabilityPercent: number;
+  convenerFee: number;
+  mgmtFee: number;
+  naac: string;
+  nirf: string;
+  topRecruiter?: PlacementRecord;
+  reason: string;
 }
 
-function isEligibleEAPCET(branchName: string): boolean {
-  const b = branchName.toLowerCase();
-  
-  // Exclude PG / general degrees / management degrees
-  if (b.includes('mba') || b.includes('mca') || b.includes('m.tech') || b.includes('mtech')) return false;
-  if (b === 'b.sc' || b === 'bsc' || b === 'b.a' || b === 'ba' || b === 'b.com' || b === 'bcom' || b === 'bba' || b === 'bca' || b === 'l.l.b' || b === 'llb' || b === 'l.l.m' || b === 'llm') return false;
-  
-  // Include standard EAPCET courses
-  const eapcetKeywords = [
-    'cse', 'computer science', 'information technology', 'it', 'ece', 'electronics', 'eee', 'electrical',
-    'mechanical', 'civil', 'biotech', 'biotechnology', 'chemical', 'agriculture', 'agricultural', 'pharmacy',
-    'pharm.d', 'food tech', 'metallurgy', 'mining', 'aeronautical', 'automobile', 'instrumentation',
-    'ai', 'ml', 'data science', 'cybersecurity', 'iot'
-  ];
-  
-  return eapcetKeywords.some(keyword => b.includes(keyword));
+export interface PredictorFilters {
+  exam: 'EAPCET' | 'ICET';
+  rank: number;
+  category: string; // OC, EWS, BC-A, BC-B, BC-C, BC-D, BC-E, SC, ST
+  gender: string;   // Male / Female
+  preferredBranch: string; // All, CSE, AI/ML/DS, IT, ECE, EEE, Mechanical, Civil
+  candidateRegion?: 'AU' | 'SVU' | 'All'; // Local candidate area
+  quotaPreference?: 'All' | 'Convener' | 'Management';
+  round?: 'Round 1' | 'Round 2' | 'Round 3';
 }
 
-function isEligibleICET(branchName: string): boolean {
-  const b = branchName.toLowerCase();
-  return b.includes('mba') || b.includes('mca');
+function normalizeBranchName(name: string): string {
+  const n = name.toUpperCase().replace(/[^A-Z0-9/]/g, ' ').trim();
+  if (n.includes('CSE') || n.includes('COMPUTER SCIENCE')) return 'CSE';
+  if (n.includes('AI') || n.includes('ML') || n.includes('DATA SCIENCE') || n.includes('ARTIFICIAL')) return 'AI/ML/DS';
+  if (n.includes('IT') || n.includes('INFORMATION')) return 'IT';
+  if (n.includes('ECE') || n.includes('ELECTRONICS AND COMMUNICATION')) return 'ECE';
+  if (n.includes('EEE') || n.includes('ELECTRICAL')) return 'EEE';
+  if (n.includes('MECH') || n.includes('MECHANICAL')) return 'Mechanical';
+  if (n.includes('CIVIL')) return 'Civil';
+  return name;
 }
 
 export function predictAdmission(
   universities: University[],
-  exam: 'EAPCET' | 'ICET',
-  rank: number,
-  category: string,
-  gender: string,
-  preferredBranch: string,
-  round: 'Round 1' | 'Round 2' | 'Round 3' = 'Round 1'
+  filters: PredictorFilters
 ): PredictionResult[] {
-  const predictions: PredictionResult[] = [];
+  const {
+    exam,
+    rank,
+    category,
+    gender,
+    preferredBranch,
+    candidateRegion = 'All',
+    quotaPreference = 'All',
+    round = 'Round 1'
+  } = filters;
 
-  universities.forEach(uni => {
-    // 1. Determine base college tier selectivity (1 to 10 scale, 10 being most selective)
-    let selectivity = 3; // default
-    const naac = uni.naac || 'B';
-    const nirf = uni.nirf || '';
-    const hasTopNirf = String(nirf).includes('#') && parseInt(String(nirf).replace(/[^0-9]/g, '')) < 150;
+  if (!rank || rank <= 0 || !universities || universities.length === 0) {
+    return [];
+  }
 
-    if (naac === 'A++' && hasTopNirf) selectivity = 9;
-    else if (naac === 'A++' || hasTopNirf) selectivity = 8;
-    else if (naac === 'A+') selectivity = 7;
-    else if (naac === 'A') selectivity = 6;
-    else if (naac === 'B++') selectivity = 5;
-    else if (naac === 'B+') selectivity = 4;
+  // Round multiplier: sliding rounds allow slightly higher ranks to get allotted
+  const roundFactor = round === 'Round 3' ? 1.25 : (round === 'Round 2' ? 1.12 : 1.0);
 
-    // Adjust selectivity based on city (major hubs are more competitive)
-    const city = (uni.city || '').toLowerCase();
-    if (city === 'visakhapatnam' || city === 'amaravati' || city === 'vijayawada') {
-      selectivity += 1;
+  const results: PredictionResult[] = [];
+
+  for (const uni of universities) {
+    const isPvtUniv = (uni.category || '').includes('Deemed') || (uni.category || '').includes('Private');
+    const isGovt = (uni.category || '').includes('Govt') || (uni.category || '').includes('State');
+    const uniRegion = uni.region || (isPvtUniv ? 'Statewide' : 'AU');
+
+    // 1. Regional Quota evaluation:
+    // In AP, 85% seats are reserved for local candidates.
+    // If student selects AU Region and college is SVU (or vice versa), candidate competes in 15% non-local unreserved pool.
+    let regionMultiplier = 1.0;
+    if (candidateRegion !== 'All' && uniRegion !== 'Statewide' && candidateRegion !== uniRegion) {
+      // Non-local quota is more competitive
+      regionMultiplier = 0.85;
     }
 
-    // 2. Identify eligible branches/programs
-    const collegeBranches = uni.branchFees ? Object.keys(uni.branchFees) : (uni.tags || []);
-    
-    collegeBranches.forEach((branch: string) => {
-      // Filter out non-matching branches if preferred branch is specified
-      if (preferredBranch && preferredBranch !== 'All' && !branch.toLowerCase().includes(preferredBranch.toLowerCase()) && !preferredBranch.toLowerCase().includes(branch.toLowerCase())) {
-        return;
+    const catAPct = uni.categoryAQuotaPercent || (isPvtUniv ? 35 : (isGovt ? 100 : 70));
+    const catBPct = uni.categoryBQuotaPercent || (isPvtUniv ? 65 : (isGovt ? 0 : 30));
+    const convenerFee = uni.convenerFee || uni.feeIntelligence?.convenerQuotaFee || (isGovt ? 35000 : 70000);
+    const mgmtFee = uni.mgmtFee || uni.feeIntelligence?.mgmtQuotaFee || 0;
+    const topRecruiter = (uni.topRecruiters && uni.topRecruiters[0]) || (uni.placements && uni.placements[0]);
+
+    // 2. Iterate through cutoffs of the college
+    const collegeCutoffs = uni.cutoffs || [];
+
+    // Fallback if cutoffs array is empty: construct standard branch list
+    const branchEntries: { branch: string; cutoffData?: BranchCutoff }[] = [];
+    if (collegeCutoffs.length > 0) {
+      collegeCutoffs.forEach(c => branchEntries.push({ branch: c.branch, cutoffData: c }));
+    } else {
+      const branches = uni.branches || Object.keys(uni.branchFees || {}) || ['CSE', 'ECE'];
+      branches.forEach(b => branchEntries.push({ branch: b }));
+    }
+
+    for (const entry of branchEntries) {
+      const branchKey = normalizeBranchName(entry.branch);
+
+      // Filter by preferred branch
+      if (preferredBranch && preferredBranch !== 'All') {
+        const prefNorm = normalizeBranchName(preferredBranch);
+        if (prefNorm !== branchKey && !entry.branch.toLowerCase().includes(preferredBranch.toLowerCase())) {
+          continue;
+        }
       }
 
-      // Check exam eligibility
-      if (exam === 'EAPCET' && !isEligibleEAPCET(branch)) return;
-      if (exam === 'ICET' && !isEligibleICET(branch)) return;
-
-      // 3. Compute base cutoff rank for OC General Male
-      // Selective branches like CSE/AI-ML have lower cutoff ranks (harder to get)
-      let branchDifficulty = 1.0;
-      const bLower = branch.toLowerCase();
-      if (bLower.includes('cse') || bLower.includes('ai') || bLower.includes('ds') || bLower.includes('ml')) {
-        branchDifficulty = 0.5; // CSE cutoffs are half the rank (e.g. 5000 instead of 10000)
-      } else if (bLower.includes('ece') || bLower.includes('it')) {
-        branchDifficulty = 0.8;
-      } else if (bLower.includes('eee') || bLower.includes('mechanical') || bLower.includes('civil')) {
-        branchDifficulty = 1.5; // wider cutoff
-      }
-
-      // base rank cutoff calculation
-      // Tier 9: CSE ~2k rank, ECE ~3.2k, EEE ~6k
-      // Tier 6: CSE ~15k rank, ECE ~24k, EEE ~45k
-      // Tier 3: CSE ~50k rank, ECE ~80k, EEE ~120k
-      let baseCutoff = Math.round(500000 / Math.pow(selectivity, 2.5) * branchDifficulty);
-      if (baseCutoff < 500) baseCutoff = 500;
-
-      // 4. Adjust base cutoff for reservation Category & Gender
-      let categoryMultiplier = 1.0;
-      switch (category) {
-        case 'BC-A': categoryMultiplier = 1.3; break;
-        case 'BC-B': categoryMultiplier = 1.25; break;
-        case 'BC-C': categoryMultiplier = 1.4; break;
-        case 'BC-D': categoryMultiplier = 1.2; break;
-        case 'BC-E': categoryMultiplier = 1.5; break;
-        case 'SC': categoryMultiplier = 2.2; break;
-        case 'ST': categoryMultiplier = 2.8; break;
-        default: categoryMultiplier = 1.0; // OC
-      }
-
-      const genderMultiplier = gender === 'Female' ? 1.15 : 1.0;
-      let roundMultiplier = 1.0;
-      if (round === 'Round 2') roundMultiplier = 1.15;
-      else if (round === 'Round 3') roundMultiplier = 1.25;
-
-      const finalEstimatedCutoff = Math.round(baseCutoff * categoryMultiplier * genderMultiplier * roundMultiplier);
-
-      // 5. Predict Chance using Logistic Regression (Sigmoid)
-      let chance: 'High' | 'Medium' | 'Low' = 'Low';
-      let quota: 'Convener Quota' | 'Management Quota' = 'Convener Quota';
-      let color = '#EF4444';
-
-      const x = (rank - finalEstimatedCutoff) / finalEstimatedCutoff;
-      const k = 12; // Steepness of the sigmoid curve
-      const admissionProb = 1 / (1 + Math.exp(k * x));
-      const probabilityPercent = Math.round(admissionProb * 100);
-
-      if (admissionProb >= 0.70) {
-        chance = 'High';
-        color = '#10B981';
-      } else if (admissionProb >= 0.30) {
-        chance = 'Medium';
-        color = '#F59E0B';
+      // Compute base closing rank for Category-A
+      let baseCutoff = 35000;
+      if (entry.cutoffData) {
+        baseCutoff = getCategoryCutoff(entry.cutoffData, category, gender);
       } else {
-        // If rank is too high, check if management quota is possible
-        let minFee = uni.branchFees?.[branch];
-        if (!minFee) {
-          const prog = uni.programs?.find((p: Program) => p.name?.toLowerCase().includes(branch.toLowerCase()));
-          if (prog) {
-            let f = parseInt((prog.fees || '').replace(/[^0-9]/g, '')) || 0;
-            if (f === 0 && prog.mgmtFees) f = parseInt((prog.mgmtFees || '').replace(/[^0-9]/g, '')) || 0;
-            if (f > 0) minFee = f;
-          }
-        }
-        if (!minFee) minFee = 150000;
+        // Fallback calculation based on ranking
+        const nirfNum = parseInt((uni.nirf || '150').replace(/[^0-9]/g, ''), 10) || 100;
+        baseCutoff = Math.round((nirfNum * 350 + (entry.branch.includes('CSE') ? 3000 : 15000)) * roundFactor);
+      }
 
-        if (minFee > 0) {
-          quota = 'Management Quota';
-          chance = 'High'; // Management quota seats are usually guaranteed if fees can be paid
-          color = '#3B82F6';
-        } else {
+      // Apply regional priority factor and round factor
+      const effectiveCutoff = Math.round(baseCutoff * regionMultiplier * roundFactor);
+
+      // ── Category-A Evaluation (Convenor Quota via EAPCET) ────
+      if (quotaPreference === 'All' || quotaPreference === 'Convener') {
+        let chance: 'High' | 'Medium' | 'Low' = 'Low';
+        let chanceLabel: 'Safe' | 'Target' | 'Reach' = 'Reach';
+        let color = '#EF4444';
+        let prob = 15;
+        let reason = '';
+
+        if (rank <= effectiveCutoff * 0.88) {
+          chance = 'High';
+          chanceLabel = 'Safe';
+          color = '#10B981';
+          prob = Math.min(99, Math.round(88 + ((effectiveCutoff * 0.88 - rank) / effectiveCutoff) * 20));
+          reason = `Comfortable admission: Your rank (${rank.toLocaleString()}) is safely within the closing rank (${effectiveCutoff.toLocaleString()}).`;
+        } else if (rank <= effectiveCutoff * 1.10) {
+          chance = 'Medium';
+          chanceLabel = 'Target';
+          color = '#F59E0B';
+          const span = effectiveCutoff * 0.22;
+          prob = Math.max(50, Math.round(78 - ((rank - effectiveCutoff * 0.88) / span) * 28));
+          reason = `Competitive match: Very realistic chance during Round 1 or Round 2 sliding.`;
+        } else if (rank <= effectiveCutoff * 1.35) {
           chance = 'Low';
-          color = '#EF4444';
+          chanceLabel = 'Reach';
+          color = '#8B5CF6'; // Purple for ambitious reach
+          const span = effectiveCutoff * 0.25;
+          prob = Math.max(20, Math.round(45 - ((rank - effectiveCutoff * 1.10) / span) * 25));
+          reason = `Ambitious option: Possible in Round 3 sliding or mop-up counseling phase.`;
+        }
+
+        // Only include if chance is at least reach (< 1.35x cutoff)
+        if (rank <= effectiveCutoff * 1.35) {
+          results.push({
+            collegeId: uni.id,
+            collegeName: uni.name,
+            collegeShortName: uni.shortName || uni.name,
+            code: uni.code,
+            city: uni.city,
+            region: uniRegion,
+            branch: entry.branch,
+            quota: 'Convener Quota (Cat-A)',
+            quotaPercent: catAPct,
+            chance,
+            chanceLabel,
+            color,
+            closingCutoff: effectiveCutoff,
+            probabilityPercent: prob,
+            convenerFee,
+            mgmtFee,
+            naac: uni.naac || 'B++',
+            nirf: uni.nirf || '—',
+            topRecruiter,
+            reason
+          });
         }
       }
 
-      predictions.push({
-        collegeId: uni.id,
-        collegeName: uni.name,
-        collegeShortName: uni.shortName || uni.name,
-        city: uni.city,
-        branch,
-        quota,
-        chance,
-        color,
-        estimatedCutoff: finalEstimatedCutoff,
-        probabilityPercent: quota === 'Management Quota' ? 85 : probabilityPercent
-      });
-    });
-  });
+      // ── Category-B Option (Management Quota) ────────────────
+      // If student asked for management quota or if their rank is not eligible for Category-A in top colleges
+      if ((quotaPreference === 'Management' || (quotaPreference === 'All' && rank > effectiveCutoff * 1.35)) && catBPct > 0 && mgmtFee > 0) {
+        results.push({
+          collegeId: uni.id,
+          collegeName: uni.name,
+          collegeShortName: uni.shortName || uni.name,
+          code: uni.code,
+          city: uni.city,
+          region: uniRegion,
+          branch: entry.branch,
+          quota: 'Management Quota (Cat-B)',
+          quotaPercent: catBPct,
+          chance: 'High',
+          chanceLabel: 'Safe',
+          color: '#3B82F6', // Blue for Management Quota
+          closingCutoff: 0, // Direct merit
+          probabilityPercent: 92,
+          convenerFee,
+          mgmtFee,
+          naac: uni.naac || 'B++',
+          nirf: uni.nirf || '—',
+          topRecruiter,
+          reason: `Direct merit admission under Category-B (${catBPct}% quota). Regulated institutional fee.`
+        });
+      }
+    }
+  }
 
-  // Sort by probability (descending), then estimated cutoff
-  return predictions.sort((a, b) => {
-    const pA = a.probabilityPercent || 0;
-    const pB = b.probabilityPercent || 0;
-    if (pB !== pA) return pB - pA;
-    return a.estimatedCutoff - b.estimatedCutoff;
+  // Sort by probability descending, then by college NIRF/NAAC selectivity
+  return results.sort((a, b) => {
+    // Put Category-A above Category-B unless user specifically selected Management
+    if (a.quota !== b.quota) {
+      return a.quota.includes('Cat-A') ? -1 : 1;
+    }
+    if (b.probabilityPercent !== a.probabilityPercent) {
+      return b.probabilityPercent - a.probabilityPercent;
+    }
+    return a.closingCutoff - b.closingCutoff;
   });
 }

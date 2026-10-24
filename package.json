@@ -7,7 +7,11 @@
     "dev": "concurrently \"vite\" \"node api-server.js\"",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "lint": "eslint src",
+    "data:audit": "python scripts/fetch_ap_colleges_data.py",
+    "images:download": "python scripts/download_highres_images.py",
+    "images:sync": "node scripts/sync-local-images.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
@@ -26,6 +30,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@mlc-ai/web-llm": "^0.2.86",
     "@radix-ui/react-slot": "^1.2.4",
     "@tailwindcss/vite": "^4.2.2",
     "@vitejs/plugin-react": "^6.0.1",

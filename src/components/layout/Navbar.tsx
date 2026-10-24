@@ -14,6 +14,22 @@ export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Close mobile navigation drawer on route change
+  React.useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
+
+  // Close mobile navigation drawer on Escape key
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && menuOpen) {
+        setMenuOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [menuOpen]);
+
   const firstName = currentUser?.name?.split(' ')[0] || 'Scholar';
   const avatarLetter = firstName[0]?.toUpperCase() || 'S';
 
@@ -26,6 +42,7 @@ export default function Navbar() {
     { label: 'Home', path: '/home' },
     { label: 'Search', path: '/search' },
     { label: 'Predictor', path: '/predictor' },
+    { label: 'Compare', path: '/compare' },
     { label: 'Wishlist', path: '/wishlist' },
   ];
 
@@ -175,21 +192,46 @@ export default function Navbar() {
             </AnimatePresence>
           </motion.button>
           
-          <motion.div 
-            whileHover={{ scale: 1.1, rotate: 8 }}
-            whileTap={{ scale: 0.9 }}
-            style={{
-              width: '38px', height: '38px', borderRadius: '50%',
-              background: 'var(--gradient)', display: 'flex', alignItems: 'center',
-              justifyContent: 'center', color: '#fff', fontWeight: '800', fontSize: '16px',
-              cursor: 'pointer', overflow: 'hidden'
-            }} 
-            onClick={() => navigate('/profile')}
-          >
-            {currentUser?.photoURL ? (
-              <img src={currentUser.photoURL} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            ) : avatarLetter}
-          </motion.div>
+          {currentUser ? (
+            <motion.div 
+              whileHover={{ scale: 1.1, rotate: 8 }}
+              whileTap={{ scale: 0.9 }}
+              style={{
+                width: '38px', height: '38px', borderRadius: '50%',
+                background: 'var(--gradient)', display: 'flex', alignItems: 'center',
+                justifyContent: 'center', color: '#fff', fontWeight: '800', fontSize: '16px',
+                cursor: 'pointer', overflow: 'hidden'
+              }} 
+              onClick={() => navigate('/profile')}
+              title={`${currentUser.name || 'Student'} Profile`}
+            >
+              {currentUser?.photoURL ? (
+                <img src={currentUser.photoURL} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : avatarLetter}
+            </motion.div>
+          ) : (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate('/')}
+              style={{
+                background: 'var(--gradient)',
+                color: '#fff',
+                fontWeight: '700',
+                fontSize: '13px',
+                padding: '8px 18px',
+                borderRadius: '999px',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                boxShadow: '0 4px 12px var(--primary-glow)'
+              }}
+            >
+              <LogOut size={14} style={{ transform: 'rotate(180deg)' }} /> Sign In
+            </motion.button>
+          )}
         </div>
 
         {/* Mobile Hamburger & Theme Toggle */}
@@ -197,10 +239,11 @@ export default function Navbar() {
           <button 
             onClick={toggleTheme} 
             aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+            className="tap-target-44"
             style={{
               background: 'var(--primary-light)', 
-              width: '34px', 
-              height: '34px',
+              width: '44px', 
+              height: '44px',
               borderRadius: '50%', 
               display: 'flex', 
               alignItems: 'center', 
@@ -222,7 +265,7 @@ export default function Navbar() {
                 transition={{ duration: 0.2, ease: 'easeInOut' }}
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
-                {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
+                {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
               </motion.div>
             </AnimatePresence>
           </button>
@@ -231,31 +274,53 @@ export default function Navbar() {
             aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             aria-expanded={menuOpen}
             aria-controls="mobile-nav-dropdown"
-            style={{ color: 'var(--text-main)', padding: '4px', background: 'transparent', border: 'none', cursor: 'pointer' }}
+            className="tap-target-44"
+            style={{ color: 'var(--text-main)', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: 'none', cursor: 'pointer' }}
           >
             {menuOpen ? <X size={26} /> : <Menu size={26} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown with Smooth Animation */}
+      {/* Mobile Backdrop Scrim & Dropdown */}
       <AnimatePresence>
         {menuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, height: 0, y: -10 }}
-            animate={{ opacity: 1, height: 'auto', y: 0 }}
-            exit={{ opacity: 0, height: 0, y: -10 }}
-            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-            className="md:hidden absolute w-full overflow-hidden" 
-            style={{ 
-              background: 'var(--surface-glass)', 
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              borderBottom: '1px solid var(--border)', 
-              boxShadow: 'var(--shadow-lg)',
-              zIndex: 99
-            }}
-          >
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setMenuOpen(false)}
+              style={{
+                position: 'fixed',
+                top: '68px',
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(0, 0, 0, 0.45)',
+                backdropFilter: 'blur(4px)',
+                WebkitBackdropFilter: 'blur(4px)',
+                zIndex: 90,
+              }}
+              aria-hidden="true"
+            />
+            <motion.div 
+              id="mobile-nav-dropdown"
+              initial={{ opacity: 0, height: 0, y: -10 }}
+              animate={{ opacity: 1, height: 'auto', y: 0 }}
+              exit={{ opacity: 0, height: 0, y: -10 }}
+              transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+              className="md:hidden absolute w-full overflow-hidden" 
+              style={{ 
+                top: '100%',
+                left: 0,
+                background: 'var(--surface)', 
+                borderBottom: '2px solid var(--border)', 
+                boxShadow: 'var(--shadow-lg), 0 20px 40px rgba(0,0,0,0.15)',
+                zIndex: 99
+              }}
+            >
             <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {navLinks.map((link) => (
                  <motion.button
@@ -293,41 +358,60 @@ export default function Navbar() {
 
               <div className="divider" style={{ margin: '8px 0', opacity: 0.5 }} />
               
-               <motion.button
-                   whileTap={{ scale: 0.97 }}
-                   onClick={() => { navigate('/profile'); setMenuOpen(false); }}
-                   style={{
-                     padding: '12px 16px', borderRadius: '12px', textAlign: 'left',
-                     color: 'var(--text-main)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '12px',
-                     background: 'transparent',
-                     border: 'none',
-                     cursor: 'pointer'
-                   }}
-                 >
-                   <div style={{
-                    width: '28px', height: '28px', borderRadius: '50%', background: 'var(--gradient)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '12px'
-                   }}>
-                     {currentUser?.photoURL ? <img src={currentUser.photoURL} alt="Avatar" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : avatarLetter}
-                   </div>
-                   My Profile
-               </motion.button>
+              {currentUser ? (
+                <>
+                  <motion.button
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => { navigate('/profile'); setMenuOpen(false); }}
+                    style={{
+                      padding: '12px 16px', borderRadius: '12px', textAlign: 'left',
+                      color: 'var(--text-main)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '12px',
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <div style={{
+                      width: '28px', height: '28px', borderRadius: '50%', background: 'var(--gradient)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '12px'
+                    }}>
+                      {currentUser?.photoURL ? <img src={currentUser.photoURL} alt="Avatar" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : avatarLetter}
+                    </div>
+                    My Profile
+                  </motion.button>
 
-               <motion.button
-                   whileTap={{ scale: 0.97 }}
-                   onClick={() => { handleLogout(); setMenuOpen(false); }}
-                   style={{
-                     padding: '12px 16px', borderRadius: '12px', textAlign: 'left',
-                     color: '#ef4444', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '12px',
-                     background: 'transparent',
-                     border: 'none',
-                     cursor: 'pointer'
-                   }}
-                 >
-                   <LogOut size={18} /> Sign Out
-               </motion.button>
+                  <motion.button
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => { handleLogout(); setMenuOpen(false); }}
+                    style={{
+                      padding: '12px 16px', borderRadius: '12px', textAlign: 'left',
+                      color: '#ef4444', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '12px',
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <LogOut size={18} /> Sign Out
+                  </motion.button>
+                </>
+              ) : (
+                <motion.button
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => { navigate('/'); setMenuOpen(false); }}
+                  style={{
+                    padding: '12px 16px', borderRadius: '12px', textAlign: 'left',
+                    color: 'var(--primary)', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '12px',
+                    background: 'var(--primary-light)',
+                    border: '1px solid rgba(16, 185, 129, 0.2)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <LogOut size={18} style={{ transform: 'rotate(180deg)' }} /> Sign In / Create Account
+                </motion.button>
+              )}
             </div>
           </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>

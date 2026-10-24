@@ -78,6 +78,11 @@ export const PWAProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 };
 
 export const usePWA = () => {
-  const context = useContext(PWAContext);
-  return context || defaultPWAContext;
+  try {
+    const context = useContext(PWAContext);
+    return context || defaultPWAContext;
+  } catch (err) {
+    console.warn('[usePWA] Context resolution fallback:', err);
+    return defaultPWAContext;
+  }
 };

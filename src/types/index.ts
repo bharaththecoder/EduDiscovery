@@ -27,10 +27,24 @@ export interface PlacementRecord {
   year: number;
 }
 
+export interface BranchCutoff {
+  branch: string;      // e.g. "CSE", "AI/ML", "IT", "ECE", "EEE", "Mechanical", "Civil"
+  ocBoys: number;      // Open Competition Boys / General Pool
+  ocGirls: number;     // Open Competition Girls Pool (33% horizontal)
+  ews?: number;        // Economically Weaker Section
+  bcA?: number;        // Backward Class - A
+  bcB?: number;        // Backward Class - B
+  bcD?: number;        // Backward Class - D
+  bcE?: number;        // Backward Class - E
+  sc?: number;         // Scheduled Caste
+  st?: number;         // Scheduled Tribe
+}
+
 export interface University {
   id: string;
   name: string;
   shortName: string;
+  code?: string;       // Official AP EAPCET / APHERMC Counseling Code (e.g. VRSE, GVPV, SRMAP)
   city: string;
   state: string;
   established: number;
@@ -44,12 +58,20 @@ export interface University {
   image: string;
   website: string;
   about: string;
+  category?: string;    // e.g. "Deemed / Private", "Autonomous Affiliated", "State Govt University"
+  convenerFee?: number; // Statutory Category-A Convenor Quota Fee in ₹/yr
+  mgmtFee?: number;     // Category-B Management Quota Fee in ₹/yr
+  topRecruiters?: PlacementRecord[]; // Top 3 verified recruiters
+  region?: 'AU' | 'SVU' | 'Statewide'; // AP Local Quota Region
   lastVerified?: string;
   programs: Program[];
   placements?: PlacementRecord[];
   faculty: Faculty[];
   facilities: Facility[];
   branchFees?: Record<string, number | undefined>;
+  cutoffs?: BranchCutoff[];
+  categoryAQuotaPercent?: number; // e.g. 35 for Private Universities, 70 for Affiliated, 100 for Govt
+  categoryBQuotaPercent?: number; // e.g. 65 for Private Universities, 30 for Affiliated, 0 for Govt
   avgPackage?: number;      // Average placement package in ₹ (e.g. 1200000 = ₹12 LPA)
   placementRate?: number;   // 0-100 percentage
   feeIntelligence?: FeeIntelligence;
@@ -75,6 +97,8 @@ export interface NewsArticle {
   date: string;
   readTime: string;
   content: string;
+  url?: string;
+  source?: string;
 }
 
 export interface Review {

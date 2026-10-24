@@ -1,26 +1,64 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Sparkles, HelpCircle, GraduationCap, MapPin, Info, Landmark, ChevronDown, Target, TrendingUp, Award, BookOpen, Zap, CheckCircle2, AlertTriangle, XCircle } from 'lucide-react';
+import { Sparkles, HelpCircle, MapPin, ChevronDown, Target, TrendingUp, Award, Zap, CheckCircle2, AlertTriangle, FileText, Heart, ExternalLink, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useUniversities } from '@/contexts/UniversityContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { predictAdmission, PredictionResult } from '@/utils/predictorEngine';
+import { useToast } from '@/contexts/ToastContext';
+import { useWishlist } from '@/contexts/WishlistContext';
+import { useCounselor, PredictorContextData } from '@/contexts/CounselorContext';
+import { predictAdmission, PredictionResult, PredictorFilters } from '@/utils/predictorEngine';
 import { parseRankToNumber } from '@/utils/intelligenceEngine';
 import { Link } from 'react-router-dom';
-import { RadarSweep, HolographicBadge, ConfettiExplosion, SpotlightCard, NeonCard, MagneticButton, ConfettiButton, AnimatedCounter3D } from '@/components/Animation3DComponents';
+import { ConfettiExplosion, SpotlightCard, NeonCard, ConfettiButton, AnimatedCounter3D } from '@/components/Animation3DComponents';
 
-const CATEGORIES = ['OC', 'BC-A', 'BC-B', 'BC-C', 'BC-D', 'BC-E', 'SC', 'ST'];
-const GENDERS = ['Male', 'Female'];
-const BRANCHES_EAPCET = ['All', 'CSE', 'AI/ML', 'ECE', 'EEE', 'IT', 'Mechanical', 'Civil', 'Biotech'];
-const BRANCHES_ICET = ['All', 'MBA', 'MCA'];
+const CATEGORIES = [
+  { key: 'OC', label: 'OC (General)' },
+  { key: 'EWS', label: 'EWS (Economically Weaker)' },
+  { key: 'BC-A', label: 'BC-A' },
+  { key: 'BC-B', label: 'BC-B' },
+  { key: 'BC-C', label: 'BC-C' },
+  { key: 'BC-D', label: 'BC-D' },
+  { key: 'BC-E', label: 'BC-E' },
+  { key: 'SC', label: 'SC' },
+  { key: 'ST', label: 'ST' },
+];
 
-interface GroupedPrediction {
+const GENDERS = ['General / Boys', 'Girls (33% Quota)'];
+
+const BRANCHES_EAPCET = [
+  'All',
+  'CSE',
+  'AI/ML/DS',
+  'IT',
+  'ECE',
+  'EEE',
+  'Mechanical',
+  'Civil'
+];
+
+const RANK_PRESETS = [
+  { label: '< 2.5K', value: 2000 },
+  { label: '5K', value: 5000 },
+  { label: '15K', value: 15000 },
+  { label: '30K', value: 30000 },
+  { label: '50K', value: 50000 },
+  { label: '80K+', value: 85000 },
+];
+
+interface GroupedCollegePrediction {
   collegeId: string;
   collegeName: string;
   collegeShortName: string;
+  code?: string;
   city: string;
+  region: 'AU' | 'SVU' | 'Statewide';
   naac: string;
   nirf: string;
   image: string;
+  convenerFee: number;
+  mgmtFee: number;
+  catAPct: number;
+  catBPct: number;
   branches: PredictionResult[];
 }
 
@@ -35,10 +73,10 @@ function SegmentedControl({ options, value, onChange }: {
       display: 'flex',
       background: 'var(--bg)',
       border: '1.5px solid var(--border)',
-      borderRadius: '14px',
-      padding: '4px',
+      borderRadius: '12px',
+      padding: '3px',
       gap: '2px',
-      marginTop: '8px',
+      marginTop: '6px',
     }}>
       {options.map(opt => {
         const active = value === opt;
@@ -48,10 +86,10 @@ function SegmentedControl({ options, value, onChange }: {
             onClick={() => onChange(opt)}
             style={{
               flex: 1,
-              padding: '9px 4px',
-              fontSize: '12.5px',
+              padding: '8px 4px',
+              fontSize: '12px',
               fontWeight: '800',
-              borderRadius: '10px',
+              borderRadius: '9px',
               cursor: 'pointer',
               background: active ? 'var(--primary)' : 'transparent',
               color: active ? '#fff' : 'var(--text-muted)',
@@ -64,46 +102,6 @@ function SegmentedControl({ options, value, onChange }: {
           </button>
         );
       })}
-    </div>
-  );
-}
-
-// ─── Styled Select ───────────────────────────────────────────────
-function StyledSelect({ value, onChange, children }: {
-  value: string;
-  onChange: (v: string) => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <div style={{ position: 'relative', marginTop: '8px' }}>
-      <select
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        style={{
-          width: '100%',
-          padding: '12px 40px 12px 14px',
-          borderRadius: '12px',
-          border: '1.5px solid var(--border)',
-          background: 'var(--surface)',
-          color: 'var(--text-main)',
-          fontWeight: 700,
-          fontSize: '13.5px',
-          appearance: 'none',
-          cursor: 'pointer',
-          fontFamily: 'inherit',
-          outline: 'none',
-        }}
-      >
-        {children}
-      </select>
-      <ChevronDown size={16} style={{
-        position: 'absolute',
-        right: '14px',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        color: 'var(--text-muted)',
-        pointerEvents: 'none',
-      }} />
     </div>
   );
 }
@@ -127,28 +125,28 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
 // ─── Chance Config ───────────────────────────────────────────────
 const CHANCE_CONFIG = {
   High: {
-    label: 'Safe',
+    label: 'Safe Choice',
     color: '#10B981',
     bg: 'rgba(16,185,129,0.1)',
     border: 'rgba(16,185,129,0.25)',
     icon: CheckCircle2,
-    tagline: 'High Chance',
+    tagline: 'High Admission Probability',
   },
   Medium: {
-    label: 'Moderate',
+    label: 'Target Choice',
     color: '#F59E0B',
     bg: 'rgba(245,158,11,0.1)',
     border: 'rgba(245,158,11,0.25)',
     icon: AlertTriangle,
-    tagline: 'Medium Chance',
+    tagline: 'Competitive Sliding Match',
   },
   Low: {
-    label: 'Reach',
-    color: '#EF4444',
-    bg: 'rgba(239,68,68,0.1)',
-    border: 'rgba(239,68,68,0.25)',
-    icon: XCircle,
-    tagline: 'Low Chance',
+    label: 'Reach Choice',
+    color: '#8B5CF6',
+    bg: 'rgba(139,92,246,0.1)',
+    border: 'rgba(139,92,246,0.25)',
+    icon: Zap,
+    tagline: 'Ambitious Round 2/3 Match',
   },
 };
 
@@ -156,12 +154,15 @@ const CHANCE_CONFIG = {
 function GroupedCollegeCard({
   college,
   activeTab,
-  index,
+  userRank,
 }: {
-  college: GroupedPrediction;
+  college: GroupedCollegePrediction;
   activeTab: 'All' | 'High' | 'Medium' | 'Low';
-  index: number;
+  userRank: number;
 }) {
+  const { toggleWishlist, isWishlisted } = useWishlist() as { toggleWishlist: (u: any) => void, isWishlisted: (id: string) => boolean };
+  const { showToast } = useToast() as { showToast: (msg: string, type: string) => void };
+
   const initialBranch = useMemo(() => {
     if (activeTab !== 'All') {
       const match = college.branches.find(b => b.chance === activeTab);
@@ -178,13 +179,37 @@ function GroupedCollegeCard({
     setSelectedBranch(initialBranch);
   }, [initialBranch]);
 
-  const cfg = CHANCE_CONFIG[selectedBranch.chance];
+  const cfg = CHANCE_CONFIG[selectedBranch.chance] || CHANCE_CONFIG.Low;
   const ChanceIcon = cfg.icon;
 
-  // Best chance across all branches
   const bestChance = college.branches.some(b => b.chance === 'High') ? 'High'
     : college.branches.some(b => b.chance === 'Medium') ? 'Medium' : 'Low';
-  const bestCfg = CHANCE_CONFIG[bestChance];
+  const bestCfg = CHANCE_CONFIG[bestChance] || CHANCE_CONFIG.Low;
+
+  const inWishlist = isWishlisted(college.collegeId);
+
+  const handleAddChoice = () => {
+    toggleWishlist({
+      id: college.collegeId,
+      name: college.collegeName,
+      shortName: college.collegeShortName,
+      city: college.city,
+      state: 'Andhra Pradesh',
+      established: 2000,
+      acres: 50,
+      ratio: '1:15',
+      naac: college.naac,
+      nirf: college.nirf,
+      match: 95,
+      branches: college.branches.map(b => b.branch),
+      tags: [],
+      image: college.image,
+      website: '',
+      about: '',
+      programs: []
+    } as any);
+    showToast(inWishlist ? 'Removed from your Choice List' : `Added ${college.collegeShortName} to your Web Options List!`, 'success');
+  };
 
   return (
     <NeonCard
@@ -195,45 +220,74 @@ function GroupedCollegeCard({
         position: 'relative',
         transformStyle: 'preserve-3d',
         perspective: '800px',
+        marginBottom: '16px'
       }}
     >
       {/* Accent top bar */}
       <div style={{
-        height: '3px',
+        height: '4px',
         background: `linear-gradient(90deg, ${bestCfg.color}, ${bestCfg.color}44)`,
       }} />
 
-      <div style={{ padding: '20px 22px 22px', display: 'flex', flexDirection: 'column', gap: '18px' }}>
+      <div style={{ padding: '20px 22px 22px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
-        {/* Row 1: College info + badge */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            {/* Meta tags */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '6px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <MapPin size={11} style={{ color: 'var(--primary)', flexShrink: 0 }} />
-                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '700' }}>{college.city}</span>
-              </div>
-              <span style={{ color: 'var(--border)', fontSize: '10px' }}>•</span>
+        {/* Row 1: College header, Code pill, and Actions */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '14px', flexWrap: 'wrap' }}>
+          <div style={{ flex: 1, minWidth: '240px' }}>
+            {/* Meta Tags: Code + Region + NAAC + NIRF */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '8px' }}>
+              {college.code && (
+                <span style={{
+                  fontSize: '11px',
+                  fontWeight: '900',
+                  color: '#fff',
+                  background: 'var(--primary)',
+                  padding: '2px 8px',
+                  borderRadius: '6px',
+                  letterSpacing: '0.6px'
+                }}>
+                  CODE: {college.code}
+                </span>
+              )}
               <span style={{
-                fontSize: '10.5px', fontWeight: '800', color: 'var(--primary)',
-                background: 'var(--primary-light)', padding: '1px 7px', borderRadius: '99px',
-              }}>NAAC {college.naac}</span>
+                fontSize: '10.5px',
+                fontWeight: '800',
+                color: 'var(--text-muted)',
+                background: 'var(--bg)',
+                border: '1px solid var(--border)',
+                padding: '2px 8px',
+                borderRadius: '6px'
+              }}>
+                Region: {college.region}
+              </span>
+              <span style={{
+                fontSize: '10.5px',
+                fontWeight: '800',
+                color: 'var(--primary)',
+                background: 'var(--primary-light)',
+                padding: '2px 8px',
+                borderRadius: '6px',
+              }}>
+                NAAC {college.naac}
+              </span>
               {college.nirf && college.nirf !== '—' && (
-                <>
-                  <span style={{ color: 'var(--border)', fontSize: '10px' }}>•</span>
-                  <span style={{
-                    fontSize: '10.5px', fontWeight: '800', color: '#0ea5e9',
-                    background: 'rgba(14,165,233,0.08)', padding: '1px 7px', borderRadius: '99px',
-                  }}>{college.nirf.split(' ')[0]}</span>
-                </>
+                <span style={{
+                  fontSize: '10.5px',
+                  fontWeight: '800',
+                  color: '#0ea5e9',
+                  background: 'rgba(14,165,233,0.1)',
+                  padding: '2px 8px',
+                  borderRadius: '6px',
+                }}>
+                  {college.nirf.split(' ')[0]}
+                </span>
               )}
             </div>
 
             {/* College Name */}
             <Link to={`/university/${college.collegeId}`} style={{ textDecoration: 'none' }}>
               <h3 style={{
-                fontSize: '15.5px',
+                fontSize: '16.5px',
                 fontWeight: '900',
                 color: 'var(--text-main)',
                 lineHeight: 1.35,
@@ -244,67 +298,113 @@ function GroupedCollegeCard({
                 onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-main)')}
               >
                 {college.collegeName}
-                <span style={{ color: 'var(--text-muted)', fontWeight: '600', fontSize: '13px' }}> ({college.collegeShortName})</span>
+                <span style={{ color: 'var(--text-muted)', fontWeight: '600', fontSize: '13.5px' }}> ({college.collegeShortName})</span>
               </h3>
             </Link>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
+              <MapPin size={12} style={{ color: 'var(--primary)' }} />
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>{college.city}, Andhra Pradesh</span>
+            </div>
           </div>
 
-          {/* Chance Badge */}
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '3px',
-            flexShrink: 0,
-          }}>
-            <div style={{
-              background: cfg.bg,
-              border: `1.5px solid ${cfg.border}`,
-              color: cfg.color,
-              padding: '6px 12px',
-              borderRadius: '10px',
-              fontSize: '11px',
-              fontWeight: '900',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '5px',
-              transition: 'all 0.3s ease',
-            }}>
-              <ChanceIcon size={12} />
-              {cfg.label}
-            </div>
-            <span style={{ fontSize: '9.5px', fontWeight: '700', color: 'var(--text-muted)', textAlign: 'center' }}>{cfg.tagline}</span>
+          {/* Quick Action Buttons */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button
+              onClick={handleAddChoice}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '8px 14px',
+                borderRadius: '10px',
+                fontSize: '12px',
+                fontWeight: '800',
+                cursor: 'pointer',
+                border: inWishlist ? '1.5px solid #EF4444' : '1.5px solid var(--border)',
+                background: inWishlist ? 'rgba(239, 68, 68, 0.1)' : 'var(--bg)',
+                color: inWishlist ? '#EF4444' : 'var(--text-main)',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              <Heart size={14} fill={inWishlist ? '#EF4444' : 'none'} color={inWishlist ? '#EF4444' : 'currentColor'} />
+              <span>{inWishlist ? 'In Choice List' : '+ Add Choice'}</span>
+            </button>
+            <Link
+              to={`/university/${college.collegeId}`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                padding: '8px 12px',
+                borderRadius: '10px',
+                fontSize: '12px',
+                fontWeight: '800',
+                textDecoration: 'none',
+                background: 'var(--primary-light)',
+                color: 'var(--primary)',
+              }}
+            >
+              <ExternalLink size={13} /> Details
+            </Link>
           </div>
         </div>
 
-        {/* Row 2: Branch Selector */}
-        <div style={{ position: 'relative', zIndex: 10 }}>
-          <FieldLabel>Select Branch to Check Cutoff</FieldLabel>
+        {/* Row 2: Branch Selector Dropdown & Chance Highlight */}
+        <div style={{ position: 'relative' }}>
           <div
             onClick={() => setDropdownOpen(!dropdownOpen)}
             style={{
               display: 'flex',
-              justifyContent: 'space-between',
               alignItems: 'center',
-              padding: '11px 14px',
+              justifyContent: 'space-between',
+              padding: '12px 16px',
+              borderRadius: '14px',
               background: 'var(--bg)',
-              border: `1.5px solid ${dropdownOpen ? 'var(--primary)' : 'var(--border)'}`,
-              borderRadius: '12px',
+              border: `1.5px solid ${cfg.border}`,
               cursor: 'pointer',
-              fontSize: '13px',
-              fontWeight: '700',
-              color: 'var(--text-main)',
               userSelect: 'none',
-              transition: 'all 0.2s ease',
-              marginTop: '7px',
+              boxShadow: 'var(--shadow-sm)',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <BookOpen size={13} style={{ color: 'var(--primary)' }} />
-              <span>{selectedBranch.branch}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '8px',
+                background: cfg.bg,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: cfg.color
+              }}>
+                <ChanceIcon size={16} />
+              </div>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '14.5px', fontWeight: '900', color: 'var(--text-main)' }}>
+                    B.Tech {selectedBranch.branch}
+                  </span>
+                  <span style={{
+                    fontSize: '11px',
+                    fontWeight: '900',
+                    color: cfg.color,
+                    background: cfg.bg,
+                    padding: '2px 8px',
+                    borderRadius: '99px',
+                    border: `1px solid ${cfg.border}`
+                  }}>
+                    {cfg.label} ({selectedBranch.probabilityPercent}%)
+                  </span>
+                </div>
+                <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                  {selectedBranch.reason}
+                </div>
+              </div>
             </div>
+
             <motion.div animate={{ rotate: dropdownOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
-              <ChevronDown size={15} style={{ color: 'var(--text-muted)' }} />
+              <ChevronDown size={18} style={{ color: 'var(--text-muted)' }} />
             </motion.div>
           </div>
 
@@ -320,7 +420,7 @@ function GroupedCollegeCard({
                   top: 'calc(100% + 4px)',
                   left: 0,
                   right: 0,
-                  background: 'var(--dropdown-bg)',
+                  background: 'var(--dropdown-bg, var(--surface))',
                   border: '1.5px solid var(--border)',
                   borderRadius: '14px',
                   boxShadow: 'var(--shadow-lg)',
@@ -328,16 +428,16 @@ function GroupedCollegeCard({
                   zIndex: 50,
                 }}
               >
-                <div style={{ maxHeight: '200px', overflowY: 'auto' }} className="no-scrollbar">
+                <div style={{ maxHeight: '220px', overflowY: 'auto' }} className="no-scrollbar">
                   {college.branches.map((b) => {
                     const isSelected = b.branch === selectedBranch.branch;
-                    const bCfg = CHANCE_CONFIG[b.chance];
+                    const bCfg = CHANCE_CONFIG[b.chance] || CHANCE_CONFIG.Low;
                     return (
                       <div
                         key={b.branch}
                         onClick={() => { setSelectedBranch(b); setDropdownOpen(false); }}
                         style={{
-                          padding: '10px 14px',
+                          padding: '12px 16px',
                           cursor: 'pointer',
                           fontSize: '13px',
                           fontWeight: isSelected ? '800' : '600',
@@ -346,15 +446,25 @@ function GroupedCollegeCard({
                           display: 'flex',
                           justifyContent: 'space-between',
                           alignItems: 'center',
+                          borderBottom: '1px solid var(--border)',
                           transition: 'background 0.15s ease',
                         }}
                         onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = 'var(--bg)'; }}
                         onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = 'transparent'; }}
                       >
-                        <span>{b.branch}</span>
+                        <div>
+                          <div style={{ fontWeight: '800' }}>B.Tech {b.branch}</div>
+                          <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                            Cutoff: {b.closingCutoff ? b.closingCutoff.toLocaleString('en-IN') : 'Direct'}
+                          </div>
+                        </div>
                         <span style={{
-                          fontSize: '10px', fontWeight: '800', color: bCfg.color,
-                          padding: '2px 8px', borderRadius: '99px', background: bCfg.bg,
+                          fontSize: '10.5px',
+                          fontWeight: '800',
+                          color: bCfg.color,
+                          padding: '2px 8px',
+                          borderRadius: '99px',
+                          background: bCfg.bg,
                         }}>
                           {bCfg.label}
                         </span>
@@ -367,100 +477,182 @@ function GroupedCollegeCard({
           </AnimatePresence>
         </div>
 
-        {/* Row 3: Stats Grid */}
+        {/* Row 3: Transparent Fee & Quota Breakdown */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))',
           gap: '10px',
           borderTop: '1px solid var(--border)',
-          paddingTop: '16px',
+          paddingTop: '14px',
         }}>
+          {/* Convenor Fee (Category-A) */}
           <div style={{
             background: 'var(--bg)',
             border: '1px solid var(--border)',
             borderRadius: '12px',
-            padding: '12px 14px',
+            padding: '10px 14px',
           }}>
-            <span style={{ fontSize: '9.5px', color: 'var(--text-muted)', display: 'block', textTransform: 'uppercase', fontWeight: '800', letterSpacing: '0.5px', marginBottom: '4px' }}>Seat Quota</span>
-            <span style={{ color: 'var(--text-main)', fontSize: '13px', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '5px' }}>
-              <GraduationCap size={13} style={{ color: 'var(--primary)' }} />
-              {selectedBranch.quota}
-            </span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+              <span style={{ fontSize: '10px', color: 'var(--primary)', textTransform: 'uppercase', fontWeight: '800', letterSpacing: '0.5px' }}>
+                Convenor
+              </span>
+              <span style={{ fontSize: '9.5px', color: 'var(--text-muted)', fontWeight: '700' }}>
+                {college.catAPct}% Quota
+              </span>
+            </div>
+            <div style={{ color: 'var(--text-main)', fontSize: '15px', fontWeight: '900' }}>
+              ₹{college.convenerFee.toLocaleString('en-IN')}{' '}
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600' }}>/ yr</span>
+            </div>
+            <div style={{ fontSize: '10px', color: '#10B981', fontWeight: '700', marginTop: '2px' }}>
+              JVD Reimbursable
+            </div>
           </div>
+
+          {/* Management Fee (Category-B) */}
+          <div style={{
+            background: 'var(--bg)',
+            border: '1px solid var(--border)',
+            borderRadius: '12px',
+            padding: '10px 14px',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+              <span style={{ fontSize: '10px', color: '#F59E0B', textTransform: 'uppercase', fontWeight: '800', letterSpacing: '0.5px' }}>
+                Mgmt
+              </span>
+              <span style={{ fontSize: '9.5px', color: 'var(--text-muted)', fontWeight: '700' }}>
+                {college.catBPct > 0 ? `${college.catBPct}% Quota` : 'Govt'}
+              </span>
+            </div>
+            <div style={{ color: 'var(--text-main)', fontSize: '15px', fontWeight: '900' }}>
+              {college.mgmtFee > 0 ? (
+                <>
+                  ₹{college.mgmtFee.toLocaleString('en-IN')}{' '}
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600' }}>/ yr</span>
+                </>
+              ) : (
+                <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>N/A (100% Merit)</span>
+              )}
+            </div>
+            <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '600', marginTop: '2px' }}>
+              Institutional Seat
+            </div>
+          </div>
+
+          {/* Cutoff Rank Comparison */}
           <div style={{
             background: `${cfg.color}08`,
             border: `1px solid ${cfg.border}`,
             borderRadius: '12px',
-            padding: '12px 14px',
+            padding: '10px 14px',
           }}>
-            <span style={{ fontSize: '9.5px', color: 'var(--text-muted)', display: 'block', textTransform: 'uppercase', fontWeight: '800', letterSpacing: '0.5px', marginBottom: '4px' }}>Est. Cutoff</span>
-            <span style={{ color: cfg.color, fontSize: '13px', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '5px' }}>
-              <TrendingUp size={13} />
-              {selectedBranch.estimatedCutoff.toLocaleString()}
-            </span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+              <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '800', letterSpacing: '0.5px' }}>
+                Closing Cutoff
+              </span>
+              <span style={{ fontSize: '10px', color: cfg.color, fontWeight: '800' }}>
+                {selectedBranch.chanceLabel}
+              </span>
+            </div>
+            <div style={{ color: cfg.color, fontSize: '15px', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <TrendingUp size={14} />
+              {selectedBranch.closingCutoff ? selectedBranch.closingCutoff.toLocaleString('en-IN') : 'Direct Merit'}
+            </div>
+            <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '600', marginTop: '2px' }}>
+              Your Rank: <strong>{userRank.toLocaleString('en-IN')}</strong>
+            </div>
           </div>
         </div>
+
       </div>
     </NeonCard>
   );
 }
 
-// ─── Main Page ──────────────────────────────────────────────────
+// ─── Main Predictor Page ──────────────────────────────────────────
 export default function PredictorPage() {
   useEffect(() => {
-    document.title = 'Admission Predictor | EduDiscovery AP';
+    document.title = 'AP EAPCET Real Cutoff Predictor | EduDiscovery';
   }, []);
 
   const { currentUser } = useAuth();
   const { universities, loading: loadingColleges } = useUniversities();
+  const { showToast } = useToast() as { showToast: (msg: string, type: string) => void };
+  const { openWithPredictor } = useCounselor();
 
   const queryParams = new URLSearchParams(window.location.search);
   const urlRank = queryParams.get('rank');
   const initialRank = urlRank
     ? parseRankToNumber(urlRank)
-    : parseRankToNumber(currentUser?.quizResults?.answers?.rank);
+    : parseRankToNumber(currentUser?.quizResults?.answers?.rank) || 12500;
 
-  const [exam, setExam] = useState<'EAPCET' | 'ICET'>('EAPCET');
+  const exam: 'EAPCET' | 'ICET' = 'EAPCET';
   const [rank, setRank] = useState<number>(initialRank);
   const [category, setCategory] = useState<string>('OC');
-  const [gender, setGender] = useState<string>('Male');
+  const [gender, setGender] = useState<string>('General / Boys');
+  const [candidateRegion, setCandidateRegion] = useState<'AU' | 'SVU' | 'All'>('All');
+  const [quotaPreference, setQuotaPreference] = useState<'All' | 'Convener' | 'Management'>('All');
   const [branch, setBranch] = useState<string>('All');
   const [round, setRound] = useState<'Round 1' | 'Round 2' | 'Round 3'>('Round 1');
   const [activeTab, setActiveTab] = useState<'All' | 'High' | 'Medium' | 'Low'>('All');
   const [showConfetti, setShowConfetti] = useState(false);
 
-  useEffect(() => { setBranch('All'); }, [exam]);
-
+  // Synchronize rank from profile quiz if present
   useEffect(() => {
     if (!urlRank && currentUser?.quizResults?.answers?.rank) {
-      setRank(parseRankToNumber(currentUser.quizResults.answers.rank));
+      const parsed = parseRankToNumber(currentUser.quizResults.answers.rank);
+      if (parsed > 0) setRank(parsed);
     }
   }, [urlRank, currentUser?.quizResults?.answers?.rank]);
 
+  // Execute accurate AP EAPCET prediction
   const predictions = useMemo(() => {
-    if (!rank || rank <= 0 || loadingColleges) return [];
-    return predictAdmission(universities, exam, rank, category, gender, branch, round);
-  }, [exam, rank, category, gender, branch, round, universities, loadingColleges]);
+    if (!rank || rank <= 0 || loadingColleges || universities.length === 0) return [];
+    
+    const filters: PredictorFilters = {
+      exam,
+      rank,
+      category,
+      gender: gender.includes('Girls') ? 'Female' : 'Male',
+      preferredBranch: branch,
+      candidateRegion,
+      quotaPreference,
+      round
+    };
 
+    return predictAdmission(universities, filters);
+  }, [exam, rank, category, gender, branch, candidateRegion, quotaPreference, round, universities, loadingColleges]);
+
+  // Group predictions by college for clean cards
   const groupedPredictions = useMemo(() => {
     const uniMap = new Map(universities.map(u => [u.id, u]));
-    const map: Record<string, GroupedPrediction> = {};
+    const map: Record<string, GroupedCollegePrediction> = {};
+
     predictions.forEach(p => {
       const uni = uniMap.get(p.collegeId);
       if (!map[p.collegeId]) {
+        const isPvt = (uni?.category || '').includes('Deemed') || (uni?.category || '').includes('Private');
+        const isGovt = (uni?.category || '').includes('Govt') || (uni?.category || '').includes('State');
         map[p.collegeId] = {
           collegeId: p.collegeId,
           collegeName: p.collegeName,
           collegeShortName: p.collegeShortName,
+          code: p.code,
           city: p.city,
-          naac: uni?.naac || 'B',
+          region: p.region,
+          naac: uni?.naac || 'B++',
           nirf: uni?.nirf || '—',
           image: uni?.image || '',
+          convenerFee: p.convenerFee,
+          mgmtFee: p.mgmtFee,
+          catAPct: p.quotaPercent,
+          catBPct: isPvt ? 65 : (isGovt ? 0 : 30),
           branches: [],
         };
       }
       map[p.collegeId].branches.push(p);
     });
+
     return Object.values(map);
   }, [predictions, universities]);
 
@@ -479,49 +671,133 @@ export default function PredictorPage() {
   }), [groupedPredictions]);
 
   const TAB_CONFIG = [
-    { key: 'All' as const, label: 'All', icon: Sparkles, color: 'var(--primary)' },
+    { key: 'All' as const, label: 'All Matches', icon: Sparkles, color: 'var(--primary)' },
     { key: 'High' as const, label: 'Safe', icon: CheckCircle2, color: '#10B981' },
-    { key: 'Medium' as const, label: 'Moderate', icon: AlertTriangle, color: '#F59E0B' },
-    { key: 'Low' as const, label: 'Reach', icon: XCircle, color: '#EF4444' },
+    { key: 'Medium' as const, label: 'Target', icon: AlertTriangle, color: '#F59E0B' },
+    { key: 'Low' as const, label: 'Reach', icon: Zap, color: '#8B5CF6' },
   ];
+
+  // Export choice list helper
+  const handleExportChoiceList = () => {
+    if (groupedPredictions.length === 0) {
+      showToast('No predicted colleges to export', 'error');
+      return;
+    }
+
+    const lines = [
+      `=== AP EAPCET Choice Filling Recommendations ===`,
+      `Student Rank: ${rank.toLocaleString('en-IN')} | Category: ${category} | Gender: ${gender}`,
+      `Region: ${candidateRegion} | Round: ${round}`,
+      `Generated by EduDiscovery (https://edudiscovery.in)`,
+      `--------------------------------------------------`,
+      ...groupedPredictions.slice(0, 20).map((c, i) => {
+        const topB = c.branches[0];
+        return `${i + 1}. [${c.code || 'CODE'}] ${c.collegeName} (${c.collegeShortName}) - B.Tech ${topB.branch} | Closing: ${topB.closingCutoff ? topB.closingCutoff.toLocaleString('en-IN') : 'Direct'} | Convenor Fee: ₹${c.convenerFee.toLocaleString('en-IN')}/yr`;
+      })
+    ];
+
+    navigator.clipboard.writeText(lines.join('\n'));
+    showToast('📋 Copied Choice List of Top 20 Recommendations to Clipboard!', 'success');
+  };
+
+  const handleAskAiOptions = () => {
+    if (predictions.length === 0) {
+      showToast('Please enter your rank first to generate web options', 'error');
+      return;
+    }
+    const contextData: PredictorContextData = {
+      exam,
+      rank,
+      category,
+      gender: gender.includes('Girls') ? 'Female' : 'Male',
+      region: candidateRegion,
+      preferredBranch: branch,
+      results: predictions
+    };
+    openWithPredictor(
+      `Based on my AP EAPCET rank ${rank.toLocaleString('en-IN')} (${category}, ${gender}, ${candidateRegion} region), what is the optimal Web-Options entry order to maximize my allotment in Round 1? Please categorize into Safe, Target, and Reach colleges with their verified tuition fees.`,
+      contextData
+    );
+  };
+
+  const handleExplainOdds = () => {
+    if (predictions.length === 0) {
+      showToast('Please enter your rank first to evaluate odds', 'error');
+      return;
+    }
+    const contextData: PredictorContextData = {
+      exam,
+      rank,
+      category,
+      gender: gender.includes('Girls') ? 'Female' : 'Male',
+      region: candidateRegion,
+      preferredBranch: branch,
+      results: predictions
+    };
+    openWithPredictor(
+      `Can you analyze my admission chances across my matching colleges for rank ${rank.toLocaleString('en-IN')}? Which ones offer the strongest placement packages and NAAC accreditation?`,
+      contextData
+    );
+  };
 
   return (
     <div className="page" style={{ paddingBottom: '80px', position: 'relative' }}>
       {showConfetti && <ConfettiExplosion count={60} />}
 
       {/* ── Page Hero Header ───────────────────────────────────── */}
-      <div style={{ paddingTop: '32px', paddingBottom: '32px' }}>
-        <motion.div
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 200, damping: 24 }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-            <motion.div
-              animate={{ rotateY: [0, 360] }}
-              transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
+      <div style={{ paddingTop: '28px', paddingBottom: '24px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '14px' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+              <span style={{
+                background: 'var(--primary-light)',
+                color: 'var(--primary)',
+                padding: '3px 10px',
+                borderRadius: '999px',
+                fontSize: '11px',
+                fontWeight: '800',
+                textTransform: 'uppercase'
+              }}>
+                APSCHE 2026 Cutoff Algorithm
+              </span>
+              <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontWeight: '600' }}>
+                All 60 AP Institutions Indexed
+              </span>
+            </div>
+            <h1 className="wave-underline" style={{ fontSize: '24px', fontWeight: '900', color: 'var(--text-main)', margin: 0, lineHeight: 1.1 }}>
+              AP EAPCET Admissions Predictor
+            </h1>
+            <p style={{ color: 'var(--text-muted)', fontSize: '13.5px', marginTop: '4px', margin: 0 }}>
+              Real statutory closing ranks, Convenor vs Management fees, and regional quota allocations.
+            </p>
+          </div>
+
+          {predictions.length > 0 && (
+            <button
+              onClick={handleExportChoiceList}
               style={{
-                width: '40px', height: '40px', borderRadius: '12px',
-                background: 'var(--gradient)', display: 'flex', alignItems: 'center',
-                justifyContent: 'center', boxShadow: '0 4px 12px var(--primary-glow), 0 0 20px rgba(16,185,129,0.15)',
-                transformStyle: 'preserve-3d',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 16px',
+                borderRadius: '12px',
+                fontWeight: '800',
+                fontSize: '13px',
+                cursor: 'pointer',
+                background: 'var(--surface)',
+                border: '1.5px solid var(--border)',
+                color: 'var(--text-main)',
+                boxShadow: 'var(--shadow-sm)'
               }}
             >
-              <Target size={20} color="#fff" />
-            </motion.div>
-            <div>
-              <h1 className="wave-underline" style={{ fontSize: '22px', fontWeight: '900', color: 'var(--text-main)', margin: 0, lineHeight: 1.1, display: 'inline-block' }}>
-                AP Admissions Predictor
-              </h1>
-              <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '2px', fontWeight: '500' }}>
-                EAPCET / ICET cutoff analysis based on historical data
-              </p>
-            </div>
-          </div>
-        </motion.div>
+              <FileText size={15} color="var(--primary)" />
+              Export Choice Filling Order
+            </button>
+          )}
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6 lg:gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 lg:gap-8">
 
         {/* ── Controls Sidebar ────────────────────────────────── */}
         <div className="lg:col-span-1">
@@ -531,118 +807,117 @@ export default function PredictorPage() {
               style={{
                 background: 'var(--surface)',
                 borderRadius: '24px',
-                padding: '24px',
+                padding: '22px',
                 boxShadow: 'var(--shadow-md)',
               }}
             >
               {/* Sidebar Header */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px', paddingBottom: '20px', borderBottom: '1px solid var(--border)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid var(--border)' }}>
                 <div style={{
                   width: '32px', height: '32px', borderRadius: '10px',
                   background: 'var(--primary-light)', display: 'flex',
                   alignItems: 'center', justifyContent: 'center',
                 }}>
-                  <Sparkles size={16} style={{ color: 'var(--primary)' }} />
+                  <Target size={16} style={{ color: 'var(--primary)' }} />
                 </div>
                 <div>
-                  <h2 style={{ fontSize: '15px', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>Predictor Controls</h2>
-                  <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, marginTop: '1px' }}>Tune filters to see results</p>
+                  <h2 style={{ fontSize: '15px', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>Candidate Profile</h2>
+                  <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, marginTop: '1px' }}>Tune your rank and reservation</p>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
 
-                {/* Exam Select */}
-                <div>
-                  <FieldLabel>Entrance Exam</FieldLabel>
-                  <SegmentedControl
-                    options={['EAPCET', 'ICET']}
-                    value={exam}
-                    onChange={v => setExam(v as 'EAPCET' | 'ICET')}
-                  />
-                </div>
-
-                {/* Rank Input & Slider */}
+                {/* Rank Input & Quick Presets */}
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <FieldLabel>Your Rank</FieldLabel>
-                    <span style={{ fontSize: '11px', fontWeight: '800', color: 'var(--primary)' }}>
-                      {rank ? `${rank.toLocaleString()}` : '0'}
+                    <FieldLabel>AP EAPCET Rank</FieldLabel>
+                    <span style={{ fontSize: '12px', fontWeight: '900', color: 'var(--primary)' }}>
+                      {rank ? rank.toLocaleString('en-IN') : '0'}
                     </span>
                   </div>
-                  <div style={{ position: 'relative', marginTop: '8px' }}>
+                  
+                  <div style={{ position: 'relative', marginTop: '6px' }}>
                     <input
                       type="number"
                       min="1"
-                      max={exam === 'EAPCET' ? 150000 : 75000}
+                      max={160000}
                       value={rank > 0 ? rank : ''}
                       onChange={e => {
                         const parsed = parseInt(e.target.value, 10);
-                        if (isNaN(parsed) || parsed <= 0) {
-                          setRank(0);
-                        } else {
-                          const maxLimit = exam === 'EAPCET' ? 150000 : 75000;
-                          setRank(Math.min(parsed, maxLimit));
-                        }
+                        setRank(isNaN(parsed) || parsed <= 0 ? 0 : Math.min(parsed, 160000));
                       }}
-                      placeholder="e.g. 15000"
+                      placeholder="Enter Rank e.g. 12500"
                       style={{
                         width: '100%',
-                        padding: '12px 14px 12px 42px',
+                        padding: '12px 14px 12px 38px',
                         borderRadius: '12px',
                         border: '1.5px solid var(--border)',
                         background: 'var(--bg)',
                         color: 'var(--text-main)',
-                        fontWeight: '700',
-                        fontSize: '14px',
+                        fontWeight: '800',
+                        fontSize: '14.5px',
                         fontFamily: 'inherit',
                         outline: 'none',
-                        transition: 'border-color 0.2s ease',
                       }}
-                      onFocus={e => (e.target.style.borderColor = 'var(--primary)')}
-                      onBlur={e => (e.target.style.borderColor = 'var(--border)')}
                     />
-                    <Award size={15} style={{
-                      position: 'absolute', left: '14px', top: '50%',
+                    <Award size={16} style={{
+                      position: 'absolute', left: '12px', top: '50%',
                       transform: 'translateY(-50%)', color: 'var(--primary)',
                     }} />
                   </div>
-                  <div style={{ marginTop: '12px' }}>
-                    <input
-                      type="range"
-                      min="1"
-                      max={exam === 'EAPCET' ? '120000' : '60000'}
-                      step={exam === 'EAPCET' ? '500' : '200'}
-                      value={rank || 1}
-                      onChange={e => setRank(parseInt(e.target.value))}
-                      style={{
-                        width: '100%',
-                        height: '6px',
-                        borderRadius: '999px',
-                        background: 'var(--border)',
-                        outline: 'none',
-                        cursor: 'pointer',
-                        accentColor: 'var(--primary)',
-                      }}
-                    />
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-muted)', fontWeight: '700', marginTop: '4px' }}>
-                      <span>1</span>
-                      <span>{exam === 'EAPCET' ? '120K' : '60K'}</span>
-                    </div>
+
+                  {/* Quick Rank Presets */}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '8px' }}>
+                    {RANK_PRESETS.map(p => (
+                      <button
+                        key={p.label}
+                        onClick={() => setRank(p.value)}
+                        style={{
+                          padding: '4px 8px',
+                          borderRadius: '6px',
+                          fontSize: '11px',
+                          fontWeight: '800',
+                          border: rank === p.value ? '1px solid var(--primary)' : '1px solid var(--border)',
+                          background: rank === p.value ? 'var(--primary-light)' : 'var(--bg)',
+                          color: rank === p.value ? 'var(--primary)' : 'var(--text-muted)',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {p.label}
+                      </button>
+                    ))}
                   </div>
                 </div>
 
-                {/* Category */}
+                {/* Candidate Reservation Category (Caste) */}
                 <div>
-                  <FieldLabel>Reservation Category</FieldLabel>
-                  <StyledSelect value={category} onChange={setCategory}>
-                    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                  </StyledSelect>
+                  <FieldLabel>Reservation Category (Caste)</FieldLabel>
+                  <select
+                    value={category}
+                    onChange={e => setCategory(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '11px 14px',
+                      borderRadius: '12px',
+                      border: '1.5px solid var(--border)',
+                      background: 'var(--bg)',
+                      color: 'var(--text-main)',
+                      fontWeight: 700,
+                      fontSize: '13px',
+                      outline: 'none',
+                      marginTop: '6px'
+                    }}
+                  >
+                    {CATEGORIES.map(c => (
+                      <option key={c.key} value={c.key}>{c.label}</option>
+                    ))}
+                  </select>
                 </div>
 
-                {/* Gender */}
+                {/* Gender Quota (Boys vs Girls 33% Horizontal) */}
                 <div>
-                  <FieldLabel>Gender</FieldLabel>
+                  <FieldLabel>Gender Pool</FieldLabel>
                   <SegmentedControl
                     options={GENDERS}
                     value={gender}
@@ -650,86 +925,131 @@ export default function PredictorPage() {
                   />
                 </div>
 
-                {/* Branch */}
+                {/* Local Candidate Region (AU vs SVU vs Statewide) */}
                 <div>
-                  <FieldLabel>Preferred Branch</FieldLabel>
-                  <StyledSelect value={branch} onChange={setBranch}>
-                    {(exam === 'EAPCET' ? BRANCHES_EAPCET : BRANCHES_ICET).map(b => (
-                      <option key={b} value={b}>{b === 'All' ? 'All Branches' : b}</option>
-                    ))}
-                  </StyledSelect>
+                  <FieldLabel>AP Local Region (85% Quota)</FieldLabel>
+                  <SegmentedControl
+                    options={['AU', 'SVU', 'All']}
+                    value={candidateRegion}
+                    onChange={v => setCandidateRegion(v as any)}
+                  />
+                  <span style={{ fontSize: '10.5px', color: 'var(--text-muted)', marginTop: '4px', display: 'block' }}>
+                    {candidateRegion === 'AU' ? 'Coastal AP (AU Region Priority)' : candidateRegion === 'SVU' ? 'Rayalaseema (SVU Region Priority)' : 'Statewide 15% open pool'}
+                  </span>
                 </div>
 
-                {/* Counselling Round */}
+                {/* Preferred Branch */}
+                <div>
+                  <FieldLabel>Engineering Branch</FieldLabel>
+                  <select
+                    value={branch}
+                    onChange={e => setBranch(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '11px 14px',
+                      borderRadius: '12px',
+                      border: '1.5px solid var(--border)',
+                      background: 'var(--bg)',
+                      color: 'var(--text-main)',
+                      fontWeight: 700,
+                      fontSize: '13px',
+                      outline: 'none',
+                      marginTop: '6px'
+                    }}
+                  >
+                    {BRANCHES_EAPCET.map(b => (
+                      <option key={b} value={b}>{b === 'All' ? 'All Engineering Branches' : `B.Tech ${b}`}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Quota Preference */}
+                <div>
+                  <FieldLabel>Quota Preference</FieldLabel>
+                  <SegmentedControl
+                    options={['All', 'Convener', 'Management']}
+                    value={quotaPreference}
+                    onChange={v => setQuotaPreference(v as any)}
+                  />
+                </div>
+
+                {/* Counselling Phase / Round */}
                 <div>
                   <FieldLabel>Counselling Round</FieldLabel>
-                  <StyledSelect value={round} onChange={v => setRound(v as any)}>
-                    <option value="Round 1">Round 1 — Mock &amp; Main</option>
+                  <select
+                    value={round}
+                    onChange={e => setRound(e.target.value as any)}
+                    style={{
+                      width: '100%',
+                      padding: '11px 14px',
+                      borderRadius: '12px',
+                      border: '1.5px solid var(--border)',
+                      background: 'var(--bg)',
+                      color: 'var(--text-main)',
+                      fontWeight: 700,
+                      fontSize: '13px',
+                      outline: 'none',
+                      marginTop: '6px'
+                    }}
+                  >
+                    <option value="Round 1">Round 1 — Main Allotment</option>
                     <option value="Round 2">Round 2 — Sliding Phase</option>
-                    <option value="Round 3">Round 3 — Mop-up Phase</option>
-                  </StyledSelect>
+                    <option value="Round 3">Round 3 — Final / Mop-up</option>
+                  </select>
                 </div>
 
               </div>
 
-              {/* Quick Stats at bottom of sidebar */}
+              {/* Quick Summary Counts */}
               {predictions.length > 0 && (
                 <div style={{
-                  marginTop: '24px',
-                  paddingTop: '20px',
+                  marginTop: '20px',
+                  paddingTop: '16px',
                   borderTop: '1px solid var(--border)',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '8px',
                 }}>
-                  <p style={{ fontSize: '10px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '4px' }}>
-                    Quick Summary
-                  </p>
-                  {[
-                    { key: 'High', label: 'Safe Colleges', color: '#10B981' },
-                    { key: 'Medium', label: 'Moderate', color: '#F59E0B' },
-                    { key: 'Low', label: 'Reach Colleges', color: '#EF4444' },
-                  ].map(item => (
-                    <div key={item.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                        <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: item.color, flexShrink: 0 }} />
-                        <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>{item.label}</span>
-                      </div>
-                      <span style={{ fontSize: '15px', fontWeight: '900', color: item.color }}>
-                        <AnimatedCounter3D value={counts[item.key as 'High' | 'Medium' | 'Low']} duration={1} />
-                      </span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10B981' }} />
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>Safe Matches</span>
                     </div>
-                  ))}
-                  
-                  {/* Lock in predictions button */}
-                  <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border)' }}>
+                    <span style={{ fontSize: '15px', fontWeight: '900', color: '#10B981' }}>
+                      <AnimatedCounter3D value={counts.High} duration={1} />
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#F59E0B' }} />
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>Target Matches</span>
+                    </div>
+                    <span style={{ fontSize: '15px', fontWeight: '900', color: '#F59E0B' }}>
+                      <AnimatedCounter3D value={counts.Medium} duration={1} />
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#8B5CF6' }} />
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>Reach Matches</span>
+                    </div>
+                    <span style={{ fontSize: '15px', fontWeight: '900', color: '#8B5CF6' }}>
+                      <AnimatedCounter3D value={counts.Low} duration={1} />
+                    </span>
+                  </div>
+
+                  <div style={{ marginTop: '12px' }}>
                     <ConfettiButton
                       onClick={() => {
-                        const hasMatches = counts.High > 0 || counts.Medium > 0;
-                        if (hasMatches) {
-                          setShowConfetti(true);
-                          setTimeout(() => setShowConfetti(false), 2500);
-                        }
+                        setShowConfetti(true);
+                        setTimeout(() => setShowConfetti(false), 2500);
                       }}
-                      className="btn btn-primary"
-                      style={{
-                        width: '100%',
-                        padding: '12px 14px',
-                        borderRadius: '12px',
-                        fontWeight: '800',
-                        fontSize: '13px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '6px',
-                        cursor: 'pointer',
-                        border: 'none',
-                        background: 'var(--primary)',
-                        color: '#fff',
-                        boxShadow: '0 8px 20px var(--primary-glow)',
-                      }}
+                      className="btn btn-primary btn-full"
+                      style={{ padding: '12px', borderRadius: '12px', fontSize: '13px', fontWeight: '800' }}
                     >
-                      Lock in Predictions 🚀
+                      Celebrate Matches 🎉
                     </ConfettiButton>
                   </div>
                 </div>
@@ -741,116 +1061,149 @@ export default function PredictorPage() {
         {/* ── Results Area ─────────────────────────────────────── */}
         <div className="lg:col-span-1">
 
-          {/* Distribution Bar Card */}
-          <AnimatePresence>
-            {predictions.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: -12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ type: 'spring', stiffness: 200, damping: 24 }}
-                style={{
-                  background: 'var(--surface)',
-                  border: '1.5px solid var(--border)',
-                  borderRadius: '20px',
-                  padding: '20px 22px',
-                  marginBottom: '16px',
-                  boxShadow: 'var(--shadow-sm)',
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                  <div style={{ fontSize: '13px', fontWeight: '800', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '7px' }}>
-                    <Zap size={14} style={{ color: 'var(--primary)' }} />
-                    Admission Distribution Analysis
-                  </div>
+          {/* Admission Distribution Analysis */}
+          {predictions.length > 0 && (
+            <div style={{
+              background: 'var(--surface)',
+              border: '1.5px solid var(--border)',
+              borderRadius: '20px',
+              padding: '18px 22px',
+              marginBottom: '18px',
+              boxShadow: 'var(--shadow-sm)'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                <div style={{ fontSize: '13.5px', fontWeight: '800', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '7px' }}>
+                  <ShieldCheck size={16} color="var(--primary)" />
+                  Statutory Cutoff Breakdown for Rank {rank.toLocaleString('en-IN')}
+                </div>
+                <span style={{
+                  fontSize: '11px', fontWeight: '800', color: 'var(--primary)',
+                  background: 'var(--primary-light)', padding: '3px 10px', borderRadius: '99px',
+                }}>
+                  {groupedPredictions.length} Colleges Available
+                </span>
+              </div>
+
+              {/* Segmented Bar */}
+              <div style={{ height: '8px', width: '100%', background: 'var(--bg)', borderRadius: '4px', display: 'flex', overflow: 'hidden', marginBottom: '12px', gap: '2px' }}>
+                {counts.High > 0 && (
+                  <div style={{ height: '100%', width: `${Math.round((counts.High / groupedPredictions.length) * 100)}%`, background: '#10B981' }} />
+                )}
+                {counts.Medium > 0 && (
+                  <div style={{ height: '100%', width: `${Math.round((counts.Medium / groupedPredictions.length) * 100)}%`, background: '#F59E0B' }} />
+                )}
+                {counts.Low > 0 && (
+                  <div style={{ height: '100%', width: `${Math.round((counts.Low / groupedPredictions.length) * 100)}%`, background: '#8B5CF6' }} />
+                )}
+              </div>
+
+              <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', fontSize: '12px', fontWeight: '700' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10B981' }} />
+                  <span style={{ color: 'var(--text-muted)' }}>Safe:</span>
+                  <span style={{ color: '#10B981' }}>{counts.High}</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#F59E0B' }} />
+                  <span style={{ color: 'var(--text-muted)' }}>Target:</span>
+                  <span style={{ color: '#F59E0B' }}>{counts.Medium}</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#8B5CF6' }} />
+                  <span style={{ color: 'var(--text-muted)' }}>Reach:</span>
+                  <span style={{ color: '#8B5CF6' }}>{counts.Low}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* AI Counseling Intelligence Action Card */}
+          {predictions.length > 0 && (
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(0, 135, 90, 0.08) 0%, rgba(16, 185, 129, 0.04) 100%)',
+              border: '1.5px solid rgba(16, 185, 129, 0.3)',
+              borderRadius: '20px',
+              padding: '16px 20px',
+              marginBottom: '18px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '14px',
+              boxShadow: 'var(--shadow-sm)'
+            }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                  <Sparkles size={18} color="var(--primary)" />
+                  <span style={{ fontSize: '14px', fontWeight: '800', color: 'var(--text-main)' }}>
+                    AI Admissions Counselor
+                  </span>
                   <span style={{
-                    fontSize: '11px', fontWeight: '800', color: 'var(--primary)',
-                    background: 'var(--primary-light)', padding: '3px 10px', borderRadius: '99px',
+                    fontSize: '10px',
+                    fontWeight: '800',
+                    background: 'rgba(16, 185, 129, 0.15)',
+                    color: '#047857',
+                    padding: '2px 8px',
+                    borderRadius: '99px'
                   }}>
-                    {predictions.length} options
+                    On-Device WebGPU & Cloud
                   </span>
                 </div>
-
-                {/* Segmented progress bar */}
-                <div style={{ height: '10px', width: '100%', background: 'var(--bg)', borderRadius: '5px', display: 'flex', overflow: 'hidden', marginBottom: '14px', gap: '2px' }}>
-                  {counts.High > 0 && (
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${Math.round((counts.High / groupedPredictions.length) * 100)}%` }}
-                      transition={{ duration: 0.6, ease: 'easeOut' }}
-                      style={{ height: '100%', background: '#10B981', borderRadius: '5px' }}
-                    />
-                  )}
-                  {counts.Medium > 0 && (
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${Math.round((counts.Medium / groupedPredictions.length) * 100)}%` }}
-                      transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
-                      style={{ height: '100%', background: '#F59E0B', borderRadius: '5px' }}
-                    />
-                  )}
-                  {counts.Low > 0 && (
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${Math.round((counts.Low / groupedPredictions.length) * 100)}%` }}
-                      transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
-                      style={{ height: '100%', background: '#EF4444', borderRadius: '5px' }}
-                    />
-                  )}
-                </div>
-
-                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                  {[
-                    { label: 'Safe', color: '#10B981', count: counts.High },
-                    { label: 'Moderate', color: '#F59E0B', count: counts.Medium },
-                    { label: 'Reach', color: '#EF4444', count: counts.Low },
-                  ].map(item => (
-                    <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: '700' }}>
-                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: item.color }} />
-                      <span style={{ color: 'var(--text-muted)' }}>{item.label}:</span>
-                      <span style={{ color: item.color }}>{item.count} ({Math.round((item.count / groupedPredictions.length) * 100)}%)</span>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Disclaimer */}
-          <div style={{
-            background: 'var(--primary-light)',
-            border: '1px solid var(--primary-glow)',
-            borderRadius: '16px',
-            padding: '14px 16px',
-            marginBottom: '20px',
-            display: 'flex',
-            gap: '10px',
-            alignItems: 'flex-start',
-          }}>
-            <Info size={16} style={{ color: 'var(--primary)', flexShrink: 0, marginTop: '1px' }} />
-            <div>
-              <h4 style={{ fontSize: '10.5px', fontWeight: '800', color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0, marginBottom: '3px' }}>Selectivity Disclaimer</h4>
-              <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.55 }}>
-                Predictions use historical APSCHE cutoff ranges, NAAC grades, and popularity metrics. Actual cutoffs vary annually.
-              </p>
+                <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>
+                  Generate an optimized Round 1 Web-Options list or evaluate placement ROI for rank {rank.toLocaleString('en-IN')}.
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={handleAskAiOptions}
+                  className="btn btn-primary"
+                  style={{
+                    padding: '9px 16px',
+                    borderRadius: '12px',
+                    fontSize: '12px',
+                    fontWeight: '800',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <Sparkles size={14} /> Plan Web-Options
+                </button>
+                <button
+                  onClick={handleExplainOdds}
+                  className="btn btn-outline"
+                  style={{
+                    padding: '9px 16px',
+                    borderRadius: '12px',
+                    fontSize: '12px',
+                    fontWeight: '800',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <Award size={14} /> Compare ROI
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Filter Tabs */}
-          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '16px', marginBottom: '8px' }} className="no-scrollbar">
+          {/* Filter Tabs (Safe, Target, Reach) */}
+          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '14px', marginBottom: '8px' }} className="no-scrollbar">
             {TAB_CONFIG.map(({ key, label, icon: Icon, color }) => {
               const active = activeTab === key;
               return (
-                <motion.button
+                <button
                   key={key}
                   onClick={() => setActiveTab(key)}
-                  whileTap={{ scale: 0.95 }}
                   style={{
                     cursor: 'pointer',
-                    padding: '9px 16px',
+                    padding: '8px 14px',
                     fontSize: '12px',
                     fontWeight: '800',
-                    borderRadius: '12px',
+                    borderRadius: '10px',
                     border: active ? `1.5px solid ${color}` : '1.5px solid var(--border)',
                     background: active ? `${color}15` : 'var(--surface)',
                     color: active ? color : 'var(--text-muted)',
@@ -859,86 +1212,76 @@ export default function PredictorPage() {
                     gap: '6px',
                     whiteSpace: 'nowrap',
                     flexShrink: 0,
-                    transition: 'all 0.2s ease',
-                    boxShadow: active ? `0 2px 12px ${color}20` : 'none',
+                    transition: 'all 0.15s ease',
                   }}
                 >
-                  <Icon size={13} />
+                  <Icon size={14} />
                   {label}
                   <span style={{
-                    padding: '1px 7px', borderRadius: '99px', fontSize: '10px', fontWeight: '900',
-                    background: active ? `${color}20` : 'var(--bg)',
+                    padding: '1px 6px', borderRadius: '99px', fontSize: '10px', fontWeight: '900',
+                    background: active ? `${color}25` : 'var(--bg)',
                     color: active ? color : 'var(--text-muted)',
-                    border: active ? `1px solid ${color}30` : '1px solid var(--border)',
                   }}>
                     {counts[key]}
                   </span>
-                </motion.button>
+                </button>
               );
             })}
           </div>
 
-          {/* Results Grid */}
-          <motion.div layout className="flex flex-col gap-4">
-            <AnimatePresence mode="popLayout">
-              {loadingColleges ? (
-                <motion.div
-                  key="loading"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  style={{
-                    textAlign: 'center', padding: '64px 20px',
-                    background: 'var(--surface)', borderRadius: '20px',
-                    border: '1.5px dashed var(--border)',
-                  }}
-                >
-                  <div style={{
-                    width: '36px', height: '36px',
-                    border: '3px solid var(--primary-light)', borderTopColor: 'var(--primary)',
-                    borderRadius: '50%', animation: 'spin 0.9s linear infinite',
-                    margin: '0 auto 16px auto',
-                  }} />
-                  <h4 style={{ fontWeight: '800', color: 'var(--text-main)', fontSize: '14px', margin: 0 }}>Syncing College Data...</h4>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '12px', marginTop: '6px' }}>Connecting to real-time database</p>
-                  <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-                </motion.div>
-              ) : filteredPredictions.length > 0 ? (
-                filteredPredictions.map((college, idx) => (
-                  <GroupedCollegeCard
-                    key={college.collegeId}
-                    college={college}
-                    activeTab={activeTab}
-                    index={idx}
-                  />
-                ))
-              ) : (
-                <motion.div
-                  key="empty"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  style={{
-                    textAlign: 'center', padding: '64px 20px',
-                    background: 'var(--surface)', borderRadius: '20px',
-                    border: '1.5px dashed var(--border)',
-                  }}
-                >
-                  <div style={{
-                    width: '52px', height: '52px', borderRadius: '16px',
-                    background: 'var(--primary-light)', display: 'flex',
-                    alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto',
-                  }}>
-                    <HelpCircle size={24} style={{ color: 'var(--primary)' }} />
-                  </div>
-                  <h4 style={{ fontWeight: '800', color: 'var(--text-main)', fontSize: '15px', margin: 0 }}>No Predictions Found</h4>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '8px', maxWidth: '280px', margin: '8px auto 0' }}>
-                    Try adjusting your rank, category, or branch filters to see more results.
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+          {/* Results List */}
+          <div className="flex flex-col gap-4">
+            {loadingColleges ? (
+              <div style={{
+                textAlign: 'center', padding: '64px 20px',
+                background: 'var(--surface)', borderRadius: '20px',
+                border: '1.5px dashed var(--border)',
+              }}>
+                <div style={{
+                  width: '36px', height: '36px',
+                  border: '3px solid var(--primary-light)', borderTopColor: 'var(--primary)',
+                  borderRadius: '50%', animation: 'spin 0.9s linear infinite',
+                  margin: '0 auto 16px auto',
+                }} />
+                <h4 style={{ fontWeight: '800', color: 'var(--text-main)', fontSize: '15px', margin: 0 }}>
+                  Analyzing AP EAPCET Cutoffs...
+                </h4>
+                <p style={{ color: 'var(--text-muted)', fontSize: '12.5px', marginTop: '6px' }}>
+                  Matching against official closing ranks for {category} category
+                </p>
+                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+              </div>
+            ) : filteredPredictions.length > 0 ? (
+              filteredPredictions.map((college) => (
+                <GroupedCollegeCard
+                  key={college.collegeId}
+                  college={college}
+                  activeTab={activeTab}
+                  userRank={rank}
+                />
+              ))
+            ) : (
+              <div style={{
+                textAlign: 'center', padding: '64px 20px',
+                background: 'var(--surface)', borderRadius: '20px',
+                border: '1.5px dashed var(--border)',
+              }}>
+                <div style={{
+                  width: '52px', height: '52px', borderRadius: '16px',
+                  background: 'var(--primary-light)', display: 'flex',
+                  alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto',
+                }}>
+                  <HelpCircle size={24} style={{ color: 'var(--primary)' }} />
+                </div>
+                <h4 style={{ fontWeight: '800', color: 'var(--text-main)', fontSize: '16px', margin: 0 }}>
+                  No Colleges Match This Specific Filter
+                </h4>
+                <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '8px', maxWidth: '320px', margin: '8px auto 0' }}>
+                  Try switching to 'All Matches', expanding to All Engineering Branches, or selecting Category-B Management Quota.
+                </p>
+              </div>
+            )}
+          </div>
 
         </div>
       </div>

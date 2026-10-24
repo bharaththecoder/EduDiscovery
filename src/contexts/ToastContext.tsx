@@ -18,8 +18,13 @@ const defaultToastContext: ToastContextType = {
 
 const ToastContext = createContext<ToastContextType>(defaultToastContext);
 export const useToast = (): ToastContextType => {
-  const ctx = useContext(ToastContext);
-  return ctx || defaultToastContext;
+  try {
+    const ctx = useContext(ToastContext);
+    return ctx || defaultToastContext;
+  } catch (err) {
+    console.warn('[useToast] Context resolution fallback:', err);
+    return defaultToastContext;
+  }
 };
 
 let toastId = 0;

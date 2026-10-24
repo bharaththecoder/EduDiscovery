@@ -84,6 +84,18 @@ vi.mock('../api/firebaseAdmin.js', () => ({
   }
 }));
 
+vi.mock('@google/generative-ai', () => ({
+  GoogleGenerativeAI: class {
+    getGenerativeModel() {
+      return {
+        embedContent: vi.fn().mockResolvedValue({
+          embedding: { values: new Array(768).fill(0.1) }
+        })
+      };
+    }
+  }
+}));
+
 vi.mock('../api/aiHelper.js', () => ({
   generateText: vi.fn().mockResolvedValue('Mocked AI analysis explaining college choice.')
 }));
