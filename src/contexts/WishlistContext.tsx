@@ -11,7 +11,7 @@ export { normalizeWishlistIds };
 interface WishlistContextType {
   wishlist: University[];
   wishlistIds: string[];
-  toggleWishlist: (university: University) => Promise<void>;
+  toggleWishlist: (universityOrId: University | string) => Promise<void>;
   isWishlisted: (id: string) => boolean;
   clearWishlist: () => Promise<void>;
 }
@@ -175,11 +175,12 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     }
   }, [wishlistIds, currentUser?.id]);
 
-  const toggleWishlist = useCallback(async (university: University) => {
-    const isSaved = wishlistIds.includes(university.id);
+  const toggleWishlist = useCallback(async (universityOrId: University | string) => {
+    const uniId = typeof universityOrId === 'string' ? universityOrId : universityOrId.id;
+    const isSaved = wishlistIds.includes(uniId);
     const nextIds = isSaved
-      ? wishlistIds.filter(id => id !== university.id)
-      : [...wishlistIds, university.id];
+      ? wishlistIds.filter(id => id !== uniId)
+      : [...wishlistIds, uniId];
 
     // Optimistic local state update
     setWishlistIds(nextIds);
@@ -189,7 +190,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     try {
       const userRef = doc(db, 'users', currentUser.id);
       await updateDoc(userRef, {
-        wishlist: isSaved ? arrayRemove(university.id) : arrayUnion(university.id)
+        wishlist: isSaved ? arrayRemove(uniId) : arrayUnion(uniId)
       });
     } catch (error) {
       console.warn('[WishlistSync] Atomic update notice:', error);

@@ -40,35 +40,39 @@ export default function WishlistPage() {
       <div className="page" style={{ paddingTop: '24px' }}>
         
         {/* Header Section */}
-        <div style={{ marginBottom: '32px', textAlign: 'center', position: 'relative' }}>
-          
-          <div
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '32px' }}>
+          {/* <div
             style={{
-              display: 'inline-flex',
+              display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: '64px',
-              height: '64px',
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, rgba(239,68,68,0.1), rgba(236,72,153,0.1))',
-              marginBottom: '16px',
+              width: '60px',
+              height: '60px',
+              borderRadius: '20px',
+              background: 'linear-gradient(135deg, rgba(239,68,68,0.12), rgba(236,72,153,0.08))',
+              border: '1px solid rgba(239,68,68,0.2)',
+              marginBottom: '14px',
+              boxShadow: '0 4px 12px rgba(239,68,68,0.08)',
             }}
           >
-            <Heart size={30} color="#EF4444" strokeWidth={2.5} />
-          </div>
+            <Heart size={28} color="#EF4444" fill="rgba(239,68,68,0.15)" strokeWidth={2.2} />
+          </div> */}
 
           <h1
             style={{
-              fontSize: '32px', fontWeight: '900', color: 'var(--text-main)', marginBottom: '8px',
-              display: 'inline-block',
+              fontSize: 'clamp(24px, 4vw, 32px)',
+              fontWeight: '900',
+              color: 'var(--text-main)',
+              margin: '0 0 10px 0',
+              lineHeight: 1.2
             }}
           >
             My Shortlisted Colleges
           </h1>
           <p
-            style={{ color: 'var(--text-muted)', fontSize: '15px', maxWidth: '500px', margin: '0 auto' }}
+            style={{ color: 'var(--text-muted)', fontSize: '15px', maxWidth: '520px', margin: '0 auto', lineHeight: 1.5 }}
           >
-            Compare, track, and ask AI counselor about your saved universities all in one place.
+            Compare, track, and get insights from EduDiscovery about your saved colleges all in one place.
           </p>
         </div>
 
@@ -106,7 +110,7 @@ export default function WishlistPage() {
               Your Wishlist is Empty
             </h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '24px', lineHeight: 1.5 }}>
-              Start discovering universities in Andhra Pradesh. Tap the heart icon on any college card to shortlist them.
+              Start discovering colleges in Andhra Pradesh. Tap the heart icon on any college card to shortlist them.
             </p>
               <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap', marginTop: '10px' }}>
                 <MagneticButton

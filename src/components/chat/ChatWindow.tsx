@@ -6,10 +6,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import MessageBubble from './MessageBubble';
 
 const SUGGESTED_QUESTIONS = [
-  "💡 Why these colleges?",
-  "⭐ Better options?",
-  "💰 Low budget colleges?",
-  "🎯 Best web options order?"
+  "Why these college recommendations?",
+  "Alternative higher-value options?",
+  "Low budget statutory fee colleges?",
+  "How to order my web-options?"
 ];
 
 const cleanText = (text: string) => {
@@ -370,7 +370,7 @@ export default function ChatWindow() {
               {SUGGESTED_QUESTIONS.map((q, i) => (
                 <button
                   key={i}
-                  onClick={() => handleSend(q.replace(/[💡⭐💰🎯]\s*/, ''))}
+                  onClick={() => handleSend(q)}
                   className="px-3.5 py-1.5 bg-white dark:bg-slate-900 border border-slate-200/85 dark:border-slate-800 rounded-full text-[12px] font-bold text-[var(--primary)] dark:text-[var(--accent)] shadow-sm hover:border-[var(--accent)] hover:text-[var(--secondary)] dark:hover:text-white transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                 >
                   {q}

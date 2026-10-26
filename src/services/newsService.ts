@@ -55,6 +55,15 @@ export async function fetchLiveEamcetNews(): Promise<LiveNewsArticle[]> {
 
           // Smart Category Tagging & Aesthetics
           const titleLower = cleanTitle.toLowerCase();
+          const isEapcetRelevant = titleLower.includes('eamcet') || 
+                                   titleLower.includes('eapcet') || 
+                                   titleLower.includes('apsche') || 
+                                   (titleLower.includes('andhra') && (titleLower.includes('counselling') || titleLower.includes('allotment') || titleLower.includes('admission')));
+          
+          if (!isEapcetRelevant) {
+            continue;
+          }
+
           let category = 'COUNSELLING';
           let categoryColor = '#00D4FF';
 

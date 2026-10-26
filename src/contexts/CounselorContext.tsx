@@ -45,6 +45,7 @@ export interface CounselorContextType {
   webLlmState: WebLlmProgressState;
   initializeLocalModel: () => Promise<boolean>;
   openWithPredictor: (prompt: string, contextData: PredictorContextData) => void;
+  openCounselor: (prompt?: string) => void;
 }
 
 const defaultCounselorContext: CounselorContextType = {
@@ -67,6 +68,7 @@ const defaultCounselorContext: CounselorContextType = {
   webLlmState: webLlmService.getState(),
   initializeLocalModel: async () => false,
   openWithPredictor: () => {},
+  openCounselor: () => {},
 };
 
 const CounselorContext = createContext<CounselorContextType>(defaultCounselorContext);
@@ -196,6 +198,11 @@ export function CounselorProvider({ children }: { children: React.ReactNode }) {
     setIsOpen(true);
   }, []);
 
+  const openCounselor = useCallback((prompt?: string) => {
+    setIsOpen(true);
+    if (prompt) setPendingPrompt(prompt);
+  }, []);
+
   return (
     <CounselorContext.Provider
       value={{
@@ -218,6 +225,7 @@ export function CounselorProvider({ children }: { children: React.ReactNode }) {
         webLlmState,
         initializeLocalModel,
         openWithPredictor,
+        openCounselor,
       }}
     >
       {children}

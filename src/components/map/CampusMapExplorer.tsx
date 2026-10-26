@@ -153,6 +153,26 @@ export default function CampusMapExplorer({
         background: 'radial-gradient(circle at 75% 35%, rgba(0,212,255,0.06) 0%, transparent 60%), radial-gradient(circle at 30% 60%, rgba(16,185,129,0.05) 0%, transparent 60%), var(--bg)',
         overflow: 'hidden'
       }}>
+        <style>{`
+          .ap-map-land {
+            fill: #f0fdf4;
+            stroke: #059669;
+            filter: drop-shadow(0 12px 24px rgba(5, 150, 105, 0.12));
+            transition: all 0.3s ease;
+          }
+          [data-theme='dark'] .ap-map-land {
+            fill: #064e3b;
+            stroke: #10b981;
+            filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.4));
+          }
+          .ap-ocean-area {
+            fill: url(#oceanGrad);
+          }
+          [data-theme='dark'] .ap-ocean-area {
+            fill: rgba(14, 165, 233, 0.12);
+          }
+        `}</style>
+
         {/* SVG Map of Andhra Pradesh */}
         <svg
           viewBox="0 0 800 650"
@@ -161,57 +181,126 @@ export default function CampusMapExplorer({
           <defs>
             {/* Bay of Bengal subtle gradient */}
             <linearGradient id="oceanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="rgba(0,212,255,0.04)" />
-              <stop offset="100%" stopColor="rgba(59,130,246,0.08)" />
+              <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.14" />
+              <stop offset="50%" stopColor="#0ea5e9" stopOpacity="0.22" />
+              <stop offset="100%" stopColor="#0284c7" stopOpacity="0.30" />
             </linearGradient>
 
-            {/* Land gradient */}
-            <linearGradient id="landGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="var(--surface)" />
-              <stop offset="100%" stopColor="var(--surface-hover)" />
-            </linearGradient>
+            {/* Pattern for delicate map grid lines */}
+            <pattern id="mapGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.07" />
+            </pattern>
           </defs>
 
-          {/* Bay of Bengal Coast Area Representation */}
+          {/* Background Cartographic Grid */}
+          <rect width="800" height="650" fill="url(#mapGrid)" />
+
+          {/* Bay of Bengal Ocean Body (seamlessly wraps the entire coastline to canvas edge) */}
           <path
-            d="M 520,380 C 600,320 680,240 760,140 L 800,140 L 800,650 L 450,650 C 470,550 490,460 520,380 Z"
-            fill="url(#oceanGrad)"
+            className="ap-ocean-area"
+            d="M 790,20
+               C 740,70 690,115 644,149
+               C 595,185 570,205 548,219
+               C 495,255 465,275 438,297
+               C 405,310 388,318 372,325
+               C 350,335 340,350 331,364
+               C 328,410 326,440 325,469
+               C 326,505 327,535 328,558
+               L 800,650
+               L 800,0
+               Z"
           />
 
-          {/* Andhra Pradesh Geographic Boundary Contour */}
-          {/* Calibrated to project true lat (12.6-19.2) & lng (76.7-84.8) */}
+          {/* Accurate Andhra Pradesh Geographic Territory Boundary */}
           <path
-            d="M 120,530 
-               C 100,500 130,420 180,390
-               C 220,370 280,360 360,340
-               C 420,330 460,310 490,290
-               C 540,260 580,220 630,170
-               C 680,120 730,80 770,60
-               C 780,80 770,120 740,160
-               C 700,210 650,260 610,300
-               C 570,340 540,370 510,410
-               C 470,470 440,530 410,590
-               C 380,630 330,640 270,640
-               C 210,630 160,580 120,530 Z"
-            fill="url(#landGrad)"
-            stroke="var(--border)"
-            strokeWidth="2"
-            strokeDasharray="4 2"
+            className="ap-map-land"
+            d="M 790,20
+               C 740,70 690,115 644,149
+               C 595,185 570,205 548,219
+               C 495,255 465,275 438,297
+               C 405,310 388,318 372,325
+               C 350,335 340,350 331,364
+               C 328,410 326,440 325,469
+               C 326,505 327,535 328,558
+               C 275,585 220,610 164,635
+               C 135,595 105,565 78,529
+               C 50,490 32,465 25,445
+               C 35,420 50,405 66,397
+               C 95,365 115,345 132,332
+               C 165,320 190,315 214,307
+               C 235,285 248,270 258,259
+               C 295,245 320,235 336,227
+               C 360,218 375,212 387,206
+               C 425,200 445,195 463,192
+               C 510,165 535,145 558,130
+               C 585,110 598,98 610,86
+               C 635,65 650,52 665,41
+               C 715,30 755,25 790,20
+               Z"
+            strokeWidth="2.5"
+            strokeLinejoin="round"
           />
 
-          {/* Region Label Watermarks */}
-          <text x="660" y="280" fill="var(--text-muted)" opacity="0.3" fontSize="13" fontWeight="800" letterSpacing="3">
-            BAY OF BENGAL
-          </text>
-          <text x="210" y="520" fill="var(--text-muted)" opacity="0.25" fontSize="12" fontWeight="800" letterSpacing="2">
-            RAYALASEEMA
-          </text>
-          <text x="440" y="380" fill="var(--text-muted)" opacity="0.25" fontSize="12" fontWeight="800" letterSpacing="2">
-            COASTAL ANDHRA
-          </text>
-          <text x="640" y="140" fill="var(--text-muted)" opacity="0.25" fontSize="12" fontWeight="800" letterSpacing="2">
-            UTTARANDHRA
-          </text>
+          {/* Regional Divisions (Dashed Boundaries) */}
+          {/* Rayalaseema to Coastal AP Border (Nallamala to Pulicat) */}
+          <path
+            d="M 214,307 C 255,390 285,470 328,558"
+            stroke="var(--primary)"
+            strokeWidth="1.5"
+            strokeDasharray="4 4"
+            opacity="0.5"
+          />
+          {/* Coastal AP to Uttarandhra Border (Godavari to Visakha hills) */}
+          <path
+            d="M 463,192 C 515,198 545,210 548,219"
+            stroke="var(--primary)"
+            strokeWidth="1.5"
+            strokeDasharray="4 4"
+            opacity="0.5"
+          />
+
+          {/* Prominent Regional Labels */}
+          <g style={{ pointerEvents: 'none' }}>
+            <text x="630" y="380" fill="#0284c7" opacity="0.65" fontSize="14" fontWeight="900" letterSpacing="4">
+              BAY OF BENGAL
+            </text>
+            <text x="110" y="480" fill="var(--text-muted)" opacity="0.5" fontSize="13" fontWeight="900" letterSpacing="3">
+              RAYALASEEMA
+            </text>
+            <text x="360" y="270" fill="var(--primary)" opacity="0.6" fontSize="13" fontWeight="900" letterSpacing="3">
+              COASTAL ANDHRA
+            </text>
+            <text x="630" y="80" fill="var(--text-muted)" opacity="0.5" fontSize="12" fontWeight="900" letterSpacing="3">
+              UTTARANDHRA
+            </text>
+          </g>
+
+          {/* District Hub Reference Markers & Labels */}
+          <g opacity="0.75" style={{ pointerEvents: 'none' }}>
+            <circle cx="644" cy="149" r="3" fill="var(--text-main)" />
+            <text x="652" y="153" fill="var(--text-main)" fontSize="11" fontWeight="800">Visakhapatnam</text>
+
+            <circle cx="548" cy="219" r="3" fill="var(--text-main)" />
+            <text x="556" y="223" fill="var(--text-main)" fontSize="11" fontWeight="800">Kakinada</text>
+
+            <circle cx="390" cy="275" r="3" fill="var(--text-main)" />
+            <text x="398" y="279" fill="var(--text-main)" fontSize="11" fontWeight="800">Vijayawada</text>
+
+            <circle cx="340" cy="295" r="3" fill="var(--text-main)" />
+            <text x="300" y="299" fill="var(--text-main)" fontSize="11" fontWeight="800">Guntur</text>
+
+            <circle cx="325" cy="469" r="3" fill="var(--text-main)" />
+            <text x="333" y="473" fill="var(--text-main)" fontSize="11" fontWeight="800">Nellore</text>
+
+            <circle cx="270" cy="565" r="3" fill="var(--text-main)" />
+            <text x="278" y="569" fill="var(--text-main)" fontSize="11" fontWeight="800">Tirupati</text>
+
+            <circle cx="132" cy="332" r="3" fill="var(--text-main)" />
+            <text x="140" y="336" fill="var(--text-main)" fontSize="11" fontWeight="800">Kurnool</text>
+
+            <circle cx="78" cy="529" r="3" fill="var(--text-main)" />
+            <text x="86" y="533" fill="var(--text-main)" fontSize="11" fontWeight="800">Anantapur</text>
+          </g>
 
           {/* College Pins */}
           {mappedColleges.map(({ uni, loc }) => {
@@ -348,6 +437,20 @@ export default function CampusMapExplorer({
                 />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                    {selectedCollege.uni.code && (
+                      <span style={{
+                        background: 'var(--primary)',
+                        color: '#ffffff',
+                        padding: '2px 8px',
+                        borderRadius: '6px',
+                        fontSize: '11px',
+                        fontWeight: '900',
+                        fontFamily: 'monospace',
+                        letterSpacing: '0.5px'
+                      }}>
+                        [{selectedCollege.uni.code}]
+                      </span>
+                    )}
                     <span style={{
                       background: selectedCollege.loc.precision === 'verified_campus' ? 'rgba(16,185,129,0.1)' : 'rgba(59,130,246,0.1)',
                       color: selectedCollege.loc.precision === 'verified_campus' ? '#059669' : '#2563EB',
@@ -375,13 +478,25 @@ export default function CampusMapExplorer({
                     }}>
                       NAAC {selectedCollege.uni.naac}
                     </span>
+                    {selectedCollege.uni.region && (
+                      <span style={{
+                        background: 'var(--surface-hover)',
+                        color: 'var(--text-muted)',
+                        padding: '2px 7px',
+                        borderRadius: '999px',
+                        fontSize: '10px',
+                        fontWeight: '700'
+                      }}>
+                        {selectedCollege.uni.region} Pool
+                      </span>
+                    )}
                   </div>
 
                   <h3 style={{
-                    fontSize: '16px',
+                    fontSize: '15.5px',
                     fontWeight: '800',
                     color: 'var(--text-main)',
-                    margin: '6px 0 2px',
+                    margin: '6px 0 3px',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap'
@@ -389,9 +504,12 @@ export default function CampusMapExplorer({
                     {selectedCollege.uni.name}
                   </h3>
 
-                  <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>
-                    {selectedCollege.loc.notes || `${selectedCollege.uni.city}, Andhra Pradesh`}
-                  </p>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '5px', fontSize: '11.5px', color: 'var(--text-muted)', lineHeight: '1.4' }}>
+                    <MapPin size={13} style={{ flexShrink: 0, marginTop: '2px', color: 'var(--primary)' }} />
+                    <span>
+                      {selectedCollege.loc.notes ? `${selectedCollege.loc.notes}, ${selectedCollege.uni.city}` : `${selectedCollege.uni.city}, ${selectedCollege.uni.district ? selectedCollege.uni.district + ' District, ' : ''}Andhra Pradesh`}
+                    </span>
+                  </div>
                 </div>
               </div>
 

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, Download, ExternalLink, Users, Building2, Award, BookOpen, Navigation, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, Heart, Download, ExternalLink, Users, Building2, Award, BookOpen, Navigation, ChevronDown, ChevronUp, Calendar, Trees, MapPin, CreditCard, BadgePercent, GraduationCap, Briefcase } from 'lucide-react';
+
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import { useWishlist } from '@/contexts/WishlistContext';
@@ -8,15 +10,13 @@ import { useUniversities } from '@/contexts/UniversityContext';
 import { getUniversityById as getStaticUniversityById } from '@/data/universities';
 import { db, isFirestoreReady } from '@/services/firebase';
 import { Review, University, UserProfile } from '@/types';
-import { collection, addDoc, doc, increment, updateDoc, query, where, orderBy, onSnapshot, serverTimestamp, deleteDoc } from 'firebase/firestore';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { collection, addDoc, doc, increment, updateDoc, query, where, onSnapshot, serverTimestamp, deleteDoc } from 'firebase/firestore';
 import { trackView } from '@/services/activityTracker';
 import { computeFitScore } from '@/utils/intelligenceEngine';
 import { useCounselor } from '@/contexts/CounselorContext';
-import { Sparkles as SparklesIcon, TrendingUp, CheckCircle2, MessageSquare, Star, Trash2 } from 'lucide-react';
+import { Sparkles as SparklesIcon, CheckCircle2, MessageSquare, Star, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HolographicBadge, AnimatedCounter3D, ParallaxImage, SpotlightCard, MagneticButton, WaveDivider, RippleButton, FloatingEmoji3D } from '@/components/Animation3DComponents';
+import { HolographicBadge, ParallaxImage, SpotlightCard, MagneticButton, WaveDivider, RippleButton } from '@/components/Animation3DComponents';
 import { UniversityDetailSkeleton } from '@/components/ui/UniversityDetailSkeleton';
 import { updatePageMetadata } from '@/services/metadataService';
 import FeeCutoffAnalytics from '@/components/analytics/FeeCutoffAnalytics';
@@ -103,7 +103,7 @@ function CollegeFitScore({ university }: { university: University }) {
 }
 
 
-function ScholarshipEligibility({ university }: { university: University }) {
+function ScholarshipEligibility({ university: _university }: { university: University }) {
   const { currentUser } = useAuth();
   const answers = currentUser?.quizResults?.answers;
   
@@ -134,7 +134,9 @@ function ScholarshipEligibility({ university }: { university: University }) {
   if (eligibleSchemes.length === 0) {
     return (
       <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-md)', padding: '20px', marginBottom: '24px', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' }}>
-        <h3 style={{ fontSize: '15px', fontWeight: '800', marginBottom: '6px', color: 'var(--text-main)' }}>🎓 Scholarship Eligibility</h3>
+        <h3 style={{ fontSize: '15px', fontWeight: '800', marginBottom: '6px', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <GraduationCap size={18} className="text-primary" /> Scholarship Eligibility
+        </h3>
         <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Based on your profile, you do not qualify for direct AP state fee reimbursement. Consider merit-based private scholarships.</p>
       </div>
     );
@@ -142,8 +144,8 @@ function ScholarshipEligibility({ university }: { university: University }) {
 
   return (
     <div style={{ background: 'var(--primary-light)', borderRadius: 'var(--radius-md)', padding: '20px', marginBottom: '24px', boxShadow: 'var(--shadow-sm)', border: '1.5px solid var(--primary-glow)' }}>
-      <h3 style={{ fontSize: '15px', fontWeight: '800', marginBottom: '6px', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-        <span>🎓 Eligible AP Scholarships</span>
+      <h3 style={{ fontSize: '15px', fontWeight: '800', marginBottom: '6px', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <GraduationCap size={18} className="text-primary" /> Eligible AP Scholarships
       </h3>
       <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '14px', fontWeight: '600' }}>Matching schemes based on your quiz profile ({category} Category):</p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -212,7 +214,7 @@ function ReviewsSection({ universityId }: { universityId: string }) {
         universityId,
         userId: currentUser.id || 'student',
         userName: currentUser.name || 'Anonymous Student',
-        userPhoto: currentUser.photoURL || null,
+        userPhoto: currentUser.photoURL || undefined,
         text,
         rating,
         createdAt: { seconds: Math.floor(Date.now() / 1000) } as any,
@@ -224,7 +226,7 @@ function ReviewsSection({ universityId }: { universityId: string }) {
       setText('');
       setRating(5);
       setHoverRating(0);
-      showToast('Review posted! 🎉', 'success');
+      showToast('Review posted successfully', 'success');
       return;
     }
 
@@ -244,7 +246,7 @@ function ReviewsSection({ universityId }: { universityId: string }) {
       setText('');
       setRating(5);
       setHoverRating(0);
-      showToast('Review posted! 🎉', 'success');
+      showToast('Review posted successfully', 'success');
     } catch (err: any) {
       console.error("Review submission error:", err);
       showToast(err?.message || 'Error posting review', 'error');
@@ -477,7 +479,9 @@ function ApplyModal({ university, onClose, onSuccess }: { university: University
 
         {submitted ? (
           <div style={{ textAlign: 'center', padding: '24px 0' }}>
-            <div style={{ fontSize: '56px', marginBottom: '16px' }}>🎉</div>
+            <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
+              <CheckCircle2 size={56} className="text-primary" />
+            </div>
             <h2 style={{ fontWeight: '800', marginBottom: '8px' }}>Application Sent!</h2>
             <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>
               Your application to {university.name} has been submitted successfully to our cloud records.
@@ -536,7 +540,7 @@ export default function UniversityDetail() {
     if (!id) return '';
     try {
       return decodeURIComponent(id).trim();
-    } catch (e) {
+    } catch {
       return id.trim();
     }
   }, [id]);
@@ -632,7 +636,7 @@ export default function UniversityDetail() {
   if (!resolvedUniversity) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '16px' }}>
-        <div style={{ fontSize: '48px' }}>😕</div>
+        <Building2 size={48} className="text-muted-foreground" />
         <h2>University not found</h2>
         <p style={{ color: 'var(--text-muted)', fontSize: '14px', maxWidth: '400px', textAlign: 'center' }}>
           We could not locate a university matching ID "{normalizedId}". It may have been renamed or removed.
@@ -646,20 +650,19 @@ export default function UniversityDetail() {
 
   const handleWishlist = () => {
     toggleWishlist(resolvedUniversity);
-    showToast(saved ? 'Removed from wishlist' : 'Saved to wishlist! ❤️', saved ? 'info' : 'success');
+    showToast(saved ? 'Removed from wishlist' : 'Saved to wishlist', saved ? 'info' : 'success');
   };
 
-  const handleBrochure = () => showToast('📄 Brochure downloaded!', 'success');
+  const handleBrochure = () => showToast('Brochure download initiated', 'success');
 
   return (
     <div style={{ background: 'transparent', minHeight: '100vh', paddingBottom: '40px' }}>
       {/* Hero */}
-      <div className="relative h-[280px] md:h-[400px]" style={{ overflow: 'hidden' }}>
-        <ParallaxImage
-          src={resolvedUniversity.image}
+      <div className="relative h-[280px] md:h-[400px]" style={{ width: '100%', overflow: 'hidden', margin: 0, padding: 0 }}>
+        <img
+          src={resolvedUniversity.image || "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=1600&q=80"}
           alt={resolvedUniversity.name}
-          speed={0.3}
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
         />
         <div style={{
           position: 'absolute', inset: 0,
@@ -711,14 +714,11 @@ export default function UniversityDetail() {
 
         {/* Name overlay */}
         <div style={{ position: 'absolute', bottom: '16px', left: '16px', right: '16px' }}>
-          <HolographicBadge style={{ marginBottom: '8px' }}>
-            <span style={{ color: '#fff', fontWeight: 800, fontSize: '12px' }}>{resolvedUniversity.match}% MATCH</span>
-          </HolographicBadge>
           <h1 style={{ color: '#fff', fontSize: '22px', fontWeight: '900', lineHeight: 1.2, textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}>
             {resolvedUniversity.name}
           </h1>
-          <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '13px', marginTop: '4px' }}>
-            📍 {resolvedUniversity.city}, {resolvedUniversity.state}
+          <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '13px', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <MapPin size={13} /> {resolvedUniversity.city}, {resolvedUniversity.state}
           </p>
         </div>
       </div>
@@ -933,7 +933,9 @@ export default function UniversityDetail() {
 
             {/* Bottom Counselor Assistance CTA */}
             <div style={{ background: 'var(--dark-card)', borderRadius: 'var(--radius-lg)', padding: '26px 20px', textAlign: 'center', boxShadow: 'var(--shadow-md)' }}>
-              <div style={{ fontSize: '32px', marginBottom: '8px' }}>🎓</div>
+              <div style={{ marginBottom: '8px', display: 'flex', justifyContent: 'center' }}>
+                <GraduationCap size={32} className="text-primary" />
+              </div>
               <h2 style={{ color: '#fff', fontSize: '19px', fontWeight: '800', marginBottom: '8px' }}>Need Guidance for 2026 Admissions?</h2>
               <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px', lineHeight: 1.5, marginBottom: '20px' }}>
                 Connect with verified AP EAPCET counseling specialists for rank verification and seat allotment strategies.
@@ -942,7 +944,7 @@ export default function UniversityDetail() {
                 <RippleButton onClick={() => setShowApply2(true)} className="btn btn-primary btn-full" style={{ borderRadius: '12px', padding: '14px' }}>
                   Apply for Admission
                 </RippleButton>
-                <RippleButton onClick={() => showToast('📞 Counselor callback requested! We will reach out shortly.', 'success')} style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', border: '1px solid rgba(255,255,255,0.25)', borderRadius: '12px', padding: '12px', fontWeight: '600', fontSize: '14px', cursor: 'pointer', width: '100%' }}>
+                <RippleButton onClick={() => showToast('Counselor callback requested. We will reach out shortly.', 'success')} style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', border: '1px solid rgba(255,255,255,0.25)', borderRadius: '12px', padding: '12px', fontWeight: '600', fontSize: '14px', cursor: 'pointer', width: '100%' }}>
                   Request Free Callback
                 </RippleButton>
               </div>
@@ -953,8 +955,8 @@ export default function UniversityDetail() {
         </div>
       </div>
 
-      {showApply && <ApplyModal university={resolvedUniversity} onClose={() => setShowApply(false)} onSuccess={() => showToast('✅ Application submitted successfully!', 'success')} />}
-      {showApply2 && <ApplyModal university={resolvedUniversity} onClose={() => setShowApply2(false)} onSuccess={() => showToast('✅ Application submitted successfully!', 'success')} />}
+      {showApply && createPortal(<ApplyModal university={resolvedUniversity} onClose={() => setShowApply(false)} onSuccess={() => showToast('Application submitted successfully', 'success')} />, document.body)}
+      {showApply2 && createPortal(<ApplyModal university={resolvedUniversity} onClose={() => setShowApply2(false)} onSuccess={() => showToast('Application submitted successfully', 'success')} />, document.body)}
     </div>
   );
 }
@@ -963,7 +965,7 @@ function PlacementsSection({ resolvedUniversity }: { resolvedUniversity: Univers
   return (
     <SpotlightCard style={{ background: 'var(--surface)', borderRadius: 'var(--radius-md)', padding: '24px', marginBottom: '20px', boxShadow: 'var(--shadow-sm)' }}>
       <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        💼 Top Placements
+        <Briefcase size={18} className="text-primary" /> Top Placements
       </h2>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
         {resolvedUniversity.placements?.map((p: any, i: number) => (
@@ -1011,10 +1013,10 @@ function AcademicProgramsSection({ resolvedUniversity }: { resolvedUniversity: U
   return (
     <SpotlightCard style={{ background: 'var(--surface)', borderRadius: 'var(--radius-md)', overflow: 'hidden', marginBottom: '20px', boxShadow: 'var(--shadow-sm)' }}>
       <div style={{ padding: '20px 20px 12px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <h2 style={{ fontSize: '18px', fontWeight: '800', margin: 0 }}>🎓 Academic Programs &amp; Fee Structure</h2>
+          <h2 style={{ fontSize: '18px', fontWeight: '800', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <BookOpen size={18} className="text-primary" /> Academic Programs &amp; Fee Structure
+          </h2>
 
-        </div>
         <HolographicBadge style={{ textTransform: 'none' }}>
           {resolvedUniversity.programs.length} Courses
         </HolographicBadge>
@@ -1096,7 +1098,9 @@ function AcademicProgramsSection({ resolvedUniversity }: { resolvedUniversity: U
 function FacultySection({ resolvedUniversity }: { resolvedUniversity: University }) {
   return (
     <div style={{ marginBottom: '20px' }}>
-      <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '14px' }}>🏛️ Guided by Pioneers</h2>
+      <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <Users size={18} className="text-primary" /> Guided by Pioneers
+      </h2>
       <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: '8px' }} className="no-scrollbar">
         {resolvedUniversity.faculty.map((f, i) => (
           <motion.div 
@@ -1153,14 +1157,14 @@ function UniversityMetricRibbon({ university }: { university: University }) {
   );
 
   const stats = [
-    { label: 'Category', value: university.category?.replace(' College', '').replace(' University', '') || 'Autonomous', icon: '🏛️', sub: `${catAPct}% Conv. / ${catBPct}% Mgmt` },
-    { label: 'NAAC Rating', value: university.naac || 'Grade A+', icon: '🏆', sub: 'National Accreditation', highlight: true },
-    { label: 'Founded', value: `${university.established || 1980}`, icon: '📅', sub: 'Established Year' },
-    { label: 'Campus Area', value: `${university.acres || 50} Acres`, icon: '🌿', sub: 'Campus Land Area' },
-    { label: 'Faculty Ratio', value: university.ratio || '1:15', icon: '👥', sub: 'Student-to-Faculty' },
-    { label: 'AP Region', value: region, icon: '📍', sub: 'EAPCET Local Area' },
-    { label: 'Convenor Fee', value: convenerFee, icon: '💳', sub: `${catAPct}% Quota via EAPCET`, primary: true },
-    { label: 'Management Fee', value: mgmtFee, icon: '💎', sub: catBPct > 0 ? `${catBPct}% Merit Seats` : '100% Convenor', accent: true },
+    { label: 'Category', value: university.category?.replace(' College', '').replace(' University', '') || 'Autonomous', icon: <Building2 size={20} className="text-slate-600 dark:text-slate-300" />, sub: `${catAPct}% Conv. / ${catBPct}% Mgmt` },
+    { label: 'NAAC Rating', value: university.naac || 'Grade A+', icon: <Award size={20} className="text-amber-500" />, sub: 'National Accreditation', highlight: true },
+    { label: 'Founded', value: `${university.established || 1980}`, icon: <Calendar size={20} className="text-blue-500" />, sub: 'Established Year' },
+    { label: 'Campus Area', value: `${university.acres || 50} Acres`, icon: <Trees size={20} className="text-emerald-500" />, sub: 'Campus Land Area' },
+    { label: 'Faculty Ratio', value: university.ratio || '1:15', icon: <Users size={20} className="text-indigo-500" />, sub: 'Student-to-Faculty' },
+    { label: 'AP Region', value: region, icon: <MapPin size={20} className="text-rose-500" />, sub: 'EAPCET Local Area' },
+    { label: 'Convenor Fee', value: convenerFee, icon: <CreditCard size={20} className="text-primary" />, sub: `${catAPct}% Quota via EAPCET`, primary: true },
+    { label: 'Management Fee', value: mgmtFee, icon: <BadgePercent size={20} className="text-emerald-600 dark:text-emerald-400" />, sub: catBPct > 0 ? `${catBPct}% Merit Seats` : '100% Convenor', accent: true },
   ];
 
   return (
@@ -1193,7 +1197,7 @@ function UniversityMetricRibbon({ university }: { university: University }) {
               transition: 'transform 0.2s ease, box-shadow 0.2s ease',
             }}
           >
-            <div style={{ fontSize: '20px', marginBottom: '6px' }}>{s.icon}</div>
+            <div style={{ marginBottom: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{s.icon}</div>
             <div style={{
               fontSize: '13px',
               fontWeight: '900',
@@ -1248,7 +1252,8 @@ function FacilitiesSection({ resolvedUniversity }: { resolvedUniversity: Univers
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
         <div>
           <h2 style={{ fontSize: '20px', fontWeight: '900', margin: 0, display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-main)' }}>
-            <span>🌳 The Living Ecosystem</span>
+            <Trees size={20} className="text-emerald-500" />
+            <span>Campus Infrastructure &amp; Ecosystem</span>
           </h2>
           <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>
             Verified campus infrastructure, research laboratories, and student facilities

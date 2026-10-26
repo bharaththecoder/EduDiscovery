@@ -10,10 +10,12 @@ interface Toast {
 
 interface ToastContextType {
   showToast: (message: string, type?: 'info' | 'success' | 'error', duration?: number) => void;
+  addToast: (message: string, type?: 'info' | 'success' | 'error', duration?: number) => void;
 }
 
 const defaultToastContext: ToastContextType = {
   showToast: () => {},
+  addToast: () => {},
 };
 
 const ToastContext = createContext<ToastContextType>(defaultToastContext);
@@ -44,7 +46,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     setToasts(prev => prev.filter(t => t.id !== id));
   };
 
-  const value = React.useMemo(() => ({ showToast }), [showToast]);
+  const value = React.useMemo(() => ({ showToast, addToast: showToast }), [showToast]);
 
   return (
     <ToastContext.Provider value={value}>

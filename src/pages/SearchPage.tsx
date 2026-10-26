@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { Search, SlidersHorizontal, Sparkles, AlertCircle, TrendingUp, LayoutGrid, Map } from 'lucide-react';
+import { Search, SlidersHorizontal, Sparkles, AlertCircle, TrendingUp, LayoutGrid, Map, GraduationCap, Coins } from 'lucide-react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
-import UniversityCard, { UniversityCardSkeleton } from '@/components/cards/UniversityCard';
-import { MagneticButton, SpotlightCard, HolographicBadge } from '@/components/Animation3DComponents';
+import UniversityCard from '@/components/cards/UniversityCard';
+import { MagneticButton, HolographicBadge } from '@/components/Animation3DComponents';
 import CampusMapExplorer from '@/components/map/CampusMapExplorer';
 import { useUniversities } from '@/contexts/UniversityContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,19 +17,17 @@ const containerVariants: Variants = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.06
+      duration: 0.15
     }
   }
 };
 
 const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 25, rotateX: 12, scale: 0.95 },
+  hidden: { opacity: 0, y: 8 },
   show: { 
     opacity: 1, 
     y: 0,
-    rotateX: 0,
-    scale: 1,
-    transition: { type: "spring", stiffness: 260, damping: 22 }
+    transition: { duration: 0.2, ease: "easeOut" }
   }
 };
 
@@ -201,13 +199,12 @@ export default function SearchPage() {
   const { budget: parsedBudget, branch: parsedBranch } = useMemo(() => parseIntent(query), [query]);
 
   return (
-    <div style={{ minHeight: '100vh', background: 'transparent' }} onClick={() => setShowSuggestions(false)}>
+    <div style={{ background: 'transparent' }} onClick={() => setShowSuggestions(false)}>
       {/* Redesigned Premium Header (Scrollable) */}
       <div
         className="w-full"
         style={{
-          background: 'linear-gradient(180deg, var(--bg) 0%, var(--bg-glass-fade) 85%, transparent 100%)',
-          backdropFilter: 'blur(16px)',
+          background: 'var(--surface)',
           padding: '24px 20px 16px',
           borderBottom: '1.5px solid var(--border)',
         }}
@@ -215,56 +212,51 @@ export default function SearchPage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
 
           {/* Top Row: Title, Subtitle, and AI Search Indicator */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-              <h1 className="wave-underline" style={{ fontSize: 'clamp(20px, 4vw, 26px)', fontWeight: '900', letterSpacing: '-0.5px', color: 'var(--text-main)', lineHeight: 1.15, display: 'inline-block' }}>
-                Discover Premier <span className="gradient-text" style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #059669 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Education in AP</span> 🎓
-              </h1>
-              <HolographicBadge>
-                <Sparkles size={12} style={{ color: 'var(--primary)' }} />
-                <span style={{ color: 'var(--primary)' }}>AI-POWERED SEARCH</span>
-              </HolographicBadge>
-            </div>
-            <p style={{ color: 'var(--text-muted)', fontSize: '13.5px', fontWeight: '500', maxWidth: '600px', lineHeight: 1.4 }}>
-              Enter natural questions (e.g. <i>"Top CSE colleges under 5 lakh"</i>)
+          {/* Top Row: Title & Subtitle */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
+            <h1 className="wave-underline" style={{ fontSize: 'clamp(20px, 4vw, 26px)', fontWeight: '900', letterSpacing: '-0.5px', color: 'var(--text-main)', lineHeight: 1.2, display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              Discover Premier <span className="gradient-text" style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #059669 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Education in AP</span>
+              <GraduationCap size={22} className="text-primary" />
+            </h1>
+            <p style={{ color: 'var(--text-muted)', fontSize: '13.5px', fontWeight: '500', maxWidth: '600px', lineHeight: 1.4, margin: 0 }}>
+              Search AP engineering colleges, branch cutoffs, fees & cities
             </p>
           </div>
 
-          {/* AI Semantic Search Bar with Suggestions */}
+          {/* Semantic Search Bar with Responsive Layout */}
           <div style={{ position: 'relative', marginBottom: '20px' }} onClick={e => e.stopPropagation()}>
             <form
               onSubmit={handleSubmit}
               style={{
                 width: '100%',
-                background: 'var(--search-bg)',
-                border: '2px solid var(--search-border)',
-                borderRadius: '20px',
-                padding: '4px',
+                background: 'var(--surface)',
+                border: '1.5px solid var(--border)',
+                borderRadius: '16px',
+                padding: '4px 6px',
                 display: 'flex',
                 alignItems: 'center',
                 boxShadow: 'var(--shadow-sm)',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
               }}
               onFocus={e => {
                 e.currentTarget.style.borderColor = 'var(--primary)';
-                e.currentTarget.style.boxShadow = 'var(--shadow-md), 0 0 0 4px var(--primary-glow)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-md), 0 0 0 3px var(--primary-glow)';
               }}
               onBlur={e => {
-                e.currentTarget.style.borderColor = 'var(--search-border)';
+                e.currentTarget.style.borderColor = 'var(--border)';
                 e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
               }}
             >
-              {/* Sparkles Glowing Icon */}
+              {/* Left Search Icon */}
               <div style={{
-                padding: '0 12px 0 16px',
+                paddingLeft: '10px',
+                paddingRight: '6px',
                 color: 'var(--primary)',
                 display: 'flex',
                 alignItems: 'center',
-                borderRight: '1px solid rgba(226, 232, 240, 0.8)',
-                marginRight: '12px',
-                height: '24px'
+                flexShrink: 0
               }}>
-                <Sparkles size={18} style={{ filter: 'drop-shadow(0 0 4px var(--primary-glow))' }} />
+                <Search size={18} />
               </div>
 
               {/* Main Input */}
@@ -275,7 +267,7 @@ export default function SearchPage() {
                 aria-label="Search AP colleges or degrees"
                 autoComplete="off"
                 type="text"
-                placeholder="Try: Top CSE colleges under 5 lakh with good placements..."
+                placeholder="Search colleges, branches, cities (e.g. CSE under 5 lakh)..."
                 value={query}
                 onChange={e => {
                   setQuery(e.target.value);
@@ -286,39 +278,43 @@ export default function SearchPage() {
                 style={{
                   flex: 1,
                   minWidth: 0,
-                  padding: '12px 8px',
-                  fontSize: '15px',
+                  padding: '10px 8px',
+                  fontSize: '14px',
                   outline: 'none',
                   color: 'var(--text-main)',
                   fontWeight: '600',
                   background: 'transparent',
+                  border: 'none'
                 }}
               />
 
               {/* Clear button */}
               {query && (
-                <MagneticButton
+                <button
+                  type="button"
                   onClick={() => { setQuery(''); setIsAiSearch(false); setShowSuggestions(false); }}
+                  aria-label="Clear search input"
                   style={{
-                    padding: '8px',
+                    padding: '0',
                     marginRight: '6px',
                     color: 'var(--text-muted)',
-                    fontSize: '18px',
-                    fontWeight: '300',
+                    fontSize: '16px',
+                    fontWeight: '700',
                     borderRadius: '50%',
-                    width: '30px',
-                    height: '30px',
+                    width: '26px',
+                    height: '26px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    background: 'rgba(241, 245, 249, 0.8)',
+                    background: 'var(--surface-hover)',
+                    border: 'none',
+                    cursor: 'pointer',
                     transition: 'all 0.2s',
+                    flexShrink: 0
                   }}
-                  onMouseOver={(e: React.MouseEvent<HTMLButtonElement>) => (e.currentTarget.style.background = 'rgba(226, 232, 240, 1)')}
-                  onMouseOut={(e: React.MouseEvent<HTMLButtonElement>) => (e.currentTarget.style.background = 'rgba(241, 245, 249, 0.8)')}
                 >
                   ×
-                </MagneticButton>
+                </button>
               )}
 
               {/* Action Button */}
@@ -327,43 +323,32 @@ export default function SearchPage() {
                 aria-label="Search"
                 disabled={!query.trim() || isLoading}
                 style={{
-                  background: 'var(--gradient)',
+                  background: 'var(--primary)',
                   color: '#fff',
                   fontWeight: '800',
-                  borderRadius: '16px',
-                  padding: '12px clamp(12px, 3vw, 22px)',
-                  fontSize: 'clamp(13px, 3.2vw, 14px)',
+                  borderRadius: '12px',
+                  padding: '10px 18px',
+                  fontSize: '13.5px',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
-                  boxShadow: '0 4px 14px var(--primary-glow)',
+                  border: 'none',
+                  boxShadow: '0 2px 8px var(--primary-glow)',
                   transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                   opacity: (!query.trim() || isLoading) ? 0.6 : 1,
                   cursor: (!query.trim() || isLoading) ? 'not-allowed' : 'pointer',
                   flexShrink: 0
                 }}
-                onMouseOver={e => {
-                  if (query.trim() && !isLoading) {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 8px 18px var(--primary-glow)';
-                    e.currentTarget.style.filter = 'brightness(1.08)';
-                  }
-                }}
-                onMouseOut={e => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 4px 14px var(--primary-glow)';
-                  e.currentTarget.style.filter = 'none';
-                }}
               >
                 {isLoading ? (
                   <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <span className="animate-spin" style={{ width: '12px', height: '12px', border: '2px solid #fff', borderTopColor: 'transparent', borderRadius: '50%', display: 'inline-block' }} />
-                    Searching...
+                    <span className="hidden sm:inline">Searching...</span>
                   </span>
                 ) : (
                   <>
                     <Search size={14} />
-                    <span>Search</span>
+                    <span className="hidden sm:inline">Search</span>
                   </>
                 )}
               </button>
@@ -426,7 +411,7 @@ export default function SearchPage() {
                     alignItems: 'center',
                     gap: '4px'
                   }}>
-                    🎓 Branch: {parsedBranch}
+                    <GraduationCap size={13} /> Branch: {parsedBranch}
                   </span>
                 )}
                 {parsedBudget && (
@@ -442,7 +427,7 @@ export default function SearchPage() {
                     alignItems: 'center',
                     gap: '4px'
                   }}>
-                    💰 Budget: under ₹{parsedBudget.replace('l', ' Lakh').replace('k', 'K')}
+                    <Coins size={13} /> Budget: under ₹{parsedBudget.replace('l', ' Lakh').replace('k', 'K')}
                   </span>
                 )}
               </div>
@@ -515,7 +500,7 @@ export default function SearchPage() {
                 marginRight: '4px',
                 flexShrink: 0
               }}>
-                <span style={{ width: '12px', height: '12px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '3px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px', color: 'var(--primary)', fontWeight: 'bold' }}>🎓</span>
+                <GraduationCap size={13} className="text-primary" />
                 <span>Branches:</span>
               </div>
               {BRANCHES.map(b => {
@@ -669,41 +654,27 @@ export default function SearchPage() {
             selectedCity={activeCities[0]}
           />
         ) : displayResults.length > 0 ? (
-          <motion.div 
-            variants={containerVariants}
-            initial="hidden"
-            animate="show"
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-          >
-            <AnimatePresence mode="popLayout">
-                {displayResults.map(uni => (
-                  <motion.div 
-                    key={uni.id} 
-                    layout
-                    variants={itemVariants} 
-                    transition={{
-                      type: "spring",
-                      stiffness: 120,
-                      damping: 18,
-                      mass: 0.8
-                    }}
-                    exit={{ opacity: 0, scale: 0.9, y: 10, transition: { duration: 0.15 } }}
-                    className="relative flex flex-col h-full"
-                  >
-                    {isAiSearch && uni.intelligenceScore !== undefined && (
-                      <div className="absolute top-4 right-4 z-10 bg-emerald-600/80 backdrop-blur-md px-2 py-1 rounded-full text-white text-xs font-bold flex items-center gap-1">
-                        <TrendingUp size={10} />
-                        ROI {uni.intelligenceScore}/10
-                      </div>
-                    )}
-                    <UniversityCard university={uni} />
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {displayResults.map(uni => (
+              <div 
+                key={uni.id} 
+                className="relative flex flex-col h-full transition-transform duration-200 hover:-translate-y-1"
+              >
+                {isAiSearch && uni.intelligenceScore !== undefined && (
+                  <div className="absolute top-4 right-4 z-10 bg-emerald-600/80 backdrop-blur-md px-2 py-1 rounded-full text-white text-xs font-bold flex items-center gap-1 shadow-sm">
+                    <TrendingUp size={10} />
+                    ROI {uni.intelligenceScore}/10
+                  </div>
+                )}
+                <UniversityCard university={uni} />
+              </div>
+            ))}
+          </div>
           ) : (
             <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-              <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔍</div>
+              <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
+                <Search size={44} className="text-muted-foreground opacity-60" />
+              </div>
               <h3 style={{ fontWeight: '800', marginBottom: '8px' }}>No colleges found</h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Try adjusting your filters or search term.</p>
               <MagneticButton

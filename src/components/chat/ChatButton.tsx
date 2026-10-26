@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useCounselor } from '@/contexts/CounselorContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles } from 'lucide-react';
 
 export default function ChatButton() {
   const { isOpen, setIsOpen, quizContext } = useCounselor();
   const [showTooltip, setShowTooltip] = useState(() => {
     try {
       return !localStorage.getItem('hasShownCounselorTooltip');
-    } catch (e) {
+    } catch {
       return true;
     }
   });
@@ -18,7 +19,7 @@ export default function ChatButton() {
         setShowTooltip(false);
         try {
           localStorage.setItem('hasShownCounselorTooltip', 'true');
-        } catch (e) {}
+        } catch {}
       }, 5000);
       return () => clearTimeout(timer);
     }
@@ -54,20 +55,21 @@ export default function ChatButton() {
               setShowTooltip(false);
               try {
                 localStorage.setItem('hasShownCounselorTooltip', 'true');
-              } catch (e) {}
+              } catch {}
             }}
             className="hidden md:flex glow-up compact-card"
           >
             <span style={{ 
-              background: 'linear-gradient(135deg, #10B981 0%, #059669 50%, #047857 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
+              color: 'var(--primary)',
               fontSize: '11px', 
               fontWeight: '900', 
               letterSpacing: '0.8px',
-              textTransform: 'uppercase'
+              textTransform: 'uppercase',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px'
             }}>
-              ✨ AI Counselor
+              <Sparkles size={12} className="text-emerald-500" /> AI Counselor
             </span>
             <div style={{ width: '1px', height: '12px', background: 'rgba(226, 232, 240, 0.8)' }}></div>
             <span style={{ color: 'var(--text-muted)', fontSize: '12.5px', fontWeight: '700' }}>
@@ -106,7 +108,7 @@ export default function ChatButton() {
           setShowTooltip(false);
           try {
             localStorage.setItem('hasShownCounselorTooltip', 'true');
-          } catch (e) {}
+          } catch {}
         }}
         aria-label="Open AI Counselor Chat"
         className="relative w-14 h-14 rounded-full flex items-center justify-center text-white border-[2.5px] border-white cursor-pointer tap-target-44"

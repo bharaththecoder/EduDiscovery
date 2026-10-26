@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import Layout from '@/components/layout/Layout';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
@@ -38,28 +38,20 @@ const SearchPage = lazyWithRetry(() => import('@/pages/SearchPage'));
 const ComparePage = lazyWithRetry(() => import('@/pages/ComparePage'));
 const UniversityDetailPage = lazyWithRetry(() => import('@/pages/UniversityDetailPage'));
 const ProfilePage = lazyWithRetry(() => import('@/pages/ProfilePage'));
-const QuizPage = lazyWithRetry(() => import('@/pages/QuizPage'));
-const QuizResultPage = lazyWithRetry(() => import('@/pages/QuizResultPage'));
+// const QuizPage = lazyWithRetry(() => import('@/pages/QuizPage'));
+// const QuizResultPage = lazyWithRetry(() => import('@/pages/QuizResultPage'));
 const AdminSeedPage = lazyWithRetry(() => import('@/pages/AdminSeedPage'));
 const NotFoundPage = lazyWithRetry(() => import('@/pages/NotFoundPage'));
 const WishlistPage = lazyWithRetry(() => import('@/pages/WishlistPage'));
-const PredictorPage = lazyWithRetry(() => import('@/pages/PredictorPage'));
+const WebOptionsPage = lazyWithRetry(() => import('@/pages/WebOptionsPage'));
 
-const ProtectedLayout = () => {
+const RequireAuth = () => {
   const { currentUser, loading } = useAuth();
-  const location = useLocation();
 
   if (loading) return <LoadingScreen />;
   if (!currentUser) return <Navigate to="/" replace />;
 
-  const needsQuiz = currentUser.isNewUser && !currentUser.quizResults;
-  const isOnQuizFlow = location.pathname === '/quiz' || location.pathname === '/quiz-result';
-
-  if (needsQuiz && !isOnQuizFlow) {
-    return <Navigate to="/quiz" replace />;
-  }
-
-  return <Layout />;
+  return <Outlet />;
 };
 
 const LoadingScreen = () => (
@@ -136,22 +128,22 @@ function App() {
               {/* Public */}
               <Route path="/" element={currentUser ? <Navigate to="/home" replace /> : <LandingPage />} />
 
-              {/* Public Discovery Routes: College search, profiles, compare, predictor, and guest shortlists */}
+              {/* Unified In-App Layout for identical, smooth transitions */}
               <Route element={<Layout />}>
+                {/* Public Guest Discovery: Search is the ONLY page accessible without login */}
                 <Route path="/search" element={<SearchPage />} />
-                <Route path="/compare" element={<ComparePage />} />
-                <Route path="/university/:id" element={<UniversityDetailPage />} />
-                <Route path="/predictor" element={<PredictorPage />} />
-                <Route path="/wishlist" element={<WishlistPage />} />
-              </Route>
 
-              {/* Protected Student Account Setup: Wrapped with ProtectedLayout */}
-              <Route element={<ProtectedLayout />}>
-                <Route path="/home" element={<HomePage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/quiz" element={<QuizPage />} />
-                <Route path="/quiz-result" element={<QuizResultPage />} />
-                <Route path="/admin/seed-colleges" element={<AdminSeedPage />} />
+                {/* Protected Routes: Require authentication, otherwise route to login (/) */}
+                <Route element={<RequireAuth />}>
+                  <Route path="/home" element={<HomePage />} />
+                  <Route path="/compare" element={<ComparePage />} />
+                  <Route path="/university/:id" element={<UniversityDetailPage />} />
+                  <Route path="/web-options" element={<WebOptionsPage />} />
+                  <Route path="/predictor" element={<Navigate to="/web-options" replace />} />
+                  <Route path="/wishlist" element={<WishlistPage />} />
+                  <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/admin/seed-colleges" element={<AdminSeedPage />} />
+                </Route>
               </Route>
 
               {/* 404 Fallback */}

@@ -55,7 +55,7 @@ function EditModal({ currentUser, onClose }: { currentUser: any; onClose: () => 
         city: form.city,
         tags: selectedTags
       });
-      showToast('Profile updated in cloud! ☁️', 'success');
+      showToast('Profile updated in cloud', 'success');
       onClose();
     } catch (err) {
       showToast('Failed to sync profile', 'error');
@@ -279,7 +279,7 @@ export default function Profile() {
         await uploadBytes(fileRef, file);
         const url = await getDownloadURL(fileRef);
         await updateUserDoc({ photoURL: url });
-        showToast('Profile picture synced to cloud! ☁️', 'success');
+        showToast('Profile picture synced to cloud', 'success');
       } catch (err) {
         showToast('Upload failed', 'error');
       } finally {

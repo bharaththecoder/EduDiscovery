@@ -6,6 +6,7 @@
 export interface PageMetadata {
   title: string;
   description: string;
+  keywords?: string;
   image?: string;
   url?: string;
   type?: 'website' | 'article';
@@ -25,8 +26,11 @@ export function updatePageMetadata(meta: PageMetadata) {
   // 1. Document Title
   document.title = meta.title;
 
-  // 2. Standard Meta Description
+  // 2. Standard Meta Description & Keywords
   updateOrCreateMetaTag('meta[name="description"]', 'name', 'description', meta.description);
+  if (meta.keywords) {
+    updateOrCreateMetaTag('meta[name="keywords"]', 'name', 'keywords', meta.keywords);
+  }
 
   // 3. OpenGraph Properties
   updateOrCreateMetaTag('meta[property="og:title"]', 'property', 'og:title', meta.title);

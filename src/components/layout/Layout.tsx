@@ -65,11 +65,11 @@ export default function Layout() {
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
-            initial={{ opacity: 0, y: 12, scale: 0.99 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -12, scale: 0.99 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.18, ease: [0.25, 0.1, 0.25, 1] }}
+            style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', willChange: 'opacity, transform' }}
           >
             <ErrorBoundary fallbackTitle="View Recovery">
               <Outlet />

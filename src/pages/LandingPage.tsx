@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Globe, Mail, Eye, EyeOff, Sparkles, GraduationCap, Target, Zap, BookOpen, ArrowRight, Star, Search } from 'lucide-react';
+import { Globe, Mail, Eye, EyeOff, Sparkles, GraduationCap, Target, Zap, BookOpen, ArrowRight, Star, Search, Bot, ArrowLeftRight, BarChart3, MessageSquare } from 'lucide-react';
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
 import { OrbitRing, FloatingEmoji3D, HolographicBadge, AnimatedCounter3D, GlowButton, NeonCard, WaveDivider, InteractiveFluidParticles, MagneticButton, ConfettiButton, SpotlightCard, BounceIn, VelocityText } from '@/components/Animation3DComponents';
 
@@ -51,7 +51,7 @@ function TiltCard({ children, className = '', style = {} }: { children: React.Re
 
 // ─── Feature Card (3D Neon Enhanced) ────────────────────────────
 function FeatureCard({ icon, title, desc, gradient, delay }: {
-  icon: string; title: string; desc: string; gradient: string; delay: number;
+  icon: React.ReactNode; title: string; desc: string; gradient: string; delay: number;
 }) {
   return (
     <motion.div
@@ -120,25 +120,25 @@ const PARTICLES = Array.from({ length: 16 }, (_, i) => ({
 
 const FEATURES = [
   {
-    icon: '🎯',
+    icon: <Target size={24} color="#fff" />,
     title: 'AI Admission Predictor',
     desc: 'Enter your rank and get real-time admission probability across 100+ AP colleges with 94% accuracy.',
     gradient: 'linear-gradient(135deg, #10B981, #059669)',
   },
   {
-    icon: '🤖',
+    icon: <Bot size={24} color="#fff" />,
     title: 'AI College Counselor',
     desc: 'Chat with our AI bot 24/7. Ask anything — fees, cutoffs, scholarships, hostel — it knows it all.',
     gradient: 'linear-gradient(135deg, #3B82F6, #8B5CF6)',
   },
   {
-    icon: '⚡',
+    icon: <ArrowLeftRight size={24} color="#fff" />,
     title: 'Smart Compare Engine',
     desc: 'Compare up to 3 colleges side-by-side on fees, placements, NAAC grade, branches, and cutoff trends.',
     gradient: 'linear-gradient(135deg, #F59E0B, #EF4444)',
   },
   {
-    icon: '📊',
+    icon: <BarChart3 size={24} color="#fff" />,
     title: 'Cutoff Trend Analytics',
     desc: 'See 3-year EAPCET/ICET cutoff trends, counselling round data, and seat availability in real-time.',
     gradient: 'linear-gradient(135deg, #06B6D4, #10B981)',
@@ -146,10 +146,10 @@ const FEATURES = [
 ];
 
 const MARQUEE_TAGS = [
-  '🎓 100+ AP Colleges', '⚡ EAPCET Cutoffs', '🤖 AI Counselor', '📊 Compare Colleges',
-  '🎯 Rank Predictor', '💰 Scholarships Hub', '🏆 NAAC Rankings', '🌟 Free Forever',
-  '🎓 100+ AP Colleges', '⚡ EAPCET Cutoffs', '🤖 AI Counselor', '📊 Compare Colleges',
-  '🎯 Rank Predictor', '💰 Scholarships Hub', '🏆 NAAC Rankings', '🌟 Free Forever',
+  '100+ AP Colleges', 'APSCHE Cutoff Verification', 'AI Counseling Engine', 'Side-by-Side Comparison',
+  'Rank Simulator', 'Scholarships Portal', 'NAAC Accredited Insights', 'Statutory Verified Fees',
+  '100+ AP Colleges', 'APSCHE Cutoff Verification', 'AI Counseling Engine', 'Side-by-Side Comparison',
+  'Rank Simulator', 'Scholarships Portal', 'NAAC Accredited Insights', 'Statutory Verified Fees',
 ];
 
 export default function Landing() {
@@ -366,7 +366,7 @@ export default function Landing() {
                       background: 'var(--primary-light)', color: 'var(--primary)',
                       fontSize: '11px', fontWeight: '800', padding: '6px 12px', borderRadius: '999px',
                     }}>98% MATCH RATING</span>
-                    <FloatingEmoji3D emoji="🌟" size={22} />
+                    <Sparkles size={20} className="text-amber-400" />
                   </div>
                   <h3 style={{ fontSize: '18px', fontWeight: '900', color: 'var(--text-main)', marginBottom: '6px' }}>VIT-AP University</h3>
                   <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>Amravati, Andhra Pradesh</p>
@@ -399,7 +399,9 @@ export default function Landing() {
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <FloatingEmoji3D emoji="💬" size={20} style={{ filter: 'none' }} />
+                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
+                    <MessageSquare size={16} />
+                  </div>
                   <div>
                     <div style={{ fontSize: '9.5px', fontWeight: '800', color: 'var(--primary)', textTransform: 'uppercase' }}>AI COUNSELOR</div>
                     <div style={{ fontSize: '11px', fontWeight: '600', color: 'var(--text-main)', marginTop: '2px' }}>"You qualify for a fee waiver!"</div>
@@ -420,7 +422,7 @@ export default function Landing() {
               >
                 <div style={{ fontSize: '9.5px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Admission Odds</div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginTop: '4px' }}>
-                  <span style={{ fontSize: '22px', fontWeight: '900', color: '#059669' }}>High 🎉</span>
+                  <span style={{ fontSize: '20px', fontWeight: '900', color: '#059669' }}>High Fit</span>
                 </div>
                 <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>Rank 8,500 → Safe Zone</div>
               </motion.div>

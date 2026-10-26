@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, MapPin } from 'lucide-react';
+import { Heart, MapPin, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useToast } from '@/contexts/ToastContext';
@@ -65,7 +65,7 @@ const UniversityCard = React.memo(({ university, compact = false, reasons = [], 
     e.stopPropagation();
     const nextSaved = !saved;
     toggleWishlist(university);
-    showToast(saved ? 'Removed from wishlist' : 'Saved to wishlist! ❤️', saved ? 'info' : 'success');
+    showToast(saved ? 'Removed from wishlist' : 'Saved to wishlist', saved ? 'info' : 'success');
     if (nextSaved) {
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 2000);
@@ -74,6 +74,10 @@ const UniversityCard = React.memo(({ university, compact = false, reasons = [], 
 
   const [imgSrc, setImgSrc] = useState(university.image || FALLBACK);
   const [showAllReasons, setShowAllReasons] = useState(false);
+
+  useEffect(() => {
+    setImgSrc(university.image || FALLBACK);
+  }, [university.image, university.id]);
 
   const handleClick = () => navigate(`/university/${university.id}`);
 
@@ -247,8 +251,8 @@ const UniversityCard = React.memo(({ university, compact = false, reasons = [], 
         </div>
 
         {university.nirf && university.nirf !== '—' && (
-          <div style={{ fontSize: '11px', color: 'var(--primary)', fontWeight: '700' }}>
-            📊 NIRF {university.nirf}
+          <div style={{ fontSize: '11px', color: 'var(--primary)', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <TrendingUp size={11} /> NIRF {university.nirf}
           </div>
         )}
 

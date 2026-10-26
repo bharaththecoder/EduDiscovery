@@ -1,7 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { OrbitRing, StarField, FloatingEmoji3D } from '@/components/Animation3DComponents';
+import { Compass, ArrowLeft, Home } from 'lucide-react';
+import { OrbitRing, StarField } from '@/components/Animation3DComponents';
 
 export default function NotFoundPage() {
   const navigate = useNavigate();
@@ -82,8 +83,10 @@ export default function NotFoundPage() {
         </motion.div>
       </div>
 
-      {/* Floating telescope */}
-      <FloatingEmoji3D emoji="🔭" size={52} style={{ marginBottom: '20px' }} />
+      {/* Floating Compass */}
+      <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'center' }}>
+        <Compass size={48} className="text-emerald-400 animate-pulse" />
+      </div>
 
       {/* Heading */}
       <motion.h1
@@ -138,9 +141,12 @@ export default function NotFoundPage() {
             cursor: 'pointer',
             transformStyle: 'preserve-3d',
             perspective: '600px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px'
           }}
         >
-          ← Go Back
+          <ArrowLeft size={16} /> Go Back
         </motion.button>
         <motion.button
           onClick={() => navigate('/home')}
@@ -156,11 +162,12 @@ export default function NotFoundPage() {
             background: 'linear-gradient(135deg, #10B981, #059669)',
             cursor: 'pointer',
             boxShadow: '0 6px 20px rgba(16,185,129,0.35)',
-            transformStyle: 'preserve-3d',
-            perspective: '600px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px'
           }}
         >
-          🏠 Back to Home
+          <Home size={16} /> Back to Home
         </motion.button>
       </motion.div>
     </div>

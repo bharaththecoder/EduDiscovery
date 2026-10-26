@@ -1,25 +1,66 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Search, MapPin, Laptop, Award, Compass, Sparkles, LogOut, ChevronRight, Calculator, CheckCircle2, TrendingUp, Building2, ExternalLink, Calendar, Users, X, Activity, Cpu, Code, Target, Clock, AlertTriangle, ShieldCheck, Banknote, LayoutGrid, Newspaper, Zap, Heart, BarChart2 } from 'lucide-react';
+import { Search, MapPin, Laptop, Compass, Sparkles, ListOrdered, ChevronRight, ExternalLink, Calendar, Target, Clock, ShieldCheck, Banknote, LayoutGrid, Newspaper, Zap, Heart, BarChart2, GraduationCap } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { auth } from '@/services/firebase';
 import { newsArticles } from '@/data/news';
 import { fetchLiveEamcetNews } from '@/services/newsService';
 import { useUniversities } from '@/contexts/UniversityContext';
-import UniversityCard, { UniversityCardSkeleton } from '@/components/cards/UniversityCard';
+import UniversityCard from '@/components/cards/UniversityCard';
 import { getActivity } from '@/services/activityTracker';
 import { ActivityEvent, University, NewsArticle } from '@/types';
-import { useWishlist } from '@/contexts/WishlistContext';
-import { WaveDivider, HolographicBadge, MagneticButton, SpotlightCard, NeonCard, ParallaxImage } from '@/components/Animation3DComponents';
+import { HolographicBadge, MagneticButton, NeonCard } from '@/components/Animation3DComponents';
 import { parseRankToNumber } from '@/utils/intelligenceEngine';
 
 // ─── News Modal ───────────────────────────────────────────────
 function NewsModal({ article, onClose }: { article: NewsArticle; onClose: () => void }) {
-  const paragraphs = article.content.split('\n\n').filter(Boolean);
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, []);
+
+  const contentText = article.content || article.summary || '';
+  const paragraphs = contentText.split('\n\n').filter(Boolean);
+
   return (
-    <div className="overlay" onClick={onClose}>
-      <div className="modal-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative', maxHeight: '85vh', maxWidth: '640px', width: '92%' }}>
+    <div 
+      className="overlay" 
+      onClick={onClose}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 99999,
+        background: 'rgba(0, 0, 0, 0.6)',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '16px',
+        animation: 'fadeIn 0.2s ease-out'
+      }}
+    >
+      <div 
+        className="modal-sheet" 
+        onClick={e => e.stopPropagation()} 
+        style={{ 
+          position: 'relative', 
+          maxHeight: '85vh', 
+          maxWidth: '640px', 
+          width: '100%',
+          borderRadius: '24px',
+          padding: '28px 24px',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35)',
+          overflowY: 'auto',
+          background: 'var(--surface)',
+          border: '1.5px solid var(--border)'
+        }}
+      >
         <button onClick={onClose} style={{
           position: 'absolute', top: '16px', right: '16px',
           background: 'var(--primary-light)', color: 'var(--primary)',
@@ -140,73 +181,26 @@ const itemVariants: Variants = {
   }
 };
 
-// ─── Stats Card Component ─────────────────────────────────────
-function StatsWidgetCard({ icon, title, value, color, delay }: { icon: string; title: string; value: string | number; color: string; delay: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ type: 'spring', stiffness: 200, damping: 20, delay }}
-      whileHover={{ y: -6, scale: 1.02, rotateX: 2 }}
-      style={{
-        border: '1px solid var(--border)',
-        background: 'var(--surface)',
-        borderRadius: '20px',
-        padding: '20px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '16px',
-        boxShadow: 'var(--shadow-sm)',
-        transformStyle: 'preserve-3d',
-        perspective: '600px',
-      }}
-    >
-      <div style={{
-        width: '46px',
-        height: '46px',
-        borderRadius: '12px',
-        background: `${color}12`,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '22px',
-        color,
-        flexShrink: 0
-      }}>
-        {icon}
-      </div>
-      <div>
-        <div style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{title}</div>
-        <div style={{ fontSize: '24px', fontWeight: '900', color: 'var(--text-main)', marginTop: '2px', lineHeight: 1.1 }}>{value}</div>
-      </div>
-    </motion.div>
-  );
-}
+
 
 // ─── Main Home Component ──────────────────────────────────────
 export default function Home() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
-  const { wishlist } = useWishlist();
   const { universities, loading: loadingColleges } = useUniversities();
   const [activeNews, setActiveNews] = useState<NewsArticle | null>(null);
   const [liveNews, setLiveNews] = useState<NewsArticle[]>(newsArticles);
-  const [loadingNews, setLoadingNews] = useState<boolean>(true);
 
   useEffect(() => {
     let isMounted = true;
     async function loadNews() {
       try {
-        setLoadingNews(true);
         const data = await fetchLiveEamcetNews();
         if (isMounted && data && data.length > 0) {
           setLiveNews(data);
         }
       } catch (err) {
         console.warn('[HomePage] Failed fetching real news, keeping fallback:', err);
-      } finally {
-        if (isMounted) setLoadingNews(false);
       }
     }
     loadNews();
@@ -229,9 +223,9 @@ export default function Home() {
     e.preventDefault();
     if (quickRank) {
       const numRank = parseRankToNumber(quickRank);
-      navigate(`/predictor?rank=${numRank}`);
+      navigate(`/web-options?rank=${numRank}`);
     } else {
-      navigate('/predictor');
+      navigate('/web-options');
     }
   };
   const [recommendations, setRecommendations] = useState<University[]>([]);
@@ -246,9 +240,6 @@ export default function Home() {
   }, []);
 
   const firstName = currentUser?.name?.split(' ')[0] || 'Scholar';
-  const collegesDiscovered = loadingColleges ? '...' : universities.length;
-  const savedCount = wishlist.length;
-  const quizCompleted = currentUser?.quizResults ? '100%' : 'Pending';
 
   const lastFetchedSignature = React.useRef<string>('');
 
@@ -292,11 +283,15 @@ export default function Home() {
               shortName: u.shortName,
               city: u.city,
               state: u.state,
-              tuitionFee: u.tuitionFee,
+              tuitionFee: u.convenerFee ?? u.tuitionFee,
               avgPackage: u.avgPackage,
               placementRate: u.placementRate,
               naac: u.naac,
-              tags: u.tags
+              tags: u.tags,
+              image: u.image,
+              branches: u.branches,
+              code: u.code,
+              district: u.district,
             }))
           }),
           signal: controller.signal
@@ -304,12 +299,21 @@ export default function Home() {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         if (!isCancelled) {
-          setRecommendations(data.recommendations || []);
+          const uniMap = new Map(universities.map(u => [u.id, u]));
+          const rawRecs = data.recommendations || [];
+          const enriched = rawRecs.map((r: any) => {
+            const full = uniMap.get(r.id);
+            return full ? { ...full, ...r, image: full.image || r.image } : r;
+          }).filter((u: any) => u && u.name);
+          setRecommendations(enriched);
           lastFetchedSignature.current = signature;
         }
       } catch (err: any) {
         if (err.name !== 'AbortError') {
           console.error('Failed to fetch recommendations:', err);
+          // Fallback to top institutions so recommendation cards always show images
+          const fallback = [...universities].sort((a, b) => (b.placementRate || 0) - (a.placementRate || 0)).slice(0, 6);
+          if (!isCancelled) setRecommendations(fallback);
         }
       } finally {
         if (!isCancelled) {
@@ -324,7 +328,7 @@ export default function Home() {
       isCancelled = true;
       controller.abort();
     };
-  }, [currentUser?.id, universities.length, loadingColleges]);
+  }, [currentUser?.id, universities, loadingColleges]);
 
   // Pull cloud-synced quiz results, fall back to best-match sort
   const topUniversities = useMemo(() => {
@@ -386,7 +390,9 @@ export default function Home() {
           }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative', zIndex: 2 }}>
               <HolographicBadge>
-                <span style={{ color: 'var(--primary)', fontWeight: '700' }}>🎓 EduDiscovery Student Hub</span>
+                <span style={{ color: 'var(--primary)', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                  <GraduationCap size={15} /> EduDiscovery Student Hub
+                </span>
               </HolographicBadge>
               <h1 style={{ fontSize: '40px', fontWeight: '900', lineHeight: 1.15, display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-main)' }}>
                 Hey {firstName}! 
@@ -396,7 +402,7 @@ export default function Home() {
               </p>
               
               {/* Preference capsules */}
-              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '4px' }}>
+              {/* <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '4px' }}>
                 <span style={{ fontSize: '12px', fontWeight: '700', background: 'var(--surface-glass)', padding: '6px 14px', borderRadius: '99px', border: '1px solid var(--border)', display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--text-main)' }}>
                   <Laptop size={14} style={{ color: 'var(--primary)' }} /> {typeof currentUser?.quizResults?.answers?.branch === 'string' ? currentUser.quizResults.answers.branch : (currentUser?.branchPreference as string) || 'Any Stream'}
                 </span>
@@ -406,7 +412,7 @@ export default function Home() {
                 <span style={{ fontSize: '12px', fontWeight: '700', background: 'var(--surface-glass)', padding: '6px 14px', borderRadius: '99px', border: '1px solid var(--border)', display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--text-main)' }}>
                   <MapPin size={14} style={{ color: 'var(--primary)' }} /> {typeof currentUser?.quizResults?.answers?.location === 'string' ? currentUser.quizResults.answers.location : 'Any Region'}
                 </span>
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -426,9 +432,11 @@ export default function Home() {
               gap: '16px'
             }}>
               <div style={{ fontSize: '13px', fontWeight: '800', letterSpacing: '0.5px', textTransform: 'uppercase', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Sparkles size={18} /> EAPCET / ICET Predictor
+                <ListOrdered size={18} /> AP EAPCET Web-Options Assistant
               </div>
-              <p style={{ color: 'var(--text-muted)', fontSize: '13px', margin: 0 }}>Enter your rank to see a quick list of top matching colleges.</p>
+              <p style={{ color: 'var(--text-muted)', fontSize: '13px', margin: 0 }}>
+                Enter your rank to generate your prioritized Dream ➔ Target ➔ Safe choice sheet with official college codes.
+              </p>
               <form onSubmit={handleQuickPredict} style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
                 <input
                   type="number"
@@ -464,7 +472,7 @@ export default function Home() {
                     cursor: 'pointer',
                   }}
                 >
-                  Predict
+                  Generate
                 </MagneticButton>
               </form>
             </div>
@@ -498,13 +506,13 @@ export default function Home() {
               <motion.div
                 whileHover={{ scale: 1.02, y: -2 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => navigate('/quiz')}
+                onClick={() => navigate('/web-options')}
                 style={{
                   background: isMobile ? 'var(--surface)' : 'var(--surface-glass)', backdropFilter: isMobile ? 'none' : 'blur(16px)', border: '1px solid var(--border)', borderRadius: '16px', padding: '16px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: 'var(--shadow-sm)'
                 }}
               >
-                <Compass size={24} color="var(--primary)" />
-                <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-main)' }}>Finder Quiz</span>
+                <ListOrdered size={24} color="var(--primary)" />
+                <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-main)' }}>Web Options</span>
               </motion.div>
               <motion.div
                 whileHover={{ scale: 1.02, y: -2 }}
@@ -525,70 +533,40 @@ export default function Home() {
 
         {/* ── Recently Viewed (Phase 3) ── */}
         {recentViews.length > 0 && (
-          <motion.div 
-            initial={{ opacity: 0, y: 25 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ type: "spring", stiffness: 120, damping: 15 }}
-            style={{ marginBottom: '48px' }}
-          >
+          <div style={{ marginBottom: '48px' }}>
             <SectionRow icon={<Clock size={18} />} title="Recently Viewed" />
-            <motion.div 
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, margin: "-40px" }}
-              className="scroll-row"
-            >
+            <div className="scroll-row">
               {recentViewsColleges.map((uni: University) => (
-                <motion.div key={uni.id} variants={itemVariants}>
+                <div key={uni.id}>
                   <UniversityCard university={uni} compact />
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         )}
 
         {/* ── Personalized Recommendations (Phase 3) ── */}
         {(loadingRecs || recommendations.length > 0) && (
-          <motion.div 
-            initial={{ opacity: 0, y: 25 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ type: "spring", stiffness: 120, damping: 15 }}
-            style={{ marginBottom: '48px' }}
-          >
+          <div style={{ marginBottom: '48px' }}>
             <SectionRow icon={<Zap size={18} />} title="Recommended for You" />
             {loadingRecs ? (
               <div className="h-48 flex items-center justify-center">
                 <span className="text-slate-400 text-sm font-medium animate-pulse">Loading recommendations...</span>
               </div>
             ) : (
-              <motion.div 
-                variants={containerVariants}
-                initial="hidden"
-                whileInView="show"
-                viewport={{ once: true, margin: "-40px" }}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-              >
-                {(isMobile ? recommendations.slice(0, 2) : recommendations).map((uni) => (
-                  <motion.div key={uni.id} variants={itemVariants}>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {recommendations.slice(0, 8).map((uni) => (
+                  <div key={uni.id}>
                     <UniversityCard university={uni} />
-                  </motion.div>
+                  </div>
                 ))}
-              </motion.div>
+              </div>
             )}
-          </motion.div>
+          </div>
         )}
 
         {/* ── Top Matches ── */}
-        <motion.div 
-          initial={{ opacity: 0, y: 25 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ type: "spring", stiffness: 120, damping: 15 }}
-          style={{ marginBottom: '48px' }}
-        >
+        <div style={{ marginBottom: '48px' }}>
           <SectionRow
             icon={<Sparkles size={18} />}
             title="Top Matches For You"
@@ -611,41 +589,29 @@ export default function Home() {
                   ))}
                 </div>
 
-                <motion.div 
-                  variants={containerVariants}
-                  initial="hidden"
-                  whileInView="show"
-                  viewport={{ once: true, margin: "-40px" }}
-                  className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-                >
+                <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {topUniversities.map((uni: University) => (
-                    <motion.div key={uni.id} variants={itemVariants}>
+                    <div key={uni.id}>
                       <UniversityCard university={uni} />
-                    </motion.div>
+                    </div>
                   ))}
-                </motion.div>
+                </div>
               </>
             )}
           </div>
-        </motion.div>
+        </div>
 
         {/* ── Action Banners ── */}
-        <motion.div 
-          initial={{ opacity: 0, y: 25 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ type: "spring", stiffness: 120, damping: 15 }}
-          style={{ marginBottom: '48px' }}
-        >
+        <div style={{ marginBottom: '48px' }}>
           <SectionRow icon={<LayoutGrid size={18} />} title="Explore Tools" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            {/* Quiz Banner */}
+            {/* Web Options Assistant Banner */}
             <motion.div
               whileHover={{ y: -4, scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               className="glow-up"
-              onClick={() => navigate('/quiz')}
+              onClick={() => navigate('/web-options')}
               style={{
                 borderRadius: 'var(--radius-lg)',
                 padding: '32px 28px', cursor: 'pointer',
@@ -656,18 +622,18 @@ export default function Home() {
               }}
             >
               <div style={{ flex: 1 }}>
-                <p style={{ color: 'var(--text-muted)', fontSize: '12px', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: '800' }}>Not sure where to start?</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '12px', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: '800' }}>Official EAPCET Option Entry</p>
                 <h3 style={{ color: 'var(--text-main)', fontSize: '22px', fontWeight: '900', marginBottom: '16px', lineHeight: 1.25 }}>
-                  Start the 2-Minute<br />Future Fit Quiz
+                  AP EAPCET<br />Web-Options Assistant
                 </h3>
                 <div 
                   style={{ background: 'var(--primary)', color: '#fff', padding: '10px 24px', borderRadius: '999px', fontSize: '14px', fontWeight: '800', display: 'inline-block' }}
                 >
-                  Take Quiz →
+                  Open Web Options →
                 </div>
               </div>
               <div style={{ flexShrink: 0, marginLeft: '16px' }}>
-                <Target size={64} color="var(--primary)" opacity={0.8} strokeWidth={1} />
+                <ListOrdered size={64} color="var(--primary)" opacity={0.8} strokeWidth={1} />
               </div>
             </motion.div>
 
@@ -702,16 +668,10 @@ export default function Home() {
               </div>
             </motion.div>
           </div>
-        </motion.div>
+        </div>
 
         {/* ── Latest News ── */}
-        <motion.div 
-          initial={{ opacity: 0, y: 25 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ type: "spring", stiffness: 120, damping: 15 }}
-          style={{ marginBottom: '40px' }}
-        >
+        <div style={{ marginBottom: '40px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <div style={{
@@ -736,28 +696,19 @@ export default function Home() {
             </div>
           </div>
 
-          <motion.div 
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-40px" }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            {liveNews.slice(0, 3).map((article: NewsArticle) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {liveNews.slice(0, 6).map((article: NewsArticle) => (
               <motion.div
                 key={article.id}
-                variants={itemVariants}
                 onClick={() => setActiveNews(article)}
                 className="glow-up"
-                whileHover={{ y: -6, scale: 1.02, rotateX: 1.5 }}
+                whileHover={{ y: -6, scale: 1.02 }}
                 style={{
                   border: '1px solid var(--border)',
                   background: 'var(--surface)', borderRadius: 'var(--radius-md)',
                   padding: '20px', cursor: 'pointer', boxShadow: 'var(--shadow-sm)',
                   display: 'flex', flexDirection: 'column',
                   height: '100%', transition: 'all 0.25s cubic-bezier(0.25,1,0.5,1)',
-                  transformStyle: 'preserve-3d',
-                  perspective: '600px',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
@@ -781,12 +732,12 @@ export default function Home() {
                 </div>
               </motion.div>
             ))}
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
       </div>
 
-      {activeNews && <NewsModal article={activeNews} onClose={() => setActiveNews(null)} />}
+      {activeNews && createPortal(<NewsModal article={activeNews} onClose={() => setActiveNews(null)} />, document.body)}
     </div>
   );
 }

@@ -42,8 +42,17 @@ export default async function newsHandler(req, res) {
         const sourceName = sourceMatch ? sourceMatch[1].trim() : 'AP Education';
         const cleanTitle = rawTitle.replace(new RegExp(`\\s*-\\s*${sourceName}$`), '').trim();
 
+        // Strict EAPCET relevance verification
+        const isEapcetRelevant = titleLower.includes('eamcet') || 
+                                 titleLower.includes('eapcet') || 
+                                 titleLower.includes('apsche') || 
+                                 (titleLower.includes('andhra') && (titleLower.includes('counselling') || titleLower.includes('allotment') || titleLower.includes('admission')));
+        
+        if (!isEapcetRelevant) {
+          continue;
+        }
+
         // Smart Category Tagging & Aesthetics
-        const titleLower = cleanTitle.toLowerCase();
         let category = 'COUNSELLING';
         let categoryColor = '#00D4FF'; // Cyan
 
@@ -64,8 +73,9 @@ export default async function newsHandler(req, res) {
           categoryColor = '#3B82F6'; // Blue
         }
 
+        const pubDate = pubDateMatch ? new Date(pubDateMatch[1]) : new Date();
         const dateStr = pubDateMatch 
-          ? new Date(pubDateMatch[1]).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) 
+          ? pubDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) 
           : 'Recent';
 
         const content = [
@@ -84,6 +94,7 @@ export default async function newsHandler(req, res) {
           title: cleanTitle,
           summary: `${sourceName} reports official updates regarding AP EAPCET counselling, allotment orders, and statutory admissions procedures.`,
           date: dateStr,
+          timestamp: pubDate.getTime(),
           readTime: '3 min read',
           content,
           url: linkMatch ? linkMatch[1] : 'https://cets.apsche.ap.gov.in',
@@ -91,6 +102,9 @@ export default async function newsHandler(req, res) {
         });
       }
     }
+
+    // Sort by newest publication date
+    articles.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
     if (articles.length > 0) {
       cachedNews = articles;

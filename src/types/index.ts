@@ -32,12 +32,37 @@ export interface BranchCutoff {
   ocBoys: number;      // Open Competition Boys / General Pool
   ocGirls: number;     // Open Competition Girls Pool (33% horizontal)
   ews?: number;        // Economically Weaker Section
+  ewsBoys?: number;
+  ewsGirls?: number;
   bcA?: number;        // Backward Class - A
+  bcABoys?: number;
+  bcAGirls?: number;
   bcB?: number;        // Backward Class - B
+  bcBBoys?: number;
+  bcBGirls?: number;
+  bcC?: number;        // Backward Class - C
+  bcCBoys?: number;
+  bcCGirls?: number;
   bcD?: number;        // Backward Class - D
+  bcDBoys?: number;
+  bcDGirls?: number;
   bcE?: number;        // Backward Class - E
+  bcEBoys?: number;
+  bcEGirls?: number;
   sc?: number;         // Scheduled Caste
+  scBoys?: number;
+  scGirls?: number;
   st?: number;         // Scheduled Tribe
+  stBoys?: number;
+  stGirls?: number;
+  source?: {
+    authority: string;
+    documentRef: string;
+    academicYear: string;
+    counselingPhase: string;
+    sourceUrl?: string;
+    verifiedAt?: string;
+  };
 }
 
 export interface University {
@@ -62,8 +87,12 @@ export interface University {
   convenerFee?: number; // Statutory Category-A Convenor Quota Fee in ₹/yr
   mgmtFee?: number;     // Category-B Management Quota Fee in ₹/yr
   topRecruiters?: PlacementRecord[]; // Top 3 verified recruiters
+  district?: string;
   region?: 'AU' | 'SVU' | 'Statewide'; // AP Local Quota Region
   lastVerified?: string;
+  tuitionFee?: number;  // Fallback tuition fee reference
+  fees?: string;        // Fallback fee display string
+  mgmtFees?: string;    // Fallback mgmt fee display string
   programs: Program[];
   placements?: PlacementRecord[];
   faculty: Faculty[];
@@ -75,6 +104,13 @@ export interface University {
   avgPackage?: number;      // Average placement package in ₹ (e.g. 1200000 = ₹12 LPA)
   placementRate?: number;   // 0-100 percentage
   feeIntelligence?: FeeIntelligence;
+  feeAttribution?: {
+    authority: string;
+    orderNumber: string;
+    blockPeriod: string;
+    statutoryMaxConvenorFee: number;
+    eligibleForJvdReimbursement: boolean;
+  };
 }
 
 export interface FeeIntelligence {

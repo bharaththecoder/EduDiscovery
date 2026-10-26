@@ -697,7 +697,7 @@ export default function PredictorPage() {
     ];
 
     navigator.clipboard.writeText(lines.join('\n'));
-    showToast('📋 Copied Choice List of Top 20 Recommendations to Clipboard!', 'success');
+    showToast('Copied Choice List of Top 20 Recommendations to Clipboard', 'success');
   };
 
   const handleAskAiOptions = () => {
@@ -1049,7 +1049,7 @@ export default function PredictorPage() {
                       className="btn btn-primary btn-full"
                       style={{ padding: '12px', borderRadius: '12px', fontSize: '13px', fontWeight: '800' }}
                     >
-                      Celebrate Matches 🎉
+                      Celebrate Matches
                     </ConfettiButton>
                   </div>
                 </div>
