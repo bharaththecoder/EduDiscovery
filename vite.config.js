@@ -17,6 +17,7 @@ export default defineConfig({
       },
       manifest: false,
       workbox: {
+        maximumFileSizeToCacheInBytes: 15 * 1024 * 1024,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
         navigateFallback: '/index.html',
         cleanupOutdatedCaches: true,
@@ -66,7 +67,11 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
+            if (id.includes('@mlc-ai/web-llm') || id.includes('@google/generative-ai')) return 'ai-vendor';
             if (id.includes('firebase')) return 'firebase';
+            if (id.includes('framer-motion')) return 'motion-vendor';
+            if (id.includes('recharts')) return 'charts-vendor';
+            if (id.includes('lucide-react')) return 'icons-vendor';
             if (id.includes('/node_modules/react/') || id.includes('/node_modules/react-dom/') || id.includes('/node_modules/react-router-dom/')) return 'react-vendor';
             return 'vendor';
           }
