@@ -27,34 +27,46 @@ export interface PlacementRecord {
   year: number;
 }
 
-export interface BranchCutoff {
+export interface CategoryCutoffs {
+  ocBoys: number | null;
+  ocGirls: number | null;
+  ews?: number | null;
+  ewsBoys?: number | null;
+  ewsGirls?: number | null;
+  bcA?: number | null;
+  bcABoys?: number | null;
+  bcAGirls?: number | null;
+  bcB?: number | null;
+  bcBBoys?: number | null;
+  bcBGirls?: number | null;
+  bcC?: number | null;
+  bcCBoys?: number | null;
+  bcCGirls?: number | null;
+  bcD?: number | null;
+  bcDBoys?: number | null;
+  bcDGirls?: number | null;
+  bcE?: number | null;
+  bcEBoys?: number | null;
+  bcEGirls?: number | null;
+  sc?: number | null;
+  scBoys?: number | null;
+  scGirls?: number | null;
+  st?: number | null;
+  stBoys?: number | null;
+  stGirls?: number | null;
+}
+
+export interface CutoffYearStatement {
+  academicYear: '2024-2025' | '2023-2024' | '2022-2023';
+  authority: 'APSCHE';
+  documentRef: string;
+  counselingPhase: string;
+  cutoffs: CategoryCutoffs;
+}
+
+export interface BranchCutoff extends CategoryCutoffs {
   branch: string;      // e.g. "CSE", "AI/ML", "IT", "ECE", "EEE", "Mechanical", "Civil"
-  ocBoys: number;      // Open Competition Boys / General Pool
-  ocGirls: number;     // Open Competition Girls Pool (33% horizontal)
-  ews?: number;        // Economically Weaker Section
-  ewsBoys?: number;
-  ewsGirls?: number;
-  bcA?: number;        // Backward Class - A
-  bcABoys?: number;
-  bcAGirls?: number;
-  bcB?: number;        // Backward Class - B
-  bcBBoys?: number;
-  bcBGirls?: number;
-  bcC?: number;        // Backward Class - C
-  bcCBoys?: number;
-  bcCGirls?: number;
-  bcD?: number;        // Backward Class - D
-  bcDBoys?: number;
-  bcDGirls?: number;
-  bcE?: number;        // Backward Class - E
-  bcEBoys?: number;
-  bcEGirls?: number;
-  sc?: number;         // Scheduled Caste
-  scBoys?: number;
-  scGirls?: number;
-  st?: number;         // Scheduled Tribe
-  stBoys?: number;
-  stGirls?: number;
+  historicalStatements?: Record<'2024' | '2023' | '2022', CategoryCutoffs>;
   source?: {
     authority: string;
     documentRef: string;
@@ -107,9 +119,12 @@ export interface University {
   feeAttribution?: {
     authority: string;
     orderNumber: string;
+    orderDate?: string;
     blockPeriod: string;
     statutoryMaxConvenorFee: number;
     eligibleForJvdReimbursement: boolean;
+    gazetteRef?: string;
+    quotaNotes?: string;
   };
 }
 

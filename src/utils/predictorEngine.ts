@@ -1,9 +1,15 @@
 // src/utils/predictorEngine.ts
 // Real-world AP EAPCET / ICET Admissions Predictor Engine
-// Driven by authentic APHERMC & APSCHE statutory cutoffs, regional quotas & fee classifications
+// Driven strictly by authentic APSCHE statutory cutoffs, regional quotas & APHERMC fee gazettes.
+// ZERO synthetic or fabricated ranks.
 
 import { University, BranchCutoff, PlacementRecord } from '@/types';
 import { getCategoryCutoff } from '@/services/collegeQueries';
+import { getAdmissionApplicability } from '@/data/admissionApplicability';
+import {
+  OFFICIAL_CUTOFF_SNAPSHOT,
+  getVerifiedClosingRank
+} from '@/data/officialCutoffSnapshot';
 
 export interface PredictionResult {
   collegeId: string;
@@ -26,6 +32,8 @@ export interface PredictionResult {
   nirf: string;
   topRecruiter?: PlacementRecord;
   reason: string;
+  isVerifiedCutoff?: boolean;
+  cutoffYear?: string;
 }
 
 export interface PredictorFilters {
@@ -42,12 +50,12 @@ export interface PredictorFilters {
 function normalizeBranchName(name: string): string {
   const n = name.toUpperCase().replace(/[^A-Z0-9/]/g, ' ').trim();
   if (n.includes('CSE') || n.includes('COMPUTER SCIENCE')) return 'CSE';
-  if (n.includes('AI') || n.includes('ML') || n.includes('DATA SCIENCE') || n.includes('ARTIFICIAL')) return 'AI/ML/DS';
-  if (n.includes('IT') || n.includes('INFORMATION')) return 'IT';
+  if (n.includes('AI') || n.includes('ML') || n.includes('DATA SCIENCE') || n.includes('ARTIFICIAL') || n === 'CSM' || n === 'AIM' || n === 'CSD') return 'AI/ML/DS';
+  if (n.includes('IT') || n.includes('INFORMATION') || n === 'INF') return 'IT';
   if (n.includes('ECE') || n.includes('ELECTRONICS AND COMMUNICATION')) return 'ECE';
   if (n.includes('EEE') || n.includes('ELECTRICAL')) return 'EEE';
-  if (n.includes('MECH') || n.includes('MECHANICAL')) return 'Mechanical';
-  if (n.includes('CIVIL')) return 'Civil';
+  if (n.includes('MECH') || n.includes('MECHANICAL') || n === 'MEC') return 'Mechanical';
+  if (n.includes('CIVIL') || n === 'CIV') return 'Civil';
   return name;
 }
 
@@ -56,7 +64,7 @@ export function predictAdmission(
   filters: PredictorFilters
 ): PredictionResult[] {
   const {
-    exam,
+    exam: _exam,
     rank,
     category,
     gender,
@@ -70,19 +78,28 @@ export function predictAdmission(
     return [];
   }
 
-  // Round multiplier: sliding rounds allow slightly higher ranks to get allotted
+  // Round multiplier: sliding rounds allow slightly higher ranks to get allotted in counseling
   const roundFactor = round === 'Round 3' ? 1.25 : (round === 'Round 2' ? 1.12 : 1.0);
 
   const results: PredictionResult[] = [];
 
   for (const uni of universities) {
+    // 1. Admission Channel & Applicability Filter
+    // Filter out institutions that do NOT participate in AP EAPCET MPC engineering admissions (e.g. medical, agri, law, degree, RGUKT 10th GPA)
+    const applicability = getAdmissionApplicability(uni.id);
+    if (applicability) {
+      if (applicability.overallApplicability === 'not_applicable' || applicability.counsellingChannel !== 'EAPCET_MPC') {
+        continue;
+      }
+    }
+
     const isPvtUniv = (uni.category || '').includes('Deemed') || (uni.category || '').includes('Private');
     const isGovt = (uni.category || '').includes('Govt') || (uni.category || '').includes('State');
-    const uniRegion = uni.region || (isPvtUniv ? 'Statewide' : 'AU');
+    const uniRegion = (uni.region as 'AU' | 'SVU' | 'Statewide') || (isPvtUniv ? 'Statewide' : 'AU');
 
-    // 1. Regional Quota evaluation:
-    // In AP, 85% seats are reserved for local candidates.
-    // If student selects AU Region and college is SVU (or vice versa), candidate competes in 15% non-local unreserved pool.
+    // 2. Regional Quota evaluation:
+    // In AP, 85% seats are reserved for local candidates (AU or SVU).
+    // If candidate selects AU Region and college is SVU (or vice versa), candidate competes in 15% non-local unreserved pool.
     let regionMultiplier = 1.0;
     if (candidateRegion !== 'All' && uniRegion !== 'Statewide' && candidateRegion !== uniRegion) {
       // Non-local quota is more competitive
@@ -95,38 +112,68 @@ export function predictAdmission(
     const mgmtFee = uni.mgmtFee || uni.feeIntelligence?.mgmtQuotaFee || 0;
     const topRecruiter = (uni.topRecruiters && uni.topRecruiters[0]) || (uni.placements && uni.placements[0]);
 
-    // 2. Iterate through cutoffs of the college
-    const collegeCutoffs = uni.cutoffs || [];
+    // 3. Official Verified Snapshot Resolution
+    const officialSnapshot = OFFICIAL_CUTOFF_SNAPSHOT[uni.id];
+    const officialCode = officialSnapshot?.code || uni.code;
 
-    // Fallback if cutoffs array is empty: construct standard branch list
-    const branchEntries: { branch: string; cutoffData?: BranchCutoff }[] = [];
-    if (collegeCutoffs.length > 0) {
-      collegeCutoffs.forEach(c => branchEntries.push({ branch: c.branch, cutoffData: c }));
-    } else {
-      const branches = uni.branches || Object.keys(uni.branchFees || {}) || ['CSE', 'ECE'];
-      branches.forEach(b => branchEntries.push({ branch: b }));
+    // Build branch list from official snapshot if available, or university cutoffs
+    interface BranchEntry {
+      branchName: string;
+      branchCode: string;
+      verifiedClosingRank?: number;
+      cutoffYear?: string;
+      isOCFallback?: boolean;
+      cutoffData?: BranchCutoff;
+    }
+
+    const branchEntries: BranchEntry[] = [];
+
+    if (officialSnapshot && Object.keys(officialSnapshot.branches).length > 0) {
+      const targetRegion = candidateRegion === 'All' ? (uniRegion === 'Statewide' ? 'SW' : uniRegion) : candidateRegion;
+      for (const [bCode] of Object.entries(officialSnapshot.branches)) {
+        const verified = getVerifiedClosingRank(uni.id, bCode, category, gender, targetRegion);
+        if (verified && verified.closingRank > 0) {
+          branchEntries.push({
+            branchName: bCode,
+            branchCode: bCode,
+            verifiedClosingRank: verified.closingRank,
+            cutoffYear: verified.latestYear,
+            isOCFallback: verified.isOCFallback
+          });
+        }
+      }
+    } else if (uni.cutoffs && uni.cutoffs.length > 0) {
+      for (const c of uni.cutoffs) {
+        const r = getCategoryCutoff(c, category, gender);
+        if (typeof r === 'number' && r > 0) {
+          branchEntries.push({
+            branchName: c.branch,
+            branchCode: c.branch,
+            verifiedClosingRank: r,
+            cutoffData: c
+          });
+        }
+      }
+    }
+
+    // Skip university if no authentic closing ranks exist
+    if (branchEntries.length === 0) {
+      continue;
     }
 
     for (const entry of branchEntries) {
-      const branchKey = normalizeBranchName(entry.branch);
+      const branchKey = normalizeBranchName(entry.branchCode);
 
       // Filter by preferred branch
       if (preferredBranch && preferredBranch !== 'All') {
         const prefNorm = normalizeBranchName(preferredBranch);
-        if (prefNorm !== branchKey && !entry.branch.toLowerCase().includes(preferredBranch.toLowerCase())) {
+        if (prefNorm !== branchKey && !entry.branchCode.toLowerCase().includes(preferredBranch.toLowerCase())) {
           continue;
         }
       }
 
-      // Compute base closing rank for Category-A
-      let baseCutoff = 35000;
-      if (entry.cutoffData) {
-        baseCutoff = getCategoryCutoff(entry.cutoffData, category, gender);
-      } else {
-        // Fallback calculation based on ranking
-        const nirfNum = parseInt((uni.nirf || '150').replace(/[^0-9]/g, ''), 10) || 100;
-        baseCutoff = Math.round((nirfNum * 350 + (entry.branch.includes('CSE') ? 3000 : 15000)) * roundFactor);
-      }
+      // Base cutoff is strictly the authentic verified closing rank
+      const baseCutoff = entry.verifiedClosingRank!;
 
       // Apply regional priority factor and round factor
       const effectiveCutoff = Math.round(baseCutoff * regionMultiplier * roundFactor);
@@ -167,10 +214,10 @@ export function predictAdmission(
             collegeId: uni.id,
             collegeName: uni.name,
             collegeShortName: uni.shortName || uni.name,
-            code: uni.code,
+            code: officialCode || uni.code,
             city: uni.city,
             region: uniRegion,
-            branch: entry.branch,
+            branch: entry.branchName,
             quota: 'Convener Quota (Cat-A)',
             quotaPercent: catAPct,
             chance,
@@ -183,7 +230,9 @@ export function predictAdmission(
             naac: uni.naac || 'B++',
             nirf: uni.nirf || '—',
             topRecruiter,
-            reason
+            reason,
+            isVerifiedCutoff: !!entry.verifiedClosingRank,
+            cutoffYear: entry.cutoffYear
           });
         }
       }
@@ -195,10 +244,10 @@ export function predictAdmission(
           collegeId: uni.id,
           collegeName: uni.name,
           collegeShortName: uni.shortName || uni.name,
-          code: uni.code,
+          code: officialCode || uni.code,
           city: uni.city,
           region: uniRegion,
-          branch: entry.branch,
+          branch: entry.branchName,
           quota: 'Management Quota (Cat-B)',
           quotaPercent: catBPct,
           chance: 'High',
@@ -211,7 +260,8 @@ export function predictAdmission(
           naac: uni.naac || 'B++',
           nirf: uni.nirf || '—',
           topRecruiter,
-          reason: `Direct merit admission under Category-B (${catBPct}% quota). Regulated institutional fee.`
+          reason: `Direct merit admission under Category-B (${catBPct}% quota). Regulated institutional fee.`,
+          isVerifiedCutoff: false
         });
       }
     }

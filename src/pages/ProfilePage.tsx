@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useToast } from '@/contexts/ToastContext';
-import { ChevronDown, ChevronUp, Bell, Shield, HelpCircle, Edit3, LogOut, Camera, Sun, Moon, Megaphone, FileText, GraduationCap, Heart, Sparkles, Rocket, BarChart3, FolderHeart } from 'lucide-react';
+import { ChevronDown, ChevronUp, Bell, Shield, HelpCircle, Edit3, Camera, FileText, Heart, CheckCircle2, BarChart3, ShieldCheck, Megaphone, GraduationCap, FolderHeart, Sun, Moon, LogOut } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import UniversityCard from '@/components/cards/UniversityCard';
@@ -12,14 +12,14 @@ import { getRecommendations } from '@/utils/quizAgent';
 import { universities } from '@/data/universities';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import { motion } from 'framer-motion';
-import { OrbitRing, AnimatedCounter3D, HolographicBadge, SpotlightCard, FloatingEmoji3D } from '@/components/Animation3DComponents';
+import { SpotlightCard } from '@/components/Animation3DComponents';
 
 const FAQS = [
   { q: 'How does the completion score work?', a: 'Your profile score is calculated based on how much information you have shared. A complete profile (Photo, Bio, Tags, and Base Info) helps us provide better college recommendations.' },
   { q: 'Can I apply to multiple universities?', a: 'Yes! You can apply to as many universities as you like from the EduDiscovery app. We recommend shortlisting 3-5 colleges and applying to all simultaneously.' },
   { q: 'How do I check scholarship eligibility?', a: 'Complete your profile with income, caste, and rank details. The app will automatically match you to applicable scholarships in the Scholarship Hub section.' },
-  { q: 'Is the college data on this app accurate?', a: 'Yes, all university data is verified from official NAAC records, university websites, and SCHE-AP announcements.' },
-  { q: 'How do I contact a counselor?', a: 'Click "Contact Counselors" on any university detail page or use the "Help Center" for general guidance.' },
+  { q: 'Is the college data on this app accurate?', a: 'Yes, all university data is verified from official NAAC records, university websites, and APSCHE official closing-rank details.' },
+  { q: 'How do I check official admission cutoffs?', a: 'Open any engineering college detail page to inspect official APSCHE closing rank distributions across branches, categories, and quota regions.' },
 ];
 
 const AVAILABLE_TAGS = [
@@ -57,7 +57,7 @@ function EditModal({ currentUser, onClose }: { currentUser: any; onClose: () => 
       });
       showToast('Profile updated in cloud', 'success');
       onClose();
-    } catch (err) {
+    } catch {
       showToast('Failed to sync profile', 'error');
     } finally {
       setLoading(false);
@@ -209,7 +209,7 @@ function HelpModal({ onClose }: { onClose: () => void }) {
 export default function Profile() {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { currentUser, logout, updateUserDoc, profileStrength: completionScore } = useAuth();
+  const { currentUser, logout, updateUserDoc } = useAuth();
   const { wishlist } = useWishlist();
   const { showToast } = useToast();
   const { theme, setTheme } = useTheme();
@@ -261,7 +261,7 @@ export default function Profile() {
         { subject: 'Rank Match', score: rankAvg },
       ]
     };
-  }, [currentUser?.quizResults?.answers, wishlist, universities]);
+  }, [currentUser?.quizResults?.answers, wishlist]);
   
 
   const handleAvatarClick = () => fileInputRef.current?.click();
@@ -280,7 +280,7 @@ export default function Profile() {
         const url = await getDownloadURL(fileRef);
         await updateUserDoc({ photoURL: url });
         showToast('Profile picture synced to cloud', 'success');
-      } catch (err) {
+      } catch {
         showToast('Upload failed', 'error');
       } finally {
         setUploading(false);
@@ -383,22 +383,33 @@ export default function Profile() {
           ))}
         </div>
 
-            {/* Daily Insights */}
+            {/* Statewide Counselling Checklist */}
             <div style={{ marginBottom: '24px' }}>
-              <h2 style={{ fontSize: '18px', fontWeight: '900', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}><Sparkles size={20} color="#f59e0b" /> Daily Insights</h2>
+              <h2 style={{ fontSize: '18px', fontWeight: '900', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <ShieldCheck size={20} color="var(--primary)" /> Admissions & Verification Checklist
+              </h2>
               <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-lg)', padding: '20px', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' }}>
-                 <p style={{ fontSize: '14px', lineHeight: 1.6, color: 'var(--text-main)', marginBottom: '12px' }}>
-                   Based on your profile as an <strong>{profile.bio}</strong> and your tags, we recommend checking out Early Action deadlines for autonomous institutions. Specifically, colleges ranked in the Top 5000 are increasingly looking for <em>{profile.tags[1] || 'well-rounded'}</em> applicants this week.
-                 </p>
-                 <div style={{ background: 'var(--primary-light)', padding: '12px 16px', borderRadius: '12px', display: 'flex', gap: '12px', alignItems: 'center' }}>
-                    <div style={{ background: '#fff', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: 'var(--shadow-sm)' }}>
-                      <Rocket size={16} color="var(--primary)" />
+                <p style={{ fontSize: '13.5px', lineHeight: 1.5, color: 'var(--text-muted)', marginBottom: '16px', fontWeight: '500' }}>
+                  Mandatory documentation required by APSCHE certificate verification centers for Convenor Quota web-counselling:
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {[
+                    { label: 'AP EAPCET Rank Card & Hall Ticket', status: 'Mandatory for Web-Options' },
+                    { label: 'Class 10 (SSC) & Intermediate Marks Memo', status: 'Date of Birth & Qualification' },
+                    { label: 'Study / Residence Certificates (Classes 6 to Inter)', status: 'Determines AU / SVU / Statewide Quota' },
+                    { label: 'Integrated Caste & Income / EWS Certificate (MeeSeva)', status: 'Required for Category Allotment & Fee Waiver' },
+                  ].map((item, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: 'var(--chip-bg)', borderRadius: '10px', border: '1px solid var(--border)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <CheckCircle2 size={16} className="text-primary shrink-0" />
+                        <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-main)' }}>{item.label}</span>
+                      </div>
+                      <span style={{ fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)', background: 'var(--surface)', padding: '3px 8px', borderRadius: '6px' }}>
+                        {item.status}
+                      </span>
                     </div>
-                    <div>
-                      <div style={{ fontSize: '12px', fontWeight: '800', color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>Action Item</div>
-                      <div style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-main)' }}>Complete 1 more university application to boost your chances.</div>
-                    </div>
-                 </div>
+                  ))}
+                </div>
               </div>
             </div>
 

@@ -1,0 +1,1036 @@
+{
+  "description": "EduDiscovery statutory mapping of official APSCHE EAPCET counselling college codes to internal university IDs",
+  "totalSupportedInstitutions": 60,
+  "mappings": {
+    "SRMUPU": {
+      "id": "srm-ap",
+      "name": "SRM University AP",
+      "city": "Amaravati",
+      "region": "SW",
+      "category": "Private University",
+      "historicalName": "S R M University AP (Amaravati)",
+      "campus": "Neerukonda, Mangalagiri Mandal, Amaravati"
+    },
+    "SRMAP": {
+      "id": "srm-ap",
+      "name": "SRM University AP",
+      "city": "Amaravati",
+      "region": "Statewide",
+      "category": "Private University"
+    },
+    "VITAPU": {
+      "id": "vit-ap",
+      "name": "VIT-AP University",
+      "city": "Amaravati",
+      "region": "SW",
+      "category": "Private University",
+      "historicalName": "VIT-AP University (Amaravati)",
+      "campus": "Inavolu, Beside AP Secretariat, Amaravati"
+    },
+    "VITAPUMT": {
+      "id": "vit-ap",
+      "name": "VIT-AP University (Integrated MTech)",
+      "city": "Amaravati",
+      "region": "Statewide",
+      "category": "Private University"
+    },
+    "VITAP": {
+      "id": "vit-ap",
+      "name": "VIT-AP University",
+      "city": "Amaravati",
+      "region": "Statewide",
+      "category": "Private University"
+    },
+    "CENUPU": {
+      "id": "centurion-university-vizianagaram",
+      "name": "Centurion University (CUTM)",
+      "city": "Vizianagaram",
+      "region": "Statewide",
+      "category": "Private University"
+    },
+    "CUTMAP": {
+      "id": "centurion-university-vizianagaram",
+      "name": "Centurion University (CUTM)",
+      "city": "Vizianagaram",
+      "region": "Statewide",
+      "category": "Private University"
+    },
+    "AITSPU": {
+      "id": "annamacharya-university-rajampet",
+      "name": "Annamacharya University",
+      "city": "Rajampet",
+      "region": "Statewide",
+      "category": "Private University"
+    },
+    "AITS": {
+      "id": "annamacharya-university-rajampet",
+      "name": "Annamacharya Inst. of Tech. & Sciences",
+      "city": "Rajampet",
+      "region": "Statewide",
+      "category": "Autonomous"
+    },
+    "AETR": {
+      "id": "annamacharya-university-rajampet",
+      "name": "Annamacharya University",
+      "city": "Rajampet",
+      "region": "Statewide",
+      "category": "Private University"
+    },
+    "NRIA": {
+      "id": "nri-institute",
+      "name": "Dr. RVR NRI University (formerly NRI Institute of Technology)",
+      "historicalName": "NRI Institute of Technology (Agiripalli / Pothavarappadu Campus)",
+      "campus": "Pothavarappadu, Agiripalli Mandal, Krishna / Eluru Dist",
+      "city": "Vijayawada",
+      "region": "AU",
+      "category": "Deemed / Private"
+    },
+    "NRIU": {
+      "id": "nri-institute",
+      "name": "Dr. RVR NRI University",
+      "historicalName": "Dr. RVR NRI University",
+      "campus": "Pothavarappadu, Agiripalli Mandal",
+      "city": "Vijayawada",
+      "region": "AU",
+      "category": "Deemed / Private"
+    },
+    "AUCE": {
+      "id": "andhra-university",
+      "name": "Andhra University College of Engineering",
+      "city": "Visakhapatnam",
+      "region": "AU",
+      "category": "State University"
+    },
+    "AUCESF": {
+      "id": "andhra-university",
+      "name": "Andhra University College of Engineering (Self-Finance)",
+      "city": "Visakhapatnam",
+      "region": "AU",
+      "category": "State University"
+    },
+    "AUEWSF": {
+      "id": "andhra-university",
+      "name": "AU College of Engg. for Women (Self-Finance)",
+      "city": "Visakhapatnam",
+      "region": "AU",
+      "category": "State University"
+    },
+    "JNTK": {
+      "id": "jntuk",
+      "name": "JNTUK College of Engineering Kakinada",
+      "city": "Kakinada",
+      "region": "AU",
+      "category": "State University"
+    },
+    "JNTKSF": {
+      "id": "jntuk",
+      "name": "JNTUK College of Engineering Kakinada (Self-Finance)",
+      "city": "Kakinada",
+      "region": "AU",
+      "category": "State University"
+    },
+    "JNTKSS": {
+      "id": "jntuk",
+      "name": "JNTUK College of Engineering Kakinada (Self-Supporting)",
+      "city": "Kakinada",
+      "region": "AU",
+      "category": "State University"
+    },
+    "JNUK": {
+      "id": "jntuk",
+      "name": "JNTU Kakinada",
+      "city": "Kakinada",
+      "region": "AU",
+      "category": "State University"
+    },
+    "JNTA": {
+      "id": "jntua-anantapur",
+      "name": "JNTUA College of Engineering Anantapur",
+      "city": "Anantapur",
+      "region": "SVU",
+      "category": "State University"
+    },
+    "SVUC": {
+      "id": "sv-university",
+      "name": "Sri Venkateswara University College of Engineering",
+      "city": "Tirupati",
+      "region": "SVU",
+      "category": "State University"
+    },
+    "SVUCSS": {
+      "id": "sv-university",
+      "name": "SVU College of Engineering (Self-Supporting)",
+      "city": "Tirupati",
+      "region": "SVU",
+      "category": "State University"
+    },
+    "ANUC": {
+      "id": "acharya-nagarjuna-university",
+      "name": "Acharya Nagarjuna University College of Engineering",
+      "city": "Guntur",
+      "region": "AU",
+      "category": "State University"
+    },
+    "ANCUSF": {
+      "id": "acharya-nagarjuna-university",
+      "name": "ANU College of Engineering (Self-Finance)",
+      "city": "Guntur",
+      "region": "AU",
+      "category": "State University"
+    },
+    "ANUPSF": {
+      "id": "acharya-nagarjuna-university",
+      "name": "ANU College of Engineering (Self-Finance)",
+      "city": "Guntur",
+      "region": "AU",
+      "category": "State University"
+    },
+    "AKNU": {
+      "id": "aknu-rajamahendravaram",
+      "name": "Adikavi Nannaya University College of Engineering",
+      "city": "Rajamahendravaram",
+      "region": "AU",
+      "category": "State University"
+    },
+    "ANURSF": {
+      "id": "aknu-rajamahendravaram",
+      "name": "Adikavi Nannaya University (Self-Finance)",
+      "city": "Rajamahendravaram",
+      "region": "AU",
+      "category": "State University"
+    },
+    "SKUC": {
+      "id": "sku-anantapur",
+      "name": "Sri Krishnadevaraya University College of Engineering",
+      "city": "Anantapur",
+      "region": "SVU",
+      "category": "State University"
+    },
+    "SKUASF": {
+      "id": "sku-anantapur",
+      "name": "SKU College of Engineering (Self-Finance)",
+      "city": "Anantapur",
+      "region": "SVU",
+      "category": "State University"
+    },
+    "RAYU": {
+      "id": "ru-kurnool",
+      "name": "Rayalaseema University College of Engineering",
+      "city": "Kurnool",
+      "region": "SVU",
+      "category": "State University"
+    },
+    "RUCESF": {
+      "id": "ru-kurnool",
+      "name": "Rayalaseema University (Self-Finance)",
+      "city": "Kurnool",
+      "region": "SVU",
+      "category": "State University"
+    },
+    "SPMV": {
+      "id": "spmvv-tirupati",
+      "name": "Sri Padmavati Mahila Visvavidyalayam School of Engineering",
+      "city": "Tirupati",
+      "region": "SVU",
+      "category": "State University Women"
+    },
+    "SPMUSF": {
+      "id": "spmvv-tirupati",
+      "name": "SPMVV School of Engineering (Self-Finance)",
+      "city": "Tirupati",
+      "region": "SVU",
+      "category": "State University Women"
+    },
+    "KRUN": {
+      "id": "krishna-university-machilipatnam",
+      "name": "Krishna University College of Engineering",
+      "city": "Machilipatnam",
+      "region": "Statewide",
+      "category": "State University"
+    },
+    "KRUESF": {
+      "id": "krishna-university-machilipatnam",
+      "name": "Krishna University College of Engineering (Self-Finance)",
+      "city": "Machilipatnam",
+      "region": "Statewide",
+      "category": "State University"
+    },
+    "VRSE": {
+      "id": "vr-siddhartha",
+      "name": "V.R. Siddhartha Engineering College",
+      "city": "Vijayawada",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "GVPE": {
+      "id": "gvpce-visakhapatnam",
+      "name": "Gayatri Vidya Parishad College of Engineering",
+      "city": "Visakhapatnam",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "RVJC": {
+      "id": "rvrjcce-guntur",
+      "name": "RVR & JC College of Engineering",
+      "city": "Guntur",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "RVRJ": {
+      "id": "rvrjcce-guntur",
+      "name": "RVR & JC College of Engineering",
+      "city": "Guntur",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "GMRI": {
+      "id": "gmrit-rajam",
+      "name": "GMR Institute of Technology",
+      "city": "Rajam",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "GMRV": {
+      "id": "gmrit-rajam",
+      "name": "GMR Institute of Technology",
+      "city": "Rajam",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "LBCE": {
+      "id": "lbrce-mylavaram",
+      "name": "Lakireddy Bali Reddy College of Engineering",
+      "city": "Mylavaram",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "LBRC": {
+      "id": "lbrce-mylavaram",
+      "name": "Lakireddy Bali Reddy College of Engineering",
+      "city": "Mylavaram",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "BECB": {
+      "id": "bec-bapatla",
+      "name": "Bapatla Engineering College",
+      "city": "Bapatla",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "VITB": {
+      "id": "vitb-bhimavaram",
+      "name": "Vishnu Institute of Technology",
+      "city": "Bhimavaram",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "VVIT": {
+      "id": "vvit-guntur",
+      "name": "Vasireddy Venkatadri Institute of Technology",
+      "city": "Guntur",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "GDLV": {
+      "id": "gec-gudlavalleru",
+      "name": "Seshadri Rao Gudlavalleru Engineering College",
+      "city": "Gudlavalleru",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "SRKR": {
+      "id": "srkrec-bhimavaram",
+      "name": "Sagi Ramakrishnam Raju Engineering College",
+      "city": "Bhimavaram",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "ADIT": {
+      "id": "aitam-tekkali",
+      "name": "Aditya Institute of Technology and Management",
+      "city": "Tekkali",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "AITM": {
+      "id": "aitam-tekkali",
+      "name": "Aditya Institute of Technology and Management",
+      "city": "Tekkali",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "VISW": {
+      "id": "svecw-bhimavaram",
+      "name": "Shri Vishnu Engineering College for Women",
+      "city": "Bhimavaram",
+      "region": "AU",
+      "category": "Autonomous Women"
+    },
+    "BVMW": {
+      "id": "svecw-bhimavaram",
+      "name": "Shri Vishnu Engineering College for Women",
+      "city": "Bhimavaram",
+      "region": "AU",
+      "category": "Autonomous Women"
+    },
+    "NSPE": {
+      "id": "nec-narasaraopeta",
+      "name": "Narasaraopeta Engineering College",
+      "city": "Narasaraopeta",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "NRTE": {
+      "id": "nec-narasaraopeta",
+      "name": "Narasaraopeta Engineering College",
+      "city": "Narasaraopeta",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "PRAG": {
+      "id": "pec-surampalem",
+      "name": "Pragati Engineering College",
+      "city": "Surampalem",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "ALIT": {
+      "id": "aliet-vijayawada",
+      "name": "Andhra Loyola Institute of Engineering & Technology",
+      "city": "Vijayawada",
+      "region": "AU",
+      "category": "Private"
+    },
+    "ALIE": {
+      "id": "aliet-vijayawada",
+      "name": "Andhra Loyola Institute of Engineering & Technology",
+      "city": "Vijayawada",
+      "region": "AU",
+      "category": "Private"
+    },
+    "MVRG": {
+      "id": "mvgrce-vizianagaram",
+      "name": "MVGR College of Engineering",
+      "city": "Vizianagaram",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "MVGR": {
+      "id": "mvgrce-vizianagaram",
+      "name": "MVGR College of Engineering",
+      "city": "Vizianagaram",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "LIET": {
+      "id": "liet-rajam",
+      "name": "Lendi Institute of Engineering and Technology",
+      "city": "Vizianagaram",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "LEND": {
+      "id": "liet-rajam",
+      "name": "Lendi Institute of Engineering and Technology",
+      "city": "Vizianagaram",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "QISE": {
+      "id": "qiscet-ongole",
+      "name": "QIS College of Engineering and Technology",
+      "city": "Ongole",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "QISC": {
+      "id": "qiscet-ongole",
+      "name": "QIS College of Engineering and Technology",
+      "city": "Ongole",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "KIET": {
+      "id": "kiet-kakinada",
+      "name": "Kakinada Institute of Engineering and Technology",
+      "city": "Kakinada",
+      "region": "AU",
+      "category": "Private"
+    },
+    "PPSV": {
+      "id": "pvpsit-vijayawada",
+      "name": "Prasad V Potluri Siddhartha Institute of Technology",
+      "city": "Vijayawada",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "PVPS": {
+      "id": "pvpsit-vijayawada",
+      "name": "Prasad V Potluri Siddhartha Institute of Technology",
+      "city": "Vijayawada",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "RAGU": {
+      "id": "raghu-engineering-visakhapatnam",
+      "name": "Raghu Engineering College",
+      "city": "Visakhapatnam",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "RAGH": {
+      "id": "raghu-engineering-visakhapatnam",
+      "name": "Raghu Engineering College",
+      "city": "Visakhapatnam",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "SDTN": {
+      "id": "sietk-puttur",
+      "name": "Siddharth Institute of Engineering & Technology",
+      "city": "Puttur",
+      "region": "SVU",
+      "category": "Autonomous"
+    },
+    "SIET": {
+      "id": "sietk-puttur",
+      "name": "Siddharth Institute of Engineering & Technology",
+      "city": "Puttur",
+      "region": "SVU",
+      "category": "Autonomous"
+    },
+    "VSVT": {
+      "id": "svec-tadepalligudem",
+      "name": "Sri Vasavi Engineering College",
+      "city": "Tadepalligudem",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "VASV": {
+      "id": "svec-tadepalligudem",
+      "name": "Sri Vasavi Engineering College",
+      "city": "Tadepalligudem",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "SVCT": {
+      "id": "svce-tirupati",
+      "name": "Sri Venkateswara College of Engineering",
+      "city": "Tirupati",
+      "region": "SVU",
+      "category": "Autonomous"
+    },
+    "ADTP": {
+      "id": "aec-surampalem",
+      "name": "Aditya Engineering College",
+      "city": "Surampalem",
+      "region": "AU",
+      "category": "Autonomous"
+    },
+    "ADTPPU": {
+      "id": "aec-surampalem",
+      "name": "Aditya University (formerly Aditya Engineering College)",
+      "city": "Surampalem",
+      "region": "AU",
+      "category": "Private University"
+    }
+  },
+  "supportedRegistry": [
+    {
+      "id": "srm-ap",
+      "name": "SRM University AP",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "SRMUPU",
+        "SRMAP"
+      ]
+    },
+    {
+      "id": "vit-ap",
+      "name": "VIT-AP University",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "VITAPU",
+        "VITAPUMT",
+        "VITAP"
+      ]
+    },
+    {
+      "id": "gitam",
+      "name": "GITAM University",
+      "counsellingChannel": "DEEMED_DIRECT",
+      "counsellingCodes": [],
+      "note": "Admits via GAT; does not participate in EAPCET MPC convenor allotment"
+    },
+    {
+      "id": "kl-university",
+      "name": "KL University (KLEF)",
+      "counsellingChannel": "DEEMED_DIRECT",
+      "counsellingCodes": [],
+      "note": "Admits via KLEEE; does not participate in EAPCET MPC convenor allotment"
+    },
+    {
+      "id": "vignan-university",
+      "name": "Vignan University",
+      "counsellingChannel": "DEEMED_DIRECT",
+      "counsellingCodes": [],
+      "note": "Admits via V-SAT; does not participate in EAPCET MPC convenor allotment"
+    },
+    {
+      "id": "amrita-ap",
+      "name": "Amrita Vishwa Vidyapeetham – AP",
+      "counsellingChannel": "DEEMED_DIRECT",
+      "counsellingCodes": [],
+      "note": "Admits via AEEE; does not participate in EAPCET MPC convenor allotment"
+    },
+    {
+      "id": "nri-institute",
+      "name": "Dr. RVR NRI University",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "NRIA",
+        "NRIU"
+      ]
+    },
+    {
+      "id": "krea-university-sri-city",
+      "name": "Krea University",
+      "counsellingChannel": "DEEMED_DIRECT",
+      "counsellingCodes": [],
+      "note": "Private University with independent liberal arts & sciences admissions"
+    },
+    {
+      "id": "centurion-university-vizianagaram",
+      "name": "Centurion University (CUTM)",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "CENUPU",
+        "CUTMAP"
+      ]
+    },
+    {
+      "id": "annamacharya-university-rajampet",
+      "name": "Annamacharya University",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "AITSPU",
+        "AITS",
+        "AETR"
+      ]
+    },
+    {
+      "id": "sssihl-prasanthi-nilayam",
+      "name": "Sri Sathya Sai Institute (SSSIHL)",
+      "counsellingChannel": "DEEMED_DIRECT",
+      "counsellingCodes": [],
+      "note": "Deemed University with values-based internal entrance test"
+    },
+    {
+      "id": "vr-siddhartha",
+      "name": "V.R. Siddhartha Engineering College",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "VRSE"
+      ]
+    },
+    {
+      "id": "gvpce-visakhapatnam",
+      "name": "Gayatri Vidya Parishad (GVPCE)",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "GVPE"
+      ]
+    },
+    {
+      "id": "rvrjcce-guntur",
+      "name": "RVR & JC College of Engineering",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "RVJC",
+        "RVRJ"
+      ]
+    },
+    {
+      "id": "gmrit-rajam",
+      "name": "GMR Institute of Technology",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "GMRI",
+        "GMRV"
+      ]
+    },
+    {
+      "id": "lbrce-mylavaram",
+      "name": "Lakireddy Bali Reddy College of Engg.",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "LBCE",
+        "LBRC"
+      ]
+    },
+    {
+      "id": "bec-bapatla",
+      "name": "Bapatla Engineering College",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "BECB"
+      ]
+    },
+    {
+      "id": "vitb-bhimavaram",
+      "name": "Vishnu Institute of Technology",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "VITB"
+      ]
+    },
+    {
+      "id": "vvit-guntur",
+      "name": "Vasireddy Venkatadri Inst. of Tech.",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "VVIT"
+      ]
+    },
+    {
+      "id": "gec-gudlavalleru",
+      "name": "Seshadri Rao Gudlavalleru Engg. College",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "GDLV"
+      ]
+    },
+    {
+      "id": "srkrec-bhimavaram",
+      "name": "Sagi Ramakrishnam Raju Engg. College",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "SRKR"
+      ]
+    },
+    {
+      "id": "aitam-tekkali",
+      "name": "Aditya Inst. of Tech. and Mgmt.",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "ADIT",
+        "AITM"
+      ]
+    },
+    {
+      "id": "svecw-bhimavaram",
+      "name": "Shri Vishnu Engg. College for Women",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "VISW",
+        "BVMW"
+      ]
+    },
+    {
+      "id": "nec-narasaraopeta",
+      "name": "Narasaraopeta Engineering College",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "NSPE",
+        "NRTE"
+      ]
+    },
+    {
+      "id": "pec-surampalem",
+      "name": "Pragati Engineering College",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "PRAG"
+      ]
+    },
+    {
+      "id": "aliet-vijayawada",
+      "name": "Andhra Loyola Inst. of Engg. & Tech.",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "ALIT",
+        "ALIE"
+      ]
+    },
+    {
+      "id": "mvgrce-vizianagaram",
+      "name": "MVGR College of Engineering",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "MVRG",
+        "MVGR"
+      ]
+    },
+    {
+      "id": "liet-rajam",
+      "name": "Lendi Inst. of Engg. and Technology",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "LIET",
+        "LEND"
+      ]
+    },
+    {
+      "id": "qiscet-ongole",
+      "name": "QIS College of Engg. and Tech.",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "QISE",
+        "QISC"
+      ]
+    },
+    {
+      "id": "kiet-kakinada",
+      "name": "Kakinada Inst. of Engg. and Tech.",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "KIET"
+      ]
+    },
+    {
+      "id": "pvpsit-vijayawada",
+      "name": "Prasad V Potluri Siddhartha Inst. of Tech.",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "PPSV",
+        "PVPS"
+      ]
+    },
+    {
+      "id": "raghu-engineering-visakhapatnam",
+      "name": "Raghu Engineering College",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "RAGU",
+        "RAGH"
+      ]
+    },
+    {
+      "id": "sietk-puttur",
+      "name": "Siddharth Inst. of Engg. & Tech.",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "SDTN",
+        "SIET"
+      ]
+    },
+    {
+      "id": "svec-tadepalligudem",
+      "name": "Sri Vasavi Engineering College",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "VSVT",
+        "VASV"
+      ]
+    },
+    {
+      "id": "svce-tirupati",
+      "name": "Sri Venkateswara College of Engg.",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "SVCT"
+      ]
+    },
+    {
+      "id": "aec-surampalem",
+      "name": "Aditya Engineering College",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "ADTP",
+        "ADTPPU"
+      ]
+    },
+    {
+      "id": "andhra-university",
+      "name": "Andhra University",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "AUCE",
+        "AUCESF",
+        "AUEWSF"
+      ]
+    },
+    {
+      "id": "sv-university",
+      "name": "Sri Venkateswara University",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "SVUC",
+        "SVUCSS"
+      ]
+    },
+    {
+      "id": "jntuk",
+      "name": "JNTU Kakinada",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "JNTK",
+        "JNTKSF",
+        "JNTKSS",
+        "JNUK"
+      ]
+    },
+    {
+      "id": "jntua-anantapur",
+      "name": "JNTU Anantapur",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "JNTA"
+      ]
+    },
+    {
+      "id": "acharya-nagarjuna-university",
+      "name": "Acharya Nagarjuna University",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "ANUC",
+        "ANCUSF",
+        "ANUPSF"
+      ]
+    },
+    {
+      "id": "aknu-rajamahendravaram",
+      "name": "Adikavi Nannaya University",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "AKNU",
+        "ANURSF"
+      ]
+    },
+    {
+      "id": "sku-anantapur",
+      "name": "Sri Krishnadevaraya University",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "SKUC",
+        "SKUASF"
+      ]
+    },
+    {
+      "id": "yvu-kadapa",
+      "name": "Yogi Vemana University",
+      "counsellingChannel": "DIRECT_DEGREE",
+      "counsellingCodes": [],
+      "notes": "State university with non-EAPCET direct degree admissions / PG programs"
+    },
+    {
+      "id": "vsu-nellore",
+      "name": "Vikrama Simhapuri University",
+      "counsellingChannel": "DIRECT_DEGREE",
+      "counsellingCodes": [],
+      "notes": "State university with non-EAPCET direct degree admissions / PG programs"
+    },
+    {
+      "id": "ru-kurnool",
+      "name": "Rayalaseema University",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "RAYU",
+        "RUCESF"
+      ]
+    },
+    {
+      "id": "spmvv-tirupati",
+      "name": "Sri Padmavati Mahila Visvavidyalayam",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "SPMV",
+        "SPMUSF"
+      ]
+    },
+    {
+      "id": "rgukt-ap",
+      "name": "RGUKT – AP (IIIT Nuzvid)",
+      "counsellingChannel": "DIRECT_10TH_GPA",
+      "counsellingCodes": [],
+      "note": "Admits based on Class 10 GPA; does not participate in EAPCET MPC counselling"
+    },
+    {
+      "id": "krishna-university-machilipatnam",
+      "name": "Krishna University",
+      "counsellingChannel": "EAPCET_MPC",
+      "counsellingCodes": [
+        "KRUN",
+        "KRUESF"
+      ]
+    },
+    {
+      "id": "dravidian-university-kuppam",
+      "name": "Dravidian University",
+      "counsellingChannel": "DIRECT_ARTS",
+      "counsellingCodes": [],
+      "note": "Specialized language/humanities university without EAPCET MPC engineering seats"
+    },
+    {
+      "id": "ntruhs-vijayawada",
+      "name": "Dr. NTR University of Health Sciences",
+      "counsellingChannel": "NEET_UG",
+      "counsellingCodes": [],
+      "note": "State medical university admitting via NEET UG"
+    },
+    {
+      "id": "amc-visakhapatnam",
+      "name": "Andhra Medical College",
+      "counsellingChannel": "NEET_UG",
+      "counsellingCodes": [],
+      "note": "Medical college admitting via NEET UG"
+    },
+    {
+      "id": "gmc-guntur",
+      "name": "Guntur Medical College",
+      "counsellingChannel": "NEET_UG",
+      "counsellingCodes": [],
+      "note": "Medical college admitting via NEET UG"
+    },
+    {
+      "id": "rmc-kakinada",
+      "name": "Rangaraya Medical College",
+      "counsellingChannel": "NEET_UG",
+      "counsellingCodes": [],
+      "note": "Medical college admitting via NEET UG"
+    },
+    {
+      "id": "gsmc-vijayawada",
+      "name": "Govt. Siddhartha Medical College",
+      "counsellingChannel": "NEET_UG",
+      "counsellingCodes": [],
+      "note": "Medical college admitting via NEET UG"
+    },
+    {
+      "id": "angrau-guntur",
+      "name": "Acharya N.G. Ranga Agri University",
+      "counsellingChannel": "ICAR_BIPC",
+      "counsellingCodes": [],
+      "note": "Agricultural university admitting via BiPC/ICAR counselling"
+    },
+    {
+      "id": "svvu-tirupati",
+      "name": "Sri Venkateswara Veterinary Univ.",
+      "counsellingChannel": "NEET_BIPC",
+      "counsellingCodes": [],
+      "note": "Veterinary university admitting via BiPC/NEET counselling"
+    },
+    {
+      "id": "dsnlu-visakhapatnam",
+      "name": "Damodaram Sanjivayya National Law Univ.",
+      "counsellingChannel": "CLAT",
+      "counsellingCodes": [],
+      "note": "National Law University admitting via CLAT"
+    },
+    {
+      "id": "andhra-loyola-college-vijayawada",
+      "name": "Andhra Loyola College",
+      "counsellingChannel": "DIRECT_DEGREE",
+      "counsellingCodes": [],
+      "note": "Autonomous degree college for BA, B.Sc, B.Com admissions"
+    },
+    {
+      "id": "pbsiddhartha-college-vijayawada",
+      "name": "PB Siddhartha College of Arts & Sci.",
+      "counsellingChannel": "DIRECT_DEGREE",
+      "counsellingCodes": [],
+      "note": "Degree college for undergraduate arts and sciences"
+    }
+  ]
+}

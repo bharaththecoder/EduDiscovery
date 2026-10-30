@@ -1,35 +1,14 @@
-import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { Search, SlidersHorizontal, Sparkles, AlertCircle, TrendingUp, LayoutGrid, Map, GraduationCap, Coins } from 'lucide-react';
-import { motion, AnimatePresence, Variants } from 'framer-motion';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Search, SlidersHorizontal, LayoutGrid, Map, GraduationCap, Coins } from 'lucide-react';
+import { motion } from 'framer-motion';
 import UniversityCard from '@/components/cards/UniversityCard';
-import { MagneticButton, HolographicBadge } from '@/components/Animation3DComponents';
+import { MagneticButton } from '@/components/Animation3DComponents';
 import CampusMapExplorer from '@/components/map/CampusMapExplorer';
 import { useUniversities } from '@/contexts/UniversityContext';
-import { useAuth } from '@/contexts/AuthContext';
-import { trackSearch } from '@/services/activityTracker';
 
 const CITIES = ['Amaravati', 'Visakhapatnam', 'Vijayawada', 'Guntur', 'Kakinada', 'Tirupati'];
 const BRANCHES = ['Engineering', 'Medical', 'Arts', 'Law', 'Business', 'Sciences', 'Pharmacy'];
-
-// ─── Animation Variants ───────────────────────────────────────
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      duration: 0.15
-    }
-  }
-};
-
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 8 },
-  show: { 
-    opacity: 1, 
-    y: 0,
-    transition: { duration: 0.2, ease: "easeOut" }
-  }
-};
 
 // ─── Intent Parser ─────────────────────────────────────────────
 function parseIntent(query: string): { budget?: string; branch?: string } {
@@ -67,18 +46,35 @@ function parseIntent(query: string): { budget?: string; branch?: string } {
 }
 
 export default function SearchPage() {
-  const { currentUser } = useAuth();
   const { universities, loading: loadingColleges } = useUniversities();
-  const [query, setQuery] = useState('');
-  const [activeCities, setActiveCities] = useState<string[]>([]);
-  const [activeBranches, setActiveBranches] = useState<string[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [searchParams] = useSearchParams();
 
-  const [isAiSearch, setIsAiSearch] = useState(false);
-  const [aiResults, setAiResults] = useState<any[]>([]);
-  const [aiReasoning, setAiReasoning] = useState<string>('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // Initialize search state from URL query params or sessionStorage
+  const [query, setQuery] = useState(() => {
+    return searchParams.get('q') || sessionStorage.getItem('edudiscovery_search_query') || '';
+  });
+  const [activeCities, setActiveCities] = useState<string[]>(() => {
+    const urlCities = searchParams.get('cities');
+    if (urlCities) return urlCities.split(',').filter(Boolean);
+    try {
+      const stored = sessionStorage.getItem('edudiscovery_search_cities');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [activeBranches, setActiveBranches] = useState<string[]>(() => {
+    const urlBranches = searchParams.get('branches');
+    if (urlBranches) return urlBranches.split(',').filter(Boolean);
+    try {
+      const stored = sessionStorage.getItem('edudiscovery_search_branches');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const [viewMode, setViewMode] = useState<'grid' | 'map'>(() => {
     try {
@@ -99,7 +95,39 @@ export default function SearchPage() {
     document.title = "Search & Filter AP Engineering Colleges 2026 | EduDiscovery";
   }, []);
 
-  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Save search state to sessionStorage
+  useEffect(() => {
+    sessionStorage.setItem('edudiscovery_search_query', query);
+  }, [query]);
+
+  useEffect(() => {
+    sessionStorage.setItem('edudiscovery_search_cities', JSON.stringify(activeCities));
+  }, [activeCities]);
+
+  useEffect(() => {
+    sessionStorage.setItem('edudiscovery_search_branches', JSON.stringify(activeBranches));
+  }, [activeBranches]);
+
+  // Restore scroll position when returning from detail page
+  useEffect(() => {
+    const savedScroll = sessionStorage.getItem('edudiscovery_search_scroll');
+    if (savedScroll) {
+      const scrollY = parseInt(savedScroll, 10);
+      if (!isNaN(scrollY) && scrollY > 0) {
+        requestAnimationFrame(() => {
+          window.scrollTo({ top: scrollY, behavior: 'instant' });
+        });
+      }
+    }
+
+    const handleScroll = () => {
+      sessionStorage.setItem('edudiscovery_search_scroll', String(window.scrollY));
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   const toggleCity = (city: string) =>
@@ -128,75 +156,32 @@ export default function SearchPage() {
     return matches;
   }, [query, universities, loadingColleges]);
 
-  // Execute AI Search
-  const runAISearch = useCallback(async (q: string) => {
-    if (!q.trim()) { setIsAiSearch(false); return; }
-    setIsAiSearch(true);
-    setIsLoading(true);
-    setError(null);
-    setShowSuggestions(false);
-    try {
-      const { budget, branch } = parseIntent(q);
-      const response = await fetch('/api/search', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: q, budget, branch })
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error + (data.details ? ` (${data.details})` : ''));
-      setAiResults(data.results || []);
-      setAiReasoning(data.reasoning || '');
-      // Track search
-      if (currentUser?.id) trackSearch(currentUser.id, q);
-    } catch (err: any) {
-      setError(err.message);
-      setAiResults([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [currentUser]);
-
-  useEffect(() => {
-    document.title = "Explore Colleges | EduDiscovery AP";
-  }, []);
-
-  // Debounce: trigger AI search 600ms after typing stops
-  useEffect(() => {
-    if (debounceTimer.current) clearTimeout(debounceTimer.current);
-    if (!query.trim()) { setIsAiSearch(false); return; }
-    debounceTimer.current = setTimeout(() => runAISearch(query), 600);
-    return () => { if (debounceTimer.current) clearTimeout(debounceTimer.current); };
-  }, [query, runAISearch]);
-
-  const handleSubmit = (e?: React.FormEvent) => {
-    e?.preventDefault();
-    if (debounceTimer.current) clearTimeout(debounceTimer.current);
-    runAISearch(query);
-  };
-
-  // Local filter fallback
+  // Instant client-side search and filtering across universities
   const filtered = useMemo(() => {
-    const lowerQuery = query.toLowerCase();
+    const lowerQuery = query.toLowerCase().trim();
     return universities.filter(uni => {
-      const matchesQuery = isAiSearch || !query ||
+      const matchesQuery = !lowerQuery ||
         uni.name.toLowerCase().includes(lowerQuery) ||
+        (uni.shortName && uni.shortName.toLowerCase().includes(lowerQuery)) ||
+        (uni.code && uni.code.toLowerCase().includes(lowerQuery)) ||
         uni.city.toLowerCase().includes(lowerQuery) ||
-        uni.tags.some(t => t.toLowerCase().includes(lowerQuery));
+        (uni.district && uni.district.toLowerCase().includes(lowerQuery)) ||
+        (uni.tags && uni.tags.some(t => t.toLowerCase().includes(lowerQuery))) ||
+        (uni.branches && uni.branches.some(b => b.toLowerCase().includes(lowerQuery)));
+
       const matchesCity = activeCities.length === 0 || activeCities.includes(uni.city);
       const matchesBranch = activeBranches.length === 0 || activeBranches.some(b => uni.branches?.includes(b));
       return matchesQuery && matchesCity && matchesBranch;
     });
-  }, [query, isAiSearch, activeCities, activeBranches, universities]);
+  }, [query, activeCities, activeBranches, universities]);
 
-  const displayResults = isAiSearch
-    ? aiResults.filter(uni => {
-      const matchesCity = activeCities.length === 0 || activeCities.includes(uni.city);
-      const matchesBranch = activeBranches.length === 0 || activeBranches.some(b => uni.branches?.includes(b));
-      return matchesCity && matchesBranch;
-    })
-    : filtered;
-
+  const displayResults = filtered;
   const { budget: parsedBudget, branch: parsedBranch } = useMemo(() => parseIntent(query), [query]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setShowSuggestions(false);
+  };
 
   return (
     <div style={{ background: 'transparent' }} onClick={() => setShowSuggestions(false)}>
@@ -267,12 +252,12 @@ export default function SearchPage() {
                 aria-label="Search AP colleges or degrees"
                 autoComplete="off"
                 type="text"
-                placeholder="Search colleges, branches, cities (e.g. CSE under 5 lakh)..."
+                placeholder="Search for colleges, branches or cities"
                 value={query}
                 onChange={e => {
                   setQuery(e.target.value);
                   setShowSuggestions(true);
-                  if (!e.target.value) { setIsAiSearch(false); setShowSuggestions(false); }
+                  if (!e.target.value) { setShowSuggestions(false); }
                 }}
                 onFocus={() => query.length >= 2 && setShowSuggestions(true)}
                 style={{
@@ -292,7 +277,7 @@ export default function SearchPage() {
               {query && (
                 <button
                   type="button"
-                  onClick={() => { setQuery(''); setIsAiSearch(false); setShowSuggestions(false); }}
+                  onClick={() => { setQuery(''); setShowSuggestions(false); }}
                   aria-label="Clear search input"
                   style={{
                     padding: '0',
@@ -321,7 +306,7 @@ export default function SearchPage() {
               <button
                 type="submit"
                 aria-label="Search"
-                disabled={!query.trim() || isLoading}
+                disabled={!query.trim() || loadingColleges}
                 style={{
                   background: 'var(--primary)',
                   color: '#fff',
@@ -335,12 +320,12 @@ export default function SearchPage() {
                   border: 'none',
                   boxShadow: '0 2px 8px var(--primary-glow)',
                   transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                  opacity: (!query.trim() || isLoading) ? 0.6 : 1,
-                  cursor: (!query.trim() || isLoading) ? 'not-allowed' : 'pointer',
+                  opacity: (!query.trim() || loadingColleges) ? 0.6 : 1,
+                  cursor: (!query.trim() || loadingColleges) ? 'not-allowed' : 'pointer',
                   flexShrink: 0
                 }}
               >
-                {isLoading ? (
+                {loadingColleges ? (
                   <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <span className="animate-spin" style={{ width: '12px', height: '12px', border: '2px solid #fff', borderTopColor: 'transparent', borderRadius: '50%', display: 'inline-block' }} />
                     <span className="hidden sm:inline">Searching...</span>
@@ -541,37 +526,11 @@ export default function SearchPage() {
       </div>
 
       <div className="page" style={{ paddingTop: '24px' }}>
-        {/* Error */}
-        {error && (
-          <div className="bg-rose-50 border border-rose-100 text-rose-600 p-4 rounded-2xl mb-6 flex items-start gap-3 text-[14px]">
-            <AlertCircle className="shrink-0 mt-0.5" size={18} />
-            <div><p className="font-bold">Search Error</p><p>{error}</p></div>
-          </div>
-        )}
-
-        {/* AI Reasoning Block */}
-        {!isLoading && isAiSearch && aiReasoning && (
-          <div className="glow-up" style={{
-            background: 'var(--ai-insights-bg)',
-            border: '1.5px solid var(--search-border)',
-            padding: '20px',
-            borderRadius: '24px',
-            marginBottom: '32px',
-            boxShadow: 'var(--shadow-sm)',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-              <Sparkles size={16} style={{ color: 'var(--primary)' }} />
-              <span style={{ fontWeight: 'bold', color: 'var(--text-main)', fontSize: '14px' }}>AI Insights</span>
-            </div>
-            <p style={{ color: 'var(--text-muted)', fontSize: '14.5px', lineHeight: '1.6', fontWeight: '500' }}>{aiReasoning}</p>
-          </div>
-        )}
-
         {/* Results count & View Mode Toggle */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
           <p style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: '600', margin: 0 }}>
-            {isLoading ? 'Analyzing with AI...' : (
-              <>Found <span style={{ color: 'var(--primary)' }}>{displayResults.length}</span> {isAiSearch ? 'intelligent matches' : 'universities'}</>
+            {loadingColleges && displayResults.length === 0 ? 'Loading colleges...' : (
+              <>Found <span style={{ color: 'var(--primary)' }}>{displayResults.length}</span> colleges</>
             )}
           </p>
 
@@ -641,10 +600,26 @@ export default function SearchPage() {
           </div>
         </div>
 
-        {/* Skeletons */}
-        {isLoading || loadingColleges ? (
-          <div className="h-64 flex items-center justify-center">
-            <span className="text-slate-400 text-sm font-medium animate-pulse">Loading universities...</span>
+        {/* Skeletons reserving full card bounding box */}
+        {loadingColleges && displayResults.length === 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, idx) => (
+              <div 
+                key={idx} 
+                className="animate-pulse rounded-2xl border border-slate-700/40 bg-slate-800/30 overflow-hidden flex flex-col"
+                style={{ height: '380px' }}
+              >
+                <div className="h-48 bg-slate-700/40 w-full" />
+                <div className="p-4 flex flex-col gap-3 flex-1">
+                  <div className="h-5 bg-slate-700/50 rounded-md w-3/4" />
+                  <div className="h-4 bg-slate-700/30 rounded-md w-1/2" />
+                  <div className="mt-auto flex justify-between items-center pt-3 border-t border-slate-700/30">
+                    <div className="h-4 bg-slate-700/40 rounded w-1/3" />
+                    <div className="h-4 bg-slate-700/40 rounded w-1/4" />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         ) : viewMode === 'map' ? (
           /* Interactive Campus Map View */
@@ -660,12 +635,6 @@ export default function SearchPage() {
                 key={uni.id} 
                 className="relative flex flex-col h-full transition-transform duration-200 hover:-translate-y-1"
               >
-                {isAiSearch && uni.intelligenceScore !== undefined && (
-                  <div className="absolute top-4 right-4 z-10 bg-emerald-600/80 backdrop-blur-md px-2 py-1 rounded-full text-white text-xs font-bold flex items-center gap-1 shadow-sm">
-                    <TrendingUp size={10} />
-                    ROI {uni.intelligenceScore}/10
-                  </div>
-                )}
                 <UniversityCard university={uni} />
               </div>
             ))}
@@ -678,7 +647,7 @@ export default function SearchPage() {
               <h3 style={{ fontWeight: '800', marginBottom: '8px' }}>No colleges found</h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Try adjusting your filters or search term.</p>
               <MagneticButton
-                onClick={() => { setQuery(''); setIsAiSearch(false); setActiveCities([]); setActiveBranches([]); }}
+                onClick={() => { setQuery(''); setActiveCities([]); setActiveBranches([]); }}
                 className="btn btn-secondary mx-auto mt-5"
                 style={{ display: 'flex', gap: '8px' }}
               >

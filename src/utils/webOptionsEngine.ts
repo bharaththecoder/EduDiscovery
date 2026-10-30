@@ -1,10 +1,16 @@
 // src/utils/webOptionsEngine.ts
 // Authoritative AP EAPCET Web-Options Priority Generator Engine
 // Sequenced strictly as: Tier 1 (Dream) -> Tier 2 (Target) -> Tier 3 (Safe)
-// Grounded on official APSCHE Last Rank Statements & APHERMC G.O.Ms.No.17 Fee Gazettes
+// Grounded on official APSCHE Last Rank Statements & APHERMC G.O.Ms.No.17 Fee Gazettes.
+// ZERO synthetic or fabricated ranks.
 
 import { University } from '@/types';
 import { getCategoryCutoff } from '@/services/collegeQueries';
+import { getAdmissionApplicability } from '@/data/admissionApplicability';
+import {
+  OFFICIAL_CUTOFF_SNAPSHOT,
+  getVerifiedClosingRank
+} from '@/data/officialCutoffSnapshot';
 
 export type OptionTier = 'Dream' | 'Target' | 'Safe';
 
@@ -32,6 +38,8 @@ export interface WebOptionItem {
   topPackage?: string;
   topCompany?: string;
   rationale: string;
+  isVerifiedCutoff?: boolean;
+  cutoffYear?: string;
 }
 
 export interface WebOptionsFilters {
@@ -56,7 +64,7 @@ export interface WebOptionsResult {
 function normalizeBranch(branch: string): string {
   const b = branch.toUpperCase().trim();
   if (b.includes('CSE') || b.includes('COMPUTER SCIENCE')) return 'CSE';
-  if (b.includes('CSM') || b.includes('AI') || b.includes('ML') || b.includes('DATA SCIENCE')) return 'AI/ML/DS';
+  if (b.includes('CSM') || b.includes('AI') || b.includes('ML') || b.includes('DATA SCIENCE') || b === 'AIM' || b === 'CSD') return 'AI/ML/DS';
   if (b.includes('INF') || b.includes('IT') || b.includes('INFORMATION')) return 'IT';
   if (b.includes('ECE') || b.includes('ELECTRONICS')) return 'ECE';
   if (b.includes('EEE') || b.includes('ELECTRICAL')) return 'EEE';
@@ -134,6 +142,15 @@ export function generateWebOptions(
   }> = [];
 
   for (const uni of universities) {
+    // 0. Admission Channel & Applicability Filter
+    // Filter out institutions that do NOT participate in AP EAPCET MPC engineering admissions (medical, agri, law, degree, RGUKT 10th GPA)
+    const applicability = getAdmissionApplicability(uni.id);
+    if (applicability) {
+      if (applicability.overallApplicability === 'not_applicable' || applicability.counsellingChannel !== 'EAPCET_MPC') {
+        continue;
+      }
+    }
+
     // 1. Budget Filter
     const fee = uni.convenerFee || (uni.feeIntelligence?.convenerQuotaFee) || 70000;
     if (maxBudget && maxBudget > 0 && fee > maxBudget) continue;
@@ -146,7 +163,7 @@ export function generateWebOptions(
     }
 
     // 3. Region Evaluation (AP 85:15 Quota Rule)
-    const uniRegion = uni.region || 'AU';
+    const uniRegion = (uni.region as 'AU' | 'SVU' | 'Statewide') || 'AU';
     const isStatewide = uniRegion === 'Statewide';
     let regionMultiplier = 1.0;
 
@@ -155,27 +172,58 @@ export function generateWebOptions(
       regionMultiplier = 0.82;
     }
 
-    // 4. Branch & Cutoff Evaluation
-    const cutoffs = uni.cutoffs || [];
-    const availableBranches = cutoffs.length > 0 
-      ? cutoffs.map(c => ({ branch: c.branch, cutoffObj: c }))
-      : (uni.branches || ['CSE', 'ECE']).map(b => ({ branch: b, cutoffObj: undefined }));
+    // 4. Branch & Cutoff Evaluation from Official Snapshot
+    const officialSnapshot = OFFICIAL_CUTOFF_SNAPSHOT[uni.id];
+    const officialCode = officialSnapshot?.code || uni.code || uni.shortName?.slice(0, 4).toUpperCase() || 'APCL';
 
-    for (const { branch, cutoffObj } of availableBranches) {
-      const branchNorm = normalizeBranch(branch);
+    interface BranchCandidate {
+      branchCode: string;
+      branchName: string;
+      verifiedClosingRank: number;
+      cutoffYear?: string;
+    }
+
+    const availableBranches: BranchCandidate[] = [];
+
+    if (officialSnapshot && Object.keys(officialSnapshot.branches).length > 0) {
+      const targetRegion = candidateRegion === 'All' ? (uniRegion === 'Statewide' ? 'SW' : uniRegion) : candidateRegion;
+      for (const [bCode] of Object.entries(officialSnapshot.branches)) {
+        const verified = getVerifiedClosingRank(uni.id, bCode, category, isFemale ? 'Girls' : 'Boys', targetRegion);
+        if (verified && verified.closingRank > 0) {
+          availableBranches.push({
+            branchCode: bCode,
+            branchName: bCode,
+            verifiedClosingRank: verified.closingRank,
+            cutoffYear: verified.latestYear
+          });
+        }
+      }
+    } else if (uni.cutoffs && uni.cutoffs.length > 0) {
+      for (const c of uni.cutoffs) {
+        const r = getCategoryCutoff(c, category, isFemale ? 'Girls' : 'Boys');
+        if (typeof r === 'number' && r > 0) {
+          availableBranches.push({
+            branchCode: c.branch,
+            branchName: c.branch,
+            verifiedClosingRank: r
+          });
+        }
+      }
+    }
+
+    // Skip university if no authentic closing ranks exist
+    if (availableBranches.length === 0) {
+      continue;
+    }
+
+    for (const { branchCode, branchName, verifiedClosingRank, cutoffYear } of availableBranches) {
+      const branchNorm = normalizeBranch(branchCode);
       if (!includeAllBranches && !targetBranchesNorm.includes(branchNorm)) {
         continue;
       }
 
-      // Determine closing cutoff
-      let rawCutoff = 35000;
-      if (cutoffObj) {
-        rawCutoff = getCategoryCutoff(cutoffObj, category, isFemale ? 'Girls' : 'Boys');
-      } else {
-        // Fallback baseline for institutions without granular branch records
-        const nirfRankNum = parseInt((uni.nirf || '150').replace(/[^0-9]/g, ''), 10) || 120;
-        rawCutoff = nirfRankNum * 320 + (branchNorm === 'CSE' ? 3000 : 15000);
-      }
+      // Base closing rank strictly from verified dataset
+      const rawCutoff = verifiedClosingRank;
 
       // Apply regional priority factor
       const closingRank = Math.round(rawCutoff * regionMultiplier);
@@ -222,9 +270,9 @@ export function generateWebOptions(
           collegeId: uni.id,
           collegeName: uni.name,
           collegeShortName: uni.shortName || uni.name,
-          collegeCode: uni.code || uni.shortName?.slice(0, 4).toUpperCase() || 'APCL',
+          collegeCode: officialCode,
           branchCode: branchNorm,
-          branchName: branch,
+          branchName: branchName || branchNorm,
           district: uni.city,
           city: uni.city,
           region: uniRegion,
@@ -239,7 +287,9 @@ export function generateWebOptions(
           nirf: uni.nirf,
           topPackage: topRec?.package,
           topCompany: topRec?.company,
-          rationale: rationale
+          rationale: rationale,
+          isVerifiedCutoff: true,
+          cutoffYear: cutoffYear
         },
         desirability,
         closingRank

@@ -2,16 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useToast } from '@/contexts/ToastContext';
-import { useCounselor } from '@/contexts/CounselorContext';
 import UniversityCard from '@/components/cards/UniversityCard';
-import { Heart, Search, Sparkles, BarChart2, Trash2, MessageSquare, ExternalLink } from 'lucide-react';
+import { Heart, Search, BarChart2, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MagneticButton } from '@/components/Animation3DComponents';
 
 export default function WishlistPage() {
   const { wishlist, clearWishlist } = useWishlist();
   const { showToast } = useToast();
-  const { setIsOpen, setPendingPrompt } = useCounselor();
   const navigate = useNavigate();
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
@@ -20,13 +18,6 @@ export default function WishlistPage() {
     // Store in localStorage compare selection or pass IDs
     const compareIds = wishlist.map(u => u.id).join(',');
     navigate(`/compare?colleges=${compareIds}`);
-  };
-
-  const handleAskAIAboutWishlist = () => {
-    if (wishlist.length === 0) return;
-    const names = wishlist.map(u => u.name).join(', ');
-    setPendingPrompt(`I have shortlisted the following colleges: ${names}. Can you compare their placements, branch options, and fee structures for me?`);
-    setIsOpen(true);
   };
 
   const handleClearAll = () => {
@@ -119,12 +110,6 @@ export default function WishlistPage() {
                 >
                   <Search size={16} /> Search Colleges
                 </MagneticButton>
-                <MagneticButton
-                  onClick={() => navigate('/quiz')}
-                  style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '12px 24px', border: '1.5px solid var(--primary)', borderRadius: '999px', fontSize: '14px', fontWeight: '700', color: 'var(--primary)', background: 'var(--primary-light)' }}
-                >
-                  <Sparkles size={16} /> Take Quiz
-                </MagneticButton>
               </div>
           </motion.div>
         ) : (
@@ -170,24 +155,6 @@ export default function WishlistPage() {
                   <BarChart2 size={14} /> Compare Saved ({wishlist.length})
                 </button>
 
-                <button
-                  onClick={handleAskAIAboutWishlist}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '8px 14px',
-                    borderRadius: 'var(--radius-full)',
-                    background: 'rgba(16, 185, 129, 0.12)',
-                    color: 'var(--primary)',
-                    fontWeight: '700',
-                    fontSize: '13px',
-                    border: '1px solid rgba(16, 185, 129, 0.3)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <MessageSquare size={14} /> Ask AI Counselor
-                </button>
 
                 <button
                   onClick={() => setShowClearConfirm(true)}

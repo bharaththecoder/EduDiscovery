@@ -1,0 +1,42 @@
+{
+  "generatorVersion": "2.3.0-preview",
+  "generatedAt": "2026-10-28T11:15:17.980Z",
+  "supportedCollegesCount": 60,
+  "years": {
+    "2022": {
+      "academicYear": "2022-2023",
+      "file": "2022.json",
+      "sizeKB": 662.6,
+      "recordsCount": 6678,
+      "collegesCount": 40,
+      "officialCodesCount": 46,
+      "sha256": "3890f41556a95a414536bd5db862d3231ad1edf6227fd8bb0f69a5d485d9223f",
+      "sourceSha256": "909ec9b9506919342d95cbe9c8f8a7006aeca2d6e90a0ea12e27455b927db4d9",
+      "sourceDocumentUrl": "https://apsche.ap.gov.in/Pdf/APEAMCET2022LASTRANKDETAILS.pdf"
+    },
+    "2023": {
+      "academicYear": "2023-2024",
+      "file": "2023.json",
+      "sizeKB": 667,
+      "recordsCount": 6768,
+      "collegesCount": 40,
+      "officialCodesCount": 47,
+      "sha256": "d62b309a095d1cf276641778bd6a04bce94d2a75d677ad8dd67c97e68a0ace9c",
+      "sourceSha256": "498f6dd6eb08d1eed230e5e79bea33660609d1207b92ab0b371de552f073c7c5",
+      "sourceDocumentUrl": "https://apsche.ap.gov.in/Pdf/APEAPCET2023LASTRANKDETAILS.pdf"
+    },
+    "2024": {
+      "academicYear": "2024-2025",
+      "file": "2024.json",
+      "sizeKB": 831,
+      "recordsCount": 7380,
+      "collegesCount": 39,
+      "officialCodesCount": 45,
+      "sha256": "f6aa177139a371b39073f712b7d1a7d864ad47ab9a95fbf54d2dc0a62504303e",
+      "sourceSha256": "4b216e35375320f0c97a640e67ec6e568e149420e5adb8bf4729e4b07cd363a8",
+      "sourceDocumentUrl": "https://apsche.ap.gov.in/Pdf/APEAMCET2024LASTRANKDETAILSNONSW.XLS"
+    }
+  },
+  "disclaimer": "Official APSCHE closing ranks are reference guidance based on past counseling rounds, not a guarantee of admission.",
+  "promotionStatus": "READY_FOR_REVIEW"
+}

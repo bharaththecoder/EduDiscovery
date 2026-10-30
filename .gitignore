@@ -36,3 +36,15 @@ postman/
 .postman/
 tests/
 scratch/
+
+# Android build outputs & bundles
+*.apk
+*.aab
+*.dex
+android/.gradle/
+android/app/build/
+android/build/
+android/capacitor-cordova-android-plugins/
+android/app/src/main/assets/public/
+android/app/src/main/assets/capacitor.config.json
+android/app/src/main/assets/capacitor.plugins.json

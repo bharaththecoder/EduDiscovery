@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Heart, MapPin, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useWishlist } from '@/contexts/WishlistContext';
@@ -36,8 +36,8 @@ const UniversityCard = React.memo(({ university, compact = false, reasons = [], 
   const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    setIsHovered(true);
     if (isMobile) return;
+    setIsHovered(true);
     const card = e.currentTarget;
     const box = card.getBoundingClientRect();
     const x = e.clientX - box.left - box.width / 2;
@@ -56,8 +56,8 @@ const UniversityCard = React.memo(({ university, compact = false, reasons = [], 
   };
 
   const handleMouseLeave = () => {
-    setIsHovered(false);
     if (isMobile) return;
+    setIsHovered(false);
     setTilt({ x: 0, y: 0, scale: 1, translateY: 0 });
   };
 
@@ -79,7 +79,10 @@ const UniversityCard = React.memo(({ university, compact = false, reasons = [], 
     setImgSrc(university.image || FALLBACK);
   }, [university.image, university.id]);
 
-  const handleClick = () => navigate(`/university/${university.id}`);
+  const location = useLocation();
+  const handleClick = () => navigate(`/university/${university.id}`, {
+    state: { from: location.pathname + location.search }
+  });
 
   // ─── Compact Card (horizontal scroll on mobile, grid on desktop) ───
   if (compact) {
@@ -88,10 +91,11 @@ const UniversityCard = React.memo(({ university, compact = false, reasons = [], 
         onClick={handleClick}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        whileTap={{ scale: 0.97 }}
+        whileTap={isMobile ? undefined : { scale: 0.97 }}
         transition={{ type: "spring", stiffness: 450, damping: 25 }}
         className="compact-card glow-up"
         style={{
+          contain: 'content',
           transform: isMobile ? 'none' : `perspective(1000px) translateY(${tilt.translateY}px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) scale(${tilt.scale})`,
           transition: isMobile ? 'none' : 'transform 0.22s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.22s ease, border-color 0.22s ease',
           transformStyle: 'flat',
@@ -107,7 +111,7 @@ const UniversityCard = React.memo(({ university, compact = false, reasons = [], 
               width: '100%', 
               height: '100%', 
               objectFit: 'cover',
-              transform: isHovered ? 'scale(1.06)' : 'scale(1)',
+              transform: (!isMobile && isHovered) ? 'scale(1.06)' : 'scale(1)',
               transition: 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)'
             }}
             loading="lazy"
@@ -170,10 +174,11 @@ const UniversityCard = React.memo(({ university, compact = false, reasons = [], 
       onClick={handleClick}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      whileTap={{ scale: 0.98 }}
+      whileTap={isMobile ? undefined : { scale: 0.98 }}
       transition={{ type: "spring", stiffness: 450, damping: 25 }}
       className="glow-up"
       style={{
+        contain: 'content',
         borderRadius: 'var(--radius-lg)', 
         background: 'var(--surface)', 
         cursor: 'pointer',
@@ -194,7 +199,7 @@ const UniversityCard = React.memo(({ university, compact = false, reasons = [], 
             width: '100%', 
             height: '100%', 
             objectFit: 'cover', 
-            transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+            transform: (!isMobile && isHovered) ? 'scale(1.05)' : 'scale(1)',
             transition: 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)'
           }}
           loading="lazy"
@@ -339,7 +344,7 @@ const UniversityCard = React.memo(({ university, compact = false, reasons = [], 
 
         <motion.button
           whileHover={{ scale: 1.03, y: -2 }}
-          whileTap={{ scale: 0.97 }}
+          whileTap={isMobile ? undefined : { scale: 0.97 }}
           transition={{ type: "spring", stiffness: 500, damping: 25 }}
           onClick={handleClick}
           className="btn btn-primary btn-sm btn-full shine-on-hover"

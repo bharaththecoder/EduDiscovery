@@ -1,5 +1,4 @@
-import React from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Search, LogOut, Download, Sun, Moon } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePWA } from '@/contexts/PWAContext';
@@ -8,18 +7,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { currentUser, logout } = useAuth();
+  const { currentUser } = useAuth();
   const { isInstallable, installApp } = usePWA();
   const { theme, toggleTheme } = useTheme();
 
   const firstName = currentUser?.name?.split(' ')[0] || 'Scholar';
   const avatarLetter = firstName[0]?.toUpperCase() || 'S';
-
-  const handleLogout = async () => {
-    await logout();
-    navigate('/');
-  };
 
   const navLinks = [
     { label: 'Home', path: '/home' },
@@ -127,6 +120,29 @@ export default function Navbar() {
               <Download size={14} /> Install App
             </motion.button>
           )}
+
+          <a
+            href="https://github.com/bharaththecoder/edudiscovery/releases"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Download Android APK"
+            style={{
+              background: 'rgba(16, 185, 129, 0.1)',
+              color: '#059669',
+              fontWeight: '700',
+              fontSize: '12.5px',
+              padding: '7px 14px',
+              borderRadius: '999px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              border: '1px solid rgba(5, 150, 105, 0.3)',
+              textDecoration: 'none',
+              transition: 'var(--transition)'
+            }}
+          >
+            <Download size={14} /> APK
+          </a>
 
           <motion.button 
             onClick={() => navigate('/search')} 

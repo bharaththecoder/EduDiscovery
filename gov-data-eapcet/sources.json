@@ -1,0 +1,65 @@
+{
+  "authority": "Andhra Pradesh State Council of Higher Education (APSCHE)",
+  "stream": "MPC (Engineering)",
+  "allowedDomains": [
+    "apsche.ap.gov.in",
+    "cets.apsche.ap.gov.in",
+    "eapcet-sche.aptonline.in",
+    "sche.ap.gov.in"
+  ],
+  "investigation2025": {
+    "status": "NOT_PUBLISHED",
+    "retrievalTimestamp": "2026-10-27T16:53:35Z",
+    "discoveryUrlsChecked": [
+      "https://cets.apsche.ap.gov.in/EAPCET25/Eapcet/EAPCET_HomePage.aspx",
+      "https://cets.apsche.ap.gov.in/APSCHE/",
+      "https://apsche.ap.gov.in/",
+      "https://apsche.ap.gov.in/Pdf/"
+    ],
+    "verificationOutcome": "No official APSCHE 2025 MPC last-rank document exists. The official AP EAPCET 2025 portal explicitly links candidates to the 2024 Last Rank Details document (APEAMCET2024LASTRANKDETAILSNONSW.XLS) for counseling reference. Consequently, the latest three completed counseling cycles available from official admissions documents are 2024-2025, 2023-2024, and 2022-2023."
+  },
+  "years": {
+    "2024": {
+      "academicYear": "2024-2025",
+      "authority": "APSCHE",
+      "counselingPhase": "Final Phase Allotment",
+      "stream": "MPC",
+      "expectedFormat": "XLS",
+      "discoveryPage": "https://cets.apsche.ap.gov.in/EAPCET25/Eapcet/EAPCET_HomePage.aspx",
+      "directDocumentUrl": "https://apsche.ap.gov.in/Pdf/APEAMCET2024LASTRANKDETAILSNONSW.XLS",
+      "expectedTitlePattern": "APEAPCET-2024\\[\\s*M\\s*P\\s*C\\s*STREAM\\]\\s*LAST\\s*RANK\\s*DETAILS",
+      "expectedSheetName": "APEAMCET2024LASTRANKDETAILSNONS",
+      "pinnedSha256": "4b216e35375320f0c97a640e67ec6e568e149420e5adb8bf4729e4b07cd363a8",
+      "pinnedFileSizeBytes": 583680,
+      "expectedOfferingRows": 1565
+    },
+    "2023": {
+      "academicYear": "2023-2024",
+      "authority": "APSCHE",
+      "counselingPhase": "Final Phase Allotment",
+      "stream": "MPC",
+      "expectedFormat": "PDF",
+      "discoveryPage": "https://apsche.ap.gov.in/",
+      "directDocumentUrl": "https://apsche.ap.gov.in/Pdf/APEAPCET2023LASTRANKDETAILS.pdf",
+      "expectedTitlePattern": "APEAPCET-2023\\[\\s*M\\s*P\\s*C\\s*STREAM\\]\\s*LAST\\s*RANK\\s*DETAILS",
+      "expectedPages": 57,
+      "pinnedSha256": "498f6dd6eb08d1eed230e5e79bea33660609d1207b92ab0b371de552f073c7c5",
+      "pinnedFileSizeBytes": 4135431,
+      "expectedOfferingRows": 1513
+    },
+    "2022": {
+      "academicYear": "2022-2023",
+      "authority": "APSCHE",
+      "counselingPhase": "Final Phase Allotment",
+      "stream": "MPC",
+      "expectedFormat": "PDF",
+      "discoveryPage": "https://apsche.ap.gov.in/",
+      "directDocumentUrl": "https://apsche.ap.gov.in/Pdf/APEAMCET2022LASTRANKDETAILS.pdf",
+      "expectedTitlePattern": "APEAPCET-2022\\[\\s*M\\s*P\\s*C\\s*STREAM\\]\\s*LAST\\s*RANK\\s*DETAILS",
+      "expectedPages": 60,
+      "pinnedSha256": "909ec9b9506919342d95cbe9c8f8a7006aeca2d6e90a0ea12e27455b927db4d9",
+      "pinnedFileSizeBytes": 4193109,
+      "expectedOfferingRows": 1502
+    }
+  }
+}

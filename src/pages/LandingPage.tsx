@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Globe, Mail, Eye, EyeOff, Sparkles, GraduationCap, Target, Zap, BookOpen, ArrowRight, Star, Search, Bot, ArrowLeftRight, BarChart3, MessageSquare } from 'lucide-react';
+import { Globe, Mail, Eye, EyeOff, Sparkles, GraduationCap, Target, Zap, BookOpen, ArrowRight, Star, Search, ShieldCheck, ArrowLeftRight, BarChart3, MessageSquare } from 'lucide-react';
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
 import { OrbitRing, FloatingEmoji3D, HolographicBadge, AnimatedCounter3D, GlowButton, NeonCard, WaveDivider, InteractiveFluidParticles, MagneticButton, ConfettiButton, SpotlightCard, BounceIn, VelocityText } from '@/components/Animation3DComponents';
 
@@ -121,15 +121,15 @@ const PARTICLES = Array.from({ length: 16 }, (_, i) => ({
 const FEATURES = [
   {
     icon: <Target size={24} color="#fff" />,
-    title: 'AI Admission Predictor',
-    desc: 'Enter your rank and get real-time admission probability across 100+ AP colleges with 94% accuracy.',
+    title: 'Statutory Admission Predictor',
+    desc: 'Enter your rank and get admission probability across AP colleges based on official government last rank gazettes.',
     gradient: 'linear-gradient(135deg, #10B981, #059669)',
   },
   {
-    icon: <Bot size={24} color="#fff" />,
-    title: 'AI College Counselor',
-    desc: 'Chat with our AI bot 24/7. Ask anything — fees, cutoffs, scholarships, hostel — it knows it all.',
-    gradient: 'linear-gradient(135deg, #3B82F6, #8B5CF6)',
+    icon: <ShieldCheck size={24} color="#fff" />,
+    title: 'Verified APSCHE Cutoffs',
+    desc: 'Access official 3-year closing rank gazettes directly parsed from published government counselling records with complete provenance.',
+    gradient: 'linear-gradient(135deg, #059669, #10B981)',
   },
   {
     icon: <ArrowLeftRight size={24} color="#fff" />,
@@ -400,11 +400,11 @@ export default function Landing() {
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
-                    <MessageSquare size={16} />
+                    <ShieldCheck size={16} />
                   </div>
                   <div>
-                    <div style={{ fontSize: '9.5px', fontWeight: '800', color: 'var(--primary)', textTransform: 'uppercase' }}>AI COUNSELOR</div>
-                    <div style={{ fontSize: '11px', fontWeight: '600', color: 'var(--text-main)', marginTop: '2px' }}>"You qualify for a fee waiver!"</div>
+                    <div style={{ fontSize: '9.5px', fontWeight: '800', color: 'var(--primary)', textTransform: 'uppercase' }}>VERIFIED CUTOFF</div>
+                    <div style={{ fontSize: '11px', fontWeight: '600', color: 'var(--text-main)', marginTop: '2px' }}>"APSCHE Official Gazette 2024"</div>
                   </div>
                 </div>
               </motion.div>
@@ -670,7 +670,7 @@ export default function Landing() {
                     required
                   />
                 </div>
-                <div className="input-wrap">
+                <div className="input-wrap" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', position: 'relative' }}>
                   <input
                     type={showPass ? 'text' : 'password'}
                     placeholder="Password"
@@ -678,13 +678,26 @@ export default function Landing() {
                     value={form.password}
                     onChange={e => setForm({ ...form, password: e.target.value })}
                     required
-                    style={{ flex: 1 }}
+                    style={{ flex: 1, paddingRight: '48px' }}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPass(!showPass)}
                     aria-label={showPass ? 'Hide password' : 'Show password'}
-                    style={{ padding: '0 16px', color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      color: 'var(--text-muted)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '4px'
+                    }}
                   >
                     {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>

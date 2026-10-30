@@ -5,7 +5,6 @@ import { useUniversities } from '@/contexts/UniversityContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import { useWishlist } from '@/contexts/WishlistContext';
-import { useCounselor, PredictorContextData } from '@/contexts/CounselorContext';
 import { predictAdmission, PredictionResult, PredictorFilters } from '@/utils/predictorEngine';
 import { parseRankToNumber } from '@/utils/intelligenceEngine';
 import { Link } from 'react-router-dom';
@@ -558,8 +557,13 @@ function GroupedCollegeCard({
               <TrendingUp size={14} />
               {selectedBranch.closingCutoff ? selectedBranch.closingCutoff.toLocaleString('en-IN') : 'Direct Merit'}
             </div>
-            <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '600', marginTop: '2px' }}>
-              Your Rank: <strong>{userRank.toLocaleString('en-IN')}</strong>
+            <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: '600', marginTop: '2px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span>Your Rank: <strong>{userRank.toLocaleString('en-IN')}</strong></span>
+              {selectedBranch.isVerifiedCutoff && (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', color: '#10B981', fontWeight: '700', fontSize: '9.5px' }}>
+                  <ShieldCheck size={11} /> APSCHE {selectedBranch.cutoffYear || 'Verified'}
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -578,7 +582,6 @@ export default function PredictorPage() {
   const { currentUser } = useAuth();
   const { universities, loading: loadingColleges } = useUniversities();
   const { showToast } = useToast() as { showToast: (msg: string, type: string) => void };
-  const { openWithPredictor } = useCounselor();
 
   const queryParams = new URLSearchParams(window.location.search);
   const urlRank = queryParams.get('rank');
@@ -700,45 +703,6 @@ export default function PredictorPage() {
     showToast('Copied Choice List of Top 20 Recommendations to Clipboard', 'success');
   };
 
-  const handleAskAiOptions = () => {
-    if (predictions.length === 0) {
-      showToast('Please enter your rank first to generate web options', 'error');
-      return;
-    }
-    const contextData: PredictorContextData = {
-      exam,
-      rank,
-      category,
-      gender: gender.includes('Girls') ? 'Female' : 'Male',
-      region: candidateRegion,
-      preferredBranch: branch,
-      results: predictions
-    };
-    openWithPredictor(
-      `Based on my AP EAPCET rank ${rank.toLocaleString('en-IN')} (${category}, ${gender}, ${candidateRegion} region), what is the optimal Web-Options entry order to maximize my allotment in Round 1? Please categorize into Safe, Target, and Reach colleges with their verified tuition fees.`,
-      contextData
-    );
-  };
-
-  const handleExplainOdds = () => {
-    if (predictions.length === 0) {
-      showToast('Please enter your rank first to evaluate odds', 'error');
-      return;
-    }
-    const contextData: PredictorContextData = {
-      exam,
-      rank,
-      category,
-      gender: gender.includes('Girls') ? 'Female' : 'Male',
-      region: candidateRegion,
-      preferredBranch: branch,
-      results: predictions
-    };
-    openWithPredictor(
-      `Can you analyze my admission chances across my matching colleges for rank ${rank.toLocaleString('en-IN')}? Which ones offer the strongest placement packages and NAAC accreditation?`,
-      contextData
-    );
-  };
 
   return (
     <div className="page" style={{ paddingBottom: '80px', position: 'relative' }}>
@@ -750,25 +714,28 @@ export default function PredictorPage() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
               <span style={{
-                background: 'var(--primary-light)',
-                color: 'var(--primary)',
+                background: 'rgba(16,185,129,0.12)',
+                color: '#10B981',
                 padding: '3px 10px',
                 borderRadius: '999px',
                 fontSize: '11px',
                 fontWeight: '800',
-                textTransform: 'uppercase'
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px'
               }}>
-                APSCHE 2026 Cutoff Algorithm
+                <ShieldCheck size={12} />
+                APSCHE Official Statutory Cutoffs
               </span>
               <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontWeight: '600' }}>
-                All 60 AP Institutions Indexed
+                40 EAPCET Institutions Verified
               </span>
             </div>
             <h1 className="wave-underline" style={{ fontSize: '24px', fontWeight: '900', color: 'var(--text-main)', margin: 0, lineHeight: 1.1 }}>
               AP EAPCET Admissions Predictor
             </h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '13.5px', marginTop: '4px', margin: 0 }}>
-              Real statutory closing ranks, Convenor vs Management fees, and regional quota allocations.
+              Grounded in official APSCHE 2024–2022 Last Rank Details, APHERMC statutory fees, and regional quota allocations.
             </p>
           </div>
 
@@ -1134,9 +1101,9 @@ export default function PredictorPage() {
             }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                  <Sparkles size={18} color="var(--primary)" />
+                  <Target size={18} color="var(--primary)" />
                   <span style={{ fontSize: '14px', fontWeight: '800', color: 'var(--text-main)' }}>
-                    AI Admissions Counselor
+                    Simulate Statutory Web-Options Sheet
                   </span>
                   <span style={{
                     fontSize: '10px',
@@ -1146,16 +1113,16 @@ export default function PredictorPage() {
                     padding: '2px 8px',
                     borderRadius: '99px'
                   }}>
-                    On-Device WebGPU & Cloud
+                    Official Algorithm
                   </span>
                 </div>
                 <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>
-                  Generate an optimized Round 1 Web-Options list or evaluate placement ROI for rank {rank.toLocaleString('en-IN')}.
+                  Generate an organized 3-tier (Dream, Target, Safe) priority sheet based on your rank {rank.toLocaleString('en-IN')}.
                 </p>
               </div>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                <button
-                  onClick={handleAskAiOptions}
+                <Link
+                  to={`/web-options?rank=${rank}&category=${category}&region=${candidateRegion}`}
                   className="btn btn-primary"
                   style={{
                     padding: '9px 16px',
@@ -1165,27 +1132,11 @@ export default function PredictorPage() {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '6px',
-                    cursor: 'pointer'
+                    textDecoration: 'none'
                   }}
                 >
-                  <Sparkles size={14} /> Plan Web-Options
-                </button>
-                <button
-                  onClick={handleExplainOdds}
-                  className="btn btn-outline"
-                  style={{
-                    padding: '9px 16px',
-                    borderRadius: '12px',
-                    fontSize: '12px',
-                    fontWeight: '800',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <Award size={14} /> Compare ROI
-                </button>
+                  <Target size={14} /> Open Web-Options Simulator →
+                </Link>
               </div>
             </div>
           )}

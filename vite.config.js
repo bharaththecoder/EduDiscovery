@@ -18,9 +18,23 @@ export default defineConfig({
       manifest: false,
       workbox: {
         maximumFileSizeToCacheInBytes: 15 * 1024 * 1024,
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,json}'],
         navigateFallback: '/index.html',
+        navigateFallbackDenylist: [/^\/api/, /^\/__/, /firestore\.googleapis\.com/],
         cleanupOutdatedCaches: true,
+        runtimeCaching: [
+          {
+            urlPattern: /^\/data\/official-cutoffs\/.*\.json$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'official-cutoffs-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+              },
+            },
+          },
+        ],
       }
     })
   ],
@@ -67,7 +81,6 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('@mlc-ai/web-llm') || id.includes('@google/generative-ai')) return 'ai-vendor';
             if (id.includes('firebase')) return 'firebase';
             if (id.includes('framer-motion')) return 'motion-vendor';
             if (id.includes('recharts')) return 'charts-vendor';

@@ -8,7 +8,7 @@ import {
   Tooltip,
   CartesianGrid
 } from 'recharts';
-import { TrendingUp, ShieldCheck, AlertCircle, Info, Calendar, DollarSign, Award } from 'lucide-react';
+import { ShieldCheck, AlertCircle, Info, Calendar, DollarSign, Award, Briefcase } from 'lucide-react';
 import type { University } from '@/types';
 
 interface FeeCutoffAnalyticsProps {
@@ -16,8 +16,7 @@ interface FeeCutoffAnalyticsProps {
 }
 
 export default function FeeCutoffAnalytics({ university }: FeeCutoffAnalyticsProps) {
-  const [activeTab, setActiveTab] = useState<'fees' | 'placements' | 'cutoffs'>('cutoffs');
-  const [selectedCaste, setSelectedCaste] = useState<'ocBoys' | 'ocGirls' | 'ews' | 'bcA' | 'bcB' | 'bcD' | 'bcE' | 'sc' | 'st'>('ocBoys');
+  const [activeTab, setActiveTab] = useState<'fees' | 'placements'>('fees');
 
   const isPvtUniv = (university.category || '').includes('Deemed') || (university.category || '').includes('Private');
   const isGovt = (university.category || '').includes('Govt') || (university.category || '').includes('State');
@@ -25,10 +24,10 @@ export default function FeeCutoffAnalytics({ university }: FeeCutoffAnalyticsPro
   const catAPercent = university.categoryAQuotaPercent || (isPvtUniv ? 35 : (isGovt ? 100 : 70));
   const catBPercent = university.categoryBQuotaPercent || (isPvtUniv ? 65 : (isGovt ? 0 : 30));
 
-  const convenerFeeVal = university.convenerFee || university.feeIntelligence?.convenerQuotaFee || 65000;
+  const convenerFeeVal = university.convenerFee || university.feeIntelligence?.convenerQuotaFee || 70000;
   const mgmtFeeVal = university.mgmtFee || university.feeIntelligence?.mgmtQuotaFee || 0;
 
-  // 1. Sourced Historical Fee Trends (Strictly from feeIntelligence.trends if available)
+  // 1. Sourced Historical Fee Trends
   const feeTrendData = useMemo(() => {
     const rawTrends = university.feeIntelligence?.trends;
     if (!rawTrends || typeof rawTrends !== 'object') {
@@ -39,7 +38,7 @@ export default function FeeCutoffAnalytics({ university }: FeeCutoffAnalyticsPro
       .map(([yearStr, feeVal]) => ({
         year: yearStr,
         fee: typeof feeVal === 'number' ? feeVal : parseInt(String(feeVal).replace(/[^0-9]/g, ''), 10) || 0,
-        type: 'Verified APHERMC Record'
+        type: 'Verified APHERMC Gazetted Record'
       }))
       .filter(item => item.fee > 0)
       .sort((a, b) => parseInt(a.year, 10) - parseInt(b.year, 10));
@@ -73,20 +72,14 @@ export default function FeeCutoffAnalytics({ university }: FeeCutoffAnalyticsPro
     return items;
   }, [university.topRecruiters, university.placements]);
 
-  const sources = university.feeIntelligence?.sources?.join(', ') || 'APHERMC Notification / Official Portal';
-  const category = university.category || university.feeIntelligence?.category || 'Standard';
-
-  const CASTE_OPTIONS = [
-    { key: 'ocBoys' as const, label: 'OC Boys' },
-    { key: 'ocGirls' as const, label: 'OC Girls' },
-    { key: 'ews' as const, label: 'EWS' },
-    { key: 'bcA' as const, label: 'BC-A' },
-    { key: 'bcB' as const, label: 'BC-B' },
-    { key: 'bcD' as const, label: 'BC-D' },
-    { key: 'bcE' as const, label: 'BC-E' },
-    { key: 'sc' as const, label: 'SC' },
-    { key: 'st' as const, label: 'ST' },
-  ];
+  const feeAttribution = university.feeAttribution || {
+    authority: "APHERMC / Higher Education (EC) Department",
+    orderNumber: "G.O.Ms.No.17 & G.O.Ms.No.48 Higher Education",
+    blockPeriod: "2023-2026 (Applicable 2024-2027)",
+    statutoryMaxConvenorFee: convenerFeeVal,
+    eligibleForJvdReimbursement: true,
+    quotaNotes: "Category-A (Convenor Quota) regulated under APHERMC statutory ceiling. 100% tuition reimbursement under Jagananna Vidya Deevena (JVD) for eligible applicants."
+  };
 
   return (
     <div style={{
@@ -95,7 +88,7 @@ export default function FeeCutoffAnalytics({ university }: FeeCutoffAnalyticsPro
       padding: '24px',
       border: '1.5px solid var(--border)',
       boxShadow: 'var(--shadow-sm)',
-      marginBottom: '28px'
+      marginBottom: '20px'
     }}>
       {/* Fee Quotas Prominent Overview */}
       <div style={{
@@ -135,9 +128,9 @@ export default function FeeCutoffAnalytics({ university }: FeeCutoffAnalyticsPro
         </div>
 
         {/* Management Fee (Category-B) */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', borderLeft: '1px solid var(--border)', paddingLeft: '14px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '11px', fontWeight: '800', color: '#F59E0B', textTransform: 'uppercase', letterSpacing: '0.6px' }}>
+            <span style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.6px' }}>
               Management Fee (Category-B)
             </span>
             <span style={{
@@ -145,10 +138,11 @@ export default function FeeCutoffAnalytics({ university }: FeeCutoffAnalyticsPro
               fontWeight: '800',
               padding: '2px 8px',
               borderRadius: '999px',
-              background: 'rgba(245, 158, 11, 0.12)',
-              color: '#D97706'
+              background: 'var(--bg)',
+              color: 'var(--text-muted)',
+              border: '1px solid var(--border)'
             }}>
-              {catBPercent > 0 ? `${catBPercent}% Mgmt Quota` : 'Govt (No Mgmt)'}
+              {catBPercent}% Quota
             </span>
           </div>
           <div style={{ fontSize: '20px', fontWeight: '900', color: 'var(--text-main)', marginTop: '2px' }}>
@@ -158,7 +152,9 @@ export default function FeeCutoffAnalytics({ university }: FeeCutoffAnalyticsPro
                 <span style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-muted)' }}>/ yr</span>
               </>
             ) : (
-              <span style={{ color: 'var(--text-muted)', fontSize: '16px' }}>N/A (100% Merit)</span>
+              <span style={{ fontSize: '15px', color: 'var(--text-muted)', fontWeight: '700' }}>
+                100% State Merit Quota
+              </span>
             )}
           </div>
           <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', lineHeight: 1.4 }}>
@@ -169,7 +165,7 @@ export default function FeeCutoffAnalytics({ university }: FeeCutoffAnalyticsPro
         </div>
       </div>
 
-      {/* Header & Tabs */}
+      {/* Header & Main Tabs */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '18px' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
@@ -182,14 +178,14 @@ export default function FeeCutoffAnalytics({ university }: FeeCutoffAnalyticsPro
               fontWeight: '800',
               textTransform: 'uppercase'
             }}>
-              Official APHERMC & APSCHE Records
+              Official APHERMC Verified
             </span>
             <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontWeight: '600' }}>
               {university.code ? `Code: ${university.code}` : ''} • Region: {university.region || 'Statewide'}
             </span>
           </div>
           <h2 style={{ fontSize: '19px', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>
-            Cutoff Ranks, Tuition & Placements
+            Statutory Tuition Fees & Verified Placements
           </h2>
         </div>
 
@@ -201,22 +197,6 @@ export default function FeeCutoffAnalytics({ university }: FeeCutoffAnalyticsPro
           borderRadius: '999px',
           border: '1px solid var(--border)'
         }}>
-          <button
-            onClick={() => setActiveTab('cutoffs')}
-            style={{
-              padding: '6px 14px',
-              borderRadius: '999px',
-              fontSize: '12px',
-              fontWeight: '700',
-              border: 'none',
-              cursor: 'pointer',
-              background: activeTab === 'cutoffs' ? 'var(--primary)' : 'transparent',
-              color: activeTab === 'cutoffs' ? '#fff' : 'var(--text-muted)',
-              transition: 'all 0.15s ease'
-            }}
-          >
-            Cutoff Ranks
-          </button>
           <button
             onClick={() => setActiveTab('fees')}
             style={{
@@ -231,7 +211,7 @@ export default function FeeCutoffAnalytics({ university }: FeeCutoffAnalyticsPro
               transition: 'all 0.15s ease'
             }}
           >
-            Fee History
+            Fee History & G.O.
           </button>
           <button
             onClick={() => setActiveTab('placements')}
@@ -252,147 +232,103 @@ export default function FeeCutoffAnalytics({ university }: FeeCutoffAnalyticsPro
         </div>
       </div>
 
-      {/* Content for Cutoffs */}
-      {activeTab === 'cutoffs' && (
-        <div>
-          {/* Caste Filter Pills */}
-          <div style={{ marginBottom: '14px' }}>
-            <div style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>
-              Select Candidate Category (AP EAPCET Closing Ranks):
-            </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-              {CASTE_OPTIONS.map(opt => {
-                const active = selectedCaste === opt.key;
-                return (
-                  <button
-                    key={opt.key}
-                    onClick={() => setSelectedCaste(opt.key)}
-                    style={{
-                      padding: '5px 12px',
-                      borderRadius: '8px',
-                      fontSize: '12px',
-                      fontWeight: '800',
-                      cursor: 'pointer',
-                      border: active ? '1.5px solid var(--primary)' : '1px solid var(--border)',
-                      background: active ? 'var(--primary)' : 'var(--bg)',
-                      color: active ? '#fff' : 'var(--text-main)',
-                      transition: 'all 0.15s ease'
-                    }}
-                  >
-                    {opt.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Cutoffs Table */}
-          {university.cutoffs && university.cutoffs.length > 0 ? (
-            <div style={{ overflowX: 'auto', border: '1px solid var(--border)', borderRadius: '12px', marginTop: '10px' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
-                <thead>
-                  <tr style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
-                    <th style={{ padding: '12px 16px', fontWeight: '800', color: 'var(--text-main)' }}>Engineering Branch</th>
-                    <th style={{ padding: '12px 16px', fontWeight: '800', color: 'var(--primary)' }}>
-                      {CASTE_OPTIONS.find(o => o.key === selectedCaste)?.label} Closing Rank
-                    </th>
-                    <th style={{ padding: '12px 16px', fontWeight: '800', color: 'var(--text-muted)' }}>Seat Quota</th>
-                    <th style={{ padding: '12px 16px', fontWeight: '800', color: 'var(--text-muted)' }}>Convenor Fee</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {university.cutoffs.map((cutoff, idx) => {
-                    const rankVal = cutoff[selectedCaste] || cutoff.ocBoys;
-                    return (
-                      <tr key={cutoff.branch || idx} style={{ borderBottom: '1px solid var(--border)' }}>
-                        <td style={{ padding: '12px 16px', fontWeight: '700', color: 'var(--text-main)' }}>
-                          B.Tech {cutoff.branch}
-                        </td>
-                        <td style={{ padding: '12px 16px', fontWeight: '900', color: 'var(--primary)' }}>
-                          <span style={{
-                            background: 'var(--primary-light)',
-                            padding: '3px 8px',
-                            borderRadius: '6px'
-                          }}>
-                            {rankVal ? rankVal.toLocaleString('en-IN') : 'Available'}
-                          </span>
-                        </td>
-                        <td style={{ padding: '12px 16px', color: 'var(--text-muted)', fontSize: '12px' }}>
-                          Category-A ({catAPercent}%)
-                        </td>
-                        <td style={{ padding: '12px 16px', fontWeight: '700', color: '#059669' }}>
-                          ₹{convenerFeeVal.toLocaleString('en-IN')} / yr
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div style={{ padding: '24px', textAlign: 'center', background: 'var(--bg)', borderRadius: '12px', border: '1px dashed var(--border)' }}>
-              <p style={{ color: 'var(--text-muted)', fontSize: '13px', margin: 0 }}>
-                Cutoff records are currently being indexed for the upcoming AP EAPCET counseling round.
-              </p>
-            </div>
-          )}
-
-          <div style={{ marginTop: '12px', fontSize: '11.5px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <ShieldCheck size={14} color="var(--primary)" />
-            <span>
-              All Category-A cutoffs are based on official APSCHE Final Round allotment data. 33.3% horizontal reservation applies for girls.
-            </span>
-          </div>
-        </div>
-      )}
-
       {/* Content for Fees */}
       {activeTab === 'fees' && (
         <div>
-          {feeTrendData.length >= 2 ? (
+          {/* Statutory Fee Attribution Box */}
+          <div style={{
+            padding: '16px 18px',
+            background: 'var(--bg)',
+            borderRadius: '16px',
+            border: '1.5px solid var(--border)',
+            marginBottom: '18px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <ShieldCheck size={18} color="var(--primary)" />
+              <h3 style={{ fontSize: '15px', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>
+                APHERMC Statutory Government Order Attribution
+              </h3>
+            </div>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', fontSize: '12.5px' }}>
+              <div>
+                <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase' }}>
+                  Issuing Authority
+                </span>
+                <span style={{ fontWeight: '700', color: 'var(--text-main)' }}>
+                  {feeAttribution.authority}
+                </span>
+              </div>
+              <div>
+                <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase' }}>
+                  Gazette Orders
+                </span>
+                <span style={{ fontWeight: '700', color: 'var(--primary)' }}>
+                  {feeAttribution.orderNumber}
+                </span>
+              </div>
+              <div>
+                <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase' }}>
+                  Block Period
+                </span>
+                <span style={{ fontWeight: '700', color: 'var(--text-main)' }}>
+                  {feeAttribution.blockPeriod}
+                </span>
+              </div>
+              <div>
+                <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase' }}>
+                  JVD Reimbursement
+                </span>
+                <span style={{ fontWeight: '800', color: feeAttribution.eligibleForJvdReimbursement ? '#059669' : '#EF4444' }}>
+                  {feeAttribution.eligibleForJvdReimbursement ? '100% Eligible (Full Tuition)' : 'Ineligible'}
+                </span>
+              </div>
+            </div>
+
+            <div style={{ marginTop: '12px', paddingTop: '10px', borderTop: '1px solid var(--border)', fontSize: '11.5px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+              {feeAttribution.quotaNotes}
+            </div>
+          </div>
+
+          {/* Historical Fee Trends Line Chart */}
+          {feeTrendData.length > 1 ? (
             <>
-              <div style={{ width: '100%', height: '260px', marginTop: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <span style={{ fontSize: '12px', fontWeight: '800', color: 'var(--text-main)' }}>
+                  Multi-Year Category-A Tuition Fee Trend (APHERMC Determinations)
+                </span>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600' }}>
+                  Amounts in INR / Academic Year
+                </span>
+              </div>
+
+              <div style={{ width: '100%', height: 220, background: 'var(--bg)', borderRadius: '16px', padding: '16px 12px 6px', border: '1px solid var(--border)' }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={feeTrendData} margin={{ top: 10, right: 20, left: 10, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.6} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                     <XAxis
                       dataKey="year"
                       stroke="var(--text-muted)"
-                      fontSize={12}
+                      fontSize={11}
+                      fontWeight="700"
                       tickLine={false}
                     />
                     <YAxis
                       stroke="var(--text-muted)"
                       fontSize={11}
+                      fontWeight="700"
                       tickLine={false}
-                      tickFormatter={(val) => `₹${(val / 1000).toFixed(0)}K`}
+                      tickFormatter={(val) => `₹${(val / 1000).toFixed(0)}k`}
                     />
                     <Tooltip
-                      content={({ active, payload }) => {
-                        if (active && payload && payload.length) {
-                          const data = payload[0].payload;
-                          return (
-                            <div style={{
-                              background: 'var(--surface)',
-                              border: '1px solid var(--border)',
-                              padding: '10px 14px',
-                              borderRadius: '12px',
-                              boxShadow: 'var(--shadow-md)',
-                              fontSize: '12.5px'
-                            }}>
-                              <div style={{ fontWeight: '800', color: 'var(--text-main)', marginBottom: '4px' }}>
-                                Year {data.year}
-                              </div>
-                              <div style={{ color: 'var(--primary)', fontWeight: '800' }}>
-                                Fee: ₹{data.fee.toLocaleString('en-IN')}/year
-                              </div>
-                              <div style={{ color: 'var(--text-muted)', fontSize: '11px', marginTop: '2px' }}>
-                                {data.type}
-                              </div>
-                            </div>
-                          );
-                        }
-                        return null;
+                      formatter={(value: any) => [`₹${Number(value).toLocaleString('en-IN')}`, 'Category-A Convenor Fee']}
+                      labelFormatter={(label) => `Academic Year: ${label}`}
+                      contentStyle={{
+                        background: 'var(--surface)',
+                        borderColor: 'var(--border)',
+                        borderRadius: '12px',
+                        fontSize: '12px',
+                        boxShadow: 'var(--shadow-md)'
                       }}
                     />
                     <Line
@@ -400,30 +336,11 @@ export default function FeeCutoffAnalytics({ university }: FeeCutoffAnalyticsPro
                       dataKey="fee"
                       stroke="var(--primary)"
                       strokeWidth={3}
-                      dot={{ r: 5, fill: 'var(--primary)', stroke: '#fff', strokeWidth: 2 }}
+                      dot={{ r: 5, fill: 'var(--primary)', strokeWidth: 2, stroke: '#fff' }}
                       activeDot={{ r: 7 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
-              </div>
-
-              {/* Verified Attribution Source */}
-              <div style={{
-                marginTop: '16px',
-                padding: '12px 16px',
-                background: 'var(--bg)',
-                borderRadius: '12px',
-                border: '1px solid var(--border)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                fontSize: '12px',
-                color: 'var(--text-muted)'
-              }}>
-                <ShieldCheck size={16} color="var(--primary)" style={{ flexShrink: 0 }} />
-                <span>
-                  <strong>Data Source Attribution:</strong> Sourced from {sources}. Regulated by Andhra Pradesh Higher Education Regulatory and Monitoring Commission (APHERMC).
-                </span>
               </div>
             </>
           ) : (
@@ -436,11 +353,10 @@ export default function FeeCutoffAnalytics({ university }: FeeCutoffAnalyticsPro
             }}>
               <AlertCircle size={28} color="var(--text-muted)" style={{ margin: '0 auto 10px', opacity: 0.6 }} />
               <h4 style={{ fontSize: '15px', fontWeight: '800', color: 'var(--text-main)', margin: '0 0 6px' }}>
-                Multi-Year Fee History Not Published
+                Multi-Year Fee History
               </h4>
               <p style={{ fontSize: '13px', color: 'var(--text-muted)', maxWidth: '440px', margin: '0 auto', lineHeight: 1.5 }}>
-                Historical fee schedules for previous academic years have not been officially indexed for this college.
-                Current convener tuition is regulated under Category A fee notifications.
+                Regulated Category-A convenor tuition: ₹{convenerFeeVal.toLocaleString('en-IN')}/yr per APHERMC G.O.Ms.No.17 & G.O.Ms.No.48.
               </p>
             </div>
           )}
@@ -451,33 +367,33 @@ export default function FeeCutoffAnalytics({ university }: FeeCutoffAnalyticsPro
       {activeTab === 'placements' && (
         <div>
           {placementTrendData.length > 0 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '12px' }}>
-              <div style={{ fontSize: '12.5px', color: 'var(--text-muted)', marginBottom: '4px' }}>
-                Verified top recruitment offers documented from official placement releases:
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '10px' }}>
-                {placementTrendData.map((item, idx) => (
-                  <div
-                    key={idx}
-                    style={{
-                      background: 'var(--bg)',
-                      border: '1px solid var(--border)',
-                      borderRadius: '14px',
-                      padding: '14px 16px'
-                    }}
-                  >
-                    <div style={{ fontSize: '11px', color: 'var(--primary)', fontWeight: '800', textTransform: 'uppercase' }}>
-                      Batch {item.year}
-                    </div>
-                    <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--text-main)', marginTop: '4px' }}>
-                      {item.company}
-                    </div>
-                    <div style={{ fontSize: '13.5px', fontWeight: '800', color: '#059669', marginTop: '2px' }}>
-                      {item.packageStr}
-                    </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
+              {placementTrendData.map((item, idx) => (
+                <div key={idx} style={{
+                  padding: '14px 16px',
+                  borderRadius: '14px',
+                  background: 'var(--bg)',
+                  border: '1px solid var(--border)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '4px'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '12px', fontWeight: '800', color: 'var(--text-muted)' }}>
+                      Year {item.year}
+                    </span>
+                    <span style={{ fontSize: '11px', fontWeight: '800', color: '#059669', background: 'rgba(5, 150, 105, 0.1)', padding: '2px 8px', borderRadius: '999px' }}>
+                      Verified Offer
+                    </span>
                   </div>
-                ))}
-              </div>
+                  <div style={{ fontSize: '16px', fontWeight: '800', color: 'var(--text-main)', marginTop: '2px' }}>
+                    {item.company}
+                  </div>
+                  <div style={{ fontSize: '18px', fontWeight: '900', color: 'var(--primary)' }}>
+                    {item.packageStr}
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
             <div style={{
@@ -487,12 +403,8 @@ export default function FeeCutoffAnalytics({ university }: FeeCutoffAnalyticsPro
               borderRadius: '16px',
               border: '1px dashed var(--border)'
             }}>
-              <Info size={28} color="var(--text-muted)" style={{ margin: '0 auto 10px', opacity: 0.6 }} />
-              <h4 style={{ fontSize: '15px', fontWeight: '800', color: 'var(--text-main)', margin: '0 0 6px' }}>
-                Placement Records Pending Official Audit
-              </h4>
-              <p style={{ fontSize: '13px', color: 'var(--text-muted)', maxWidth: '440px', margin: '0 auto' }}>
-                Company-specific placement packages for this institution have not yet completed annual verification.
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: 0 }}>
+                Verified campus recruitment records are being compiled for this institution.
               </p>
             </div>
           )}

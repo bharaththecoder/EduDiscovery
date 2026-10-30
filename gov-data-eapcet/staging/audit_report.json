@@ -1,0 +1,399 @@
+{
+  "auditMetadata": {
+    "title": "AP EAPCET Official-Source Ingestion & Data-Quality Audit",
+    "auditedAt": "2026-10-28T11:54:21.348Z",
+    "auditor": "EduDiscovery Statutory Pipeline Validator v2.2.0",
+    "description": "Independent verification of official APSCHE closing ranks dataset with stratified checks across cycles, branches, categories, genders, regions, blanks, and markers."
+  },
+  "investigation2025": {
+    "status": "NOT_PUBLISHED",
+    "retrievalTimestamp": "2026-10-27T16:53:35Z",
+    "discoveryUrlsChecked": [
+      "https://cets.apsche.ap.gov.in/EAPCET25/Eapcet/EAPCET_HomePage.aspx",
+      "https://cets.apsche.ap.gov.in/APSCHE/",
+      "https://apsche.ap.gov.in/",
+      "https://apsche.ap.gov.in/Pdf/"
+    ],
+    "verificationOutcome": "No official APSCHE 2025 MPC last-rank document exists. The official AP EAPCET 2025 portal explicitly links candidates to the 2024 Last Rank Details document (APEAMCET2024LASTRANKDETAILSNONSW.XLS) for counseling reference. Consequently, the latest three completed counseling cycles available from official admissions documents are 2024-2025, 2023-2024, and 2022-2023."
+  },
+  "checks": {
+    "historicalCoverage": {
+      "status": "PASS",
+      "latestCompletedCycle": "2024-2025",
+      "details": "No official APSCHE 2025 MPC last-rank document exists. The official AP EAPCET 2025 portal explicitly links candidates to the 2024 Last Rank Details document (APEAMCET2024LASTRANKDETAILSNONSW.XLS) for counseling reference. Consequently, the latest three completed counseling cycles available from official admissions documents are 2024-2025, 2023-2024, and 2022-2023."
+    },
+    "byteIntegrity": {
+      "status": "PASS",
+      "results": {
+        "2022": {
+          "pinnedHash": "909ec9b9506919342d95cbe9c8f8a7006aeca2d6e90a0ea12e27455b927db4d9",
+          "calculatedHash": "909ec9b9506919342d95cbe9c8f8a7006aeca2d6e90a0ea12e27455b927db4d9",
+          "match": true
+        },
+        "2023": {
+          "pinnedHash": "498f6dd6eb08d1eed230e5e79bea33660609d1207b92ab0b371de552f073c7c5",
+          "calculatedHash": "498f6dd6eb08d1eed230e5e79bea33660609d1207b92ab0b371de552f073c7c5",
+          "match": true
+        },
+        "2024": {
+          "pinnedHash": "4b216e35375320f0c97a640e67ec6e568e149420e5adb8bf4729e4b07cd363a8",
+          "calculatedHash": "4b216e35375320f0c97a640e67ec6e568e149420e5adb8bf4729e4b07cd363a8",
+          "match": true
+        }
+      }
+    },
+    "collegeResolution": {
+      "status": "PASS",
+      "supportedCollegesAudited": 60,
+      "unresolvedSupported": 0,
+      "outsideSupportedRegistry": 0
+    },
+    "structuralValidation": {
+      "status": "PASS",
+      "results": {}
+    },
+    "pageBoundaryValidation": {
+      "status": "PASS",
+      "results": {
+        "2022": {
+          "boundaryValid": true,
+          "overlapCollege": "ADTP",
+          "lastRecordPage1": "ADTP CSD",
+          "firstRecordPage2": "ADTP CSE"
+        },
+        "2023": {
+          "boundaryValid": true,
+          "overlapCollege": "ADTP",
+          "lastRecordPage1": "ADTP AGR",
+          "firstRecordPage2": "ADTP AIM"
+        }
+      }
+    },
+    "stratifiedBenchmarks": {
+      "status": "PASS",
+      "results": {
+        "2022": [
+          {
+            "target": "AUCE CSE OC Boys",
+            "expectedRank": 3987,
+            "actualRank": 3987,
+            "expectedStatus": "published",
+            "actualStatus": "published",
+            "page": 27,
+            "pass": true
+          },
+          {
+            "target": "AUCE ECE SC Girls",
+            "expectedRank": 16737,
+            "actualRank": 16737,
+            "expectedStatus": "published",
+            "actualStatus": "published",
+            "page": 27,
+            "pass": true
+          },
+          {
+            "target": "JNTK CSE OC Boys",
+            "expectedRank": 3213,
+            "actualRank": 3213,
+            "expectedStatus": "published",
+            "actualStatus": "published",
+            "page": 4,
+            "pass": true
+          },
+          {
+            "target": "SVUC CSE OC Boys",
+            "expectedRank": 5582,
+            "actualRank": 5582,
+            "expectedStatus": "published",
+            "actualStatus": "published",
+            "page": 47,
+            "pass": true
+          },
+          {
+            "target": "GMRI CSE OC Boys",
+            "expectedRank": 9696,
+            "actualRank": 9696,
+            "expectedStatus": "published",
+            "actualStatus": "published",
+            "page": 25,
+            "pass": true
+          },
+          {
+            "target": "ACEE CIV OC Boys",
+            "expectedRank": 143031,
+            "actualRank": 143031,
+            "expectedStatus": "published",
+            "actualStatus": "published",
+            "page": 1,
+            "pass": true
+          },
+          {
+            "target": "ACEE CIV OC_EWS Girls",
+            "expectedRank": null,
+            "actualRank": null,
+            "expectedStatus": "blank_in_source",
+            "actualStatus": "blank_in_source",
+            "page": 1,
+            "pass": true
+          },
+          {
+            "target": "BESTPU AI OC_EWS Boys",
+            "expectedRank": null,
+            "actualRank": null,
+            "expectedStatus": "unallotted_explicit",
+            "actualStatus": "unallotted_explicit",
+            "page": 57,
+            "pass": true
+          }
+        ],
+        "2023": [
+          {
+            "target": "AUCE CSE OC Boys",
+            "expectedRank": 2902,
+            "actualRank": 2902,
+            "expectedStatus": "published",
+            "actualStatus": "published",
+            "page": 26,
+            "pass": true
+          },
+          {
+            "target": "AUCE ECE SC Girls",
+            "expectedRank": 11415,
+            "actualRank": 11415,
+            "expectedStatus": "published",
+            "actualStatus": "published",
+            "page": 26,
+            "pass": true
+          },
+          {
+            "target": "JNTK CSE OC Boys",
+            "expectedRank": 2567,
+            "actualRank": 2567,
+            "expectedStatus": "published",
+            "actualStatus": "published",
+            "page": 4,
+            "pass": true
+          },
+          {
+            "target": "SVUC CSE OC Boys",
+            "expectedRank": 6889,
+            "actualRank": 6889,
+            "expectedStatus": "published",
+            "actualStatus": "published",
+            "page": 45,
+            "pass": true
+          },
+          {
+            "target": "GMRI CSE OC Boys",
+            "expectedRank": 9712,
+            "actualRank": 9712,
+            "expectedStatus": "published",
+            "actualStatus": "published",
+            "page": 24,
+            "pass": true
+          },
+          {
+            "target": "ACEE CIV OC Boys",
+            "expectedRank": 148874,
+            "actualRank": 148874,
+            "expectedStatus": "published",
+            "actualStatus": "published",
+            "page": 1,
+            "pass": true
+          },
+          {
+            "target": "ACEE CIV OC_EWS Girls",
+            "expectedRank": null,
+            "actualRank": null,
+            "expectedStatus": "blank_in_source",
+            "actualStatus": "blank_in_source",
+            "page": 1,
+            "pass": true
+          },
+          {
+            "target": "APUCPU CAD OC_EWS Boys",
+            "expectedRank": null,
+            "actualRank": null,
+            "expectedStatus": "unallotted_explicit",
+            "actualStatus": "unallotted_explicit",
+            "page": 54,
+            "pass": true
+          }
+        ],
+        "2024": [
+          {
+            "target": "AUCE CSE AU OC Boys",
+            "expectedRank": 2524,
+            "actualRank": 2524,
+            "expectedStatus": "published",
+            "actualStatus": "published",
+            "location": "M647",
+            "pass": true
+          },
+          {
+            "target": "AUCE ECE AU SC Girls",
+            "expectedRank": 12957,
+            "actualRank": 12957,
+            "expectedStatus": "published",
+            "actualStatus": "published",
+            "location": "P648",
+            "pass": true
+          },
+          {
+            "target": "JNTK CSE AU OC Boys",
+            "expectedRank": 2039,
+            "actualRank": 2039,
+            "expectedStatus": "published",
+            "actualStatus": "published",
+            "location": "M69",
+            "pass": true
+          },
+          {
+            "target": "JNTK MEC AU BCB Boys",
+            "expectedRank": 16237,
+            "actualRank": 16237,
+            "expectedStatus": "published",
+            "actualStatus": "published",
+            "location": "U72",
+            "pass": true
+          },
+          {
+            "target": "SVUC CSE SVU OC Boys",
+            "expectedRank": 6300,
+            "actualRank": 6300,
+            "expectedStatus": "published",
+            "actualStatus": "published",
+            "location": "M1149",
+            "pass": true
+          },
+          {
+            "target": "SVUC EEE SVU ST Girls",
+            "expectedRank": 72165,
+            "actualRank": 72165,
+            "expectedStatus": "published",
+            "actualStatus": "published",
+            "location": "R1151",
+            "pass": true
+          },
+          {
+            "target": "GMRI CSE AU OC Boys",
+            "expectedRank": 11908,
+            "actualRank": 11908,
+            "expectedStatus": "published",
+            "actualStatus": "published",
+            "location": "M616",
+            "pass": true
+          },
+          {
+            "target": "ACEE CIV AU OC Boys",
+            "expectedRank": 146103,
+            "actualRank": 146103,
+            "expectedStatus": "published",
+            "actualStatus": "published",
+            "location": "M3",
+            "pass": true
+          },
+          {
+            "target": "ACEE CIV AU OC_EWS Girls",
+            "expectedRank": null,
+            "actualRank": null,
+            "expectedStatus": "blank_in_source",
+            "actualStatus": "blank_in_source",
+            "location": "AD3",
+            "pass": true
+          }
+        ]
+      }
+    }
+  },
+  "yearlyAudits": {
+    "2022": {
+      "academicYear": "2022-2023",
+      "sourceDocumentUrl": "https://apsche.ap.gov.in/Pdf/APEAMCET2022LASTRANKDETAILS.pdf",
+      "sourceFile": "C:\\Users\\bhara\\OneDrive\\Documents\\Antigravity\\app\\gov-data-eapcet\\raw\\2022\\official-last-rank-details.pdf",
+      "normalizedFile": "C:\\Users\\bhara\\OneDrive\\Documents\\Antigravity\\app\\gov-data-eapcet\\staging\\2022_normalized_cutoffs.json",
+      "expectedFormat": "PDF",
+      "calculatedHash": "909ec9b9506919342d95cbe9c8f8a7006aeca2d6e90a0ea12e27455b927db4d9",
+      "byteIntegrityPass": true,
+      "completenessPass": true,
+      "structuralPass": true,
+      "benchmarkPass": true,
+      "boundaryPass": true,
+      "metrics": {
+        "rowsExtracted": 27036,
+        "publishedClosingRanks": 24861,
+        "blankInSource": 2013,
+        "unallottedExplicit": 162,
+        "pendingSemanticVerification": 0,
+        "parseErrors": 0,
+        "unknownColumns": 0,
+        "duplicateKeys": 0,
+        "uniqueLogicalKeys": 27036,
+        "distinctCollegesInCycle": 297,
+        "supportedCollegesResolved": 46,
+        "outsideSupportedRegistry": 251
+      },
+      "issues": [],
+      "status": "PASS"
+    },
+    "2023": {
+      "academicYear": "2023-2024",
+      "sourceDocumentUrl": "https://apsche.ap.gov.in/Pdf/APEAPCET2023LASTRANKDETAILS.pdf",
+      "sourceFile": "C:\\Users\\bhara\\OneDrive\\Documents\\Antigravity\\app\\gov-data-eapcet\\raw\\2023\\official-last-rank-details.pdf",
+      "normalizedFile": "C:\\Users\\bhara\\OneDrive\\Documents\\Antigravity\\app\\gov-data-eapcet\\staging\\2023_normalized_cutoffs.json",
+      "expectedFormat": "PDF",
+      "calculatedHash": "498f6dd6eb08d1eed230e5e79bea33660609d1207b92ab0b371de552f073c7c5",
+      "byteIntegrityPass": true,
+      "completenessPass": true,
+      "structuralPass": true,
+      "benchmarkPass": true,
+      "boundaryPass": true,
+      "metrics": {
+        "rowsExtracted": 27234,
+        "publishedClosingRanks": 25269,
+        "blankInSource": 1779,
+        "unallottedExplicit": 186,
+        "pendingSemanticVerification": 0,
+        "parseErrors": 0,
+        "unknownColumns": 0,
+        "duplicateKeys": 0,
+        "uniqueLogicalKeys": 27234,
+        "distinctCollegesInCycle": 300,
+        "supportedCollegesResolved": 47,
+        "outsideSupportedRegistry": 253
+      },
+      "issues": [],
+      "status": "PASS"
+    },
+    "2024": {
+      "academicYear": "2024-2025",
+      "sourceDocumentUrl": "https://apsche.ap.gov.in/Pdf/APEAMCET2024LASTRANKDETAILSNONSW.XLS",
+      "sourceFile": "C:\\Users\\bhara\\OneDrive\\Documents\\Antigravity\\app\\gov-data-eapcet\\raw\\2024\\official-last-rank-details.xls",
+      "normalizedFile": "C:\\Users\\bhara\\OneDrive\\Documents\\Antigravity\\app\\gov-data-eapcet\\staging\\2024_normalized_cutoffs.json",
+      "expectedFormat": "XLS",
+      "calculatedHash": "4b216e35375320f0c97a640e67ec6e568e149420e5adb8bf4729e4b07cd363a8",
+      "byteIntegrityPass": true,
+      "completenessPass": true,
+      "structuralPass": true,
+      "benchmarkPass": true,
+      "boundaryPass": true,
+      "metrics": {
+        "rowsExtracted": 28170,
+        "publishedClosingRanks": 25505,
+        "blankInSource": 2665,
+        "unallottedExplicit": 0,
+        "pendingSemanticVerification": 0,
+        "parseErrors": 0,
+        "unknownColumns": 0,
+        "duplicateKeys": 0,
+        "uniqueLogicalKeys": 28170,
+        "distinctCollegesInCycle": 273,
+        "supportedCollegesResolved": 45,
+        "outsideSupportedRegistry": 228
+      },
+      "issues": [],
+      "status": "PASS"
+    }
+  },
+  "promotionStatus": "PROMOTED_PRODUCTION"
+}

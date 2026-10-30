@@ -23,8 +23,7 @@ import {
   Check,
   SlidersHorizontal,
   Info,
-  X,
-  MessageSquare
+  X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -32,7 +31,6 @@ import { useUniversities } from '@/contexts/UniversityContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import { useWishlist } from '@/contexts/WishlistContext';
-import { useCounselor } from '@/contexts/CounselorContext';
 import {
   generateWebOptions,
   reorderOptions,
@@ -82,7 +80,6 @@ export default function WebOptionsPage() {
   const { currentUser } = useAuth();
   const { addToast } = useToast();
   const { isWishlisted, toggleWishlist } = useWishlist();
-  const { openCounselor } = useCounselor();
   const [searchParams] = useSearchParams();
 
   // Search & Filter state with URL & profile fallback
@@ -428,14 +425,6 @@ export default function WebOptionsPage() {
     }, 150);
   };
 
-  // AI Counselor Strategy Review
-  const handleConsultCounselor = () => {
-    openCounselor(
-      `I'm evaluating my AP EAPCET web-options priority list for Rank ${parsedRank.toLocaleString()} (${category}, ${gender}, ${candidateRegion} region). ` +
-      `My list currently contains ${dreamCount} Dream, ${targetCount} Target, and ${safeCount} Safe options. ` +
-      `Can you give me strategic advice on whether my priority distribution is optimal before I enter them on eapcet-sche.aptonline.in?`
-    );
-  };
 
   // Filtered display items
   const displayItems = useMemo(() => {
@@ -913,21 +902,6 @@ export default function WebOptionsPage() {
             </button>
           )}
 
-          <button
-            type="button"
-            onClick={handleConsultCounselor}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: '6px',
-              padding: '8px 14px', borderRadius: '10px', fontSize: '13px', fontWeight: '800',
-              background: 'linear-gradient(135deg, rgba(0, 135, 90, 0.12) 0%, rgba(16, 185, 129, 0.12) 100%)',
-              border: '1.5px solid var(--primary-glow)',
-              color: 'var(--primary)', cursor: 'pointer'
-            }}
-            title="Ask AI counselor to verify priority sheet balance"
-          >
-            <MessageSquare size={14} />
-            Ask AI Counselor
-          </button>
 
           <button
             type="button"
@@ -997,11 +971,13 @@ export default function WebOptionsPage() {
               return (
                 <motion.div
                   key={item.id}
+                  className="web-option-card"
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.98 }}
                   transition={{ duration: 0.15 }}
                   style={{
+                    contain: 'content',
                     background: 'var(--surface)',
                     border: '1px solid var(--border)',
                     borderRadius: '16px',
@@ -1197,7 +1173,7 @@ export default function WebOptionsPage() {
         <HelpCircle size={22} color="var(--primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
         <div style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.6' }}>
           <strong style={{ color: 'var(--text-main)', display: 'block', marginBottom: '4px' }}>
-            Counselor's Statutory Web-Options Advisory:
+            Statutory Web-Options Counselling Advisory:
           </strong>
           1. <strong>Do Not Freeze on Day 1:</strong> On the official APSCHE portal, always click <em>"Save Options"</em> and review priority numbers. Do not click <em>"Freeze"</em> until the final notification date.<br />
           2. <strong>Zero Penalty for Dream Choices:</strong> In AP counseling, putting 10 Dream colleges at Options 1–10 costs nothing. If you don't qualify, the system effortlessly drops to Option 11.<br />

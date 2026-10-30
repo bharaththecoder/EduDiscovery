@@ -97,13 +97,31 @@ export default function PWAInstallBanner() {
                 fontWeight: '500', 
                 lineHeight: '1.3' 
               }}>
-                Install for offline search and a smoother mobile experience!
+                Install or download APK for a fast, native mobile experience!
               </div>
             </div>
           </div>
 
           {/* Action Buttons */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+            <a
+              href="https://github.com/bharaththecoder/edudiscovery/releases"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-ghost btn-sm"
+              style={{
+                padding: '8px 12px',
+                fontSize: '12px',
+                borderRadius: '999px',
+                whiteSpace: 'nowrap',
+                border: '1px solid var(--border)',
+                textDecoration: 'none',
+                color: 'var(--text-main)',
+                fontWeight: '600'
+              }}
+            >
+              Get APK
+            </a>
             <button 
               onClick={handleInstall}
               className="btn btn-primary btn-sm"
@@ -114,7 +132,7 @@ export default function PWAInstallBanner() {
                 whiteSpace: 'nowrap'
               }}
             >
-              Install
+              Install PWA
             </button>
             <button 
               onClick={handleDismiss}

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from './Navbar';
 import BottomNav from './BottomNav';
-import AICounselor from '@/components/chat/AICounselor';
 import PWAInstallBanner from './PWAInstallBanner';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
@@ -69,7 +68,7 @@ export default function Layout() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.18, ease: [0.25, 0.1, 0.25, 1] }}
-            style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', willChange: 'opacity, transform' }}
+            style={{ width: '100%', minHeight: '100%', display: 'flex', flexDirection: 'column' }}
           >
             <ErrorBoundary fallbackTitle="View Recovery">
               <Outlet />
@@ -78,7 +77,6 @@ export default function Layout() {
         </AnimatePresence>
       </main>
       <BottomNav />
-      <AICounselor />
       <PWAInstallBanner />
     </div>
   );

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Heart, Download, ExternalLink, Users, Building2, Award, BookOpen, Navigation, ChevronDown, ChevronUp, Calendar, Trees, MapPin, CreditCard, BadgePercent, GraduationCap, Briefcase } from 'lucide-react';
 
 import { useAuth } from '@/contexts/AuthContext';
@@ -12,153 +12,14 @@ import { db, isFirestoreReady } from '@/services/firebase';
 import { Review, University, UserProfile } from '@/types';
 import { collection, addDoc, doc, increment, updateDoc, query, where, onSnapshot, serverTimestamp, deleteDoc } from 'firebase/firestore';
 import { trackView } from '@/services/activityTracker';
-import { computeFitScore } from '@/utils/intelligenceEngine';
-import { useCounselor } from '@/contexts/CounselorContext';
-import { Sparkles as SparklesIcon, CheckCircle2, MessageSquare, Star, Trash2 } from 'lucide-react';
+import { CheckCircle2, MessageSquare, Star, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HolographicBadge, ParallaxImage, SpotlightCard, MagneticButton, WaveDivider, RippleButton } from '@/components/Animation3DComponents';
+import { HolographicBadge, SpotlightCard, MagneticButton, WaveDivider, RippleButton } from '@/components/Animation3DComponents';
 import { UniversityDetailSkeleton } from '@/components/ui/UniversityDetailSkeleton';
 import { updatePageMetadata } from '@/services/metadataService';
 import FeeCutoffAnalytics from '@/components/analytics/FeeCutoffAnalytics';
+import OfficialCutoffsSection from '@/components/analytics/OfficialCutoffsSection';
 import { getUniversityFacilities, EnrichedFacility } from '@/data/facilitiesData';
-
-function CollegeFitScore({ university }: { university: University }) {
-  const { currentUser } = useAuth();
-  const answers = currentUser?.quizResults?.answers;
-
-  const fit = React.useMemo(() => {
-    return computeFitScore(university, answers?.rank as string, answers?.budget as string);
-  }, [university, answers]);
-
-  if (!answers) return null;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30, scale: 0.97 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      whileHover={{ y: -4 }}
-      className="glow-up neon-border" style={{
-      background: 'var(--surface)',
-      borderRadius: 'var(--radius-lg)',
-      padding: '24px',
-      boxShadow: 'var(--shadow-md)',
-      position: 'relative',
-      overflow: 'hidden',
-      cursor: 'default',
-      transformStyle: 'preserve-3d',
-      perspective: '800px',
-    }}>
-      <div style={{ position: 'absolute', top: '-10px', right: '-10px', opacity: 0.1 }}>
-        <SparklesIcon size={80} color={fit.color} />
-      </div>
-
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-        <div style={{
-          background: `${fit.color}15`,
-          color: fit.color,
-          padding: '6px 12px',
-          borderRadius: '99px',
-          fontSize: '12px',
-          fontWeight: '800',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px'
-        }}>
-          <SparklesIcon size={14} /> ADMISSION PROBABILITY
-        </div>
-      </div>
-
-      <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px', marginBottom: '16px' }}>
-        <div style={{ fontSize: '48px', fontWeight: '900', color: 'var(--text-main)', lineHeight: 1 }}>
-          {fit.probability}%
-        </div>
-        <div style={{ paddingBottom: '4px' }}>
-          <div style={{ color: fit.color, fontWeight: '800', fontSize: '16px' }}>{fit.label} Fit</div>
-          <div style={{ color: 'var(--text-muted)', fontSize: '11px', fontWeight: '600' }}>AI ESTIMATE</div>
-        </div>
-      </div>
-
-      <div style={{ height: '8px', background: 'var(--chip-bg)', borderRadius: '4px', marginBottom: '20px', overflow: 'hidden' }}>
-        <div style={{
-          height: '100%',
-          width: `${fit.probability}%`,
-          background: `linear-gradient(to right, ${fit.color}80, ${fit.color})`,
-          borderRadius: '4px',
-          transition: 'width 1s ease-out'
-        }} />
-      </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        {fit.reasons.map((reason, i) => (
-          <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '13px', color: 'var(--text-muted)' }}>
-            <CheckCircle2 size={14} style={{ marginTop: '2px', color: '#10B981', flexShrink: 0 }} />
-            <span>{reason}</span>
-          </div>
-        ))}
-      </div>
-    </motion.div>
-  );
-}
-
-
-function ScholarshipEligibility({ university: _university }: { university: University }) {
-  const { currentUser } = useAuth();
-  const answers = currentUser?.quizResults?.answers;
-  
-  if (!answers) return null;
-
-  const category = (answers.category as string) || 'OC';
-  const budget = (answers.budget as string) || '';
-
-  // Determine if family income/budget qualifies (under 2.5L is generally budget / mid range)
-  const isBudgetFriendly = budget.includes('under ₹75k') || budget.includes('₹75k – ₹1.5l') || budget.includes('₹1.5l – ₹2.5l');
-  
-  // SC, ST, BC categories get fee reimbursement
-  const hasReimbursementCategory = ['BC-A', 'BC-B', 'BC-C', 'BC-D', 'BC-E', 'SC', 'ST'].includes(category);
-  
-  // Eligible schemes
-  const eligibleSchemes = [];
-  if (hasReimbursementCategory && isBudgetFriendly) {
-    eligibleSchemes.push({
-      name: "Jagananna Vidya Deevena (RTF)",
-      description: "100% full tuition fee reimbursement credited directly to the college account."
-    });
-    eligibleSchemes.push({
-      name: "Jagananna Vasathi Deevena (MTF)",
-      description: "Hostel & mess fee assistance of up to ₹20,000 per year credited in two installments."
-    });
-  }
-
-  if (eligibleSchemes.length === 0) {
-    return (
-      <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-md)', padding: '20px', marginBottom: '24px', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' }}>
-        <h3 style={{ fontSize: '15px', fontWeight: '800', marginBottom: '6px', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <GraduationCap size={18} className="text-primary" /> Scholarship Eligibility
-        </h3>
-        <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Based on your profile, you do not qualify for direct AP state fee reimbursement. Consider merit-based private scholarships.</p>
-      </div>
-    );
-  }
-
-  return (
-    <div style={{ background: 'var(--primary-light)', borderRadius: 'var(--radius-md)', padding: '20px', marginBottom: '24px', boxShadow: 'var(--shadow-sm)', border: '1.5px solid var(--primary-glow)' }}>
-      <h3 style={{ fontSize: '15px', fontWeight: '800', marginBottom: '6px', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <GraduationCap size={18} className="text-primary" /> Eligible AP Scholarships
-      </h3>
-      <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '14px', fontWeight: '600' }}>Matching schemes based on your quiz profile ({category} Category):</p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {eligibleSchemes.map((s, i) => (
-          <div key={i} style={{ background: 'var(--surface)', padding: '12px', borderRadius: '10px', border: '1px solid var(--border)' }}>
-            <div style={{ fontWeight: '800', fontSize: '13.5px', color: 'var(--text-main)', marginBottom: '2px' }}>{s.name}</div>
-            <div style={{ fontSize: '11.5px', color: 'var(--text-muted)', lineHeight: 1.4 }}>{s.description}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 
 function ReviewsSection({ universityId }: { universityId: string }) {
@@ -525,11 +386,11 @@ function ApplyModal({ university, onClose, onSuccess }: { university: University
 export default function UniversityDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { currentUser } = useAuth();
   const { universities, loading: loadingColleges, getUniversityById: getUniversityFromContext } = useUniversities();
   const { showToast } = useToast() as { showToast: (msg: string, type: string) => void };
   const { toggleWishlist, isWishlisted } = useWishlist() as { toggleWishlist: (u: University) => void, isWishlisted: (id: string) => boolean };
-  const { setIsOpen, setPendingPrompt } = useCounselor();
   const [showApply, setShowApply] = useState(false);
   const [showApply2, setShowApply2] = useState(false);
   const [asyncUniversity, setAsyncUniversity] = useState<University | null>(null);
@@ -544,6 +405,28 @@ export default function UniversityDetail() {
       return id.trim();
     }
   }, [id]);
+
+  // Robust, context-preserving back navigation
+  const handleBack = (e?: React.MouseEvent) => {
+    e?.preventDefault();
+    document.documentElement.style.scrollBehavior = 'auto';
+
+    // 1. Explicit router return route if opened from Search, Compare, Wishlist, Web Options, etc.
+    const returnPath = (location.state as any)?.from;
+    if (returnPath && typeof returnPath === 'string' && returnPath !== location.pathname) {
+      navigate(returnPath);
+      return;
+    }
+
+    // 2. Browser history stack if inside the single page application
+    if (typeof window.history.state?.idx === 'number' && window.history.state.idx > 0) {
+      navigate(-1);
+      return;
+    }
+
+    // 3. Fallback for direct URL opening without usable in-app history entry
+    navigate('/search');
+  };
 
   // 1. Synchronously resolve from in-memory context or static dataset
   const syncUniversity = React.useMemo(() => {
@@ -601,15 +484,13 @@ export default function UniversityDetail() {
 
   const resolvedUniversity = syncUniversity || asyncUniversity || undefined;
 
-  const handleAskAI = () => {
-    if (!resolvedUniversity) return;
-    setPendingPrompt(`Tell me about the placements, fees, and campus of ${resolvedUniversity.name}`);
-    setIsOpen(true);
-  };
+  // Route-level scroll restoration: only scroll to top on genuine navigation to a new ID
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
 
   useEffect(() => {
     if (resolvedUniversity) {
-      window.scrollTo(0, 0);
       updatePageMetadata({
         title: `${resolvedUniversity.name} (${resolvedUniversity.shortName || resolvedUniversity.city}) - Fees, Placements & Admission 2026 | EduDiscovery AP`,
         description: `Comprehensive institution guide for ${resolvedUniversity.name}: NAAC ${resolvedUniversity.naac}, annual fees, top recruiters, verified placement packages, and campus life details in ${resolvedUniversity.city}, Andhra Pradesh.`,
@@ -672,18 +553,8 @@ export default function UniversityDetail() {
         {/* Back */}
         <button 
           type="button"
-          onClick={(e) => {
-            e.preventDefault();
-            // Prevent the visual scroll jump caused by Framer Motion's mode="wait" and browser scroll restoration
-            document.documentElement.style.scrollBehavior = 'auto';
-            
-            if (window.history.length > 2) {
-              navigate(-1);
-            } else {
-              navigate('/search');
-            }
-          }} 
-          aria-label="Back to search"
+          onClick={handleBack} 
+          aria-label="Back to previous page"
           className="tap-target-44"
           style={{
             position: 'absolute', top: '20px', left: '16px',
@@ -742,34 +613,11 @@ export default function UniversityDetail() {
                 <Download size={16} /> Brochure
               </MagneticButton>
             </div>
-            <button 
-              onClick={handleAskAI} 
-              className="glow-up"
-              style={{ 
-                width: '100%', 
-                padding: '14px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                gap: '8px', 
-                border: '1.5px solid var(--primary)', 
-                background: 'var(--surface)',
-                color: 'var(--primary)', 
-                fontWeight: '800',
-                borderRadius: '999px',
-                cursor: 'pointer',
-                fontSize: '15px',
-                boxShadow: 'var(--shadow-sm)',
-                transition: 'all 0.2s'
-              }}
-            >
-              <SparklesIcon size={16} /> Ask AI about this College
-            </button>
           </div>
         </div>
 
         {/* Top Executive Metric Ribbon */}
-        <UniversityMetricRibbon university={resolvedUniversity} />
+        {/* <UniversityMetricRibbon university={resolvedUniversity} /> */}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
@@ -779,8 +627,16 @@ export default function UniversityDetail() {
             {/* Academic Programs with dynamic collapsible state */}
             <AcademicProgramsSection resolvedUniversity={resolvedUniversity} />
 
-            {/* Defensible Fee, Cutoff and Placement Analytics (Wide Desktop Canvas) */}
+            {/* Sourced Fee History and Placement Analytics (APHERMC Determinations) */}
             <FeeCutoffAnalytics university={resolvedUniversity} />
+
+            {/* Official APSCHE Verified Historical Closing Ranks & Admission Pathway */}
+            <OfficialCutoffsSection
+              collegeId={resolvedUniversity.id}
+              collegeName={resolvedUniversity.name}
+              collegeCode={resolvedUniversity.code}
+              defaultRegion={resolvedUniversity.region}
+            />
 
             <WaveDivider />
 
@@ -827,44 +683,8 @@ export default function UniversityDetail() {
                   <Download size={16} /> Brochure
                 </MagneticButton>
               </div>
-              <button 
-                onClick={handleAskAI} 
-                className="glow-up"
-                style={{ 
-                  width: '100%', 
-                  padding: '14px', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center', 
-                  gap: '8px', 
-                  border: '1.5px solid var(--primary)', 
-                  background: 'var(--surface)',
-                  color: 'var(--primary)', 
-                  fontWeight: '800',
-                  borderRadius: '999px',
-                  cursor: 'pointer',
-                  fontSize: '15px',
-                  boxShadow: 'var(--shadow-sm)',
-                  transition: 'all 0.2s'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'var(--primary-light)';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'var(--surface)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }}
-              >
-                <SparklesIcon size={16} /> Ask AI about this College
-              </button>
             </div>
 
-            {/* AI Fit Score */}
-            <CollegeFitScore university={resolvedUniversity} />
-
-            {/* Scholarship Eligibility */}
-            <ScholarshipEligibility university={resolvedUniversity} />
 
             {/* About the Institution */}
             <SpotlightCard style={{ background: 'var(--surface)', borderRadius: 'var(--radius-md)', padding: '22px', boxShadow: 'var(--shadow-sm)', border: '1.5px solid var(--border)' }}>
@@ -1135,112 +955,112 @@ function FacultySection({ resolvedUniversity }: { resolvedUniversity: University
   );
 }
 
-function UniversityMetricRibbon({ university }: { university: University }) {
-  const isPvt = (university.category || '').includes('Deemed') || (university.category || '').includes('Private');
-  const isGovt = (university.category || '').includes('Govt') || (university.category || '').includes('State');
+// function UniversityMetricRibbon({ university }: { university: University }) {
+//   const isPvt = (university.category || '').includes('Deemed') || (university.category || '').includes('Private');
+//   const isGovt = (university.category || '').includes('Govt') || (university.category || '').includes('State');
   
-  const catAPct = university.categoryAQuotaPercent || (isPvt ? 35 : (isGovt ? 100 : 70));
-  const catBPct = university.categoryBQuotaPercent || (isPvt ? 65 : (isGovt ? 0 : 30));
+//   const catAPct = university.categoryAQuotaPercent || (isPvt ? 35 : (isGovt ? 100 : 70));
+//   const catBPct = university.categoryBQuotaPercent || (isPvt ? 65 : (isGovt ? 0 : 30));
 
-  const convenerFee = university.convenerFee 
-    ? `₹${(university.convenerFee).toLocaleString('en-IN')}`
-    : (university.fees || '₹45,000');
+//   const convenerFee = university.convenerFee 
+//     ? `₹${(university.convenerFee).toLocaleString('en-IN')}`
+//     : (university.fees || '₹45,000');
   
-  const mgmtFee = university.mgmtFee && university.mgmtFee > 0
-    ? `₹${(university.mgmtFee).toLocaleString('en-IN')}`
-    : (catBPct > 0 ? (university.mgmtFees || '₹2,50,000') : 'Govt (No Mgmt)');
+//   const mgmtFee = university.mgmtFee && university.mgmtFee > 0
+//     ? `₹${(university.mgmtFee).toLocaleString('en-IN')}`
+//     : (catBPct > 0 ? (university.mgmtFees || '₹2,50,000') : 'Govt (No Mgmt)');
 
-  const region = university.region || (
-    ['Tirupati', 'Anantapur', 'Kurnool', 'Kadapa', 'Nellore', 'Chittoor'].includes(university.city) 
-      ? 'SVU Region' 
-      : 'AU Region'
-  );
+//   const region = university.region || (
+//     ['Tirupati', 'Anantapur', 'Kurnool', 'Kadapa', 'Nellore', 'Chittoor'].includes(university.city) 
+//       ? 'SVU Region' 
+//       : 'AU Region'
+//   );
 
-  const stats = [
-    { label: 'Category', value: university.category?.replace(' College', '').replace(' University', '') || 'Autonomous', icon: <Building2 size={20} className="text-slate-600 dark:text-slate-300" />, sub: `${catAPct}% Conv. / ${catBPct}% Mgmt` },
-    { label: 'NAAC Rating', value: university.naac || 'Grade A+', icon: <Award size={20} className="text-amber-500" />, sub: 'National Accreditation', highlight: true },
-    { label: 'Founded', value: `${university.established || 1980}`, icon: <Calendar size={20} className="text-blue-500" />, sub: 'Established Year' },
-    { label: 'Campus Area', value: `${university.acres || 50} Acres`, icon: <Trees size={20} className="text-emerald-500" />, sub: 'Campus Land Area' },
-    { label: 'Faculty Ratio', value: university.ratio || '1:15', icon: <Users size={20} className="text-indigo-500" />, sub: 'Student-to-Faculty' },
-    { label: 'AP Region', value: region, icon: <MapPin size={20} className="text-rose-500" />, sub: 'EAPCET Local Area' },
-    { label: 'Convenor Fee', value: convenerFee, icon: <CreditCard size={20} className="text-primary" />, sub: `${catAPct}% Quota via EAPCET`, primary: true },
-    { label: 'Management Fee', value: mgmtFee, icon: <BadgePercent size={20} className="text-emerald-600 dark:text-emerald-400" />, sub: catBPct > 0 ? `${catBPct}% Merit Seats` : '100% Convenor', accent: true },
-  ];
+//   const stats = [
+//     { label: 'Category', value: university.category?.replace(' College', '').replace(' University', '') || 'Autonomous', icon: <Building2 size={20} className="text-slate-600 dark:text-slate-300" />, sub: `${catAPct}% Conv. / ${catBPct}% Mgmt` },
+//     { label: 'NAAC Rating', value: university.naac || 'Grade A+', icon: <Award size={20} className="text-amber-500" />, sub: 'National Accreditation', highlight: true },
+//     { label: 'Founded', value: `${university.established || 1980}`, icon: <Calendar size={20} className="text-blue-500" />, sub: 'Established Year' },
+//     { label: 'Campus Area', value: `${university.acres || 50} Acres`, icon: <Trees size={20} className="text-emerald-500" />, sub: 'Campus Land Area' },
+//     { label: 'Faculty Ratio', value: university.ratio || '1:15', icon: <Users size={20} className="text-indigo-500" />, sub: 'Student-to-Faculty' },
+//     { label: 'AP Region', value: region, icon: <MapPin size={20} className="text-rose-500" />, sub: 'EAPCET Local Area' },
+//     { label: 'Convenor Fee', value: convenerFee, icon: <CreditCard size={20} className="text-primary" />, sub: `${catAPct}% Quota via EAPCET`, primary: true },
+//     { label: 'Management Fee', value: mgmtFee, icon: <BadgePercent size={20} className="text-emerald-600 dark:text-emerald-400" />, sub: catBPct > 0 ? `${catBPct}% Merit Seats` : '100% Convenor', accent: true },
+//   ];
 
-  return (
-    <div style={{
-      background: 'var(--surface)',
-      borderRadius: 'var(--radius-lg)',
-      padding: '16px',
-      border: '1.5px solid var(--border)',
-      boxShadow: 'var(--shadow-sm)',
-      marginBottom: '28px',
-    }}>
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-        {stats.map((s, idx) => (
-          <div
-            key={idx}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '12px 8px',
-              background: s.primary 
-                ? 'var(--primary-light)' 
-                : (s.highlight ? 'rgba(245, 158, 11, 0.08)' : 'var(--bg)'),
-              borderRadius: '12px',
-              border: s.primary 
-                ? '1.5px solid var(--primary-glow)' 
-                : '1px solid var(--border)',
-              textAlign: 'center',
-              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-            }}
-          >
-            <div style={{ marginBottom: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{s.icon}</div>
-            <div style={{
-              fontSize: '13px',
-              fontWeight: '900',
-              color: s.primary ? 'var(--primary)' : (s.accent ? 'var(--accent)' : 'var(--text-main)'),
-              lineHeight: 1.2,
-              width: '100%',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap'
-            }}>
-              {s.value}
-            </div>
-            <div style={{
-              fontSize: '10px',
-              fontWeight: '800',
-              color: 'var(--text-muted)',
-              textTransform: 'uppercase',
-              marginTop: '4px',
-              letterSpacing: '0.4px',
-              width: '100%',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap'
-            }}>
-              {s.label}
-            </div>
-            <div style={{
-              fontSize: '9.5px',
-              color: 'var(--text-muted)',
-              marginTop: '2px',
-              width: '100%',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap'
-            }}>
-              {s.sub}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+//   return (
+//     <div style={{
+//       background: 'var(--surface)',
+//       borderRadius: 'var(--radius-lg)',
+//       padding: '16px',
+//       border: '1.5px solid var(--border)',
+//       boxShadow: 'var(--shadow-sm)',
+//       marginBottom: '28px',
+//     }}>
+//       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+//         {stats.map((s, idx) => (
+//           <div
+//             key={idx}
+//             style={{
+//               display: 'flex',
+//               flexDirection: 'column',
+//               alignItems: 'center',
+//               justifyContent: 'center',
+//               padding: '12px 8px',
+//               background: s.primary 
+//                 ? 'var(--primary-light)' 
+//                 : (s.highlight ? 'rgba(245, 158, 11, 0.08)' : 'var(--bg)'),
+//               borderRadius: '12px',
+//               border: s.primary 
+//                 ? '1.5px solid var(--primary-glow)' 
+//                 : '1px solid var(--border)',
+//               textAlign: 'center',
+//               transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+//             }}
+//           >
+//             <div style={{ marginBottom: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{s.icon}</div>
+//             <div style={{
+//               fontSize: '13px',
+//               fontWeight: '900',
+//               color: s.primary ? 'var(--primary)' : (s.accent ? 'var(--accent)' : 'var(--text-main)'),
+//               lineHeight: 1.2,
+//               width: '100%',
+//               overflow: 'hidden',
+//               textOverflow: 'ellipsis',
+//               whiteSpace: 'nowrap'
+//             }}>
+//               {s.value}
+//             </div>
+//             <div style={{
+//               fontSize: '10px',
+//               fontWeight: '800',
+//               color: 'var(--text-muted)',
+//               textTransform: 'uppercase',
+//               marginTop: '4px',
+//               letterSpacing: '0.4px',
+//               width: '100%',
+//               overflow: 'hidden',
+//               textOverflow: 'ellipsis',
+//               whiteSpace: 'nowrap'
+//             }}>
+//               {s.label}
+//             </div>
+//             <div style={{
+//               fontSize: '9.5px',
+//               color: 'var(--text-muted)',
+//               marginTop: '2px',
+//               width: '100%',
+//               overflow: 'hidden',
+//               textOverflow: 'ellipsis',
+//               whiteSpace: 'nowrap'
+//             }}>
+//               {s.sub}
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// }
 
 function FacilitiesSection({ resolvedUniversity }: { resolvedUniversity: University }) {
   const facilities: EnrichedFacility[] = React.useMemo(() => {
