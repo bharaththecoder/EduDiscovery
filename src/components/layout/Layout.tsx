@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from './Navbar';
 import BottomNav from './BottomNav';
 import PWAInstallBanner from './PWAInstallBanner';
+import AppUpdateBanner from './AppUpdateBanner';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
 export default function Layout() {
@@ -78,6 +79,7 @@ export default function Layout() {
       </main>
       <BottomNav />
       <PWAInstallBanner />
+      <AppUpdateBanner />
     </div>
   );
 }

@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useToast } from '@/contexts/ToastContext';
-import { ChevronDown, ChevronUp, Bell, Shield, HelpCircle, Edit3, Camera, FileText, Heart, CheckCircle2, BarChart3, ShieldCheck, Megaphone, GraduationCap, FolderHeart, Sun, Moon, LogOut } from 'lucide-react';
+import { ChevronDown, ChevronUp, Bell, Shield, HelpCircle, Edit3, Camera, FileText, Heart, CheckCircle2, BarChart3, ShieldCheck, Megaphone, GraduationCap, FolderHeart, Sun, Moon, LogOut, Smartphone, RefreshCw } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
+import { CURRENT_APP_VERSION, checkForAppUpdate } from '@/services/appUpdateService';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import UniversityCard from '@/components/cards/UniversityCard';
 import { storage } from '@/services/firebase';
@@ -554,6 +555,53 @@ export default function Profile() {
                   <Moon size={16} /> Dark
                 </button>
               </div>
+            </div>
+
+            {/* App Version & Manual Update Checker */}
+            <div style={{
+              background: 'var(--bg)', borderRadius: '16px', padding: '16px 20px',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              border: '1px solid var(--border)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{
+                  width: '38px', height: '38px', borderRadius: '10px',
+                  background: 'var(--primary-light)', color: 'var(--primary)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center'
+                }}>
+                  <Smartphone size={20} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-main)' }}>
+                    EduDiscovery App
+                  </div>
+                  <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>
+                    Version {CURRENT_APP_VERSION} (Native Build)
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={async () => {
+                  showToast('Checking for updates...', 'info');
+                  const info = await checkForAppUpdate(true);
+                  if (info?.hasUpdate) {
+                    showToast(`Update Available: v${info.latestVersion}!`, 'success');
+                    window.open(info.apkDownloadUrl, '_system');
+                  } else {
+                    showToast('App is up to date (v' + CURRENT_APP_VERSION + ')', 'success');
+                  }
+                }}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  background: 'var(--surface)', border: '1px solid var(--border)',
+                  padding: '8px 14px', borderRadius: '999px', fontSize: '12px',
+                  fontWeight: 700, color: 'var(--primary)', cursor: 'pointer'
+                }}
+              >
+                <RefreshCw size={13} /> Check Update
+              </button>
             </div>
 
             {/* Sign Out */}
