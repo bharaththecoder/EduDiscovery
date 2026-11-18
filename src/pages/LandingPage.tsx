@@ -1,118 +1,175 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import {
-  Globe,
-  Mail,
-  Eye,
-  EyeOff,
-  Sparkles,
-  GraduationCap,
-  Target,
-  Zap,
-  BookOpen,
-  ArrowRight,
-  Star,
-  Search,
-  ShieldCheck,
-  ArrowLeftRight,
-  BarChart3,
-  CheckCircle2,
-  Lock,
-  Layers,
-  ChevronRight,
-  TrendingUp,
-  Award,
-  AlertCircle
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/Card';
+import { Globe, Mail, Eye, EyeOff, Sparkles, GraduationCap, Target, Zap, BookOpen, ArrowRight, Star, Search, ShieldCheck, ArrowLeftRight, BarChart3, MessageSquare } from 'lucide-react';
+import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
+import { OrbitRing, FloatingEmoji3D, HolographicBadge, AnimatedCounter3D, GlowButton, NeonCard, WaveDivider, InteractiveFluidParticles, SpotlightCard, BounceIn, VelocityText } from '@/components/Animation3DComponents';
 
-// Authentic Verified Metrics from EduDiscovery's curated database
-const METRICS = [
-  { value: '7,267', label: 'Verified Cutoffs', subtext: 'APSCHE Allotments (2024-2022)' },
-  { value: '60+', label: 'Top Universities', subtext: 'NAAC A++ to B Accredited' },
-  { value: '100%', label: 'Statutory Fee Transparency', subtext: 'APHERMC G.O.Ms.17 & 48' },
-  { value: '3-Tier', label: 'Web Options Engine', subtext: 'Dream • Target • Safe Ranks' },
+// ─── Animated Floating Particle ─────────────────────────────────
+function Particle({ delay, x, size, color }: { delay: number; x: string; size: number; color: string }) {
+  return (
+    <motion.div
+      style={{
+        position: 'absolute', bottom: '-20px', left: x,
+        width: size, height: size, borderRadius: '50%',
+        background: color, pointerEvents: 'none',
+      }}
+      animate={{ y: [0, -window.innerHeight - 40], opacity: [0, 0.8, 0.6, 0] }}
+      transition={{ duration: 8 + Math.random() * 6, delay, repeat: Infinity, ease: 'easeOut' }}
+    />
+  );
+}
+
+// ─── 3D Tilt Card ───────────────────────────────────────────────
+function TiltCard({ children, className = '', style = {} }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const rotateX = useTransform(y, [-0.5, 0.5], [8, -8]);
+  const rotateY = useTransform(x, [-0.5, 0.5], [-8, 8]);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    x.set((e.clientX - rect.left) / rect.width - 0.5);
+    y.set((e.clientY - rect.top) / rect.height - 0.5);
+  };
+  const handleMouseLeave = () => { x.set(0); y.set(0); };
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ ...style, rotateX, rotateY, transformStyle: 'preserve-3d', perspective: 1200 }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// ─── Feature Card (Clean Atlassian-Style Border Matching Homepage) ───
+function FeatureCard({ icon, title, desc, delay }: {
+  icon: React.ReactNode; title: string; desc: string; delay: number;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] }}
+      whileHover={{ y: -4 }}
+      style={{
+        background: 'var(--surface)',
+        borderRadius: 'var(--radius-lg)',
+        padding: '32px 28px',
+        display: 'flex', flexDirection: 'column', gap: '14px',
+        cursor: 'default',
+        position: 'relative',
+        border: '1px solid var(--border)',
+        boxShadow: 'var(--shadow-sm)',
+        transition: 'all 0.22s cubic-bezier(0.25, 1, 0.5, 1)',
+      }}
+      className="glow-up"
+    >
+      <div
+        style={{
+          width: '52px', height: '52px', borderRadius: '16px',
+          background: 'var(--primary-light)',
+          color: 'var(--primary)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: '24px',
+          position: 'relative', zIndex: 2,
+        }}
+      >
+        {icon}
+      </div>
+      <div style={{ position: 'relative', zIndex: 2 }}>
+        <h3 style={{ fontSize: '18px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '8px' }}>{title}</h3>
+        <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.65 }}>{desc}</p>
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── Stats Counter (3D Flip Enhanced) ────────────────────────────
+function StatCounter({ value, label, suffix = '' }: { value: number; label: string; suffix?: string }) {
+  return <AnimatedCounter3D value={value} suffix={suffix} label={label} />;
+}
+
+const PARTICLES = Array.from({ length: 16 }, (_, i) => ({
+  delay: i * 0.7,
+  x: `${Math.random() * 100}%`,
+  size: 4 + Math.random() * 8,
+  color: i % 3 === 0
+    ? 'rgba(16,185,129,0.5)'
+    : i % 3 === 1
+      ? 'rgba(0,212,255,0.3)'
+      : 'rgba(245,158,11,0.35)',
+}));
+
+const FEATURES = [
+  {
+    icon: <Target size={26} />,
+    title: 'Statutory Admission Predictor',
+    desc: 'Enter your rank and get admission probability across AP colleges based on official government last rank gazettes.',
+  },
+  {
+    icon: <ShieldCheck size={26} />,
+    title: 'Verified APSCHE Cutoffs',
+    desc: 'Access official 3-year closing rank gazettes directly parsed from published government counselling records with complete provenance.',
+  },
+  {
+    icon: <ArrowLeftRight size={26} />,
+    title: 'Smart Compare Engine',
+    desc: 'Compare up to 3 colleges side-by-side on fees, placements, NAAC grade, branches, and cutoff trends.',
+  },
+  {
+    icon: <BarChart3 size={26} />,
+    title: 'Cutoff Trend Analytics',
+    desc: 'See 3-year EAPCET/ICET cutoff trends, counselling round data, and seat availability in real-time.',
+  },
 ];
 
-const CORE_CAPABILITIES = [
-  {
-    icon: Target,
-    tag: 'DECISION INTELLIGENCE',
-    title: 'AP EAPCET Web-Options Priority Assistant',
-    description: 'Algorithmic probability clustering segregates college branch options into Dream (ambitious reach), Target (competitive match), and Safe (statistical certainty) tiers based on your exact category rank.',
-    highlight: 'Category & Region specific',
-    color: '#10B981',
-  },
-  {
-    icon: ShieldCheck,
-    tag: 'GOVERNMENT PROVENANCE',
-    title: '3-Year Official APSCHE Last Rank Gazettes',
-    description: 'Zero guesswork or crowd-sourced estimates. Directly inspect audited closing ranks across General, BC-A/B/C/D/E, SC, ST, EWS, and gender quotas across multiple counseling rounds.',
-    highlight: '7,267 authentic records',
-    color: '#059669',
-  },
-  {
-    icon: ArrowLeftRight,
-    tag: 'SIDE-BY-SIDE EVALUATION',
-    title: 'Multi-College Comparative Matrix',
-    description: 'Evaluate up to three engineering institutions at once across statutory tuition fees, NAAC cycles, campus infrastructure, hostel standards, and verified median placement packages.',
-    highlight: 'Unified comparison matrix',
-    color: '#00D4FF',
-  },
-  {
-    icon: BarChart3,
-    tag: 'REGULATORY COMPLIANCE',
-    title: 'Statutory APHERMC Fee Schedule',
-    description: 'Strict adherence to Andhra Pradesh Higher Education Regulatory and Monitoring Commission gazette notifications (G.O.Ms.No.17 & G.O.Ms.No.48) with full convenor vs management fee breakdowns.',
-    highlight: 'Official G.O. verified',
-    color: '#F59E0B',
-  },
+const MARQUEE_TAGS = [
+  '100+ AP Colleges', 'APSCHE Cutoff Verification', 'AI Counseling Engine', 'Side-by-Side Comparison',
+  'Rank Simulator', 'Scholarships Portal', 'NAAC Accredited Insights', 'Statutory Verified Fees',
+  '100+ AP Colleges', 'APSCHE Cutoff Verification', 'AI Counseling Engine', 'Side-by-Side Comparison',
+  'Rank Simulator', 'Scholarships Portal', 'NAAC Accredited Insights', 'Statutory Verified Fees',
 ];
 
-const COUNSELING_STEPS = [
-  {
-    step: '01',
-    title: 'Enter Your EAPCET Rank & Category',
-    desc: 'Select your reservation category (OC, BC, SC, ST, EWS), region (AU, SVU), and gender quota.',
-  },
-  {
-    step: '02',
-    title: 'Explore Probability Spectrum',
-    desc: 'Our engine parses historical allotment shifts to categorize seats into Dream, Target, and Safe.',
-  },
-  {
-    step: '03',
-    title: 'Export Official Web Options Order',
-    desc: 'Generate an ordered list with official 4-letter counseling college codes ready for the APSCHE portal.',
-  },
-];
-
-export default function LandingPage() {
+export default function Landing() {
   const navigate = useNavigate();
-  const { currentUser, loginWithGoogle, login, signup } = useAuth();
-  
+  const { loginWithGoogle, login, signup } = useAuth();                       
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [authError, setAuthError] = useState<string | null>(null);
+  const [error, setError] = useState('');
+  const [typedText, setTypedText] = useState('');
+  const fullText = 'College Discovery';
+  const typeRef = useRef(0);
 
-  // If user is already authenticated, redirect to /home
+  // Typewriter effect for hero heading
   useEffect(() => {
-    if (currentUser) {
-      navigate('/home', { replace: true });
-    }
-  }, [currentUser, navigate]);
+    const timeout = setTimeout(() => {
+      const timer = setInterval(() => {
+        typeRef.current += 1;
+        setTypedText(fullText.slice(0, typeRef.current));
+        if (typeRef.current >= fullText.length) clearInterval(timer);
+      }, 70);
+      return () => clearInterval(timer);
+    }, 800);
+    return () => clearTimeout(timeout);
+  }, []);
 
-  // Handle escape key modal dismiss
+  // Keyboard accessibility: dismiss auth modal on Escape
   useEffect(() => {
+    if (!showEmailModal) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && showEmailModal) {
+      if (e.key === 'Escape') {
         setShowEmailModal(false);
       }
     };
@@ -120,542 +177,552 @@ export default function LandingPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [showEmailModal]);
 
-  const handleGoogleSignIn = async () => {
-    setAuthError(null);
-    setLoading(true);
-    try {
-      await loginWithGoogle();
-      navigate('/home');
-    } catch (err: any) {
-      setAuthError(err.message || 'Google sign-in was interrupted. Please try again or use email sign-in.');
-    } finally {
-      setLoading(false);
-    }
+  const handleGoogle = async () => {
+    try { setLoading(true); await loginWithGoogle(); navigate('/home'); }
+    catch { setError('Google sign-in failed. Try email login.'); }
+    finally { setLoading(false); }
   };
 
-  const handleEmailAuth = async (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setAuthError(null);
-    setLoading(true);
+    setError(''); setLoading(true);
     try {
-      if (isSignup) {
-        await signup(form.email, form.password, form.name);
-      } else {
-        await login(form.email, form.password);
-      }
+      if (isSignup) await signup(form.email, form.password, form.name);
+      else await login(form.email, form.password);
       navigate('/home');
     } catch (err: any) {
-      setAuthError(err.message?.replace('Firebase: ', '')?.replace(/\(auth\/.*\)\.?/, '') || 'Authentication failed');
-    } finally {
-      setLoading(false);
-    }
+      setError(err.message?.replace('Firebase: ', '')?.replace(/\(auth\/.*\)\.?/, '') || 'Auth failed');
+    } finally { setLoading(false); }
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--text-main)] selection:bg-emerald-500/20 selection:text-emerald-500 overflow-x-clip">
-      
-      {/* ── TOP NAV BAR ───────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-[var(--surface)]/90 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/home')}>
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
-              <GraduationCap className="w-5 h-5" />
-            </div>
-            <div>
-              <span className="font-extrabold text-lg tracking-tight text-[var(--text-main)]">
-                Edu<span className="text-emerald-500">Discovery</span>
-              </span>
-              <span className="hidden sm:inline-block ml-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                AP EAPCET 2025
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate('/search')}
-              className="text-xs sm:text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors px-3 py-1.5"
-            >
-              Browse Colleges
-            </button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => { setIsSignup(false); setShowEmailModal(true); }}
-              className="rounded-full text-xs font-bold"
-            >
-              Sign In
-            </Button>
-            <Button
-              variant="emerald"
-              size="sm"
-              onClick={handleGoogleSignIn}
-              disabled={loading}
-              className="hidden sm:flex rounded-full text-xs font-bold gap-1.5 shadow-sm"
-            >
-              <Globe className="w-3.5 h-3.5" /> Continue with Google
-            </Button>
-          </div>
-        </div>
-      </header>
+    <div style={{ minHeight: '100vh', background: 'var(--bg)', overflowX: 'hidden' }}>
 
       {/* ── HERO SECTION ─────────────────────────────────────────── */}
-      <section className="relative pt-12 pb-20 md:pt-20 md:pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        {/* Ambient background glows */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 sm:w-[500px] sm:h-[500px] bg-emerald-500/10 dark:bg-emerald-500/5 rounded-full blur-3xl pointer-events-none -z-10" />
+      <section style={{
+        minHeight: '100vh',
+        position: 'relative',
+        overflow: 'hidden',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '80px 24px 60px',
+      }} className="hero-animated-bg">
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          
-          {/* Left Column: Mission & CTA */}
-          <div className="lg:col-span-7 flex flex-col items-start text-left space-y-6">
-            
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-bold tracking-wide">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>THE DEFINITIVE AP ENGINEERING COUNSELING PLATFORM</span>
-            </div>
+        {/* Floating particles */}
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+          {PARTICLES.map((p, i) => <Particle key={i} {...p} />)}
+        </div>
+        <InteractiveFluidParticles count={30} color="rgba(16,185,129,0.18)" />
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[var(--text-main)] leading-[1.12]">
-              Discover, Predict & Secure Your <span className="bg-gradient-to-r from-emerald-500 to-teal-400 bg-clip-text text-transparent">Engineering Seat</span> in Andhra Pradesh.
-            </h1>
+        {/* Morphing blob decorations */}
+        <div style={{
+          position: 'absolute', top: '-60px', right: '-60px',
+          width: '500px', height: '500px',
+          background: 'radial-gradient(circle, rgba(16,185,129,0.18) 0%, transparent 70%)',
+          filter: 'blur(50px)', pointerEvents: 'none',
+          animation: 'orb-float-1 12s ease-in-out infinite',
+        }} />
+        <div style={{
+          position: 'absolute', bottom: '-80px', left: '-80px',
+          width: '400px', height: '400px',
+          background: 'radial-gradient(circle, rgba(0,212,255,0.12) 0%, transparent 70%)',
+          filter: 'blur(60px)', pointerEvents: 'none',
+          animation: 'orb-float-2 18s ease-in-out infinite',
+        }} />
 
-            <p className="text-base sm:text-lg text-[var(--text-muted)] leading-relaxed max-w-2xl">
-              Eliminate guesswork with 7,267 verified APSCHE closing ranks, statutory APHERMC fee schedules, and algorithmic Web-Options priority sequencing tailored to your category rank.
-            </p>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 2 }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
 
-            {/* Error banner if login was interrupted */}
-            {authError && (
-              <div className="w-full max-w-xl p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs sm:text-sm flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
-                <div className="space-y-1">
-                  <p className="font-semibold">{authError}</p>
-                  <p className="text-xs text-[var(--text-muted)]">
-                    Tip: If using Brave or strict private browsing, tap the shield icon to enable state storage, or sign in below with your email.
-                  </p>
-                </div>
-              </div>
-            )}
+            {/* Left: Copy */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
-            {/* Primary Action Buttons */}
-            <div className="w-full flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
-              <Button
-                variant="emerald"
-                size="lg"
-                onClick={handleGoogleSignIn}
-                disabled={loading}
-                className="rounded-full font-bold text-sm sm:text-base py-3.5 px-6 shadow-lg shadow-emerald-500/25 justify-center"
-              >
-                <Globe className="w-4 h-4 mr-2" />
-                {loading ? 'Connecting...' : 'Continue with Google'}
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
+              {/* Badge */}
+              <HolographicBadge style={{ alignSelf: 'flex-start' }}>
+                <Sparkles size={13} style={{ color: 'var(--primary)' }} />
+                <span style={{ color: 'var(--primary)' }}>NEXT GEN COLLEGE COUNSELING</span>
+              </HolographicBadge>
 
-              <Button
-                variant="secondary"
-                size="lg"
-                onClick={() => { setIsSignup(true); setShowEmailModal(true); }}
-                className="rounded-full font-bold text-sm sm:text-base py-3.5 px-6 border border-[var(--border)] justify-center"
-              >
-                <Mail className="w-4 h-4 mr-2" /> Create Free Account
-              </Button>
-
-              <Button
-                variant="ghost"
-                size="lg"
-                onClick={() => navigate('/search')}
-                className="rounded-full font-bold text-sm text-[var(--text-muted)] hover:text-[var(--text-main)] justify-center"
-              >
-                <Search className="w-4 h-4 mr-1.5" /> Guest Mode
-              </Button>
-            </div>
-
-            {/* Micro Trust Indicators */}
-            <div className="flex flex-wrap items-center gap-6 pt-4 text-xs font-semibold text-[var(--text-muted)]">
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                <span>100% Free for Students</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                <span>Official APSCHE Provenance</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                <span>Offline Native PWA & APK</span>
-              </div>
-            </div>
-
-          </div>
-
-          {/* Right Column: Interactive Live Preview Card */}
-          <div className="lg:col-span-5 relative">
-            <div className="relative mx-auto max-w-sm sm:max-w-md w-full">
-              
-              {/* Glass container with preview of Web-Options Priority */}
-              <div className="p-6 rounded-3xl bg-[var(--surface)] border border-[var(--border)] shadow-2xl relative overflow-hidden">
-                <div className="flex items-center justify-between pb-4 border-b border-[var(--border)]">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                    <span className="text-xs font-extrabold uppercase tracking-wider text-[var(--text-muted)]">
-                      Counseling Simulation
-                    </span>
-                  </div>
-                  <Badge variant="emerald" className="text-[11px] font-bold">
-                    Rank #12,450 • AU / OC Boys
-                  </Badge>
-                </div>
-
-                <div className="space-y-3.5 mt-5">
-                  {/* Option 1: Dream */}
-                  <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-between">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-400">
-                          Dream Tier
-                        </span>
-                        <span className="text-xs font-bold font-mono text-[var(--text-muted)]">AUCE (Andhra Univ)</span>
-                      </div>
-                      <p className="text-sm font-bold text-[var(--text-main)] mt-1">Computer Science & Engineering</p>
-                      <p className="text-[11px] text-[var(--text-muted)]">2024 Cutoff: 4,890 • Ambitious Reach</p>
-                    </div>
-                    <span className="text-xs font-extrabold text-amber-600 dark:text-amber-400">#01</span>
-                  </div>
-
-                  {/* Option 2: Target */}
-                  <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-between">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-400">
-                          Target Tier
-                        </span>
-                        <span className="text-xs font-bold font-mono text-[var(--text-muted)]">GMRIT (Rajam)</span>
-                      </div>
-                      <p className="text-sm font-bold text-[var(--text-main)] mt-1">CSE (Artificial Intelligence & ML)</p>
-                      <p className="text-[11px] text-[var(--text-muted)]">2024 Cutoff: 13,200 • High Probability Match</p>
-                    </div>
-                    <span className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">#02</span>
-                  </div>
-
-                  {/* Option 3: Safe */}
-                  <div className="p-3.5 rounded-2xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-between">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-teal-500/20 text-teal-700 dark:text-teal-400">
-                          Safe Tier
-                        </span>
-                        <span className="text-xs font-bold font-mono text-[var(--text-muted)]">MVGR (Vizianagaram)</span>
-                      </div>
-                      <p className="text-sm font-bold text-[var(--text-main)] mt-1">Information Technology (IT)</p>
-                      <p className="text-[11px] text-[var(--text-muted)]">2024 Cutoff: 18,500 • Guaranteed Safety</p>
-                    </div>
-                    <span className="text-xs font-extrabold text-teal-600 dark:text-teal-400">#03</span>
-                  </div>
-                </div>
-
-                <div className="mt-5 pt-4 border-t border-[var(--border)] flex items-center justify-between text-xs text-[var(--text-muted)]">
-                  <span>Gazetted Fee: ₹77,000 / yr</span>
-                  <span className="font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                    <ShieldCheck className="w-3.5 h-3.5" /> G.O.Ms.17 Certified
+              {/* Heading with typewriter */}
+              <BounceIn delay={0.15}>
+                <h1
+                  style={{
+                    fontSize: 'clamp(36px, 5vw, 58px)',
+                    fontWeight: '900',
+                    color: 'var(--text-main)',
+                    lineHeight: 1.08,
+                    letterSpacing: '-2px',
+                    margin: 0,
+                  }}
+                >
+                  The Future of <br />
+                  <span style={{
+                    background: 'linear-gradient(135deg, var(--primary) 0%, #00D4FF 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }} className="typewriter-cursor">
+                    {typedText}
                   </span>
-                </div>
-              </div>
+                  <br />
+                  <span style={{ WebkitTextFillColor: 'var(--text-main)' }}>Starts Here.</span>
+                </h1>
+              </BounceIn>
 
-              {/* Floating Badge */}
-              <div className="absolute -bottom-4 -right-2 sm:-right-4 bg-[var(--surface)] border border-[var(--border)] shadow-xl rounded-2xl p-3 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
-                  <Award className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="text-[10px] font-extrabold uppercase tracking-wider text-[var(--text-muted)]">Accreditation</div>
-                  <div className="text-xs font-bold text-[var(--text-main)]">NAAC A++ Verified Database</div>
-                </div>
-              </div>
+              <BounceIn delay={0.3}>
+                <p
+                  style={{ fontSize: '16px', color: 'var(--text-muted)', lineHeight: 1.65, maxWidth: '480px', margin: 0 }}
+                >
+                  Navigate your academic journey with AI-powered matching for top-tier universities in Andhra Pradesh. Filter by rank, branches, fees, and location.
+                </p>
+              </BounceIn>
 
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* ── LIVE DATA METRICS BANNER ──────────────────────────────── */}
-      <section className="border-y border-[var(--border)] bg-[var(--surface)] py-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          {METRICS.map((item, idx) => (
-            <div key={idx} className="flex flex-col items-center text-center">
-              <span className="text-3xl sm:text-4xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight">
-                {item.value}
-              </span>
-              <span className="text-sm font-extrabold text-[var(--text-main)] mt-1">
-                {item.label}
-              </span>
-              <span className="text-xs text-[var(--text-muted)] mt-0.5">
-                {item.subtext}
-              </span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── CORE CAPABILITIES ─────────────────────────────────────── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <Badge variant="emerald" className="font-extrabold tracking-wider uppercase text-xs">
-            Purpose-Built for AP Students
-          </Badge>
-          <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-[var(--text-main)]">
-            Everything You Need to Navigate Engineering Admissions Confidently
-          </h2>
-          <p className="text-base text-[var(--text-muted)]">
-            We transformed dense government PDF records into an interactive, lightning-fast counseling intelligence portal.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {CORE_CAPABILITIES.map((cap, i) => {
-            const Icon = cap.icon;
-            return (
-              <div
-                key={i}
-                className="p-8 rounded-3xl bg-[var(--surface)] border border-[var(--border)] hover:border-emerald-500/40 transition-all duration-300 shadow-sm flex flex-col justify-between"
+              {/* CTA Buttons */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '380px' }}
               >
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-[11px] font-extrabold tracking-wider text-emerald-600 dark:text-emerald-400 uppercase">
-                      {cap.tag}
-                    </span>
-                    <Badge variant="slate" className="text-[10px] font-mono">
-                      {cap.highlight}
-                    </Badge>
-                  </div>
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-5">
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <h3 className="text-xl font-bold text-[var(--text-main)] mb-3">
-                    {cap.title}
-                  </h3>
-                  <p className="text-sm text-[var(--text-muted)] leading-relaxed">
-                    {cap.description}
-                  </p>
-                </div>
-
-                <div className="pt-6 mt-6 border-t border-[var(--border)] flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={handleGoogle}
+                  disabled={loading}
+                  className="btn btn-primary"
+                  style={{
+                    padding: '16px 24px',
+                    fontWeight: '800',
+                    fontSize: '15px',
+                    gap: '12px',
+                    borderRadius: 'var(--radius-full)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    boxShadow: '0 8px 24px rgba(5,150,105,0.25)',
+                    border: 'none',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <Globe size={18} /> Continue with Google <ArrowRight size={16} />
+                </button>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '10px' }}>
                   <button
-                    onClick={() => navigate('/search')}
-                    className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
+                    type="button"
+                    onClick={() => { setShowEmailModal(true); setIsSignup(false); }}
+                    className="btn btn-ghost"
+                    style={{
+                      padding: '14px clamp(10px, 3vw, 18px)',
+                      fontWeight: '700',
+                      fontSize: 'clamp(12px, 3.2vw, 13.5px)',
+                      gap: '6px',
+                      borderRadius: 'var(--radius-full)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      border: '1px solid var(--border)',
+                      background: 'var(--surface)',
+                      color: 'var(--text-main)',
+                      transition: 'all 0.2s ease',
+                    }}
                   >
-                    Explore feature <ChevronRight className="w-3.5 h-3.5" />
+                    <Mail size={16} /> With Email
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/search')}
+                    className="btn btn-secondary"
+                    style={{
+                      padding: '14px clamp(10px, 3vw, 18px)',
+                      fontWeight: '700',
+                      fontSize: 'clamp(12px, 3.2vw, 13.5px)',
+                      gap: '6px',
+                      borderRadius: 'var(--radius-full)',
+                      border: '1px solid var(--border)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      background: 'var(--surface)',
+                      color: 'var(--text-main)',
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    <Search size={16} /> Guest Search
                   </button>
                 </div>
+              </motion.div>
+
+              {/* Stats */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                style={{ display: 'flex', alignItems: 'center', gap: '24px', borderTop: '1px solid var(--border)', paddingTop: '20px', marginTop: '4px' }}
+              >
+                <StatCounter value={100} label="AP Colleges" suffix="+" />
+                <div style={{ width: '1px', height: '36px', background: 'var(--border)' }} />
+                <StatCounter value={94} label="Match Accuracy" suffix="%" />
+                <div style={{ width: '1px', height: '36px', background: 'var(--border)' }} />
+                <StatCounter value={50} label="Active Students" suffix="K+" />
+              </motion.div>
+            </div>
+
+            {/* Right: 3D Showcase (Production Level) */}
+            <div className="hidden md:flex" style={{ position: 'relative', justifyContent: 'center', alignItems: 'center', minHeight: '420px' }}>
+
+              {/* Orbit ring decoration */}
+              <div style={{ position: 'absolute', zIndex: 1 }}>
+                <OrbitRing size={380} color="rgba(16,185,129,0.2)" duration={15} thickness={1}>
+                  <OrbitRing size={300} color="rgba(0,212,255,0.15)" duration={10} thickness={1} reverse />
+                </OrbitRing>
               </div>
-            );
-          })}
+
+              {/* Central morphing glow */}
+              <motion.div
+                animate={{ scale: [1, 1.1, 1], borderRadius: ['60% 40% 30% 70% / 60% 30% 70% 40%', '30% 60% 70% 40% / 50% 60% 30% 60%', '60% 40% 30% 70% / 60% 30% 70% 40%'] }}
+                transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+                style={{
+                  position: 'absolute', width: '320px', height: '320px',
+                  background: 'radial-gradient(circle, rgba(16,185,129,0.22) 0%, transparent 70%)',
+                  filter: 'blur(40px)',
+                }}
+              />
+
+              {/* Main 3D card */}
+              <div style={{ width: '320px', position: 'relative', zIndex: 5 }}>
+                <NeonCard color="rgba(16,185,129,0.3)" style={{ borderRadius: '24px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <span style={{
+                      background: 'var(--primary-light)', color: 'var(--primary)',
+                      fontSize: '11px', fontWeight: '800', padding: '6px 12px', borderRadius: '999px',
+                    }}>98% MATCH RATING</span>
+                    <Sparkles size={20} className="text-amber-400" />
+                  </div>
+                  <h3 style={{ fontSize: '18px', fontWeight: '900', color: 'var(--text-main)', marginBottom: '6px' }}>VIT-AP University</h3>
+                  <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>Amravati, Andhra Pradesh</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
+                    {[['Estimated Tuition', '₹1.95 Lakhs/Yr'], ['Cutoff (CSE)', '4,800 Rank'], ['NAAC Grade', 'A++']].map(([k, v]) => (
+                      <div key={k} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+                        <span style={{ color: 'var(--text-muted)' }}>{k}:</span>
+                        <span style={{ fontWeight: '700', color: 'var(--text-main)' }}>{v}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ height: '1px', background: 'var(--border)', marginBottom: '14px' }} />
+                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                    {['CSE Core', 'Autonomous', 'A++ NAAC'].map(t => (
+                      <span key={t} className="tag" style={{ fontSize: '10px' }}>{t}</span>
+                    ))}
+                  </div>
+                </NeonCard>
+              </div>
+
+              {/* Floating chip 1 — AI counselor (holographic) */}
+              <motion.div
+                animate={{ y: [0, -14, 0], rotateY: [0, 3, 0] }}
+                transition={{ repeat: Infinity, duration: 5, ease: 'easeInOut' }}
+                className="glass-morph-3d"
+                style={{
+                  position: 'absolute', top: '6%', left: '-16px',
+                  borderRadius: '16px', padding: '12px 16px',
+                  zIndex: 6, width: '200px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
+                    <ShieldCheck size={16} />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '9.5px', fontWeight: '800', color: 'var(--primary)', textTransform: 'uppercase' }}>VERIFIED CUTOFF</div>
+                    <div style={{ fontSize: '11px', fontWeight: '600', color: 'var(--text-main)', marginTop: '2px' }}>"APSCHE Official Gazette 2024"</div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Floating chip 2 — odds */}
+              <motion.div
+                animate={{ y: [0, 14, 0], rotateX: [0, 2, 0] }}
+                transition={{ repeat: Infinity, duration: 4.5, ease: 'easeInOut', delay: 1 }}
+                className="glass-morph-3d"
+                style={{
+                  position: 'absolute', bottom: '6%', right: '-24px',
+                  borderRadius: '16px', padding: '14px 18px',
+                  zIndex: 6,
+                }}
+              >
+                <div style={{ fontSize: '9.5px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Admission Odds</div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginTop: '4px' }}>
+                  <span style={{ fontSize: '20px', fontWeight: '900', color: '#059669' }}>High Fit</span>
+                </div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>Rank 8,500 → Safe Zone</div>
+              </motion.div>
+
+              {/* Floating chip 3 — quiz (neon) */}
+              <motion.div
+                animate={{ y: [-6, 8, -6], x: [0, 4, 0], rotateZ: [-1, 1, -1] }}
+                transition={{ repeat: Infinity, duration: 6, ease: 'easeInOut', delay: 0.5 }}
+                style={{
+                  position: 'absolute', top: '40%', right: '-32px',
+                  background: 'linear-gradient(135deg, #10B981, #059669)',
+                  borderRadius: '12px', padding: '10px 14px',
+                  boxShadow: '0 8px 24px rgba(16,185,129,0.35), 0 0 20px rgba(16,185,129,0.2)', zIndex: 6,
+                  color: '#fff',
+                }}
+              >
+                <div style={{ fontSize: '9.5px', fontWeight: '800', textTransform: 'uppercase', opacity: 0.85 }}>Quiz Result</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '3px' }}>
+                  {[...Array(5)].map((_, i) => <Star key={i} size={11} fill="#fff" color="#fff" />)}
+                </div>
+              </motion.div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ── 3-STEP COUNSELING WORKFLOW ────────────────────────────── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[var(--surface)]/50 border-t border-[var(--border)]">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-            <span className="text-xs font-extrabold tracking-wider text-emerald-600 dark:text-emerald-400 uppercase">
-              How It Works
-            </span>
-            <h2 className="text-3xl font-black text-[var(--text-main)]">
-              Three Simple Steps to Your College Choice
-            </h2>
-          </div>
+      {/* ── WAVE DIVIDER ──────────────────────────────────────────── */}
+      <WaveDivider />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {COUNSELING_STEPS.map((s, idx) => (
-              <div key={idx} className="p-6 rounded-2xl bg-[var(--surface)] border border-[var(--border)] space-y-4">
-                <span className="text-3xl font-black text-emerald-500/40 font-mono">
-                  {s.step}
-                </span>
-                <h3 className="text-lg font-bold text-[var(--text-main)]">
-                  {s.title}
-                </h3>
-                <p className="text-sm text-[var(--text-muted)] leading-relaxed">
-                  {s.desc}
-                </p>
-              </div>
+      {/* ── MARQUEE TICKER ────────────────────────────────────────── */}
+      <div style={{ borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', padding: '14px 0', background: 'var(--surface)', overflow: 'hidden' }}>
+        <div className="marquee-track">
+          <div className="marquee-content">
+            {MARQUEE_TAGS.map((tag, i) => (
+              <span key={i} style={{
+                display: 'inline-flex', alignItems: 'center', gap: '6px',
+                fontSize: '12.5px', fontWeight: '700', color: 'var(--text-muted)',
+                padding: '0 20px', borderRight: '1px solid var(--border)',
+                whiteSpace: 'nowrap',
+              }}>
+                {tag}
+              </span>
+            ))}
+          </div>
+          <div className="marquee-content" aria-hidden>
+            {MARQUEE_TAGS.map((tag, i) => (
+              <span key={`b-${i}`} style={{
+                display: 'inline-flex', alignItems: 'center', gap: '6px',
+                fontSize: '12.5px', fontWeight: '700', color: 'var(--text-muted)',
+                padding: '0 20px', borderRight: '1px solid var(--border)',
+                whiteSpace: 'nowrap',
+              }}>
+                {tag}
+              </span>
             ))}
           </div>
         </div>
+      </div>
+
+      {/* ── FEATURE CARDS ─────────────────────────────────────────── */}
+      <section style={{ padding: '60px 24px', maxWidth: '1200px', margin: '0 auto' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          style={{ textAlign: 'center', marginBottom: '40px' }}
+        >
+          <span style={{ fontSize: '11px', fontWeight: '800', color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '2px' }}>What We Offer</span>
+          <h2 style={{ fontSize: 'clamp(26px, 4vw, 40px)', fontWeight: '900', color: 'var(--text-main)', margin: '10px 0 0', letterSpacing: '-1px' }}>
+            Built for Students,<br />
+            <span style={{ background: 'linear-gradient(135deg, var(--primary), #00D4FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              Powered by AI
+            </span>
+          </h2>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {FEATURES.map((f, i) => (
+            <FeatureCard key={f.title} {...f} delay={i * 0.1} />
+          ))}
+        </div>
+
+        {/* Final CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          style={{ textAlign: 'center', marginTop: '48px' }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px' }}>
+            <button
+              type="button"
+              onClick={() => { setShowEmailModal(true); setIsSignup(true); }}
+              className="btn btn-primary"
+              style={{
+                padding: '16px 36px',
+                fontSize: '16px',
+                fontWeight: '800',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '10px',
+                borderRadius: '999px',
+                boxShadow: '0 8px 24px rgba(5,150,105,0.25)',
+                width: '100%',
+                maxWidth: '360px',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <GraduationCap size={20} />
+              Get Started for Free
+              <ArrowRight size={18} />
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('/search')}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--primary)',
+                fontWeight: '700',
+                fontSize: '14px',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '4px 8px',
+              }}
+            >
+              <Search size={15} /> Or explore 60+ AP colleges as a guest
+            </button>
+          </div>
+          <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '8px', fontWeight: '500' }}>
+            No credit card required · 100% Free · Instant Access
+          </p>
+        </motion.div>
       </section>
 
-      {/* ── BOTTOM CALL TO ACTION ─────────────────────────────────── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center space-y-6">
-        <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center mx-auto shadow-xl shadow-emerald-500/20">
-          <GraduationCap className="w-8 h-8" />
-        </div>
-
-        <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-[var(--text-main)]">
-          Ready to Make an Informed Counseling Decision?
-        </h2>
-
-        <p className="text-base text-[var(--text-muted)] max-w-xl mx-auto">
-          Join thousands of Andhra Pradesh engineering aspirants using EduDiscovery to prioritize web options accurately.
-        </p>
-
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-          <Button
-            variant="emerald"
-            size="lg"
-            onClick={handleGoogleSignIn}
-            disabled={loading}
-            className="rounded-full font-bold px-8 py-3.5 shadow-lg shadow-emerald-500/25"
-          >
-            <Globe className="w-4 h-4 mr-2" /> Start with Google
-          </Button>
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={() => navigate('/search')}
-            className="rounded-full font-bold px-8 py-3.5"
-          >
-            Explore Guest Catalog
-          </Button>
-        </div>
-
-        <p className="text-xs text-[var(--text-muted)]">
-          Governed by official AP EAPCET / APSCHE allotment criteria • Free forever
-        </p>
-      </section>
-
-      {/* ── FOOTER ────────────────────────────────────────────────── */}
-      <footer className="border-t border-[var(--border)] bg-[var(--surface)] py-8 px-4 sm:px-6 lg:px-8 text-center text-xs text-[var(--text-muted)]">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-[var(--text-main)]">EduDiscovery</span>
-            <span>•</span>
-            <span>Andhra Pradesh Higher Education Discovery</span>
-          </div>
-          <div>
-            Data sourced from official gazettes (APSCHE & APHERMC G.O.Ms.No.17/48).
-          </div>
-        </div>
-      </footer>
-
-      {/* ── EMAIL AUTH MODAL ──────────────────────────────────────── */}
+      {/* ── EMAIL MODAL ────────────────────────────────────────────── */}
       <AnimatePresence>
         {showEmailModal && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="overlay"
             onClick={() => setShowEmailModal(false)}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="w-full max-w-md rounded-3xl bg-[var(--surface)] border border-[var(--border)] p-6 sm:p-8 shadow-2xl relative"
-              onClick={(e) => e.stopPropagation()}
+              initial={{ y: '100%', opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: '100%', opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 280, damping: 28 }}
+              className="modal-sheet"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="auth-modal-title"
+              onClick={e => e.stopPropagation()}
+              style={{ position: 'relative' }}
             >
               <button
                 onClick={() => setShowEmailModal(false)}
-                className="absolute top-5 right-5 text-[var(--text-muted)] hover:text-[var(--text-main)] p-2 rounded-full hover:bg-[var(--surface-hover)]"
-                aria-label="Close modal"
-              >
-                ✕
-              </button>
+                aria-label="Close dialog"
+                className="tap-target-44"
+                style={{
+                  position: 'absolute', top: '16px', right: '16px',
+                  background: 'var(--primary-light)', color: 'var(--primary)',
+                  width: '44px', height: '44px', borderRadius: '50%',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px',
+                  border: 'none', cursor: 'pointer',
+                }}
+              >×</button>
 
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                  <Sparkles className="w-5 h-5" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+                <div style={{
+                  width: '36px', height: '36px', borderRadius: '10px',
+                  background: 'var(--gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: '0 4px 12px var(--primary-glow)',
+                }}>
+                  <Sparkles size={18} color="#fff" />
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-[var(--text-main)]">
-                    {isSignup ? 'Create Student Account' : 'Welcome Back'}
-                  </h3>
-                  <p className="text-xs text-[var(--text-muted)]">
-                    {isSignup ? 'Access personalized counseling recommendations' : 'Sign in to access your saved options'}
-                  </p>
-                </div>
+                <h2 id="auth-modal-title" style={{ fontSize: '22px', fontWeight: '900', margin: 0 }}>
+                  {isSignup ? 'Create Account' : 'Welcome Back'}
+                </h2>
               </div>
+              <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '24px' }}>
+                {isSignup ? 'Start your university discovery journey' : 'Sign in to continue your journey'}
+              </p>
 
-              {authError && (
-                <div className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs">
-                  {authError}
-                </div>
-              )}
-
-              <form onSubmit={handleEmailAuth} className="space-y-4">
+              <form onSubmit={handleEmailSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 {isSignup && (
-                  <div>
-                    <label className="block text-xs font-bold text-[var(--text-muted)] uppercase mb-1">
-                      Full Name
-                    </label>
+                  <div className="input-wrap">
                     <input
                       type="text"
-                      required
-                      placeholder="e.g. Bharath"
+                      placeholder="Full Name"
+                      aria-label="Full Name"
                       value={form.name}
-                      onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+                      onChange={e => setForm({ ...form, name: e.target.value })}
+                      required
                     />
                   </div>
                 )}
-
-                <div>
-                  <label className="block text-xs font-bold text-[var(--text-muted)] uppercase mb-1">
-                    Email Address
-                  </label>
+                <div className="input-wrap">
                   <input
                     type="email"
-                    required
-                    placeholder="student@example.com"
+                    placeholder="Email Address"
+                    aria-label="Email Address"
                     value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+                    onChange={e => setForm({ ...form, email: e.target.value })}
+                    required
                   />
                 </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-[var(--text-muted)] uppercase mb-1">
-                    Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPass ? 'text' : 'password'}
-                      required
-                      placeholder="••••••••"
-                      value={form.password}
-                      onChange={(e) => setForm({ ...form, password: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40 pr-10"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPass(!showPass)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-main)]"
-                    >
-                      {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
+                <div className="input-wrap" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', position: 'relative' }}>
+                  <input
+                    type={showPass ? 'text' : 'password'}
+                    placeholder="Password"
+                    aria-label="Password"
+                    value={form.password}
+                    onChange={e => setForm({ ...form, password: e.target.value })}
+                    required
+                    style={{ flex: 1, paddingRight: '48px' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPass(!showPass)}
+                    aria-label={showPass ? 'Hide password' : 'Show password'}
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      color: 'var(--text-muted)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '4px'
+                    }}
+                  >
+                    {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
                 </div>
-
-                <Button
-                  type="submit"
-                  variant="emerald"
-                  size="lg"
-                  disabled={loading}
-                  className="w-full rounded-xl font-bold text-sm mt-2 shadow-md shadow-emerald-500/20"
+                {error && <p style={{ color: 'var(--accent)', fontSize: '13px', fontWeight: '600' }}>{error}</p>}
+                <motion.button
+                  type="submit" disabled={loading}
+                  whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                  className="btn btn-primary btn-full shine-on-hover"
+                  style={{ marginTop: '8px', padding: '16px', fontWeight: '800', fontSize: '15px' }}
                 >
-                  {loading ? 'Processing...' : isSignup ? 'Sign Up' : 'Sign In'}
-                </Button>
+                  {loading ? 'Please wait...' : isSignup ? 'Create Account' : 'Sign In'}
+                </motion.button>
               </form>
 
-              <div className="mt-6 text-center text-xs text-[var(--text-muted)]">
+              <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '14px', color: 'var(--text-muted)' }}>
                 {isSignup ? 'Already have an account? ' : "Don't have an account? "}
-                <button
-                  type="button"
-                  onClick={() => { setIsSignup(!isSignup); setAuthError(null); }}
-                  className="font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
-                >
+                <button onClick={() => setIsSignup(!isSignup)} style={{ color: 'var(--primary)', fontWeight: '700', background: 'none', border: 'none', cursor: 'pointer' }}>
                   {isSignup ? 'Sign In' : 'Sign Up'}
                 </button>
-              </div>
+              </p>
             </motion.div>
-          </div>
+          </motion.div>
         )}
       </AnimatePresence>
-
     </div>
   );
 }
