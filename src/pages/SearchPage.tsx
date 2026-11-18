@@ -600,6 +600,101 @@ export default function SearchPage() {
           </div>
         </div>
 
+        {/* Active Filter Badges */}
+        {(activeCities.length > 0 || activeBranches.length > 0) && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '20px', alignItems: 'center' }}>
+            <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)' }}>Active Filters:</span>
+            {activeCities.map(city => (
+              <span
+                key={city}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '4px 10px',
+                  borderRadius: '999px',
+                  fontSize: '12px',
+                  fontWeight: '700',
+                  background: 'var(--primary-light)',
+                  color: 'var(--primary)',
+                  border: '1px solid rgba(16, 185, 129, 0.25)',
+                }}
+              >
+                {city}
+                <button
+                  type="button"
+                  onClick={() => toggleCity(city)}
+                  aria-label={`Remove filter for ${city}`}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: 0,
+                    lineHeight: 1,
+                    color: 'var(--primary)',
+                    fontWeight: '900',
+                    fontSize: '14px',
+                  }}
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+            {activeBranches.map(branch => (
+              <span
+                key={branch}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '4px 10px',
+                  borderRadius: '999px',
+                  fontSize: '12px',
+                  fontWeight: '700',
+                  background: 'rgba(59, 130, 246, 0.1)',
+                  color: '#2563eb',
+                  border: '1px solid rgba(59, 130, 246, 0.25)',
+                }}
+              >
+                {branch}
+                <button
+                  type="button"
+                  onClick={() => toggleBranch(branch)}
+                  aria-label={`Remove filter for ${branch}`}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: 0,
+                    lineHeight: 1,
+                    color: '#2563eb',
+                    fontWeight: '900',
+                    fontSize: '14px',
+                  }}
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+            <button
+              type="button"
+              onClick={() => { setActiveCities([]); setActiveBranches([]); }}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-muted)',
+                fontSize: '12px',
+                fontWeight: '700',
+                textDecoration: 'underline',
+                cursor: 'pointer',
+                padding: '4px 8px',
+              }}
+            >
+              Clear All
+            </button>
+          </div>
+        )}
+
         {/* Skeletons reserving full card bounding box */}
         {loadingColleges && displayResults.length === 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
