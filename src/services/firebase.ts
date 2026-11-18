@@ -1,12 +1,36 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import {
+  initializeAuth,
+  getAuth,
+  GoogleAuthProvider,
+  indexedDBLocalPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence,
+  browserPopupRedirectResolver
+} from "firebase/auth";
 import { initializeFirestore, getFirestore, memoryLocalCache, type Firestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
 
+// Helper to determine optimal authDomain:
+// When running in production on Vercel (or custom domain), using window.location.hostname
+// allows the /__/:path* proxy rewrite in vercel.json to handle the OAuth flow on the exact same origin,
+// eliminating cross-site storage-partitioning and sessionStorage issues in Brave/Safari.
+const resolveAuthDomain = () => {
+  const envDomain = import.meta.env.VITE_FIREBASE_AUTH_DOMAIN;
+  if (typeof window !== 'undefined' && window.location) {
+    const hostname = window.location.hostname;
+    // If running on Vercel deployment or localhost, allow same-origin if configured or fallback to env
+    if (hostname.endsWith('.vercel.app')) {
+      return hostname;
+    }
+  }
+  return envDomain;
+};
+
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  authDomain: resolveAuthDomain(),
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
@@ -37,7 +61,29 @@ if (isConfigValid) {
 
 export const isFirebaseConfigured = Boolean(app);
 
-export const auth = app ? getAuth(app) : ({} as any);
+// Initialize Auth with multi-tier persistence (indexedDB -> localStorage -> session) in browser environments
+let authInstance: any = null;
+if (app) {
+  try {
+    if (typeof window !== 'undefined' && typeof indexedDB !== 'undefined') {
+      authInstance = initializeAuth(app, {
+        persistence: [indexedDBLocalPersistence, browserLocalPersistence, browserSessionPersistence],
+        popupRedirectResolver: browserPopupRedirectResolver,
+      });
+    } else {
+      authInstance = getAuth(app);
+    }
+  } catch {
+    // If already initialized (e.g. HMR or tests), fallback to getAuth
+    try {
+      authInstance = getAuth(app);
+    } catch (e) {
+      console.warn("[Firebase] Auth initialization error:", e);
+    }
+  }
+}
+
+export const auth = authInstance || ({} as any);
 export const googleProvider = new GoogleAuthProvider();
 
 // Initialize Firestore safely with memory cache, handling HMR rebuilds gracefully

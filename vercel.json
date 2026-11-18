@@ -49,6 +49,10 @@
       "destination": "/api/$1"
     },
     {
+      "source": "/__/:path*",
+      "destination": "https://edudiscovery-9cff0.firebaseapp.com/__/:path*"
+    },
+    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }

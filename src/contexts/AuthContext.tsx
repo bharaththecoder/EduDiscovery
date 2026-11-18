@@ -183,8 +183,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
       const result = await signInWithPopup(auth, googleProvider);
       return result.user;
-    } catch (error) {
+    } catch (error: any) {
       console.error("Google login error:", error);
+      // Helpful diagnostic message for storage-partitioned environments (e.g. Brave Shields / Private Mode)
+      if (
+        error?.code === 'auth/popup-blocked' ||
+        error?.code === 'auth/cancelled-popup-request' ||
+        error?.message?.includes('missing initial state') ||
+        error?.message?.includes('sessionStorage')
+      ) {
+        throw new Error(
+          'Sign-in was blocked by your browser privacy shields or popup blocker. If using Brave or private mode, please temporarily disable Shields for this site or sign in using email & password.'
+        );
+      }
       throw error;
     }
   }, []);
