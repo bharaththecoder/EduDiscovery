@@ -1,7 +1,7 @@
 # EduDiscovery 🎓
 
-> **The definitive AI-powered engineering college discovery, decision intelligence, and web-options counseling platform for Andhra Pradesh.**  
-> Semantic AI search, RAG counselor chat, interactive AP campus map, multi-institution comparison matrix, official AP EAPCET web-options priority generator, native Android APK build, and real-time in-app updates.
+> **The definitive engineering college discovery, decision intelligence, and web-options counseling platform for Andhra Pradesh.**  
+> Comprehensive college discovery, interactive AP campus map, multi-institution comparison matrix, official AP EAPCET web-options priority generator, native Android APK build, and real-time in-app updates.
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-edu--discovery.vercel.app-black?style=for-the-badge&logo=vercel)](https://edu-discovery.vercel.app)
 &nbsp;
@@ -17,13 +17,13 @@
 
 ## ✨ Overview
 
-**EduDiscovery** streamlines the engineering and higher education admissions journey across Andhra Pradesh. Instead of navigating dense, multi-page government PDF records or generic national aggregators, students get an intelligent, localized admissions companion:
+**EduDiscovery** streamlines the engineering and higher education admissions journey across Andhra Pradesh. Instead of navigating dense, multi-page government PDF records or generic national aggregators, students get an authoritative, localized admissions platform:
 
 - **Official AP EAPCET Web-Options Assistant:** Algorithmic probability clustering segregating choices into **Dream ➔ Target ➔ Safe** tiers with official 4-letter APSCHE institute codes (`AUCE`, `VRSE`, `GMRIT`, etc.), APHERMC fee gazettes, and local quota pools (`AU` vs `SVU`).
 - **7,267 Verified Cutoff Closing Ranks:** Provenance-backed closing rank gazettes directly parsed from published government counselling records (2024, 2023, 2022) across OC, BC, SC, ST, and EWS categories.
 - **Side-by-Side Comparison Matrix:** Multi-institution comparison across fees, NIRF/NAAC ratings, campus infrastructure, hostel standards, and Recharts radar & bar analytics.
 - **Interactive Andhra Pradesh Campus Map Explorer:** Precise geographic vector projection mapping premier campuses with regional zones (Rayalaseema, Coastal Andhra, Uttarandhra).
-- **RAG-Powered AI Counselor (`C3 Insta Counselor`):** Real-time conversational guidance grounded in verified cutoffs, fee structures, and placement statistics.
+- **Fast Filter & Discovery Catalog:** Multi-parameter search by district, branch, NAAC grade, tuition fee range, and government/autonomous status.
 - **Native Android APK & In-App Update Checker:** Native hardware-accelerated Android experience with automated GitHub Releases version polling, dismissible update banners, and offline fallback.
 
 ---
@@ -33,14 +33,14 @@
 | Feature | Description | Key Tech |
 |---|---|---|
 | 📋 **Web-Options Priority Assistant** | Generates prioritized choice-filling lists with official 4-letter APSCHE codes, APHERMC fees, drag/drop priority reordering, offline `.html` export, and A4 print sheets | Intelligence Engine + React DOM Portal |
+| 🔍 **College Discovery & Catalog** | Multi-facet filtering by branch, district, NAAC accreditation, fee tier, and government status with instant search | Fast In-Memory Indexing + React State |
 | 🤖 **In-App Update Engine** | Client-side version checker polling GitHub Releases API, dismissible bottom banner with direct APK download link, and manual update trigger | Native Fetch + Cache Busting + LocalStorage |
 | 📱 **Native Android APK** | Hardware-accelerated native Android build with custom adaptive vector icon suite, splash theming, and edge-to-edge system navigation | Capacitor 8 + Android Gradle |
 | 🗺️ **AP Campus Map Explorer** | Geographically projected vector map of Andhra Pradesh spanning Rayalaseema, Coastal AP, and Uttarandhra with interactive college popup cards | Geodetic Projection + SVG Vector |
-| ⚖️ **Compare Matrix** | Multi-college side-by-side comparison with radar graphs (ROI, Placements, Fees) and instant analytical verdict | Recharts + Framer Motion |
-| 💬 **RAG AI Counselor** | Floating AI assistant streaming responses grounded in verified college dataset (fees, NAAC, placements, cutoffs) | Vercel Serverless + Gemini 2.0 |
-| ❤️ **Wishlist Hub** | Shortlist colleges with heart animations, batch comparison, AI prompt prep, and cloud sync | Firebase Firestore + LocalStorage |
+| ⚖️ **Compare Matrix** | Multi-college side-by-side comparison with radar graphs (ROI, Placements, Fees) and structured metrics | Recharts + Framer Motion |
+| ❤️ **Wishlist Hub** | Shortlist colleges with heart animations, batch comparison, and cloud sync | Firebase Firestore + LocalStorage |
 | 📰 **Admissions News Feed** | Real-time news feed covering EAPCET counselling schedules and fee gazettes with interactive reading modal | React Portals + Live Feed |
-| 👤 **User Profile & Activity** | Track search history, bookmarked colleges, quiz preferences, and editable student profile | Firebase Auth + Firestore |
+| 👤 **User Profile & Activity** | Track search history, bookmarked colleges, preferences, and editable student profile | Firebase Auth + Firestore |
 
 ---
 
@@ -75,16 +75,9 @@ EduDiscovery is available both as a web app and a high-performance native Androi
                          ┌────────────────────┼────────────────────┐
                          ▼                    ▼                    ▼
                ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
-               │ Firebase Client  │  │ Vercel Serverless│  │  Capacitor Core  │
-               │ (Auth & Firestore)│ │  (/api/search)   │  │ (Android Native) │
-               └──────────────────┘  └────────┬─────────┘  └──────────────────┘
-                                              │
-                                              ▼
-                                     ┌──────────────────┐
-                                     │  Google Gemini   │
-                                     │  (Embeddings &   │
-                                     │   RAG Chatbot)   │
-                                     └──────────────────┘
+               │ Firebase Client  │  │   Vercel Edge    │  │  Capacitor Core  │
+               │ (Auth & Firestore)│ │ (API & OAuth Proxy)│ │ (Android Native) │
+               └──────────────────┘  └──────────────────┘  └──────────────────┘
 ```
 
 ---
@@ -99,8 +92,6 @@ edudiscovery/
 │
 ├── api/                        # Vercel Serverless API Endpoints
 │   ├── firebaseAdmin.js        # Server-side Firebase Admin SDK initialization
-│   ├── search.js               # AI semantic vector search with intent boosting
-│   ├── chat.js                 # RAG streaming counselor endpoint
 │   ├── news.js                 # Admissions news aggregator endpoint
 │   └── recommend.js            # Rule-based college matching
 │
@@ -113,7 +104,6 @@ edudiscovery/
 │   ├── app/                    # App root & route configurations
 │   ├── components/
 │   │   ├── cards/              # UniversityCard, UniversityCardSkeleton
-│   │   ├── chat/               # Counselor chat drawer & message bubbles
 │   │   ├── layout/             # Navbar, BottomNav, AppUpdateBanner, Layout
 │   │   ├── map/                # CampusMapExplorer (AP geographic vector map)
 │   │   └── ui/                 # Accessible Button, Card, Badge primitives
@@ -138,7 +128,6 @@ edudiscovery/
 ### Prerequisites
 - **Node.js 18+**
 - **Firebase Project** with Firestore and Authentication enabled
-- **Gemini API Key** ([Google AI Studio](https://aistudio.google.com))
 
 ### 1. Clone & Install
 ```bash
@@ -163,12 +152,6 @@ VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
 VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
-
-# Server-side Firebase Admin & Gemini API
-FIREBASE_PROJECT_ID=your_project_id
-FIREBASE_CLIENT_EMAIL=your_service_account_email
-FIREBASE_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----\n"
-GEMINI_API_KEY=your_gemini_api_key
 ```
 
 ### 3. Run Development Server
@@ -207,3 +190,4 @@ The project is continuously deployed on **Vercel** with automatic synchronizatio
 ## 📄 License
 
 [MIT](LICENSE)
+

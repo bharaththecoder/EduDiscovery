@@ -54,15 +54,15 @@ function ScoreBar({
   icon: React.ReactNode;
 }) {
   return (
-    <div style={{ marginBottom: '12px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+    <div className="space-y-1.5">
+      <div className="flex justify-between items-center text-xs">
+        <div className="flex items-center gap-1.5 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
           {icon} {label}
         </div>
-        <div style={{ fontSize: '12px', fontWeight: 800, color: color }}>{value.toFixed(1)}/10</div>
+        <div className="text-xs font-extrabold" style={{ color }}>{value.toFixed(1)}/10</div>
       </div>
-      <div style={{ height: '6px', background: 'var(--chip-bg)', borderRadius: '3px', overflow: 'hidden' }}>
-        <div style={{ height: '100%', width: `${Math.min(100, value * 10)}%`, background: color, borderRadius: '3px', transition: 'width 0.4s ease' }} />
+      <div className="h-1.5 bg-chip-bg rounded-full overflow-hidden">
+        <div className="h-full rounded-full transition-all duration-500 ease-out" style={{ width: `${Math.min(100, value * 10)}%`, background: color }} />
       </div>
     </div>
   );
@@ -418,77 +418,81 @@ export default function ComparePage() {
                     </div>
                   </div>
 
-                  <CardHeader className="p-4 pb-2">
-                    <CardTitle className="text-base font-extrabold text-foreground leading-snug">
+                  <CardHeader className="p-5 pb-3">
+                    <CardTitle className="text-lg font-extrabold text-foreground leading-snug">
                       {selected.shortName || selected.name}
                     </CardTitle>
-                    <div className="flex items-center gap-1.5 text-muted-foreground text-xs mt-1">
-                      <MapPin size={12} className="text-primary shrink-0" />
+                    <div className="flex items-center gap-1.5 text-muted-foreground text-xs mt-1.5">
+                      <MapPin size={13} className="text-primary shrink-0" />
                       <span>{selected.city}, {selected.district || selected.region || 'AP'}</span>
                     </div>
                   </CardHeader>
 
-                  <CardContent className="p-4 pt-2 flex flex-col gap-4 flex-1">
+                  <CardContent className="p-5 pt-0 flex flex-col gap-5 flex-1">
                     {/* Accreditation & Fit */}
-                    <div>
-                      <div className="flex gap-2 items-center mb-3">
-                        <Badge variant="outline" className="font-bold border-primary/40 text-primary flex items-center gap-1">
+                    <div className="space-y-3.5">
+                      <div className="flex gap-2 items-center">
+                        <Badge variant="outline" className="font-bold border-primary/40 text-primary flex items-center gap-1 px-2.5 py-0.5">
                           <Award size={12} /> NAAC {selected.naac || 'A'}
                         </Badge>
                         {selected.nirf && (
-                          <Badge variant="outline" className="font-bold border-border text-muted-foreground">
-                            NIRF {selected.nirf}
+                          <Badge variant="outline" className="font-bold border-border text-muted-foreground px-2.5 py-0.5">
+                            NIRF #{selected.nirf}
                           </Badge>
                         )}
                       </div>
 
-                      <ScoreBar
-                        label="ROI Score"
-                        value={computeROI(selected)}
-                        color="#10b981"
-                        icon={<DollarSign size={12} />}
-                      />
-                      <ScoreBar
-                        label="Value Score"
-                        value={computeValueScore(selected)}
-                        color="#059669"
-                        icon={<Trophy size={11} />}
-                      />
+                      <div className="space-y-2.5 pt-1">
+                        <ScoreBar
+                          label="ROI Score"
+                          value={computeROI(selected)}
+                          color="#10b981"
+                          icon={<DollarSign size={13} />}
+                        />
+                        <ScoreBar
+                          label="Value Score"
+                          value={computeValueScore(selected)}
+                          color="#059669"
+                          icon={<Trophy size={12} />}
+                        />
+                      </div>
                     </div>
 
                     {/* Verified Admission Pathway Panel */}
-                    <div className="p-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5">
-                      <div className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-1.5">
-                        <ShieldCheck size={13} /> Admission Pathway
+                    <div className="p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 space-y-1.5">
+                      <div className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                        <ShieldCheck size={14} /> Admission Pathway
                       </div>
                       <div className="text-xs font-bold text-foreground">
                         {applicability?.channelDisplayName || 'APSCHE Convenor Quota'}
                       </div>
-                      <div className="text-[11px] text-muted-foreground mt-1 line-clamp-2">
+                      <div className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
                         {applicability?.evidence?.description || applicability?.verifiedAdmissionRoute || 'Admissions governed by statutory state counseling quotas.'}
                       </div>
                       {applicability?.officialAdmissionsUrl && (
-                        <a
-                          href={applicability.officialAdmissionsUrl}
-                          target="_blank"
-                          rel="noreferrer noopener"
-                          className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline mt-2"
-                        >
-                          Official Portal <ExternalLink size={11} />
-                        </a>
+                        <div className="pt-1">
+                          <a
+                            href={applicability.officialAdmissionsUrl}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                            className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
+                          >
+                            Official Portal <ExternalLink size={12} />
+                          </a>
+                        </div>
                       )}
                     </div>
 
                     {/* Placements & Package */}
-                    <div className="bg-chip-bg p-3 rounded-xl border border-border">
-                      <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-extrabold uppercase tracking-wider mb-2">
-                        <Briefcase size={12} className="text-primary" /> Placements & Packages
+                    <div className="bg-chip-bg p-4 rounded-xl border border-border space-y-2.5">
+                      <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-extrabold uppercase tracking-wider mb-1">
+                        <Briefcase size={13} className="text-primary" /> Placements & Packages
                       </div>
-                      <div className="flex justify-between items-center text-xs mb-1.5">
+                      <div className="flex justify-between items-center text-xs">
                         <span className="text-muted-foreground font-medium">Average Package:</span>
                         <span className="font-bold text-foreground">₹{((selected.avgPackage || 500000) / 100000).toFixed(1)} LPA</span>
                       </div>
-                      <div className="flex justify-between items-center text-xs mb-1.5">
+                      <div className="flex justify-between items-center text-xs">
                         <span className="text-muted-foreground font-medium">Highest Package:</span>
                         <span className="font-bold text-emerald-600 dark:text-emerald-400">
                           {selected.topRecruiters?.[0]?.package || (selected.avgPackage ? `₹${((selected.avgPackage * 1.8) / 100000).toFixed(1)} LPA` : '₹12.0 LPA')}
@@ -501,23 +505,23 @@ export default function ComparePage() {
                     </div>
 
                     {/* Branch-wise Fees Section */}
-                    <div className="bg-chip-bg p-3 rounded-xl border border-border">
-                      <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-extrabold uppercase tracking-wider mb-2">
-                        <DollarSign size={12} className="text-primary" /> Statutory Tuition Fees (/yr)
+                    <div className="bg-chip-bg p-4 rounded-xl border border-border space-y-2.5">
+                      <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-extrabold uppercase tracking-wider mb-1">
+                        <DollarSign size={13} className="text-primary" /> Statutory Tuition Fees (/yr)
                       </div>
-                      <div className="flex flex-col gap-1.5 max-h-40 overflow-y-auto pr-1">
+                      <div className="flex flex-col gap-2 max-h-48 overflow-y-auto pr-1">
                         {selected.branchFees ? (
                           Object.entries(selected.branchFees).map(([branch, fee]) => {
                             if (fee === undefined || fee === null) return null;
                             const lowest = getLowestFeeForBranch(branch);
                             const isLowest = lowest !== null && fee === lowest;
                             return (
-                              <div key={branch} className="flex justify-between items-center text-xs">
+                              <div key={branch} className="flex justify-between items-center text-xs py-0.5">
                                 <span className="text-muted-foreground font-medium">{branch}</span>
-                                <span className={`font-bold flex items-center gap-1 ${isLowest ? 'text-primary bg-primary/10 px-1.5 py-0.5 rounded-md' : 'text-foreground'}`}>
+                                <span className={`font-bold flex items-center gap-1.5 ${isLowest ? 'text-primary bg-primary/10 px-2 py-0.5 rounded-md' : 'text-foreground'}`}>
                                   ₹{Number(fee).toLocaleString()}
                                   {isLowest && (
-                                    <span className="text-[9px] font-extrabold uppercase text-emerald-600 dark:text-emerald-400">
+                                    <span className="text-[9px] font-extrabold uppercase text-emerald-600 dark:text-emerald-400 tracking-wide">
                                       Best
                                     </span>
                                   )}
@@ -532,14 +536,14 @@ export default function ComparePage() {
                     </div>
 
                     {/* Campus & Facilities */}
-                    <div>
-                      <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-extrabold uppercase tracking-wider mb-1.5">
-                        <Building2 size={12} className="text-primary" /> Campus Infrastructure
+                    <div className="space-y-2.5">
+                      <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-extrabold uppercase tracking-wider">
+                        <Building2 size={13} className="text-primary" /> Campus Infrastructure
                       </div>
-                      <div className="text-xs font-semibold text-foreground mb-2">
+                      <div className="text-xs font-semibold text-foreground">
                         {selected.acres ? `${selected.acres} Acres Campus` : 'State-of-art Campus'}
                       </div>
-                      <div className="flex flex-col gap-1.5">
+                      <div className="flex flex-col gap-2 pt-1">
                         {(selected.facilities || []).slice(0, 3).map((f: Facility, i: number) => (
                           <div key={i} className="flex items-center gap-2 text-xs text-muted-foreground">
                             <CheckCircle2 size={13} className="text-primary shrink-0" />
@@ -550,13 +554,13 @@ export default function ComparePage() {
                     </div>
 
                     {/* Footer Action - Passes navigation state so back button returns here */}
-                    <div className="border-t border-border pt-3 mt-auto">
+                    <div className="border-t border-border pt-4 mt-auto">
                       <Link
                         to={`/university/${selected.id}`}
                         state={{ from: location.pathname + location.search }}
-                        className="btn btn-primary btn-full btn-sm flex items-center justify-center gap-1.5 py-2.5 font-bold"
+                        className="btn btn-primary btn-full flex items-center justify-center gap-2 py-3 font-bold text-xs rounded-xl shadow-xs hover:shadow-sm"
                       >
-                        Full College Profile <ArrowRight size={13} />
+                        Full College Profile <ArrowRight size={14} />
                       </Link>
                     </div>
                   </CardContent>
