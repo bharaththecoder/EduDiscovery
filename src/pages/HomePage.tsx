@@ -12,7 +12,7 @@ import UniversityCard from '@/components/cards/UniversityCard';
 import { getActivity } from '@/services/activityTracker';
 import { ActivityEvent, University, NewsArticle } from '@/types';
 import { HolographicBadge, MagneticButton, NeonCard } from '@/components/Animation3DComponents';
-import { parseRankToNumber } from '@/utils/intelligenceEngine';
+import { parseRankToNumber, computeFitScore, getIntelligenceScores } from '@/utils/intelligenceEngine';
 
 // ─── News Modal ───────────────────────────────────────────────
 function NewsModal({ article, onClose }: { article: NewsArticle; onClose: () => void }) {
@@ -228,8 +228,28 @@ export default function Home() {
       navigate('/web-options');
     }
   };
-  const [recommendations, setRecommendations] = useState<University[]>([]);
-  const [loadingRecs, setLoadingRecs] = useState(false);
+  const effectiveRank = quickRank || currentUser?.quizResults?.answers?.rank || '20000';
+  const effectiveBudget = currentUser?.quizResults?.answers?.budget || undefined;
+
+  const recommendations = useMemo(() => {
+    if (loadingColleges || universities.length === 0) return [];
+
+    return universities
+      .map(uni => {
+        const fit = computeFitScore(uni, effectiveRank, effectiveBudget);
+        const scores = getIntelligenceScores(uni);
+        return {
+          ...uni,
+          fitProbability: fit.probability,
+          fitLabel: fit.label,
+          reasons: fit.reasons,
+          intelligence: scores,
+          _score: fit.probability * 0.7 + scores.valueScore * 3,
+        };
+      })
+      .sort((a, b) => b._score - a._score);
+  }, [universities, loadingColleges, effectiveRank, effectiveBudget]);
+
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
@@ -241,16 +261,11 @@ export default function Home() {
 
   const firstName = currentUser?.name?.split(' ')[0] || 'Scholar';
 
-  const lastFetchedSignature = React.useRef<string>('');
-
   useEffect(() => {
     let isCancelled = false;
-    const controller = new AbortController();
 
-    async function fetchData() {
+    async function loadActivity() {
       if (!currentUser?.id) return;
-
-      // 1. Get recent views
       try {
         const activity = await getActivity(currentUser.id);
         if (!isCancelled) {
@@ -259,76 +274,14 @@ export default function Home() {
       } catch (err) {
         console.warn('Failed to load recent activity:', err);
       }
-
-      // 2. Get recommendations (only if colleges are loaded)
-      if (loadingColleges || universities.length === 0) return;
-
-      // Prevent duplicate fetches with identical parameters
-      const signature = `${currentUser.id}_${universities.length}`;
-      if (lastFetchedSignature.current === signature) return;
-
-      setLoadingRecs(true);
-      try {
-        const idToken = auth?.currentUser ? await auth.currentUser.getIdToken() : null;
-        const response = await fetch('/api/recommend', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(idToken ? { 'Authorization': `Bearer ${idToken}` } : {})
-          },
-          body: JSON.stringify({
-            universities: universities.map(u => ({
-              id: u.id,
-              name: u.name,
-              shortName: u.shortName,
-              city: u.city,
-              state: u.state,
-              tuitionFee: u.convenerFee ?? u.tuitionFee,
-              avgPackage: u.avgPackage,
-              placementRate: u.placementRate,
-              naac: u.naac,
-              tags: u.tags,
-              image: u.image,
-              branches: u.branches,
-              code: u.code,
-              district: u.district,
-            }))
-          }),
-          signal: controller.signal
-        });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
-        if (!isCancelled) {
-          const uniMap = new Map(universities.map(u => [u.id, u]));
-          const rawRecs = data.recommendations || [];
-          const enriched = rawRecs.map((r: any) => {
-            const full = uniMap.get(r.id);
-            return full ? { ...full, ...r, image: full.image || r.image } : r;
-          }).filter((u: any) => u && u.name);
-          setRecommendations(enriched);
-          lastFetchedSignature.current = signature;
-        }
-      } catch (err: any) {
-        if (err.name !== 'AbortError') {
-          console.error('Failed to fetch recommendations:', err);
-          // Fallback to top institutions so recommendation cards always show images
-          const fallback = [...universities].sort((a, b) => (b.placementRate || 0) - (a.placementRate || 0)).slice(0, 6);
-          if (!isCancelled) setRecommendations(fallback);
-        }
-      } finally {
-        if (!isCancelled) {
-          setLoadingRecs(false);
-        }
-      }
     }
 
-    fetchData();
+    loadActivity();
 
     return () => {
       isCancelled = true;
-      controller.abort();
     };
-  }, [currentUser?.id, universities, loadingColleges]);
+  }, [currentUser?.id]);
 
   // Pull cloud-synced quiz results, fall back to best-match sort
   const topUniversities = useMemo(() => {
@@ -546,22 +499,16 @@ export default function Home() {
         )}
 
         {/* ── Personalized Recommendations (Phase 3) ── */}
-        {(loadingRecs || recommendations.length > 0) && (
+        {recommendations.length > 0 && (
           <div style={{ marginBottom: '48px' }}>
             <SectionRow icon={<Zap size={18} />} title="Recommended for You" />
-            {loadingRecs ? (
-              <div className="h-48 flex items-center justify-center">
-                <span className="text-slate-400 text-sm font-medium animate-pulse">Loading recommendations...</span>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {recommendations.slice(0, 8).map((uni) => (
-                  <div key={uni.id}>
-                    <UniversityCard university={uni} />
-                  </div>
-                ))}
-              </div>
-            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {recommendations.slice(0, 8).map((uni: any) => (
+                <div key={uni.id}>
+                  <UniversityCard university={uni} reasons={uni.reasons} />
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
