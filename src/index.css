@@ -630,6 +630,9 @@ h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.3px; }
   .bottom-nav {
     display: none;
   }
+  :root {
+    --bottom-nav-clearance: 0px;
+  }
 }
 
 .nav-item {

@@ -19,18 +19,27 @@ export default function BottomNav() {
   ];
 
   return (
-    <nav className="bottom-nav">
+    <nav className="bottom-nav" aria-label="Mobile Navigation">
       {items.map(({ label, icon: Icon, path, badge }) => {
         const active = pathname === path;
         return (
           <motion.button 
             key={path} 
+            type="button"
             className={`nav-item ${active ? 'active' : ''}`} 
             onClick={() => navigate(path)}
             aria-label={label}
             aria-current={active ? 'page' : undefined}
             whileTap={{ scale: 0.88 }}
             transition={{ type: "spring", stiffness: 450, damping: 20 }}
+            style={{
+              minWidth: '44px',
+              minHeight: '44px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
           >
             <div style={{
               position: 'relative',
