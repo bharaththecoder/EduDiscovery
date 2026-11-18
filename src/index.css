@@ -207,7 +207,7 @@ body {
   background-size: 24px 24px;
   color: var(--text-main);
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: clip;
   font-size: 16px;
   line-height: 1.5;
 }
@@ -395,7 +395,7 @@ h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.3px; }
     transition: all 0.22s cubic-bezier(0.25, 1, 0.5, 1);
   }
   .glow-up:hover {
-    transform: translateY(-5px) scale(1.018);
+    transform: translateY(-4px);
     box-shadow: var(--card-glow);
     border-color: var(--primary);
     z-index: 50;
@@ -403,7 +403,7 @@ h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.3px; }
 
   /* Specific tuning for small items in Recently Viewed / Top Matches */
   .compact-card.glow-up:hover {
-    transform: translateY(-4px) scale(1.012);
+    transform: translateY(-3px);
     box-shadow: var(--card-glow-compact);
     border-color: var(--primary);
     z-index: 9999;
@@ -1165,7 +1165,7 @@ h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.3px; }
     transition: all 0.28s cubic-bezier(0.25, 1, 0.5, 1);
   }
   .super-glow-up:hover {
-    transform: translateY(-8px) scale(1.025);
+    transform: translateY(-6px);
     box-shadow: var(--card-glow), 0 0 0 1px var(--primary-glow), 0 30px 60px -12px rgba(16, 185, 129, 0.25);
     border-color: var(--primary) !important;
   }
@@ -1723,9 +1723,9 @@ html, body {
     contain: content;
   }
 
-  /* Prevent page horizontal layout jitter */
+  /* Prevent page horizontal layout jitter without breaking position: sticky */
   html, body {
-    overflow-x: hidden;
+    overflow-x: clip;
     width: 100%;
   }
 }
@@ -1921,7 +1921,7 @@ input:checked + .toggle-slider:before {
 html, body {
   -webkit-overflow-scrolling: touch;
   scroll-behavior: auto !important;
-  overflow-x: hidden;
+  overflow-x: clip;
   width: 100%;
   min-height: 100%;
 }
