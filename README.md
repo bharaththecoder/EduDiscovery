@@ -1,29 +1,30 @@
 # EduDiscovery 🎓
 
-> **The smartest AI-powered college discovery, decision, and web-options counseling platform for Andhra Pradesh.**  
-> Semantic AI search, RAG counselor chat, interactive AP campus map, side-by-side comparison matrix, official EAPCET web-options priority generator, and smart wishlist management — built for modern students.
+> **The definitive AI-powered engineering college discovery, decision intelligence, and web-options counseling platform for Andhra Pradesh.**  
+> Semantic AI search, RAG counselor chat, interactive AP campus map, multi-institution comparison matrix, official AP EAPCET web-options priority generator, native Android APK build, and real-time in-app updates.
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-edu--discovery.vercel.app-black?style=for-the-badge&logo=vercel)](https://edu-discovery.vercel.app)
 &nbsp;
+[![Android Release](https://img.shields.io/badge/Android%20APK-v1.0.0-10B981?style=for-the-badge&logo=android&logoColor=white)](https://github.com/bharaththecoder/EduDiscovery/releases/tag/v1.0.0)
 [![React](https://img.shields.io/badge/React%2019-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite%208-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
+[![Capacitor](https://img.shields.io/badge/Capacitor%20Android-119EFF?style=for-the-badge&logo=capacitor&logoColor=white)](https://capacitorjs.com)
 [![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com)
-[![Gemini](https://img.shields.io/badge/Gemini%202.0-8E75FF?style=for-the-badge&logo=googlegemini&logoColor=white)](https://ai.google.dev)
-[![Tests](https://img.shields.io/badge/Tests-103%20Passed-10B981?style=for-the-badge&logo=vitest&logoColor=white)](#-testing--quality-assurance)
-[![PWA Ready](https://img.shields.io/badge/PWA-Ready-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white)](#-progressive-web-app-pwa)
+[![Tests](https://img.shields.io/badge/Tests-Passing-10B981?style=for-the-badge&logo=vitest&logoColor=white)](#-testing--quality-assurance)
+[![PWA Ready](https://img.shields.io/badge/PWA-Ready-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white)](#-progressive-web-app--android-native-app)
 
 ---
 
 ## ✨ Overview
 
-**EduDiscovery** streamlines the engineering and higher education admissions journey across Andhra Pradesh. Instead of navigating static government PDFs or generic national aggregators, students get an intelligent, localized admissions companion:
+**EduDiscovery** streamlines the engineering and higher education admissions journey across Andhra Pradesh. Instead of navigating dense, multi-page government PDF records or generic national aggregators, students get an intelligent, localized admissions companion:
 
-- **Official AP EAPCET Web-Options Assistant:** Sequences choices into **Dream ➔ Target ➔ Safe** tiers with official 4-letter APSCHE institute codes, APHERMC fee gazettes, and local quota pools (`AU` vs `SVU`).
+- **Official AP EAPCET Web-Options Assistant:** Algorithmic probability clustering segregating choices into **Dream ➔ Target ➔ Safe** tiers with official 4-letter APSCHE institute codes (`AUCE`, `VRSE`, `GMRIT`, etc.), APHERMC fee gazettes, and local quota pools (`AU` vs `SVU`).
+- **7,267 Verified Cutoff Closing Ranks:** Provenance-backed closing rank gazettes directly parsed from published government counselling records (2024, 2023, 2022) across OC, BC, SC, ST, and EWS categories.
+- **Side-by-Side Comparison Matrix:** Multi-institution comparison across fees, NIRF/NAAC ratings, campus infrastructure, hostel standards, and Recharts radar & bar analytics.
 - **Interactive Andhra Pradesh Campus Map Explorer:** Precise geographic vector projection mapping premier campuses with regional zones (Rayalaseema, Coastal Andhra, Uttarandhra).
-- **Instant Semantic AI Search:** Natural language intent parsing matching queries like *"Top CSE colleges in Vijayawada under 1.5 Lakh"*.
 - **RAG-Powered AI Counselor (`C3 Insta Counselor`):** Real-time conversational guidance grounded in verified cutoffs, fee structures, and placement statistics.
-- **Side-by-Side College Compare:** Multi-institution comparison matrix with Recharts radar analysis (ROI, Placements, Fees) and AI-generated synthesis.
-- **Real-Time Admissions News Feed:** Live EAPCET counseling notifications, phase dates, and regulatory announcements.
+- **Native Android APK & In-App Update Checker:** Native hardware-accelerated Android experience with automated GitHub Releases version polling, dismissible update banners, and offline fallback.
 
 ---
 
@@ -31,14 +32,14 @@
 
 | Feature | Description | Key Tech |
 |---|---|---|
-| 📋 **Web-Options Priority Assistant** | Generates prioritized choice-filling lists with official 4-letter APSCHE codes (`AUCE`, `VRSE`, etc.), APHERMC fees, drag/drop priority reordering, offline `.html` export, and A4 print sheets | Intelligence Engine + React DOM Portal |
+| 📋 **Web-Options Priority Assistant** | Generates prioritized choice-filling lists with official 4-letter APSCHE codes, APHERMC fees, drag/drop priority reordering, offline `.html` export, and A4 print sheets | Intelligence Engine + React DOM Portal |
+| 🤖 **In-App Update Engine** | Client-side version checker polling GitHub Releases API, dismissible bottom banner with direct APK download link, and manual update trigger | Native Fetch + Cache Busting + LocalStorage |
+| 📱 **Native Android APK** | Hardware-accelerated native Android build with custom adaptive vector icon suite, splash theming, and edge-to-edge system navigation | Capacitor 8 + Android Gradle |
 | 🗺️ **AP Campus Map Explorer** | Geographically projected vector map of Andhra Pradesh spanning Rayalaseema, Coastal AP, and Uttarandhra with interactive college popup cards | Geodetic Projection + SVG Vector |
-| 🤖 **Semantic AI Search** | Natural language intent parsing with Gemini embeddings + cosine similarity ranking + priority city intent boosting | Gemini API + Vector Math |
+| ⚖️ **Compare Matrix** | Multi-college side-by-side comparison with radar graphs (ROI, Placements, Fees) and instant analytical verdict | Recharts + Framer Motion |
 | 💬 **RAG AI Counselor** | Floating AI assistant streaming responses grounded in verified college dataset (fees, NAAC, placements, cutoffs) | Vercel Serverless + Gemini 2.0 |
-| ⚖️ **Compare Matrix** | Multi-college side-by-side comparison with radar graphs (ROI, Placements, Fees) and instant AI Verdict | Recharts + Framer Motion |
 | ❤️ **Wishlist Hub** | Shortlist colleges with heart animations, batch comparison, AI prompt prep, and cloud sync | Firebase Firestore + LocalStorage |
 | 📰 **Admissions News Feed** | Real-time news feed covering EAPCET counselling schedules and fee gazettes with interactive reading modal | React Portals + Live Feed |
-| 📱 **Mobile-First PWA** | Installable Progressive Web App with mobile navigation, responsive search, touch interactions, and offline caching | Vite PWA + Workbox |
 | 👤 **User Profile & Activity** | Track search history, bookmarked colleges, quiz preferences, and editable student profile | Firebase Auth + Firestore |
 
 ---
@@ -47,9 +48,19 @@
 
 All counseling intelligence, fee figures, and quota boundaries are backed by authentic statutory records:
 
-1. **Closing Ranks Source:** Andhra Pradesh State Council of Higher Education (APSCHE) AP EAPCET Final Phase Allotment Statements.
-2. **Tuition Fee Gazette:** Andhra Pradesh Higher Education Regulatory and Monitoring Commission (APHERMC) G.O.Ms.No.17 dated 07.07.2023 specifying audited convenor fee schedules.
+1. **Closing Ranks Source:** Andhra Pradesh State Council of Higher Education (APSCHE) AP EAPCET Final Phase Allotment Statements (2024, 2023, 2022) with 7,267 verified records.
+2. **Tuition Fee Gazette:** Andhra Pradesh Higher Education Regulatory and Monitoring Commission (APHERMC) G.O.Ms.No.17 and G.O.Ms.No.48 specifying audited convenor and management fee schedules.
 3. **Local Candidate Quota (85%):** Evaluated in strict conformity with the Andhra Pradesh Educational Institutions (Regulation of Admissions) Order, 1974 (Presidential Order) for **Andhra University (AU)** and **Sri Venkateswara University (SVU)** local areas.
+
+---
+
+## 📱 Progressive Web App & Android Native App
+
+EduDiscovery is available both as a web app and a high-performance native Android application:
+
+- **Web (PWA):** [edu-discovery.vercel.app](https://edu-discovery.vercel.app)
+- **Android APK:** Direct download from [GitHub Releases v1.0.0](https://github.com/bharaththecoder/EduDiscovery/releases/tag/v1.0.0)
+- **In-App Update Engine:** Automatically checks for new GitHub release tags every 6 hours and displays a dismissible update banner when a newer APK is available.
 
 ---
 
@@ -58,14 +69,14 @@ All counseling intelligence, fee figures, and quota boundaries are backed by aut
 ```
                                   ┌────────────────────────┐
                                   │      React 19 SPA      │
-                                  │   (Vite + Tailwind)    │
+                                  │ (Vite + Tailwind CSS)  │
                                   └───────────┬────────────┘
                                               │
                          ┌────────────────────┼────────────────────┐
                          ▼                    ▼                    ▼
                ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
-               │ Firebase Client  │  │ Vercel Serverless│  │  Local Storage   │
-               │ (Auth & Firestore)│ │  (/api/search)   │  │ (Wishlist/Cache) │
+               │ Firebase Client  │  │ Vercel Serverless│  │  Capacitor Core  │
+               │ (Auth & Firestore)│ │  (/api/search)   │  │ (Android Native) │
                └──────────────────┘  └────────┬─────────┘  └──────────────────┘
                                               │
                                               ▼
@@ -82,13 +93,16 @@ All counseling intelligence, fee figures, and quota boundaries are backed by aut
 
 ```
 edudiscovery/
+├── android/                    # Native Android project (Capacitor)
+│   ├── app/src/main/res/       # Adaptive mipmap icons & splash drawables
+│   └── app/build.gradle        # Android build configurations
+│
 ├── api/                        # Vercel Serverless API Endpoints
 │   ├── firebaseAdmin.js        # Server-side Firebase Admin SDK initialization
 │   ├── search.js               # AI semantic vector search with intent boosting
 │   ├── chat.js                 # RAG streaming counselor endpoint
 │   ├── news.js                 # Admissions news aggregator endpoint
-│   ├── recommend.js            # Rule-based college matching
-│   └── quizReasoning.js        # AI quiz analysis generator
+│   └── recommend.js            # Rule-based college matching
 │
 ├── gov-data-eapcet/            # Authoritative APSCHE / APHERMC Datasets
 │   ├── eapcet_btech_colleges_master.json # 60 premier institutions with 4-letter codes
@@ -100,21 +114,21 @@ edudiscovery/
 │   ├── components/
 │   │   ├── cards/              # UniversityCard, UniversityCardSkeleton
 │   │   ├── chat/               # Counselor chat drawer & message bubbles
-│   │   ├── layout/             # Navbar, BottomNav, PWAInstallBanner, Layout
+│   │   ├── layout/             # Navbar, BottomNav, AppUpdateBanner, Layout
 │   │   ├── map/                # CampusMapExplorer (AP geographic vector map)
-│   │   └── ui/                 # Skeleton, Button, Card, Badge primitives
+│   │   └── ui/                 # Accessible Button, Card, Badge primitives
 │   │
-│   ├── contexts/               # React Context Providers (Auth, Wishlist, Counselor, Toast)
+│   ├── contexts/               # React Context Providers (Auth, University, Toast)
 │   ├── data/                   # Real AP college dataset, news & coordinates
-│   ├── pages/                  # Route views (Home, Search, WebOptions, Compare, Detail, Profile)
-│   ├── services/               # Firebase SDK setup, API wrappers, metadata
+│   ├── pages/                  # Route views (Home, Search, WebOptions, Compare, Profile)
+│   ├── services/               # Firebase SDK setup, appUpdateService, metadata
 │   ├── utils/                  # webOptionsEngine, intelligenceEngine, ROI calculator
-│   └── index.css               # Design system tokens, glassmorphism & shimmer animations
+│   └── index.css               # Design system tokens, emerald theme & responsive rules
 │
-├── tests/                      # Automated Vitest test suites (103 unit & integration tests)
+├── tests/                      # Automated Vitest test suites
 ├── public/                     # Favicons, PWA icons, manifest.json
 ├── vite.config.js              # Vite build, Workbox PWA caching & vendor code-splitting
-└── vercel.json                 # API routing & SPA fallback configuration
+└── vercel.json                 # API routing, OAuth rewrite proxy & SPA fallback
 ```
 
 ---
@@ -148,13 +162,13 @@ VITE_FIREBASE_PROJECT_ID=your_project_id
 VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
+VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
 
 # Server-side Firebase Admin & Gemini API
 FIREBASE_PROJECT_ID=your_project_id
 FIREBASE_CLIENT_EMAIL=your_service_account_email
 FIREBASE_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----\n"
 GEMINI_API_KEY=your_gemini_api_key
-GROQ_API_KEY=your_groq_api_key
 ```
 
 ### 3. Run Development Server
@@ -167,39 +181,26 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ## 🧪 Testing & Quality Assurance
 
-EduDiscovery includes an automated test suite with **103 unit and integration tests** verifying security, routing, rate limiting, and calculation engines:
+EduDiscovery includes automated test suites verifying security, routing, rate limiting, and calculation engines:
 
 ```bash
-# Run all automated tests
+# Run automated tests
 npm test
 
 # Run TypeScript type check
 npx tsc --noEmit
 ```
 
-### Test Coverage Highlights
-- **Public Routing:** Validates guest access restrictions (`/search` public; `/home`, `/web-options`, `/compare`, `/wishlist` protected).
-- **Security & Authorization:** Token validation, IDOR prevention, and role-based access control.
-- **Web-Options Engine:** Validates Dream/Target/Safe distribution, quota application, and sorting algorithms.
-- **Rate Limiting:** Protects serverless inference endpoints against abuse.
-
 ---
 
 ## ☁️ Deployment
 
-The project is continuously deployed on **Vercel**:
+The project is continuously deployed on **Vercel** with automatic synchronization to **Capacitor Android**:
 
 - **Production URL:** [https://edu-discovery.vercel.app](https://edu-discovery.vercel.app)
 - **Framework:** Vite React 19 SPA
 - **Serverless Functions:** `/api/*` mapped via `vercel.json`
-- **PWA Workbox:** Optimized with 15 MiB precache headroom and granular vendor chunking (`ai-vendor`, `motion-vendor`, `charts-vendor`, `icons-vendor`, `firebase`, `react-vendor`).
-
----
-
-## 🤝 Contributing
-
-Contributions, feature suggestions, and bug reports are welcome!  
-Feel free to open an issue or submit a pull request.
+- **OAuth Proxy Rewrite:** `/__/*` remapped directly to Firebase Auth domain, preventing browser storage-partitioning issues in privacy browsers like Brave and Safari.
 
 ---
 

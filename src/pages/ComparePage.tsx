@@ -398,7 +398,7 @@ export default function ComparePage() {
 
               {/* College Card Details or Compact Empty Slot */}
               {selected ? (
-                <Card className="neon-border rounded-2xl overflow-hidden flex flex-col flex-1 shadow-sm">
+                <Card className="rounded-2xl overflow-hidden flex flex-col flex-1 border border-border bg-surface shadow-sm hover:border-primary/40 transition-all duration-200">
                   <div className="h-36 overflow-hidden relative group">
                     <img
                       src={selected.image}
@@ -566,14 +566,14 @@ export default function ComparePage() {
                   initial={{ opacity: 0, scale: 0.98 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.2 }}
-                  className="rounded-2xl border-2 border-dashed border-border/80 flex flex-col items-center justify-center text-center p-6 text-muted-foreground bg-primary/5 dark:bg-zinc-950/40"
+                  className="rounded-2xl border border-dashed border-border flex flex-col items-center justify-center text-center p-6 text-muted-foreground bg-surface hover:border-primary/40 transition-all duration-200"
                   style={{
                     minHeight: '220px',
                     gap: '10px',
                     boxSizing: 'border-box'
                   }}
                 >
-                  <div className="w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary border border-primary/25 shadow-xs">
+                  <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-primary border border-primary/25 shadow-xs">
                     <Search size={18} />
                   </div>
                   <div>

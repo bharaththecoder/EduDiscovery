@@ -133,9 +133,9 @@ const FEATURES = [
 ];
 
 const MARQUEE_TAGS = [
-  '100+ AP Colleges', 'APSCHE Cutoff Verification', 'AI Counseling Engine', 'Side-by-Side Comparison',
+  '60+ AP Colleges', 'APSCHE Cutoff Verification', 'Side-by-Side Comparison',
   'Rank Simulator', 'Scholarships Portal', 'NAAC Accredited Insights', 'Statutory Verified Fees',
-  '100+ AP Colleges', 'APSCHE Cutoff Verification', 'AI Counseling Engine', 'Side-by-Side Comparison',
+  '60+ AP Colleges', 'APSCHE Cutoff Verification', 'Side-by-Side Comparison',
   'Rank Simulator', 'Scholarships Portal', 'NAAC Accredited Insights', 'Statutory Verified Fees',
 ];
 
@@ -360,11 +360,11 @@ export default function Landing() {
                 transition={{ duration: 0.6, delay: 0.6 }}
                 style={{ display: 'flex', alignItems: 'center', gap: '24px', borderTop: '1px solid var(--border)', paddingTop: '20px', marginTop: '4px' }}
               >
-                <StatCounter value={100} label="AP Colleges" suffix="+" />
+                <StatCounter value={60} label="AP Colleges" suffix="+" />
                 <div style={{ width: '1px', height: '36px', background: 'var(--border)' }} />
                 <StatCounter value={94} label="Match Accuracy" suffix="%" />
                 <div style={{ width: '1px', height: '36px', background: 'var(--border)' }} />
-                <StatCounter value={50} label="Active Students" suffix="K+" />
+                <StatCounter value={10} label="Active Students" suffix="" />
               </motion.div>
             </div>
 
@@ -526,7 +526,7 @@ export default function Landing() {
           <h2 style={{ fontSize: 'clamp(26px, 4vw, 40px)', fontWeight: '900', color: 'var(--text-main)', margin: '10px 0 0', letterSpacing: '-1px' }}>
             Built for Students,<br />
             <span style={{ background: 'linear-gradient(135deg, var(--primary), #00D4FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              Powered by AI
+              Completely for Free
             </span>
           </h2>
         </motion.div>
@@ -590,9 +590,7 @@ export default function Landing() {
               <Search size={15} /> Or explore 60+ AP colleges as a guest
             </button>
           </div>
-          <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '8px', fontWeight: '500' }}>
-            No credit card required · 100% Free · Instant Access
-          </p>
+
         </motion.div>
       </section>
 
