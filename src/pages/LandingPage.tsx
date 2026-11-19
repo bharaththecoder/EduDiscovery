@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Capacitor } from '@capacitor/core';
 import { useAuth } from '@/contexts/AuthContext';
 import { Globe, Mail, Eye, EyeOff, Sparkles, GraduationCap, Target, Zap, BookOpen, ArrowRight, Star, Search, ShieldCheck, ArrowLeftRight, BarChart3, MessageSquare } from 'lucide-react';
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
@@ -148,6 +149,7 @@ export default function Landing() {
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
   const [typedText, setTypedText] = useState('');
   const fullText = 'College Discovery';
   const typeRef = useRef(0);
@@ -177,10 +179,29 @@ export default function Landing() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [showEmailModal]);
 
+  const isNative = Capacitor.isNativePlatform();
+
   const handleGoogle = async () => {
-    try { setLoading(true); await loginWithGoogle(); navigate('/home'); }
-    catch { setError('Google sign-in failed. Try email login.'); }
-    finally { setLoading(false); }
+    if (isNative) {
+      setNotice('On the Android app, please sign in with Email or continue with Guest Search.');
+      setShowEmailModal(true);
+      return;
+    }
+    try {
+      setLoading(true);
+      await loginWithGoogle();
+      navigate('/home');
+    } catch (err: any) {
+      console.warn('[LandingPage] Google sign-in failed:', err);
+      if (err?.code === 'auth/native-unsupported') {
+        setNotice(err.message || 'Please use Email sign-in on Android.');
+        setShowEmailModal(true);
+      } else {
+        setError(err.message || 'Google sign-in failed. Try email login.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -283,51 +304,101 @@ export default function Landing() {
                 transition={{ duration: 0.6, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
                 style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '380px' }}
               >
-                <button
-                  type="button"
-                  onClick={handleGoogle}
-                  disabled={loading}
-                  className="btn btn-primary"
-                  style={{
-                    padding: '16px 24px',
-                    fontWeight: '800',
-                    fontSize: '15px',
-                    gap: '12px',
-                    borderRadius: 'var(--radius-full)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    boxShadow: '0 8px 24px rgba(5,150,105,0.25)',
-                    border: 'none',
-                    transition: 'all 0.2s ease',
-                  }}
-                >
-                  <Globe size={18} /> Continue with Google <ArrowRight size={16} />
-                </button>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '10px' }}>
+                {!isNative ? (
                   <button
                     type="button"
-                    onClick={() => { setShowEmailModal(true); setIsSignup(false); }}
-                    className="btn btn-ghost"
+                    onClick={handleGoogle}
+                    disabled={loading}
+                    className="btn btn-primary"
                     style={{
-                      padding: '14px clamp(10px, 3vw, 18px)',
-                      fontWeight: '700',
-                      fontSize: 'clamp(12px, 3.2vw, 13.5px)',
-                      gap: '6px',
+                      padding: '16px 24px',
+                      fontWeight: '800',
+                      fontSize: '15px',
+                      gap: '12px',
                       borderRadius: 'var(--radius-full)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       cursor: 'pointer',
-                      border: '1px solid var(--border)',
-                      background: 'var(--surface)',
-                      color: 'var(--text-main)',
+                      boxShadow: '0 8px 24px rgba(5,150,105,0.25)',
+                      border: 'none',
                       transition: 'all 0.2s ease',
                     }}
                   >
-                    <Mail size={16} /> With Email
+                    <Globe size={18} /> Continue with Google <ArrowRight size={16} />
                   </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => { setShowEmailModal(true); setIsSignup(false); }}
+                    disabled={loading}
+                    className="btn btn-primary"
+                    style={{
+                      padding: '16px 24px',
+                      fontWeight: '800',
+                      fontSize: '15px',
+                      gap: '12px',
+                      borderRadius: 'var(--radius-full)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      boxShadow: '0 8px 24px rgba(5,150,105,0.25)',
+                      border: 'none',
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    <Mail size={18} /> Sign In with Email <ArrowRight size={16} />
+                  </button>
+                )}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '10px' }}>
+                  {!isNative ? (
+                    <button
+                      type="button"
+                      onClick={() => { setShowEmailModal(true); setIsSignup(false); }}
+                      className="btn btn-ghost"
+                      style={{
+                        padding: '14px clamp(10px, 3vw, 18px)',
+                        fontWeight: '700',
+                        fontSize: 'clamp(12px, 3.2vw, 13.5px)',
+                        gap: '6px',
+                        borderRadius: 'var(--radius-full)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        border: '1px solid var(--border)',
+                        background: 'var(--surface)',
+                        color: 'var(--text-main)',
+                        transition: 'all 0.2s ease',
+                      }}
+                    >
+                      <Mail size={16} /> With Email
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => { setShowEmailModal(true); setIsSignup(true); }}
+                      className="btn btn-ghost"
+                      style={{
+                        padding: '14px clamp(10px, 3vw, 18px)',
+                        fontWeight: '700',
+                        fontSize: 'clamp(12px, 3.2vw, 13.5px)',
+                        gap: '6px',
+                        borderRadius: 'var(--radius-full)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        border: '1px solid var(--border)',
+                        background: 'var(--surface)',
+                        color: 'var(--text-main)',
+                        transition: 'all 0.2s ease',
+                      }}
+                    >
+                      <Sparkles size={16} /> Create Account
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={() => navigate('/search')}
@@ -642,7 +713,7 @@ export default function Landing() {
                 </h2>
               </div>
               <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '24px' }}>
-                {isSignup ? 'Start your university discovery journey' : 'Sign in to continue your journey'}
+                {notice || (isSignup ? 'Start your university discovery journey' : 'Sign in to continue your journey')}
               </p>
 
               <form onSubmit={handleEmailSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>

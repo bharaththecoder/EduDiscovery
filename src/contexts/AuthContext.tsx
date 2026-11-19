@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { Capacitor } from '@capacitor/core';
 import {
   onAuthStateChanged,
   createUserWithEmailAndPassword,
@@ -177,6 +178,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const loginWithGoogle = React.useCallback(async () => {
+    // In Capacitor Native Android / iOS APK shell:
+    // Firebase Web SDK's signInWithPopup / signInWithRedirect attempts to open external browsers (like Brave/Chrome),
+    // causing 'missing initial state' due to sessionStorage isolation and Google's disallowed_useragent policy in WebViews.
+    if (Capacitor.isNativePlatform()) {
+      const error: any = new Error(
+        'Google Sign-In is only supported on the Web version. On the Android App, please sign in using Email & Password or explore as Guest.'
+      );
+      error.code = 'auth/native-unsupported';
+      throw error;
+    }
+
     try {
       googleProvider.setCustomParameters({
         prompt: "select_account"
