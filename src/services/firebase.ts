@@ -17,15 +17,7 @@ import { getAnalytics } from "firebase/analytics";
 // allows the /__/:path* proxy rewrite in vercel.json to handle the OAuth flow on the exact same origin,
 // eliminating cross-site storage-partitioning and sessionStorage issues in Brave/Safari.
 const resolveAuthDomain = () => {
-  const envDomain = import.meta.env.VITE_FIREBASE_AUTH_DOMAIN;
-  if (typeof window !== 'undefined' && window.location) {
-    const hostname = window.location.hostname;
-    // If running on Vercel deployment or localhost, allow same-origin if configured or fallback to env
-    if (hostname.endsWith('.vercel.app')) {
-      return hostname;
-    }
-  }
-  return envDomain;
+  return import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "edudiscovery-9cff0.firebaseapp.com";
 };
 
 const firebaseConfig = {
