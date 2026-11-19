@@ -1,10 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Capacitor } from '@capacitor/core';
+import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 import {
   onAuthStateChanged,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signInWithPopup,
+  signInWithCredential,
+  GoogleAuthProvider,
   signOut,
   updateProfile
 } from 'firebase/auth';
@@ -178,17 +181,51 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const loginWithGoogle = React.useCallback(async () => {
-    // In Capacitor Native Android / iOS APK shell:
-    // Firebase Web SDK's signInWithPopup / signInWithRedirect attempts to open external browsers (like Brave/Chrome),
-    // causing 'missing initial state' due to sessionStorage isolation and Google's disallowed_useragent policy in WebViews.
+    // 1. Native Android / iOS APK Shell via @capacitor-firebase/authentication
     if (Capacitor.isNativePlatform()) {
-      const error: any = new Error(
-        'Google Sign-In is only supported on the Web version. On the Android App, please sign in using Email & Password or explore as Guest.'
-      );
-      error.code = 'auth/native-unsupported';
-      throw error;
+      try {
+        const result = await FirebaseAuthentication.signInWithGoogle();
+        const idToken = result.credential?.idToken;
+
+        if (idToken) {
+          // Connect native credential back to Web Firebase Auth so onAuthStateChanged,
+          // Firestore permissions, and reactive user state stay perfectly in sync
+          const credential = GoogleAuthProvider.credential(idToken);
+          const userCredential = await signInWithCredential(auth, credential);
+          return userCredential.user;
+        }
+
+        // Fallback if plugin directly authenticated native user
+        if (result.user) {
+          return result.user;
+        }
+
+        throw new Error('Google Sign-In completed but no credential was returned.');
+      } catch (nativeError: any) {
+        console.error('[Auth] Native Google Sign-In error:', nativeError);
+        // If user cancelled the picker dialog or closed it
+        if (
+          nativeError?.message?.includes('cancelled') ||
+          nativeError?.message?.includes('16') || // Sign-in was cancelled
+          nativeError?.code === '16'
+        ) {
+          throw new Error('Google sign-in was cancelled.');
+        }
+        // If Google Play Services or SHA-1 is missing in Firebase Console
+        if (
+          nativeError?.message?.includes('10') || // DEVELOPER_ERROR / SHA-1 mismatch
+          nativeError?.message?.includes('12500') ||
+          nativeError?.code === '10'
+        ) {
+          throw new Error(
+            'Google Sign-In configuration error (SHA-1 fingerprint needed in Firebase Console). Please use Email & Password in the meantime.'
+          );
+        }
+        throw new Error(nativeError?.message || 'Google sign-in failed. Please try with Email & Password.');
+      }
     }
 
+    // 2. Web Browser Environment
     try {
       googleProvider.setCustomParameters({
         prompt: "select_account"
@@ -214,6 +251,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = React.useCallback(async () => {
     try {
+      if (Capacitor.isNativePlatform()) {
+        try {
+          await FirebaseAuthentication.signOut();
+        } catch (e) {
+          console.warn("[Auth] Native sign out warning:", e);
+        }
+      }
       await signOut(auth);
     } catch (error) {
       console.error("Logout Error:", error);
