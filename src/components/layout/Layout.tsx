@@ -3,7 +3,6 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from './Navbar';
 import BottomNav from './BottomNav';
-import PWAInstallBanner from './PWAInstallBanner';
 import AppUpdateBanner from './AppUpdateBanner';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
@@ -78,7 +77,6 @@ export default function Layout() {
         </AnimatePresence>
       </main>
       <BottomNav />
-      <PWAInstallBanner />
       <AppUpdateBanner />
     </div>
   );

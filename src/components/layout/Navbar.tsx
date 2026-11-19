@@ -1,14 +1,12 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Search, LogOut, Download, Sun, Moon } from 'lucide-react';
+import { Search, LogOut, Sun, Moon } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { usePWA } from '@/contexts/PWAContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
-  const { isInstallable, installApp } = usePWA();
   const { theme, toggleTheme } = useTheme();
 
   const firstName = currentUser?.name?.split(' ')[0] || 'Scholar';
@@ -90,37 +88,6 @@ export default function Navbar() {
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-4">
-          {isInstallable && (
-            <motion.button 
-              onClick={installApp} 
-              whileHover={{ scale: 1.05, y: -1 }}
-              whileTap={{ scale: 0.95 }}
-              style={{
-                background: 'var(--primary-light)', 
-                color: 'var(--primary)',
-                fontWeight: '600',
-                fontSize: '13px',
-                padding: '8px 16px',
-                borderRadius: '999px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                border: '1px solid rgba(124, 58, 237, 0.15)',
-                transition: 'var(--transition)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'var(--primary)';
-                e.currentTarget.style.color = '#fff';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'var(--primary-light)';
-                e.currentTarget.style.color = 'var(--primary)';
-              }}
-            >
-              <Download size={14} /> Install App
-            </motion.button>
-          )}
-
           <a
             href="https://github.com/bharaththecoder/edudiscovery/releases"
             target="_blank"

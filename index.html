@@ -6,14 +6,6 @@
     <link rel="shortcut icon" href="/favicon.ico?v=2" type="image/x-icon" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>EduDiscovery</title>
-    <!-- PWA Meta Tags -->
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#10B981" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="EduDiscovery" />
-    <link rel="apple-touch-icon" href="/icon-192.png" />
     <!-- Modern Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,18 +18,16 @@
           document.documentElement.classList.add('dark');
         }
       })();
-      // Automatically clean up any stale Service Workers or CacheStorage in development
-      if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
-        if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.getRegistrations().then(function(regs) {
-            for (var r of regs) { r.unregister(); }
-          }).catch(function() {});
-        }
-        if ('caches' in window) {
-          caches.keys().then(function(keys) {
-            for (var k of keys) { caches.delete(k); }
-          }).catch(function() {});
-        }
+      // Automatically clean up any existing Service Workers and CacheStorage
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(regs) {
+          for (var r of regs) { r.unregister(); }
+        }).catch(function() {});
+      }
+      if ('caches' in window) {
+        caches.keys().then(function(keys) {
+          for (var k of keys) { caches.delete(k); }
+        }).catch(function() {});
       }
       // Handle Vite dynamic import chunk miss seamlessly
       window.addEventListener('vite:preloadError', function(event) {

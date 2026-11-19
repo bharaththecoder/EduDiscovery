@@ -5,13 +5,12 @@
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-edu--discovery.vercel.app-black?style=for-the-badge&logo=vercel)](https://edu-discovery.vercel.app)
 &nbsp;
-[![Android Release](https://img.shields.io/badge/Android%20APK-v1.0.0-10B981?style=for-the-badge&logo=android&logoColor=white)](https://github.com/bharaththecoder/EduDiscovery/releases/tag/v1.0.0)
+[![Android Release](https://img.shields.io/badge/Android%20APK-v1.0.1-10B981?style=for-the-badge&logo=android&logoColor=white)](https://github.com/bharaththecoder/EduDiscovery/releases/tag/v1.0.1)
 [![React](https://img.shields.io/badge/React%2019-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite%208-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
 [![Capacitor](https://img.shields.io/badge/Capacitor%20Android-119EFF?style=for-the-badge&logo=capacitor&logoColor=white)](https://capacitorjs.com)
 [![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com)
 [![Tests](https://img.shields.io/badge/Tests-Passing-10B981?style=for-the-badge&logo=vitest&logoColor=white)](#-testing--quality-assurance)
-[![PWA Ready](https://img.shields.io/badge/PWA-Ready-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white)](#-progressive-web-app--android-native-app)
 
 ---
 
@@ -54,13 +53,13 @@ All counseling intelligence, fee figures, and quota boundaries are backed by aut
 
 ---
 
-## 📱 Progressive Web App & Android Native App
+## 📱 Web & Android Native App
 
 EduDiscovery is available both as a web app and a high-performance native Android application:
 
-- **Web (PWA):** [edu-discovery.vercel.app](https://edu-discovery.vercel.app)
-- **Android APK:** Direct download from [GitHub Releases v1.0.0](https://github.com/bharaththecoder/EduDiscovery/releases/tag/v1.0.0)
-- **In-App Update Engine:** Automatically checks for new GitHub release tags every 6 hours and displays a dismissible update banner when a newer APK is available.
+- **Web Application:** [edu-discovery.vercel.app](https://edu-discovery.vercel.app)
+- **Android APK:** Direct download from [GitHub Releases v1.0.1](https://github.com/bharaththecoder/EduDiscovery/releases/tag/v1.0.1)
+- **In-App Update Engine:** Automatically checks for new GitHub release tags and displays a dismissible update banner when a newer APK is available.
 
 ---
 
@@ -116,8 +115,8 @@ edudiscovery/
 │   └── index.css               # Design system tokens, emerald theme & responsive rules
 │
 ├── tests/                      # Automated Vitest test suites
-├── public/                     # Favicons, PWA icons, manifest.json
-├── vite.config.js              # Vite build, Workbox PWA caching & vendor code-splitting
+├── public/                     # Favicons and images
+├── vite.config.js              # Vite build & vendor code-splitting
 └── vercel.json                 # API routing, OAuth rewrite proxy & SPA fallback
 ```
 

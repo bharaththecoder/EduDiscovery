@@ -2,41 +2,12 @@ import path from "path"
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
-import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    VitePWA({
-      registerType: 'autoUpdate',
-      injectRegister: process.env.NODE_ENV === 'production' ? 'auto' : null,
-      devOptions: {
-        enabled: false,
-      },
-      manifest: false,
-      workbox: {
-        maximumFileSizeToCacheInBytes: 15 * 1024 * 1024,
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,json}'],
-        navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/api/, /^\/__/, /firestore\.googleapis\.com/],
-        cleanupOutdatedCaches: true,
-        runtimeCaching: [
-          {
-            urlPattern: /^\/data\/official-cutoffs\/.*\.json$/,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'official-cutoffs-cache',
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
-              },
-            },
-          },
-        ],
-      }
-    })
   ],
   resolve: {
     alias: {
