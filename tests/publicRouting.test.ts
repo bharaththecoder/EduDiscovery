@@ -1,17 +1,17 @@
 import { describe, it, expect } from 'vitest';
 
 describe('Public Routing and Guest Discovery Contract', () => {
-  // Routes inventory configuration: Only landing (/) and search (/search) are public for guests
+  // Routes inventory configuration: Discovery routes are public for guests (SEO & preview)
   const PUBLIC_DISCOVERY_ROUTES = [
     '/',
     '/search',
+    '/compare',
+    '/university/:id',
   ];
 
   const PROTECTED_ACCOUNT_ROUTES = [
     '/home',
     '/profile',
-    '/compare',
-    '/university/:id',
     '/web-options',
     '/predictor',
     '/wishlist',

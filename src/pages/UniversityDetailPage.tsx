@@ -595,6 +595,27 @@ export default function UniversityDetail() {
       </div>
 
       <div className="page" style={{ paddingTop: '24px' }}>
+        {/* Guest Exploration Banner */}
+        {!currentUser && (
+          <div className="mb-6 p-4 rounded-2xl border border-primary/20 bg-primary/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <GraduationCap size={20} />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-foreground">Browsing as Guest</p>
+                <p className="text-xs text-muted-foreground">Sign in with Google to bookmark cutoffs, submit reviews, and personalize your AP EAPCET Web Options priority order.</p>
+              </div>
+            </div>
+            <button
+              onClick={() => navigate('/')}
+              className="shrink-0 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold shadow-sm hover:opacity-95 transition-opacity"
+            >
+              Sign In Free
+            </button>
+          </div>
+        )}
+
         {/* Mobile Quick Action Buttons */}
         <div className="block lg:hidden mb-6">
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>

@@ -88,15 +88,15 @@ function App() {
 
               {/* Unified In-App Layout for identical, smooth transitions */}
               <Route element={<Layout />}>
-                {/* Public Guest Discovery: Search is the ONLY page accessible without login */}
+                {/* Public Guest Discovery: Search, University Details, and College Comparison are accessible without login */}
                 <Route path="/search" element={<SearchPage />} />
+                <Route path="/university/:id" element={<UniversityDetailPage />} />
+                <Route path="/college/:id" element={<Navigate to="/university/:id" replace />} />
+                <Route path="/compare" element={<ComparePage />} />
 
-                {/* Protected Routes: Require authentication, otherwise route to login (/) */}
+                {/* Protected Routes: Require authentication for personalized dashboard & counseling tools */}
                 <Route element={<RequireAuth />}>
                   <Route path="/home" element={<HomePage />} />
-                  <Route path="/compare" element={<ComparePage />} />
-                  <Route path="/university/:id" element={<UniversityDetailPage />} />
-                  <Route path="/college/:id" element={<Navigate to="/university/:id" replace />} />
                   <Route path="/web-options" element={<WebOptionsPage />} />
                   <Route path="/predictor" element={<Navigate to="/web-options" replace />} />
                   <Route path="/wishlist" element={<WishlistPage />} />

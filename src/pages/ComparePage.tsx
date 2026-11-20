@@ -39,6 +39,8 @@ import {
 import { University, Facility } from '@/types';
 import { computeROI, computeValueScore } from '@/utils/intelligenceEngine';
 import { useToast } from '@/contexts/ToastContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { updatePageMetadata } from '@/services/metadataService';
 import { motion } from 'framer-motion';
 import { getAdmissionApplicability } from '@/data/admissionApplicability';
 
@@ -69,8 +71,16 @@ function ScoreBar({
 }
 
 export default function ComparePage() {
+  const { currentUser } = useAuth();
+
   React.useEffect(() => {
-    document.title = "Compare Colleges | EduDiscovery AP";
+    updatePageMetadata({
+      title: 'Compare Engineering Colleges Side-by-Side | EduDiscovery AP',
+      description: 'Compare AP engineering colleges side-by-side: placements, highest packages, tuition fees, faculty ratings, infrastructure, and EAPCET admission criteria.',
+      keywords: 'compare engineering colleges, AP EAPCET college comparison, college placement comparison, fee comparison',
+      url: typeof window !== 'undefined' ? window.location.href : 'https://edu-discovery.vercel.app/compare',
+      type: 'website'
+    });
   }, []);
 
   const location = useLocation();
@@ -291,6 +301,27 @@ export default function ComparePage() {
           </div>
         </div>
       </div>
+
+      {/* Guest Exploration Banner */}
+      {!currentUser && (
+        <div className="mb-6 p-4 rounded-2xl border border-primary/20 bg-primary/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+              <Award size={20} />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-foreground">Guest College Comparison</p>
+              <p className="text-xs text-muted-foreground">Compare institutions freely without signing in. To save these institutions to your personal wishlist or calculate EAPCET probability, log in anytime.</p>
+            </div>
+          </div>
+          <Link
+            to="/"
+            className="shrink-0 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold shadow-sm hover:opacity-95 transition-opacity inline-flex items-center gap-1.5"
+          >
+            Sign In Free <ArrowRight size={13} />
+          </Link>
+        </div>
+      )}
 
       {/* Mobile Slot Switcher */}
       <div className="flex md:hidden items-center justify-between bg-surface border border-border p-1.5 rounded-xl mb-4 gap-1">
