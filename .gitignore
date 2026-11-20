@@ -41,6 +41,7 @@ scratch/
 *.apk
 *.aab
 *.dex
+*.idsig
 android/.gradle/
 android/app/build/
 android/build/
