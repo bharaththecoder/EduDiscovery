@@ -2,385 +2,376 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://edu-discovery.vercel.app</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://edu-discovery.vercel.app/predictor</loc>
-    <lastmod>2026-10-11</lastmod>
-    <changefreq>weekly</changefreq>
+    
+  <url>
+    <loc>https://edu-discovery.vercel.app/search</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
-  <url>
-    <loc>https://edu-discovery.vercel.app/compare</loc>
-    <lastmod>2026-10-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://edu-discovery.vercel.app/quiz</loc>
-    <lastmod>2026-10-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
+
   <url>
     <loc>https://edu-discovery.vercel.app/university/nri-institute</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/srm-ap</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/andhra-university</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/vit-ap</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/gitam</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/kl-university</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/vignan-university</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/amrita-ap</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/jntuk</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/acharya-nagarjuna-university</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/vr-siddhartha</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/sv-university</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/gmrit-rajam</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/lbrce-mylavaram</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/bec-bapatla</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/aknu-rajamahendravaram</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/sku-anantapur</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/gvpce-visakhapatnam</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/aec-surampalem</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/rvrjcce-guntur</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/vitb-bhimavaram</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/vvit-guntur</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/gec-gudlavalleru</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/yvu-kadapa</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/vsu-nellore</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/jntua-anantapur</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/ru-kurnool</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/srkrec-bhimavaram</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/aitam-tekkali</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/svecw-bhimavaram</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/nec-narasaraopeta</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/pec-surampalem</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/aliet-vijayawada</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/spmvv-tirupati</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/dsnlu-visakhapatnam</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/sssihl-prasanthi-nilayam</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/rgukt-ap</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/mvgrce-vizianagaram</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/liet-rajam</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/angrau-guntur</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/ntruhs-vijayawada</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/annamacharya-university-rajampet</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/krea-university-sri-city</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/qiscet-ongole</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/amc-visakhapatnam</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/kiet-kakinada</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/svvu-tirupati</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/pvpsit-vijayawada</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/raghu-engineering-visakhapatnam</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/sietk-puttur</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/svec-tadepalligudem</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/krishna-university-machilipatnam</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/centurion-university-vizianagaram</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/dravidian-university-kuppam</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/gsmc-vijayawada</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/rmc-kakinada</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/gmc-guntur</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/andhra-loyola-college-vijayawada</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/svce-tirupati</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://edu-discovery.vercel.app/university/pbsiddhartha-college-vijayawada</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
