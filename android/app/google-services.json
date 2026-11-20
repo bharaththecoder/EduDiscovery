@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "532876157550",
+    "project_id": "edudiscovery-9cff0",
+    "storage_bucket": "edudiscovery-9cff0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:532876157550:android:7516cfef3b36b9b484fc7f",
+        "android_client_info": {
+          "package_name": "com.edudiscovery.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "532876157550-6l8u1tjr1ti0acid7t6t7r8jlvr3eb9u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6o3riPzIO-dSz5KqfkySPRD8Xlj0WJeQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "532876157550-6l8u1tjr1ti0acid7t6t7r8jlvr3eb9u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
