@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { Search, Sparkles, ListOrdered, ChevronRight, ExternalLink, Calendar, Clock, ShieldCheck, LayoutGrid, Newspaper, Zap, Heart, BarChart2, GraduationCap } from 'lucide-react';
+import { Search, Sparkles, ListOrdered, ChevronRight, ExternalLink, Calendar, Clock, ShieldCheck, LayoutGrid, Newspaper, Zap, Heart, BarChart2, GraduationCap, Laptop, Banknote, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { newsArticles } from '@/data/news';

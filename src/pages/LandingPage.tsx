@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Capacitor } from '@capacitor/core';
 import { useAuth } from '@/contexts/AuthContext';
 import { Globe, Mail, Eye, EyeOff, Sparkles, GraduationCap, Target, ArrowRight, Star, Search, ShieldCheck, ArrowLeftRight, BarChart3 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { OrbitRing, HolographicBadge, AnimatedCounter3D, NeonCard, WaveDivider, InteractiveFluidParticles, BounceIn } from '@/components/Animation3DComponents';
 
 // ─── Animated Floating Particle ─────────────────────────────────
