@@ -96,6 +96,7 @@ function App() {
                   <Route path="/home" element={<HomePage />} />
                   <Route path="/compare" element={<ComparePage />} />
                   <Route path="/university/:id" element={<UniversityDetailPage />} />
+                  <Route path="/college/:id" element={<Navigate to="/university/:id" replace />} />
                   <Route path="/web-options" element={<WebOptionsPage />} />
                   <Route path="/predictor" element={<Navigate to="/web-options" replace />} />
                   <Route path="/wishlist" element={<WishlistPage />} />
