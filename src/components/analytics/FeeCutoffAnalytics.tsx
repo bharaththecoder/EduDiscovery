@@ -8,7 +8,7 @@ import {
   Tooltip,
   CartesianGrid
 } from 'recharts';
-import { ShieldCheck, AlertCircle, Info, Calendar, DollarSign, Award, Briefcase } from 'lucide-react';
+import { ShieldCheck, AlertCircle } from 'lucide-react';
 import type { University } from '@/types';
 
 interface FeeCutoffAnalyticsProps {

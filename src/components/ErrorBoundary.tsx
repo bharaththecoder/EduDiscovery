@@ -30,7 +30,7 @@ class ErrorBoundary extends Component<Props, State> {
       sessionStorage.clear();
       localStorage.removeItem('edudiscovery_error_reload');
       localStorage.removeItem('edudiscovery_error_time');
-    } catch (e) {}
+    } catch (_e) {}
 
     const isHookError = this.state.error?.message?.includes('useState') || 
                         this.state.error?.message?.includes('useContext') ||
@@ -49,7 +49,7 @@ class ErrorBoundary extends Component<Props, State> {
   handleNavigateHome = () => {
     try {
       sessionStorage.clear();
-    } catch (e) {}
+    } catch (_e) {}
     window.location.href = '/';
   };
 
@@ -65,7 +65,7 @@ class ErrorBoundary extends Component<Props, State> {
         const names = await caches.keys();
         for (const name of names) { await caches.delete(name); }
       }
-    } catch (e) {}
+    } catch (_e) {}
     window.location.replace('/');
   };
 

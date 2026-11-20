@@ -27,7 +27,7 @@ export async function fetchLiveEamcetNews(): Promise<LiveNewsArticle[]> {
         return data.articles;
       }
     }
-  } catch (err) {
+  } catch (_err) {
     // API endpoint not running, continue to client-side fallback
   }
 
@@ -117,7 +117,7 @@ export async function fetchLiveEamcetNews(): Promise<LiveNewsArticle[]> {
         return articles;
       }
     }
-  } catch (clientErr) {
+  } catch (_clientErr) {
     // Client-side fetch failed, proceed to static dataset
   }
 

@@ -4,17 +4,11 @@ import {
   AlertCircle,
   ExternalLink,
   Info,
-  Calendar,
-  Layers,
   ArrowUpRight,
   ArrowDownRight,
   Minus,
   FileCheck2,
-  Filter,
-  Building,
-  GraduationCap,
-  Compass,
-  CheckCircle
+  GraduationCap
 } from 'lucide-react';
 import {
   getOfficialCutoffs,
@@ -50,7 +44,7 @@ const CATEGORY_TABS: Array<{ key: ReservationCategory; label: string }> = [
 
 export const OfficialCutoffsSection: React.FC<OfficialCutoffsSectionProps> = ({
   collegeId,
-  collegeName,
+  collegeName: _collegeName,
   collegeCode,
   defaultRegion
 }) => {
@@ -143,7 +137,7 @@ export const OfficialCutoffsSection: React.FC<OfficialCutoffsSectionProps> = ({
     status: string,
     rawVal: string | null,
     location?: string | null,
-    docUrl?: string
+    _docUrl?: string
   ) => {
     if (status === 'published' && typeof rank === 'number') {
       return (

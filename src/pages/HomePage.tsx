@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { Search, MapPin, Laptop, Compass, Sparkles, ListOrdered, ChevronRight, ExternalLink, Calendar, Target, Clock, ShieldCheck, Banknote, LayoutGrid, Newspaper, Zap, Heart, BarChart2, GraduationCap } from 'lucide-react';
-import { motion, Variants } from 'framer-motion';
+import { Search, Sparkles, ListOrdered, ChevronRight, ExternalLink, Calendar, Clock, ShieldCheck, LayoutGrid, Newspaper, Zap, Heart, BarChart2, GraduationCap } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
-import { auth } from '@/services/firebase';
 import { newsArticles } from '@/data/news';
 import { fetchLiveEamcetNews } from '@/services/newsService';
 import { useUniversities } from '@/contexts/UniversityContext';
@@ -161,25 +160,7 @@ function SectionRow({ icon, title, action, onAction }: { icon: React.ReactNode; 
   );
 }
 
-// ─── Animation Variants ───────────────────────────────────────
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.08 }
-  }
-};
 
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 30, rotateX: 10, scale: 0.95 },
-  show: { 
-    opacity: 1, 
-    y: 0,
-    rotateX: 0,
-    scale: 1,
-    transition: { type: 'spring', stiffness: 200, damping: 22 }
-  }
-};
 
 
 

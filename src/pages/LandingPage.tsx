@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Capacitor } from '@capacitor/core';
 import { useAuth } from '@/contexts/AuthContext';
-import { Globe, Mail, Eye, EyeOff, Sparkles, GraduationCap, Target, Zap, BookOpen, ArrowRight, Star, Search, ShieldCheck, ArrowLeftRight, BarChart3, MessageSquare } from 'lucide-react';
-import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
-import { OrbitRing, FloatingEmoji3D, HolographicBadge, AnimatedCounter3D, GlowButton, NeonCard, WaveDivider, InteractiveFluidParticles, SpotlightCard, BounceIn, VelocityText } from '@/components/Animation3DComponents';
+import { Globe, Mail, Eye, EyeOff, Sparkles, GraduationCap, Target, ArrowRight, Star, Search, ShieldCheck, ArrowLeftRight, BarChart3 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { OrbitRing, HolographicBadge, AnimatedCounter3D, NeonCard, WaveDivider, InteractiveFluidParticles, BounceIn } from '@/components/Animation3DComponents';
 
 // ─── Animated Floating Particle ─────────────────────────────────
 function Particle({ delay, x, size, color }: { delay: number; x: string; size: number; color: string }) {
@@ -21,34 +21,7 @@ function Particle({ delay, x, size, color }: { delay: number; x: string; size: n
   );
 }
 
-// ─── 3D Tilt Card ───────────────────────────────────────────────
-function TiltCard({ children, className = '', style = {} }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const rotateX = useTransform(y, [-0.5, 0.5], [8, -8]);
-  const rotateY = useTransform(x, [-0.5, 0.5], [-8, 8]);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    x.set((e.clientX - rect.left) / rect.width - 0.5);
-    y.set((e.clientY - rect.top) / rect.height - 0.5);
-  };
-  const handleMouseLeave = () => { x.set(0); y.set(0); };
-
-  return (
-    <motion.div
-      ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{ ...style, rotateX, rotateY, transformStyle: 'preserve-3d', perspective: 1200 }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
-}
 
 // ─── Feature Card (Clean Atlassian-Style Border Matching Homepage) ───
 function FeatureCard({ icon, title, desc, delay }: {

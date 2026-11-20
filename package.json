@@ -9,9 +9,6 @@
     "preview": "vite preview",
     "test": "vitest run",
     "lint": "eslint src",
-    "data:audit": "python scripts/fetch_ap_colleges_data.py",
-    "images:download": "python scripts/download_highres_images.py",
-    "images:sync": "node scripts/sync-local-images.mjs",
     "cap:sync": "cap sync",
     "cap:open": "cap open android",
     "build:apk": "npm run build && npx cap sync android"

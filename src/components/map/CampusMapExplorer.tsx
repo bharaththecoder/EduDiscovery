@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Navigation, ExternalLink, Award, CheckCircle2, Building, Sparkles, X, ChevronRight } from 'lucide-react';
+import { MapPin, CheckCircle2, Building, X, ChevronRight } from 'lucide-react';
 import type { University } from '@/types';
 import { getCollegeLocation, AP_MAJOR_DISTRICT_HUBS, UniversityLocation } from '@/data/coordinates';
 

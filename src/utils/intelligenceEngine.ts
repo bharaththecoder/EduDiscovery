@@ -59,13 +59,7 @@ export function parseRankToNumber(rankVal: any): number {
   return 20000;
 }
 
-// ─── Rank tier → EAPCET rank (approximate midpoint) ──────────
-const rankTierValues: Record<string, number> = {
-  'top 5,000 (high competitive)':          3000,
-  'between 5,000 – 20,000':               12000,
-  'between 20,000 – 60,000':              40000,
-  '60,000+ (management / nri quota)':     80000,
-};
+
 
 // ─── Budget tier → max annual fee the user can afford ─────────
 const budgetTierMaxFee: Record<string, number> = {

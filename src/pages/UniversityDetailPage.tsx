@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Heart, Download, ExternalLink, Users, Building2, Award, BookOpen, Navigation, ChevronDown, ChevronUp, Calendar, Trees, MapPin, CreditCard, BadgePercent, GraduationCap, Briefcase } from 'lucide-react';
+import { ArrowLeft, Heart, Download, ExternalLink, Users, Building2, BookOpen, Navigation, ChevronDown, ChevronUp, Trees, MapPin, GraduationCap, Briefcase } from 'lucide-react';
 
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';

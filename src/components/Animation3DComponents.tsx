@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { motion, useMotionValue, useTransform, useSpring, AnimatePresence, useInView } from 'framer-motion';
+import React, { useEffect, useRef, useState } from 'react';
+import { motion, useMotionValue, useTransform, useSpring, useInView } from 'framer-motion';
 
 // ═══════════════════════════════════════════════════════════════
 //  ⚡ TEEN-ATTRACTING INTERACTIVE ANIMATIONS v2.0

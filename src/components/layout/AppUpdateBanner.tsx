@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Download, X, Sparkles, ExternalLink } from 'lucide-react';
+import { Download, X, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   checkForAppUpdate,

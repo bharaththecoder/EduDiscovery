@@ -11,7 +11,7 @@ import {
   signOut,
   updateProfile
 } from 'firebase/auth';
-import { doc, onSnapshot, setDoc, getDoc } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { auth, googleProvider, db, isFirestoreReady } from '@/services/firebase';
 
 // ─── Types ────────────────────────────────────────────────────
