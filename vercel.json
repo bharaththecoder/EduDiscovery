@@ -43,6 +43,13 @@
       ]
     }
   ],
+  "redirects": [
+    {
+      "source": "/college/:id",
+      "destination": "/university/:id",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/(.*)",

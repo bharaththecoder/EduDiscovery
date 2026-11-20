@@ -1,7 +1,7 @@
 {
   "auditMetadata": {
     "title": "AP EAPCET Official-Source Ingestion & Data-Quality Audit",
-    "auditedAt": "2026-10-28T11:54:21.348Z",
+    "auditedAt": "2026-11-20T20:38:07.243Z",
     "auditor": "EduDiscovery Statutory Pipeline Validator v2.2.0",
     "description": "Independent verification of official APSCHE closing ranks dataset with stratified checks across cycles, branches, categories, genders, regions, blanks, and markers."
   },
@@ -395,5 +395,5 @@
       "status": "PASS"
     }
   },
-  "promotionStatus": "PROMOTED_PRODUCTION"
+  "promotionStatus": "READY_FOR_REVIEW"
 }

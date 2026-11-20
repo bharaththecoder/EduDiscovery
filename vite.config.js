@@ -46,6 +46,15 @@ export default defineConfig({
       },
     },
   },
+  test: {
+    globals: true,
+    environment: 'node',
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/tests/stress_m2_challenger*.test.ts',
+    ],
+  },
   build: {
     chunkSizeWarningLimit: 1200,
     rollupOptions: {
