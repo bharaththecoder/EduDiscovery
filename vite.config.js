@@ -51,12 +51,26 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('firebase')) return 'firebase';
-            if (id.includes('framer-motion')) return 'motion-vendor';
-            if (id.includes('recharts')) return 'charts-vendor';
-            if (id.includes('lucide-react')) return 'icons-vendor';
-            if (id.includes('/node_modules/react/') || id.includes('/node_modules/react-dom/') || id.includes('/node_modules/react-router-dom/')) return 'react-vendor';
+          const normalized = id.replace(/\\/g, '/');
+          if (normalized.includes('/node_modules/')) {
+            if (
+              normalized.includes('/node_modules/react/') ||
+              normalized.includes('/node_modules/react-dom/') ||
+              normalized.includes('/node_modules/react-router/') ||
+              normalized.includes('/node_modules/react-router-dom/') ||
+              normalized.includes('/node_modules/react-is/') ||
+              normalized.includes('/node_modules/scheduler/') ||
+              normalized.includes('/node_modules/clsx/') ||
+              normalized.includes('/node_modules/use-sync-external-store/')
+            ) {
+              return 'react-vendor';
+            }
+            if (normalized.includes('/node_modules/firebase/') || normalized.includes('/node_modules/@firebase/')) {
+              return 'firebase';
+            }
+            if (normalized.includes('/node_modules/framer-motion/')) return 'motion-vendor';
+            if (normalized.includes('/node_modules/recharts/')) return 'charts-vendor';
+            if (normalized.includes('/node_modules/lucide-react/')) return 'icons-vendor';
             return 'vendor';
           }
         }

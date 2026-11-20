@@ -9,7 +9,6 @@ import {
   browserPopupRedirectResolver
 } from "firebase/auth";
 import { initializeFirestore, getFirestore, memoryLocalCache, type Firestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
 
 // Helper to determine optimal authDomain:
@@ -112,5 +111,22 @@ export function isFirestoreReady(database: any = db): boolean {
   }
 }
 
-export const storage = app ? getStorage(app) : ({} as any);
+let storageInstance: any = null;
+
+export const getFirebaseStorage = async () => {
+  if (!app) return null;
+  if (!storageInstance) {
+    const { getStorage } = await import("firebase/storage");
+    storageInstance = getStorage(app);
+  }
+  return storageInstance;
+};
+
+// Fallback synchronous getter for backwards-compatible references
+export const storage = app ? {
+  get _instance() {
+    return storageInstance;
+  }
+} as any : ({} as any);
+
 export const analytics = (app && typeof window !== 'undefined') ? getAnalytics(app) : null;

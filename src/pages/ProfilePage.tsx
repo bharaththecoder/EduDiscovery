@@ -6,9 +6,8 @@ import { useToast } from '@/contexts/ToastContext';
 import { ChevronDown, ChevronUp, Bell, Shield, HelpCircle, Edit3, Camera, FileText, Heart, CheckCircle2, BarChart3, ShieldCheck, Megaphone, GraduationCap, FolderHeart, Sun, Moon, LogOut, Smartphone, RefreshCw } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { CURRENT_APP_VERSION, checkForAppUpdate } from '@/services/appUpdateService';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import UniversityCard from '@/components/cards/UniversityCard';
-import { storage } from '@/services/firebase';
+import { getFirebaseStorage } from '@/services/firebase';
 import { getRecommendations } from '@/utils/quizAgent';
 import { universities } from '@/data/universities';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
@@ -276,7 +275,13 @@ export default function Profile() {
       }
       setUploading(true);
       try {
-        const fileRef = ref(storage, `profile_pictures/${currentUser.id}`);
+        const storageInstance = await getFirebaseStorage();
+        if (!storageInstance) {
+          showToast('Storage unavailable', 'error');
+          return;
+        }
+        const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
+        const fileRef = ref(storageInstance, `profile_pictures/${currentUser.id}`);
         await uploadBytes(fileRef, file);
         const url = await getDownloadURL(fileRef);
         await updateUserDoc({ photoURL: url });
