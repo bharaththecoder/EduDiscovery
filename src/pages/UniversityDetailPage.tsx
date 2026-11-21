@@ -14,12 +14,14 @@ import { collection, addDoc, doc, increment, updateDoc, query, where, onSnapshot
 import { trackView } from '@/services/activityTracker';
 import { CheckCircle2, MessageSquare, Star, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HolographicBadge, SpotlightCard, MagneticButton, WaveDivider, RippleButton } from '@/components/Animation3DComponents';
+import { HolographicBadge, SpotlightCard, MagneticButton, RippleButton } from '@/components/Animation3DComponents';
 import { UniversityDetailSkeleton } from '@/components/ui/UniversityDetailSkeleton';
 import { updatePageMetadata } from '@/services/metadataService';
 import FeeCutoffAnalytics from '@/components/analytics/FeeCutoffAnalytics';
 import OfficialCutoffsSection from '@/components/analytics/OfficialCutoffsSection';
 import { getUniversityFacilities, EnrichedFacility } from '@/data/facilitiesData';
+import { UniversityNavTabId } from '@/components/university/UniversityProfileNav';
+import UniversityProfileLayout from '@/components/university/UniversityProfileLayout';
 
 
 function ReviewsSection({ universityId }: { universityId: string }) {
@@ -391,6 +393,7 @@ export default function UniversityDetail() {
   const { universities, loading: loadingColleges, getUniversityById: getUniversityFromContext } = useUniversities();
   const { showToast } = useToast() as { showToast: (msg: string, type: string) => void };
   const { toggleWishlist, isWishlisted } = useWishlist() as { toggleWishlist: (u: University) => void, isWishlisted: (id: string) => boolean };
+  const [activeTab, setActiveTab] = useState<UniversityNavTabId>('overview');
   const [showApply, setShowApply] = useState(false);
   const [showApply2, setShowApply2] = useState(false);
   const [asyncUniversity, setAsyncUniversity] = useState<University | null>(null);
@@ -637,163 +640,225 @@ export default function UniversityDetail() {
           </div>
         </div>
 
-        {/* Top Executive Metric Ribbon */}
-        {/* <UniversityMetricRibbon university={resolvedUniversity} /> */}
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-          {/* Main Content Column (Full/2-Col Desktop Width for Data & Cutoffs) */}
-          <div className="lg:col-span-2 order-1 lg:order-1 flex flex-col gap-6">
-
-            {/* Academic Programs with dynamic collapsible state */}
-            <AcademicProgramsSection resolvedUniversity={resolvedUniversity} />
-
-            {/* Sourced Fee History and Placement Analytics (APHERMC Determinations) */}
-            <FeeCutoffAnalytics university={resolvedUniversity} />
-
-            {/* Official APSCHE Verified Historical Closing Ranks & Admission Pathway */}
-            <OfficialCutoffsSection
-              collegeId={resolvedUniversity.id}
-              collegeName={resolvedUniversity.name}
-              collegeCode={resolvedUniversity.code}
-              defaultRegion={resolvedUniversity.region}
-            />
-
-            <WaveDivider />
-
-            {/* The Living Ecosystem (Real Campus Facilities) */}
-            <FacilitiesSection resolvedUniversity={resolvedUniversity} />
-
-            <WaveDivider />
-            
-            {/* Recent Placements */}
-            {resolvedUniversity.placements && resolvedUniversity.placements.length > 0 && (
-              <>
-                <PlacementsSection resolvedUniversity={resolvedUniversity} />
-                <WaveDivider />
-              </>
-            )}
-
-            {/* Faculty - Viewport Staggered & Floating micro-animations */}
-            <FacultySection resolvedUniversity={resolvedUniversity} />
-
-            {/* Community Reviews */}
-            <div style={{ marginBottom: '24px' }}>
-              <ReviewsSection universityId={resolvedUniversity.id} />
-            </div>
-
-          </div>
-
-          {/* Action Sidebar (Right on Desktop, Below Core Analytics on Mobile) */}
-          <div className="lg:col-span-1 order-2 lg:order-2 flex flex-col gap-6">
-
-            {/* Desktop Action Buttons */}
-            <div className="hidden lg:flex" style={{ flexDirection: 'column', gap: '10px' }}>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <MagneticButton
-                  onClick={() => setShowApply(true)}
-                  className="btn btn-primary animate-glow-breathe"
-                  style={{ flex: 1, padding: '14px', borderRadius: '12px' }}
-                >
-                  Apply Now
-                </MagneticButton>
-                <MagneticButton
-                  onClick={handleBrochure}
-                  className="btn btn-ghost"
-                  style={{ flex: 1, padding: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', borderRadius: '12px' }}>
-                  <Download size={16} /> Brochure
-                </MagneticButton>
+        {/* Standardized University Profile Navigation & Section Content Architecture */}
+        {/* Layout Geometry: grid grid-cols-1 lg:grid-cols-3 gap-8 with lg:col-span-2 main and lg:col-span-1 sidebar */}
+        <UniversityProfileLayout
+          activeTab={activeTab}
+          onTabChange={(tabId) => setActiveTab(tabId)}
+          sidebar={
+            <>
+              {/* Desktop Action Buttons */}
+              <div className="hidden lg:flex" style={{ flexDirection: 'column', gap: '10px' }}>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <MagneticButton
+                    onClick={() => setShowApply(true)}
+                    className="btn btn-primary animate-glow-breathe"
+                    style={{ flex: 1, padding: '14px', borderRadius: '12px' }}
+                  >
+                    Apply Now
+                  </MagneticButton>
+                  <MagneticButton
+                    onClick={handleBrochure}
+                    className="btn btn-ghost"
+                    style={{ flex: 1, padding: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', borderRadius: '12px' }}>
+                    <Download size={16} /> Brochure
+                  </MagneticButton>
+                </div>
               </div>
-            </div>
 
+              {/* About the Institution */}
+              <SpotlightCard style={{ background: 'var(--surface)', borderRadius: 'var(--radius-md)', padding: '22px', boxShadow: 'var(--shadow-sm)', border: '1.5px solid var(--border)' }}>
+                <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '12px', color: 'var(--text-main)' }}>About {resolvedUniversity.shortName || resolvedUniversity.name}</h2>
+                <p style={{ color: 'var(--text-muted)', fontSize: '13.5px', lineHeight: 1.7, margin: 0 }}>{resolvedUniversity.about}</p>
+                {resolvedUniversity.website && (
+                  <a href={resolvedUniversity.website} target="_blank" rel="noopener noreferrer" style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '6px',
+                    marginTop: '16px', color: 'var(--primary)', fontWeight: '700', fontSize: '13px',
+                  }}>
+                    <ExternalLink size={14} /> Visit Official Portal
+                  </a>
+                )}
+              </SpotlightCard>
 
-            {/* About the Institution */}
-            <SpotlightCard style={{ background: 'var(--surface)', borderRadius: 'var(--radius-md)', padding: '22px', boxShadow: 'var(--shadow-sm)', border: '1.5px solid var(--border)' }}>
-              <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '12px', color: 'var(--text-main)' }}>About {resolvedUniversity.shortName || resolvedUniversity.name}</h2>
-              <p style={{ color: 'var(--text-muted)', fontSize: '13.5px', lineHeight: 1.7, margin: 0 }}>{resolvedUniversity.about}</p>
-              {resolvedUniversity.website && (
-                <a href={resolvedUniversity.website} target="_blank" rel="noopener noreferrer" style={{
-                  display: 'inline-flex', alignItems: 'center', gap: '6px',
-                  marginTop: '16px', color: 'var(--primary)', fontWeight: '700', fontSize: '13px',
-                }}>
-                  <ExternalLink size={14} /> Visit Official Portal
-                </a>
-              )}
-            </SpotlightCard>
-
-            {/* Location / Google Maps */}
-            <div
-              onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(resolvedUniversity.name + ', ' + resolvedUniversity.city + ', Andhra Pradesh')}`, '_blank')}
-              className="glow-up"
-              style={{
-                background: 'var(--surface)',
-                borderRadius: 'var(--radius-md)',
-                padding: '20px',
-                cursor: 'pointer',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                boxShadow: 'var(--shadow-sm)',
-                border: '1.5px solid var(--border)',
-                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'var(--primary)';
-                e.currentTarget.style.boxShadow = 'var(--shadow-md), var(--shadow-glow)';
-                e.currentTarget.style.transform = 'translateY(-3px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'var(--border)';
-                e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                <div style={{
-                  background: 'var(--primary-light)',
-                  color: 'var(--primary)',
-                  width: '46px',
-                  height: '46px',
-                  borderRadius: '50%',
+              {/* Location / Google Maps */}
+              <div
+                onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(resolvedUniversity.name + ', ' + resolvedUniversity.city + ', Andhra Pradesh')}`, '_blank')}
+                className="glow-up"
+                style={{
+                  background: 'var(--surface)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '20px',
+                  cursor: 'pointer',
                   display: 'flex',
+                  justifyContent: 'space-between',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  border: '1.5px solid var(--primary-glow)',
-                }}>
-                  <Navigation size={22} fill="var(--primary)" />
+                  boxShadow: 'var(--shadow-sm)',
+                  border: '1.5px solid var(--border)',
+                  transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--primary)';
+                  e.currentTarget.style.boxShadow = 'var(--shadow-md), var(--shadow-glow)';
+                  e.currentTarget.style.transform = 'translateY(-3px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                  e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <div style={{
+                    background: 'var(--primary-light)',
+                    color: 'var(--primary)',
+                    width: '46px',
+                    height: '46px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '1.5px solid var(--primary-glow)',
+                  }}>
+                    <Navigation size={22} fill="var(--primary)" />
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: '800', color: 'var(--text-main)', fontSize: '15px', marginBottom: '2px' }}>Navigate to Campus</div>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '12.5px', fontWeight: '600' }}>{resolvedUniversity.city}, AP · Google Maps</div>
+                  </div>
                 </div>
-                <div>
-                  <div style={{ fontWeight: '800', color: 'var(--text-main)', fontSize: '15px', marginBottom: '2px' }}>Navigate to Campus</div>
-                  <div style={{ color: 'var(--text-muted)', fontSize: '12.5px', fontWeight: '600' }}>{resolvedUniversity.city}, AP · Google Maps</div>
+                <div style={{ color: 'var(--primary)', display: 'flex', alignItems: 'center' }}>
+                  <ExternalLink size={18} />
                 </div>
               </div>
-              <div style={{ color: 'var(--primary)', display: 'flex', alignItems: 'center' }}>
-                <ExternalLink size={18} />
-              </div>
-            </div>
 
-            {/* Bottom Counselor Assistance CTA */}
-            <div style={{ background: 'var(--dark-card)', borderRadius: 'var(--radius-lg)', padding: '26px 20px', textAlign: 'center', boxShadow: 'var(--shadow-md)' }}>
-              <div style={{ marginBottom: '8px', display: 'flex', justifyContent: 'center' }}>
-                <GraduationCap size={32} className="text-primary" />
+              {/* Bottom Counselor Assistance CTA */}
+              <div style={{ background: 'var(--dark-card)', borderRadius: 'var(--radius-lg)', padding: '26px 20px', textAlign: 'center', boxShadow: 'var(--shadow-md)' }}>
+                <div style={{ marginBottom: '8px', display: 'flex', justifyContent: 'center' }}>
+                  <GraduationCap size={32} className="text-primary" />
+                </div>
+                <h2 style={{ color: '#fff', fontSize: '19px', fontWeight: '800', marginBottom: '8px' }}>Need Guidance for 2026 Admissions?</h2>
+                <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px', lineHeight: 1.5, marginBottom: '20px' }}>
+                  Connect with verified AP EAPCET counseling specialists for rank verification and seat allotment strategies.
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <RippleButton onClick={() => setShowApply2(true)} className="btn btn-primary btn-full" style={{ borderRadius: '12px', padding: '14px' }}>
+                    Apply for Admission
+                  </RippleButton>
+                  <RippleButton onClick={() => showToast('Counselor callback requested. We will reach out shortly.', 'success')} style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', border: '1px solid rgba(255,255,255,0.25)', borderRadius: '12px', padding: '12px', fontWeight: '600', fontSize: '14px', cursor: 'pointer', width: '100%' }}>
+                    Request Free Callback
+                  </RippleButton>
+                </div>
               </div>
-              <h2 style={{ color: '#fff', fontSize: '19px', fontWeight: '800', marginBottom: '8px' }}>Need Guidance for 2026 Admissions?</h2>
-              <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px', lineHeight: 1.5, marginBottom: '20px' }}>
-                Connect with verified AP EAPCET counseling specialists for rank verification and seat allotment strategies.
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <RippleButton onClick={() => setShowApply2(true)} className="btn btn-primary btn-full" style={{ borderRadius: '12px', padding: '14px' }}>
-                  Apply for Admission
-                </RippleButton>
-                <RippleButton onClick={() => showToast('Counselor callback requested. We will reach out shortly.', 'success')} style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', border: '1px solid rgba(255,255,255,0.25)', borderRadius: '12px', padding: '12px', fontWeight: '600', fontSize: '14px', cursor: 'pointer', width: '100%' }}>
-                  Request Free Callback
-                </RippleButton>
-              </div>
-            </div>
+            </>
+          }
+        >
+          {/* TAB 1: OVERVIEW & ANALYTICS */}
+          {activeTab === 'overview' && (
+            <motion.div
+              key="tab-overview"
+              id="section-overview"
+              role="tabpanel"
+              aria-labelledby="tab-overview"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex flex-col gap-6"
+            >
+              {/* Sourced Fee History and Placement Analytics (APHERMC Determinations) */}
+              <FeeCutoffAnalytics university={resolvedUniversity} />
 
-          </div>
+              {/* Academic Programs Preview */}
+              <AcademicProgramsSection resolvedUniversity={resolvedUniversity} />
 
-        </div>
+              {/* Recent Placements */}
+              {resolvedUniversity.placements && resolvedUniversity.placements.length > 0 && (
+                <PlacementsSection resolvedUniversity={resolvedUniversity} />
+              )}
+
+              {/* Faculty Highlight */}
+              <FacultySection resolvedUniversity={resolvedUniversity} />
+            </motion.div>
+          )}
+
+          {/* TAB 2: EAPCET CUTOFFS */}
+          {activeTab === 'cutoffs' && (
+            <motion.div
+              key="tab-cutoffs"
+              id="section-cutoffs"
+              role="tabpanel"
+              aria-labelledby="tab-cutoffs"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex flex-col gap-6"
+            >
+              {/* Official APSCHE Verified Historical Closing Ranks & Admission Pathway */}
+              <OfficialCutoffsSection
+                collegeId={resolvedUniversity.id}
+                collegeName={resolvedUniversity.name}
+                collegeCode={resolvedUniversity.code}
+                defaultRegion={resolvedUniversity.region}
+              />
+            </motion.div>
+          )}
+
+          {/* TAB 3: PROGRAMS & FEES */}
+          {activeTab === 'programs' && (
+            <motion.div
+              key="tab-programs"
+              id="section-programs"
+              role="tabpanel"
+              aria-labelledby="tab-programs"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex flex-col gap-6"
+            >
+              {/* Full Academic Programs */}
+              <AcademicProgramsSection resolvedUniversity={resolvedUniversity} />
+
+              {/* Detailed Statutory Fee Determinations */}
+              <FeeCutoffAnalytics university={resolvedUniversity} />
+            </motion.div>
+          )}
+
+          {/* TAB 4: CAMPUS & FACILITIES */}
+          {activeTab === 'facilities' && (
+            <motion.div
+              key="tab-facilities"
+              id="section-facilities"
+              role="tabpanel"
+              aria-labelledby="tab-facilities"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex flex-col gap-6"
+            >
+              {/* Campus Infrastructure and Verified Facilities */}
+              <FacilitiesSection resolvedUniversity={resolvedUniversity} />
+
+              {/* Guided by Pioneers (Faculty) */}
+              <FacultySection resolvedUniversity={resolvedUniversity} />
+            </motion.div>
+          )}
+
+          {/* TAB 5: STUDENT REVIEWS */}
+          {activeTab === 'reviews' && (
+            <motion.div
+              key="tab-reviews"
+              id="section-reviews"
+              role="tabpanel"
+              aria-labelledby="tab-reviews"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex flex-col gap-6"
+            >
+              {/* Community and Student Reviews */}
+              <ReviewsSection universityId={resolvedUniversity.id} />
+            </motion.div>
+          )}
+        </UniversityProfileLayout>
       </div>
 
       {showApply && createPortal(<ApplyModal university={resolvedUniversity} onClose={() => setShowApply(false)} onSuccess={() => showToast('Application submitted successfully', 'success')} />, document.body)}
