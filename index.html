@@ -66,7 +66,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <!-- Immediate theme loading script -->
+    <!-- Immediate theme loading and cache eviction script -->
     <script>
       (function() {
         const theme = localStorage.getItem('theme');
@@ -74,18 +74,22 @@
           document.documentElement.classList.add('dark');
         }
       })();
-      // Automatically clean up any existing Service Workers and CacheStorage
+
+      // Unregister any legacy Service Workers immediately
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function(regs) {
           for (var r of regs) { r.unregister(); }
         }).catch(function() {});
       }
+
+      // Purge all legacy CacheStorage instances
       if ('caches' in window) {
         caches.keys().then(function(keys) {
           for (var k of keys) { caches.delete(k); }
         }).catch(function() {});
       }
-      // Handle Vite dynamic import chunk miss seamlessly
+
+      // Automatically reload if a stale cached chunk triggers a Vite preload miss
       window.addEventListener('vite:preloadError', function(event) {
         event.preventDefault();
         window.location.reload();
