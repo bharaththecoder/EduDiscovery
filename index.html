@@ -5,7 +5,7 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
     <link rel="shortcut icon" href="/favicon.ico?v=2" type="image/x-icon" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EduDiscovery — AP Engineering Colleges, Cutoffs, Fees & Predictor</title>
+    <title>EduDiscovery — AP Engineering Colleges, EAPCET Cutoffs and Web Options Assistant</title>
     <meta name="description" content="Discover, compare, and predict admissions for engineering colleges in Andhra Pradesh with verified AP EAPCET cutoffs, tuition fees, placements, and Web Options counseling assistant." />
     <meta name="keywords" content="AP EAPCET, Andhra Pradesh Engineering Colleges, EAMCET Cutoff, B.Tech Admissions, Web Options Predictor, JNTUK, Andhra University, SVU" />
     <link rel="canonical" href="https://edu-discovery.vercel.app/" />
@@ -38,7 +38,7 @@
           "url": "https://edu-discovery.vercel.app/",
           "name": "EduDiscovery",
           "alternateName": ["EduDiscovery AP", "Edu Discovery"],
-          "description": "Comprehensive engineering college admissions, verified AP EAPCET cutoffs, tuition fees, and Web Options predictor for Andhra Pradesh.",
+          "description": "Comprehensive engineering college admissions, verified AP EAPCET cutoffs, tuition fees, and Web Options assistant for Andhra Pradesh.",
           "inLanguage": "en-US",
           "potentialAction": {
             "@type": "SearchAction",
@@ -66,7 +66,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <!-- Immediate theme loading and cache eviction script -->
+    <!-- Immediate theme loading and automatic app version validation -->
     <script>
       (function() {
         const theme = localStorage.getItem('theme');
@@ -89,11 +89,42 @@
         }).catch(function() {});
       }
 
-      // Automatically reload if a stale cached chunk triggers a Vite preload miss
-      window.addEventListener('vite:preloadError', function(event) {
-        event.preventDefault();
-        window.location.reload();
-      });
+      // Detect and auto-refresh when a newly deployed bundle is detected
+      (function() {
+        // Automatically reload if a stale cached chunk triggers a Vite preload miss
+        window.addEventListener('vite:preloadError', function(event) {
+          event.preventDefault();
+          window.location.reload();
+        });
+
+        // Periodic background poll to detect new deployment without disrupting user interaction
+        function checkDeploymentVersion() {
+          fetch('/index.html?t=' + Date.now(), { cache: 'no-store' })
+            .then(function(res) { return res.text(); })
+            .then(function(html) {
+              var match = html.match(/\/assets\/index-[a-zA-Z0-9_-]+\.js/);
+              if (match) {
+                var currentScripts = Array.from(document.querySelectorAll('script[src*="/assets/index-"]'));
+                var currentSrc = currentScripts.length ? currentScripts[0].getAttribute('src') : '';
+                if (currentSrc && !currentSrc.includes(match[0])) {
+                  // New build detected! Reload page automatically so user gets the update seamlessly
+                  window.location.reload();
+                }
+              }
+            })
+            .catch(function() {});
+        }
+
+        // Check on visibility change (when tab is brought back into view)
+        document.addEventListener('visibilitychange', function() {
+          if (document.visibilityState === 'visible') {
+            checkDeploymentVersion();
+          }
+        });
+
+        // Periodically check every 5 minutes in background
+        setInterval(checkDeploymentVersion, 5 * 60 * 1000);
+      })();
     </script>
   </head>
   <body>
