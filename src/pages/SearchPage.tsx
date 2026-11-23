@@ -196,7 +196,6 @@ export default function SearchPage() {
       >
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
 
-          {/* Top Row: Title, Subtitle, and AI Search Indicator */}
           {/* Top Row: Title & Subtitle */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
             <h1 className="wave-underline" style={{ fontSize: 'clamp(20px, 4vw, 26px)', fontWeight: '900', letterSpacing: '-0.5px', color: 'var(--text-main)', lineHeight: 1.2, display: 'inline-flex', alignItems: 'center', gap: '8px' }}>

@@ -560,6 +560,51 @@ export const COLLEGE_FACILITIES_REGISTRY: Record<string, EnrichedFacility[]> = {
       category: 'Campus Life',
       highlight: '80+ GPS College Buses'
     }
+  ],
+  // 13. Dr. RVR NRI University (nri-institute / NRIU / NRIA)
+  'nri-institute': [
+    {
+      icon: '💻',
+      name: 'NRI Tech Innovation & AI Simulation Hub',
+      desc: 'Advanced software development laboratory equipped with high-performance workstations, cloud simulation environments, and dedicated testing frameworks for AI/ML and Data Science.',
+      category: 'Research & AI',
+      highlight: 'AI & Cloud Simulation Lab'
+    },
+    {
+      icon: '📚',
+      name: 'Central Multi-Volume Digital Library',
+      desc: 'Extensive knowledge repository with over 45,000+ volumes, IEEE digital access, DELNET subscription, and quiet individual reading sections.',
+      category: 'Knowledge Hub',
+      highlight: '45,000+ Volumes & DELNET'
+    },
+    {
+      icon: '⚡',
+      name: 'Semiconductor, IoT & Embedded Systems Lab',
+      desc: 'Hands-on electronic circuit testing, microcontrollers, FPGA test benches, and sensor interfacing kits for hardware automation projects.',
+      category: 'Research & AI',
+      highlight: 'Embedded Systems & IoT Rigs'
+    },
+    {
+      icon: '🏏',
+      name: 'NRI Sports Ground & Recreational Arenas',
+      desc: 'Outdoor cricket ground, floodlit volleyball and basketball courts, indoor badminton facilities, and student fitness gymnasium.',
+      category: 'Sports Arena',
+      highlight: 'Outdoor & Indoor Sports Complex'
+    },
+    {
+      icon: '🏠',
+      name: 'Residential Hostels & Hygienic Cafeteria',
+      desc: 'Separate secure residential accommodations for boys and girls with 24/7 security, high-speed Wi-Fi, RO drinking water, and wholesome meals.',
+      category: 'Residential Living',
+      highlight: 'Secure Hostels & RO Water'
+    },
+    {
+      icon: '🚌',
+      name: 'Extensive Transport Connectivity',
+      desc: 'Daily bus transit network covering Vijayawada, Guntur, Nuzvid, Eluru, and surrounding rural catchment areas with punctual scheduling.',
+      category: 'Campus Life',
+      highlight: 'Fleet of College Transit Buses'
+    }
   ]
 };
 

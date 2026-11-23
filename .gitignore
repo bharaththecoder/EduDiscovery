@@ -36,6 +36,9 @@ postman/
 .postman/
 tests/
 scratch/
+tmp-*.mjs
+tmp-*.json
+datasets/raw/
 
 # Android build outputs & bundles
 *.apk

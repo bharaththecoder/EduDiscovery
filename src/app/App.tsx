@@ -38,8 +38,8 @@ const SearchPage = lazyWithRetry(() => import('@/pages/SearchPage'));
 const ComparePage = lazyWithRetry(() => import('@/pages/ComparePage'));
 const UniversityDetailPage = lazyWithRetry(() => import('@/pages/UniversityDetailPage'));
 const ProfilePage = lazyWithRetry(() => import('@/pages/ProfilePage'));
-// const QuizPage = lazyWithRetry(() => import('@/pages/QuizPage'));
-// const QuizResultPage = lazyWithRetry(() => import('@/pages/QuizResultPage'));
+const QuizPage = lazyWithRetry(() => import('@/pages/QuizPage'));
+const QuizResultPage = lazyWithRetry(() => import('@/pages/QuizResultPage'));
 const AdminSeedPage = lazyWithRetry(() => import('@/pages/AdminSeedPage'));
 const NotFoundPage = lazyWithRetry(() => import('@/pages/NotFoundPage'));
 const WishlistPage = lazyWithRetry(() => import('@/pages/WishlistPage'));
@@ -97,6 +97,8 @@ function App() {
                 {/* Protected Routes: Require authentication for personalized dashboard & counseling tools */}
                 <Route element={<RequireAuth />}>
                   <Route path="/home" element={<HomePage />} />
+                  <Route path="/quiz" element={<QuizPage />} />
+                  <Route path="/quiz-results" element={<QuizResultPage />} />
                   <Route path="/web-options" element={<WebOptionsPage />} />
                   <Route path="/predictor" element={<Navigate to="/web-options" replace />} />
                   <Route path="/wishlist" element={<WishlistPage />} />

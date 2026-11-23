@@ -78,6 +78,7 @@ export default defineConfig({
               return 'firebase';
             }
             if (normalized.includes('/node_modules/framer-motion/')) return 'motion-vendor';
+            if (normalized.includes('/node_modules/three/')) return 'three-vendor';
             if (normalized.includes('/node_modules/recharts/')) return 'charts-vendor';
             if (normalized.includes('/node_modules/lucide-react/')) return 'icons-vendor';
             return 'vendor';

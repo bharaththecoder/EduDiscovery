@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"vite\" \"node api-server.js\"",
+    "dev": "concurrently \"vite --host 0.0.0.0\" \"node api-server.js\"",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
@@ -37,6 +37,7 @@
     "@capacitor/core": "^8.5.3",
     "@radix-ui/react-slot": "^1.2.4",
     "@tailwindcss/vite": "^4.2.2",
+    "@types/three": "^0.187.0",
     "@vitejs/plugin-react": "^6.0.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -52,6 +53,7 @@
     "react-router-dom": "^7.13.2",
     "recharts": "^3.8.1",
     "tailwind-merge": "^3.5.0",
-    "tailwindcss": "^4.2.2"
+    "tailwindcss": "^4.2.2",
+    "three": "^0.187.0"
   }
 }

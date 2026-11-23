@@ -269,20 +269,20 @@ export default function ComparePage() {
     <div
       className="compare-page-container"
       style={{
-        maxWidth: '1200px',
+        maxWidth: '1440px',
         margin: '0 auto',
-        padding: 'clamp(16px, 2.5vw, 28px) clamp(16px, 3vw, 32px) 64px',
+        padding: 'clamp(20px, 3vw, 36px) clamp(20px, 3.5vw, 40px) 80px',
         boxSizing: 'border-box'
       }}
     >
       {/* Header */}
-      <div className="pt-2 pb-4 mb-5 border-b border-border">
+      <div className="pt-2 pb-6 mb-8 border-b border-border">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="wave-underline" style={{ fontSize: 'clamp(22px, 3.5vw, 28px)', fontWeight: '900', margin: 0, color: 'var(--primary)', display: 'inline-block' }}>
+            <h1 className="wave-underline" style={{ fontSize: 'clamp(24px, 4vw, 32px)', fontWeight: '900', margin: 0, color: 'var(--primary)', display: 'inline-block' }}>
               Compare AP Colleges
             </h1>
-            <p style={{ color: 'var(--text-muted)', marginTop: '6px', fontSize: '13.5px' }}>
+            <p style={{ color: 'var(--text-muted)', marginTop: '8px', fontSize: '14.5px', lineHeight: 1.6 }}>
               Side-by-side verified admission pathways, statutory fees, cutoffs, and audited placement analytics for up to 4 institutions.
             </p>
           </div>
@@ -291,13 +291,11 @@ export default function ComparePage() {
             {validColleges.length > 0 && (
               <button
                 onClick={handleShare}
-                className="btn btn-ghost text-xs font-bold px-3 py-2 rounded-full border border-primary/40 text-primary hover:bg-primary/10 flex items-center gap-1.5"
+                className="btn btn-ghost text-xs font-bold px-4 py-2.5 rounded-full border border-primary/40 text-primary hover:bg-primary/10 flex items-center gap-1.5 shadow-xs cursor-pointer"
               >
-                <Share2 size={13} /> Copy Comparison
+                <Share2 size={14} /> Copy Comparison
               </button>
             )}
-
-            
           </div>
         </div>
       </div>
@@ -358,7 +356,7 @@ export default function ComparePage() {
             : selectedColleges.length === 3
             ? 'md:grid-cols-2 lg:grid-cols-3'
             : 'md:grid-cols-2 lg:grid-cols-4'
-        } gap-5 lg:gap-6 items-start mb-6`}
+        } gap-6 lg:gap-8 items-start mb-8`}
       >
         {selectedColleges.map((selected, idx) => {
           const isHiddenOnMobile = mobileTab !== 'all' && mobileTab !== idx;
@@ -367,15 +365,15 @@ export default function ComparePage() {
           return (
             <div key={idx} className={`flex flex-col h-full ${isHiddenOnMobile ? 'hidden md:flex' : 'flex'}`}>
               {/* Slot Header with Selector */}
-              <div className="flex justify-between items-center mb-1.5">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-muted-foreground">
+              <div className="flex justify-between items-center mb-2.5">
+                <span className="text-[12px] font-extrabold uppercase tracking-wider text-muted-foreground">
                   Institution {idx + 1}
                 </span>
                 <div className="flex items-center gap-2">
                   {selected && (
                     <button
                       onClick={() => removeCollegeSlot(idx)}
-                      className="text-xs font-bold text-destructive hover:underline transition-colors flex items-center gap-1"
+                      className="text-xs font-bold text-destructive hover:underline transition-colors flex items-center gap-1 cursor-pointer"
                     >
                       <X size={13} /> {selectedColleges.length > 2 ? 'Remove' : 'Clear'}
                     </button>
@@ -384,22 +382,22 @@ export default function ComparePage() {
               </div>
 
               {/* Dropdown Selector */}
-              <div className="relative mb-3">
+              <div className="relative mb-5">
                 <div
-                  className="relative w-full rounded-xl border border-border bg-surface shadow-xs transition-all duration-200 hover:border-primary/50 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
+                  className="relative w-full rounded-2xl border border-border bg-surface shadow-xs transition-all duration-200 hover:border-primary/50 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
                   style={{
                     display: 'flex',
                     flexDirection: 'row',
                     alignItems: 'center',
-                    padding: '3px 10px',
+                    padding: '6px 14px',
                     boxSizing: 'border-box'
                   }}
                 >
-                  <Search size={14} className="text-primary shrink-0 mr-2 pointer-events-none" />
+                  <Search size={16} className="text-primary shrink-0 mr-2.5 pointer-events-none" />
                   <select
                     value={selected?.id || ''}
                     onChange={(e) => handleSelect(idx, e.target.value)}
-                    className="w-full bg-transparent text-sm py-2 font-semibold text-foreground outline-none cursor-pointer pr-6 truncate"
+                    className="w-full bg-transparent text-[14px] py-2.5 font-bold text-foreground outline-none cursor-pointer pr-7 truncate"
                     style={{
                       border: 'none',
                       outline: 'none',
@@ -423,43 +421,43 @@ export default function ComparePage() {
                       </option>
                     ))}
                   </select>
-                  <ChevronDown size={14} className="text-muted-foreground shrink-0 pointer-events-none absolute right-3" />
+                  <ChevronDown size={15} className="text-muted-foreground shrink-0 pointer-events-none absolute right-3.5" />
                 </div>
               </div>
 
               {/* College Card Details or Compact Empty Slot */}
               {selected ? (
                 <Card className="rounded-2xl overflow-hidden flex flex-col flex-1 border border-border bg-surface shadow-sm hover:border-primary/40 transition-all duration-200">
-                  <div className="h-36 overflow-hidden relative group">
+                  <div className="h-44 overflow-hidden relative group">
                     <img
                       src={selected.image}
                       alt={selected.name}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                    <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
-                      <span className="text-white text-xs font-semibold px-2 py-0.5 rounded-full bg-black/40 backdrop-blur-sm border border-white/20">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
+                    <div className="absolute bottom-3 left-3.5 right-3.5 flex items-center justify-between">
+                      <span className="text-white text-xs font-bold px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-sm border border-white/20">
                         {selected.code || selected.shortName}
                       </span>
                       {selected.category && (
-                        <span className="text-white/90 text-[11px] font-medium px-2 py-0.5 rounded-full bg-emerald-950/60 backdrop-blur-sm border border-emerald-500/30">
+                        <span className="text-white text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-950/70 backdrop-blur-sm border border-emerald-500/30">
                           {selected.category}
                         </span>
                       )}
                     </div>
                   </div>
 
-                  <CardHeader className="p-5 pb-3">
-                    <CardTitle className="text-lg font-extrabold text-foreground leading-snug">
+                  <CardHeader className="p-6 pb-4">
+                    <CardTitle className="text-xl font-black text-foreground leading-snug">
                       {selected.shortName || selected.name}
                     </CardTitle>
-                    <div className="flex items-center gap-1.5 text-muted-foreground text-xs mt-1.5">
-                      <MapPin size={13} className="text-primary shrink-0" />
+                    <div className="flex items-center gap-1.5 text-muted-foreground text-xs mt-2 font-medium">
+                      <MapPin size={14} className="text-primary shrink-0" />
                       <span>{selected.city}, {selected.district || selected.region || 'AP'}</span>
                     </div>
                   </CardHeader>
 
-                  <CardContent className="p-5 pt-0 flex flex-col gap-5 flex-1">
+                  <CardContent className="p-6 pt-0 flex flex-col gap-6 flex-1">
                     {/* Accreditation & Fit */}
                     <div className="space-y-3.5">
                       <div className="flex gap-2 items-center">
@@ -601,20 +599,20 @@ export default function ComparePage() {
                   initial={{ opacity: 0, scale: 0.98 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.2 }}
-                  className="rounded-2xl border border-dashed border-border flex flex-col items-center justify-center text-center p-6 text-muted-foreground bg-surface hover:border-primary/40 transition-all duration-200"
+                  className="rounded-2xl border-2 border-dashed border-border/80 flex flex-col items-center justify-center text-center p-8 text-muted-foreground bg-surface hover:border-primary/50 transition-all duration-200"
                   style={{
-                    minHeight: '220px',
-                    gap: '10px',
+                    minHeight: '340px',
+                    gap: '16px',
                     boxSizing: 'border-box'
                   }}
                 >
-                  <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-primary border border-primary/25 shadow-xs">
-                    <Search size={18} />
+                  <div className="w-14 h-14 rounded-full bg-primary-light flex items-center justify-center text-primary border border-primary/25 shadow-xs">
+                    <Search size={24} />
                   </div>
                   <div>
-                    <p className="text-sm font-extrabold text-foreground tracking-tight">Select College {idx + 1}</p>
-                    <p className="text-xs text-muted-foreground mt-1 max-w-[220px] leading-relaxed mx-auto">
-                      Use the dropdown above to choose a college for side-by-side analysis.
+                    <p className="text-base font-extrabold text-foreground tracking-tight">Select College {idx + 1}</p>
+                    <p className="text-xs text-muted-foreground mt-2 max-w-[240px] leading-relaxed mx-auto">
+                      Use the dropdown selector above to choose an institution for side-by-side analysis.
                     </p>
                   </div>
                 </motion.div>

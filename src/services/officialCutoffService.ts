@@ -235,7 +235,21 @@ export async function getOfficialCutoffs(filter: CutoffQueryFilter): Promise<Off
   for (const year of yearsToQuery) {
     try {
       const yearPayload = await loadOfficialYearData(year);
-      const collegeData = yearPayload.colleges[filter.collegeId];
+      
+      // Resolve college by ID, code, or historicalCodes
+      let collegeData = yearPayload.colleges[filter.collegeId];
+      if (!collegeData) {
+        for (const [key, val] of Object.entries(yearPayload.colleges)) {
+          if (
+            key.toLowerCase() === filter.collegeId.toLowerCase() ||
+            (val.code && val.code.toUpperCase() === filter.collegeId.toUpperCase()) ||
+            (val.historicalCodes && val.historicalCodes.some(h => h.toUpperCase() === filter.collegeId.toUpperCase()))
+          ) {
+            collegeData = val;
+            break;
+          }
+        }
+      }
       if (!collegeData) continue;
 
       for (const tuple of collegeData.cutoffs) {

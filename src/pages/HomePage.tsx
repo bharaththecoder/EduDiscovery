@@ -12,6 +12,7 @@ import { getActivity } from '@/services/activityTracker';
 import { ActivityEvent, University, NewsArticle } from '@/types';
 import { HolographicBadge, MagneticButton, NeonCard } from '@/components/Animation3DComponents';
 import { parseRankToNumber, computeFitScore, getIntelligenceScores } from '@/utils/intelligenceEngine';
+import { getRecommendations, QuizAnswers } from '@/utils/quizAgent';
 
 // ─── News Modal ───────────────────────────────────────────────
 function NewsModal({ article, onClose }: { article: NewsArticle; onClose: () => void }) {
@@ -190,20 +191,39 @@ export default function Home() {
 
   const [recentViews, setRecentViews] = useState<ActivityEvent[]>([]);
   const [quickRank, setQuickRank] = useState<string>(() => {
+    const cachedRank = localStorage.getItem('edudiscovery_user_rank');
+    if (cachedRank) return cachedRank;
     const r = currentUser?.quizResults?.answers?.rank;
     return r ? String(parseRankToNumber(r)) : '';
   });
 
+  // Keep quickRank updated if external rank changes, but do NOT override if the user already entered or customized it in localStorage
   useEffect(() => {
-    if (currentUser?.quizResults?.answers?.rank) {
-      setQuickRank(String(parseRankToNumber(currentUser.quizResults.answers.rank)));
+    const cachedRank = localStorage.getItem('edudiscovery_user_rank');
+    if (cachedRank) {
+      setQuickRank(cachedRank);
+    } else if (currentUser?.quizResults?.answers?.rank) {
+      const r = String(parseRankToNumber(currentUser.quizResults.answers.rank));
+      setQuickRank(r);
+      localStorage.setItem('edudiscovery_user_rank', r);
     }
-  }, [currentUser?.quizResults?.answers?.rank]);
+  }, [currentUser?.id]);
+
+  const handleRankChange = (newVal: string) => {
+    const sanitized = newVal.replace(/[^0-9]/g, '');
+    setQuickRank(sanitized);
+    if (sanitized) {
+      localStorage.setItem('edudiscovery_user_rank', sanitized);
+    } else {
+      localStorage.removeItem('edudiscovery_user_rank');
+    }
+  };
 
   const handleQuickPredict = (e: React.FormEvent) => {
     e.preventDefault();
     if (quickRank) {
       const numRank = parseRankToNumber(quickRank);
+      localStorage.setItem('edudiscovery_user_rank', String(numRank));
       navigate(`/web-options?rank=${numRank}`);
     } else {
       navigate('/web-options');
@@ -214,6 +234,26 @@ export default function Home() {
 
   const recommendations = useMemo(() => {
     if (loadingColleges || universities.length === 0) return [];
+
+    // Prioritize authentic completed quiz results if available
+    let quizAnswers = currentUser?.quizResults?.answers;
+    if (!quizAnswers || Object.keys(quizAnswers).length === 0) {
+      try {
+        const cachedRaw = localStorage.getItem('edudiscovery_quiz_answers');
+        if (cachedRaw) {
+          quizAnswers = JSON.parse(cachedRaw);
+        }
+      } catch {
+        // fallback
+      }
+    }
+
+    if (quizAnswers && Object.keys(quizAnswers).length > 0) {
+      const { all } = getRecommendations(universities, quizAnswers as unknown as QuizAnswers, 16);
+      if (all && all.length > 0) {
+        return all;
+      }
+    }
 
     return universities
       .map(uni => {
@@ -229,7 +269,7 @@ export default function Home() {
         };
       })
       .sort((a, b) => b._score - a._score);
-  }, [universities, loadingColleges, effectiveRank, effectiveBudget]);
+  }, [universities, loadingColleges, currentUser?.quizResults?.answers, effectiveRank, effectiveBudget]);
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
@@ -239,6 +279,20 @@ export default function Home() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Check if user has completed the quiz (checks both currentUser profile doc and local cache)
+  useEffect(() => {
+    if (currentUser?.id) {
+      const answers = currentUser?.quizResults?.answers;
+      const completedAt = currentUser?.quizResults?.completedAt;
+      const cachedCompleted = localStorage.getItem('edudiscovery_quiz_completed') === 'true';
+      const hasCompleted = (completedAt && answers && Object.keys(answers).length > 0) || cachedCompleted;
+      
+      if (!hasCompleted) {
+        navigate('/quiz');
+      }
+    }
+  }, [currentUser, navigate]);
 
   const firstName = currentUser?.name?.split(' ')[0] || 'Scholar';
 
@@ -263,28 +317,6 @@ export default function Home() {
       isCancelled = true;
     };
   }, [currentUser?.id]);
-
-  // Pull cloud-synced quiz results, fall back to best-match sort
-  const topUniversities = useMemo(() => {
-    if (loadingColleges || universities.length === 0) return [];
-    
-    let matches: University[] = [];
-    if (currentUser?.quizResults?.topMatches?.length) {
-      const uniMap = new Map(universities.map(u => [u.id, u]));
-      matches = currentUser.quizResults.topMatches
-        .map((match: { id: string, name: string, match: number }) => {
-          if (!match?.id) return null;
-          const uni = uniMap.get(match.id);
-          return uni ? { ...uni, match: match.match } : null;
-        })
-        .filter((m): m is University & { match: number } => m !== null);
-    }
-    
-    if (matches.length === 0) {
-      matches = [...universities].sort((a, b) => (b.match || 0) - (a.match || 0)).slice(0, 6);
-    }
-    return matches;
-  }, [currentUser?.quizResults?.topMatches, universities, loadingColleges]);
 
   const recentViewsColleges = useMemo(() => {
     if (loadingColleges || universities.length === 0 || recentViews.length === 0) return [];
@@ -373,10 +405,12 @@ export default function Home() {
               </p>
               <form onSubmit={handleQuickPredict} style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   placeholder="Enter Rank e.g. 15000"
                   value={quickRank}
-                  onChange={(e) => setQuickRank(e.target.value)}
+                  onChange={(e) => handleRankChange(e.target.value)}
                   style={{
                     flex: 1,
                     padding: '12px 16px',
@@ -482,52 +516,21 @@ export default function Home() {
         {/* ── Personalized Recommendations (Phase 3) ── */}
         {recommendations.length > 0 && (
           <div style={{ marginBottom: '48px' }}>
-            <SectionRow icon={<Zap size={18} />} title="Recommended for You" />
+            <SectionRow
+              icon={<Zap size={18} />}
+              title="Recommended for You"
+              action="View All"
+              onAction={() => navigate('/quiz-results')}
+            />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {recommendations.slice(0, 8).map((uni: any) => (
                 <div key={uni.id}>
-                  <UniversityCard university={uni} reasons={uni.reasons} />
+                  <UniversityCard university={uni} reasons={uni.reasons} matchPercent={uni.matchPercent} />
                 </div>
               ))}
             </div>
           </div>
         )}
-
-        {/* ── Top Matches ── */}
-        <div style={{ marginBottom: '48px' }}>
-          <SectionRow
-            icon={<Sparkles size={18} />}
-            title="Top Matches For You"
-            action="View All"
-            onAction={() => navigate('/search')}
-          />
-
-          <div className="top-matches-container">
-            {loadingColleges ? (
-              <div className="h-48 flex items-center justify-center">
-                <span className="text-slate-400 text-sm font-medium animate-pulse">Loading top matches...</span>
-              </div>
-            ) : (
-              <>
-                <div className="scroll-row md:hidden">
-                  {topUniversities.map((uni: University) => (
-                    <div key={uni.id}>
-                      <UniversityCard university={uni} compact />
-                    </div>
-                  ))}
-                </div>
-
-                <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {topUniversities.map((uni: University) => (
-                    <div key={uni.id}>
-                      <UniversityCard university={uni} />
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-        </div>
 
         {/* ── Action Banners ── */}
         <div style={{ marginBottom: '48px' }}>

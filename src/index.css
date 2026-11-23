@@ -437,6 +437,24 @@ h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.3px; }
 .chip.active { background: var(--primary); color: #fff; border-color: #fff; box-shadow: var(--shadow-glow); }
 
 /* ════════════════════════════════════════
+   UNIVERSITY PROFILE NAV TABS
+════════════════════════════════════════ */
+.university-nav-container {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.inactive-tab-item:hover {
+  background: var(--surface-hover) !important;
+  color: var(--text-main) !important;
+}
+.active-tab-indicator {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.dark .active-tab-indicator {
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.12);
+}
+
+/* ════════════════════════════════════════
    INPUT
 ════════════════════════════════════════ */
 .input-wrap {
@@ -1956,14 +1974,13 @@ html, body {
     transform: none !important;
   }
 
-  /* Content visibility for off-screen cards (huge 60/120fps boost) */
+  /* Off-screen card rendering: avoid will-change on large scroll lists to prevent GPU tiling artifacts */
   .card, .compact-card {
-    content-visibility: auto;
-    contain-intrinsic-size: 1px 360px;
+    will-change: auto;
   }
   .web-option-card {
-    content-visibility: auto;
-    contain-intrinsic-size: 1px 120px;
+    will-change: auto;
+    contain: content;
   }
 
   /* Disable heavy continuous blurred background orbs on mobile */

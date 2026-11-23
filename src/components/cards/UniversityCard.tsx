@@ -50,9 +50,7 @@ const UniversityCard = React.memo(({ university, compact = false, reasons = [], 
       <div
         onClick={handleClick}
         className="compact-card glow-up group cursor-pointer transition-transform duration-150 active:scale-[0.98]"
-        style={{
-          contain: 'content',
-        }}
+        style={{}}
       >
         <div style={{ position: 'relative', height: '120px', flexShrink: 0, overflow: 'hidden', borderTopLeftRadius: 'var(--radius-md)', borderTopRightRadius: 'var(--radius-md)' }}>
           <img
@@ -115,7 +113,6 @@ const UniversityCard = React.memo(({ university, compact = false, reasons = [], 
       onClick={handleClick}
       className="glow-up group cursor-pointer transition-transform duration-150 active:scale-[0.98]"
       style={{
-        contain: 'content',
         borderRadius: 'var(--radius-lg)',
         background: 'var(--surface)',
         display: 'flex',

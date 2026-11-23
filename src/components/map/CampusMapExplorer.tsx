@@ -1,9 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, Suspense, lazy } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, CheckCircle2, Building, X, ChevronRight } from 'lucide-react';
+import { MapPin, CheckCircle2, Building, X, ChevronRight, Layers, Sparkles } from 'lucide-react';
 import type { University } from '@/types';
 import { getCollegeLocation, AP_MAJOR_DISTRICT_HUBS, UniversityLocation } from '@/data/coordinates';
+
+const CampusMap3D = lazy(() => import('./three/CampusMap3D'));
 
 interface CampusMapExplorerProps {
   universities: University[];
@@ -19,6 +21,7 @@ export default function CampusMapExplorer({
   const navigate = useNavigate();
   const [selectedCollege, setSelectedCollege] = useState<{ uni: University; loc: UniversityLocation } | null>(null);
   const [hoveredCollege, setHoveredCollege] = useState<{ uni: University; loc: UniversityLocation } | null>(null);
+  const [viewMode, setViewMode] = useState<'2d' | '3d'>('2d');
 
   // Map enriched college data with projection
   const mappedColleges = useMemo(() => {
@@ -81,15 +84,69 @@ export default function CampusMapExplorer({
           </h2>
         </div>
 
-        {/* Legend */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '12px', fontWeight: '700' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
-            <span style={{ color: 'var(--text-main)' }}>Verified Campus</span>
+        {/* View Mode Toggle & Legend */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '12px', fontWeight: '700', flexWrap: 'wrap' }}>
+          {/* Mode Switcher */}
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            background: 'var(--surface-hover)',
+            border: '1.5px solid var(--border)',
+            borderRadius: '999px',
+            padding: '3px'
+          }}>
+            <button
+              onClick={() => setViewMode('2d')}
+              style={{
+                padding: '5px 12px',
+                borderRadius: '999px',
+                fontSize: '12px',
+                fontWeight: 700,
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                background: viewMode === '2d' ? 'var(--primary)' : 'transparent',
+                color: viewMode === '2d' ? '#fff' : 'var(--text-muted)',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              <Layers size={13} />
+              <span>2D Map</span>
+            </button>
+            <button
+              onClick={() => setViewMode('3d')}
+              style={{
+                padding: '5px 12px',
+                borderRadius: '999px',
+                fontSize: '12px',
+                fontWeight: 700,
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                background: viewMode === '3d' ? 'linear-gradient(135deg, #0284c7 0%, #6366f1 100%)' : 'transparent',
+                color: viewMode === '3d' ? '#fff' : 'var(--text-muted)',
+                boxShadow: viewMode === '3d' ? '0 2px 8px rgba(2, 132, 199, 0.4)' : 'none',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              <Sparkles size={13} />
+              <span>3D Spatial</span>
+            </button>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#3B82F6', display: 'inline-block' }} />
-            <span style={{ color: 'var(--text-muted)' }}>City Centroid</span>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
+              <span style={{ color: 'var(--text-main)' }}>Verified Campus</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#3B82F6', display: 'inline-block' }} />
+              <span style={{ color: 'var(--text-muted)' }}>City Centroid</span>
+            </div>
           </div>
         </div>
       </div>
@@ -149,11 +206,43 @@ export default function CampusMapExplorer({
       <div style={{
         position: 'relative',
         width: '100%',
-        height: '540px',
+        minHeight: '540px',
         background: 'radial-gradient(circle at 75% 35%, rgba(0,212,255,0.06) 0%, transparent 60%), radial-gradient(circle at 30% 60%, rgba(16,185,129,0.05) 0%, transparent 60%), var(--bg)',
         overflow: 'hidden'
       }}>
-        <style>{`
+        {viewMode === '3d' ? (
+          <Suspense fallback={
+            <div style={{
+              height: '580px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: '#090d16',
+              color: '#38bdf8',
+              gap: '12px'
+            }}>
+              <div style={{
+                width: '36px',
+                height: '36px',
+                border: '3px solid rgba(56, 189, 248, 0.2)',
+                borderTopColor: '#38bdf8',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite'
+              }} />
+              <div style={{ fontSize: '13px', fontWeight: 700 }}>Initializing 3D Spatial Canvas...</div>
+            </div>
+          }>
+            <CampusMap3D
+              universities={universities}
+              selectedCity={selectedCity}
+              onSelectCity={onSelectCity}
+              onSelectCollege={(item) => setSelectedCollege(item)}
+            />
+          </Suspense>
+        ) : (
+          <>
+            <style>{`
           .ap-map-land {
             fill: #f0fdf4;
             stroke: #059669;
@@ -377,6 +466,8 @@ export default function CampusMapExplorer({
               <span style={{ color: 'var(--primary)', fontWeight: '700' }}>NAAC {hoveredCollege.uni.naac}</span>
             </div>
           </div>
+        )}
+        </>
         )}
 
         {/* Selected College Detail Popup Card */}

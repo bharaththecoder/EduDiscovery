@@ -86,6 +86,8 @@ export default function WebOptionsPage() {
   const urlRank = searchParams.get('rank');
   const userRankDefault = useMemo(() => {
     if (urlRank) return urlRank;
+    const cachedRank = localStorage.getItem('edudiscovery_user_rank');
+    if (cachedRank) return cachedRank;
     if (currentUser?.quizResults?.answers?.rank) {
       return String(parseRankToNumber(currentUser.quizResults.answers.rank));
     }
@@ -97,8 +99,17 @@ export default function WebOptionsPage() {
   useEffect(() => {
     if (urlRank) {
       setRankInput(urlRank);
+      localStorage.setItem('edudiscovery_user_rank', urlRank);
     }
   }, [urlRank]);
+
+  const handleRankInputChange = (val: string) => {
+    const cleaned = val.replace(/[^0-9]/g, '');
+    setRankInput(cleaned);
+    if (cleaned) {
+      localStorage.setItem('edudiscovery_user_rank', cleaned);
+    }
+  };
 
   const [category, setCategory] = useState<string>('OC');
   const [gender, setGender] = useState<string>('Boys / General');
@@ -581,7 +592,7 @@ export default function WebOptionsPage() {
               inputMode="numeric"
               pattern="[0-9]*"
               value={rankInput}
-              onChange={(e) => setRankInput(e.target.value.replace(/[^0-9]/g, ''))}
+              onChange={(e) => handleRankInputChange(e.target.value)}
               placeholder="e.g. 15000"
               style={{
                 width: '100%',
@@ -602,7 +613,7 @@ export default function WebOptionsPage() {
                 <button
                   key={p.label}
                   type="button"
-                  onClick={() => setRankInput(p.value.toString())}
+                  onClick={() => handleRankInputChange(p.value.toString())}
                   style={{
                     padding: '4px 10px', fontSize: '11px', fontWeight: '700',
                     borderRadius: '8px', border: '1px solid var(--border)',
@@ -958,8 +969,7 @@ export default function WebOptionsPage() {
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <AnimatePresence initial={false}>
-            {displayItems.map((item) => {
+          {displayItems.map((item) => {
               const originalIndex = activeList.findIndex(o => o.id === item.id);
               const isDream = item.tier === 'Dream';
               const isTarget = item.tier === 'Target';
@@ -969,15 +979,10 @@ export default function WebOptionsPage() {
               const tierBadgeBorder = isDream ? 'rgba(139, 92, 246, 0.25)' : (isTarget ? 'rgba(0, 135, 90, 0.25)' : 'rgba(14, 165, 233, 0.25)');
 
               return (
-                <motion.div
+                <div
                   key={item.id}
                   className="web-option-card"
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.98 }}
-                  transition={{ duration: 0.15 }}
                   style={{
-                    contain: 'content',
                     background: 'var(--surface)',
                     border: '1px solid var(--border)',
                     borderRadius: '16px',
@@ -1030,26 +1035,6 @@ export default function WebOptionsPage() {
                             {copiedCode === item.collegeCode ? <Check size={11} color="var(--primary)" /> : <Copy size={10} color="var(--text-muted)" />}
                           </span>
                         </button>
-
-                        {/* Tier Tag (No emojis, professional Lucide icon) */}
-                        <span style={{
-                          display: 'inline-flex', alignItems: 'center', gap: '4px',
-                          padding: '3px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: '800',
-                          background: tierBadgeBg, color: tierBadgeColor, border: `1px solid ${tierBadgeBorder}`
-                        }}>
-                          {isDream ? <Sparkles size={11} color="#8b5cf6" /> : (isTarget ? <Target size={11} color="#00875a" /> : <ShieldCheck size={11} color="#0ea5e9" />)}
-                          {item.tier}
-                        </span>
-
-                        {/* JVD Tag */}
-                        {item.jvdEligible && (
-                          <span style={{
-                            padding: '3px 6px', borderRadius: '6px', fontSize: '10px', fontWeight: '800',
-                            background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.2)'
-                          }}>
-                            JVD 100%
-                          </span>
-                        )}
                       </div>
 
                       {/* Reorder and Action Buttons */}
@@ -1152,10 +1137,9 @@ export default function WebOptionsPage() {
                     </div>
 
                   </div>
-                </motion.div>
+                </div>
               );
             })}
-          </AnimatePresence>
         </div>
       )}
 

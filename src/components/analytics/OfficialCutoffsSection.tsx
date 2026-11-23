@@ -354,7 +354,6 @@ export const OfficialCutoffsSection: React.FC<OfficialCutoffsSectionProps> = ({
 
   return (
     <div style={{
-      marginTop: '20px',
       padding: '20px',
       borderRadius: '16px',
       background: 'var(--surface)',
