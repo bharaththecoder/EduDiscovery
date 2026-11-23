@@ -66,7 +66,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <!-- Immediate theme loading and automatic app version validation -->
+    <!-- Immediate theme loading and automatic deployment cache invalidation -->
     <script>
       (function() {
         const theme = localStorage.getItem('theme');
@@ -89,41 +89,66 @@
         }).catch(function() {});
       }
 
-      // Detect and auto-refresh when a newly deployed bundle is detected
+      // Proactive Version Sentinel: Instantly detects when a new deployment is live
       (function() {
-        // Automatically reload if a stale cached chunk triggers a Vite preload miss
-        window.addEventListener('vite:preloadError', function(event) {
-          event.preventDefault();
-          window.location.reload();
-        });
+        var ACTIVE_BUILD_STORAGE_KEY = 'edudiscovery_active_build';
 
-        // Periodic background poll to detect new deployment without disrupting user interaction
-        function checkDeploymentVersion() {
-          fetch('/index.html?t=' + Date.now(), { cache: 'no-store' })
-            .then(function(res) { return res.text(); })
-            .then(function(html) {
-              var match = html.match(/\/assets\/index-[a-zA-Z0-9_-]+\.js/);
-              if (match) {
-                var currentScripts = Array.from(document.querySelectorAll('script[src*="/assets/index-"]'));
-                var currentSrc = currentScripts.length ? currentScripts[0].getAttribute('src') : '';
-                if (currentSrc && !currentSrc.includes(match[0])) {
-                  // New build detected! Reload page automatically so user gets the update seamlessly
-                  window.location.reload();
+        function checkLatestDeployment() {
+          // Fetch version.json bypassing all browser & proxy caches
+          fetch('/version.json?ts=' + Date.now(), { cache: 'no-store' })
+            .then(function(res) {
+              if (res.ok) { return res.json(); }
+              throw new Error('Not found');
+            })
+            .then(function(data) {
+              if (data && data.buildId) {
+                var storedBuildId = localStorage.getItem(ACTIVE_BUILD_STORAGE_KEY);
+                if (!storedBuildId) {
+                  // First initialization for this device
+                  localStorage.setItem(ACTIVE_BUILD_STORAGE_KEY, data.buildId);
+                } else if (storedBuildId !== data.buildId) {
+                  // A new deployment is live! Purge local storage key and force-load new version
+                  localStorage.setItem(ACTIVE_BUILD_STORAGE_KEY, data.buildId);
+                  if ('caches' in window) {
+                    caches.keys().then(function(keys) {
+                      for (var k of keys) { caches.delete(k); }
+                    }).finally(function() {
+                      window.location.reload();
+                    });
+                  } else {
+                    window.location.reload();
+                  }
                 }
               }
             })
             .catch(function() {});
         }
 
-        // Check on visibility change (when tab is brought back into view)
+        // 1. Check immediately when script evaluates
+        checkLatestDeployment();
+
+        // 2. Automatically reload if any stale chunk causes a Vite preload error
+        window.addEventListener('vite:preloadError', function(event) {
+          event.preventDefault();
+          checkLatestDeployment();
+        });
+
+        // 3. Check whenever the user switches back to the tab/window on mobile or desktop
         document.addEventListener('visibilitychange', function() {
           if (document.visibilityState === 'visible') {
-            checkDeploymentVersion();
+            checkLatestDeployment();
           }
         });
 
-        // Periodically check every 5 minutes in background
-        setInterval(checkDeploymentVersion, 5 * 60 * 1000);
+        // 4. Also check on pageshow event (handles mobile back/forward cache restore)
+        window.addEventListener('pageshow', function(event) {
+          if (event.persisted) {
+            checkLatestDeployment();
+          }
+        });
+
+        // 5. Periodic background heartbeat check every 2 minutes
+        setInterval(checkLatestDeployment, 2 * 60 * 1000);
       })();
     </script>
   </head>

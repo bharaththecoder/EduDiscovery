@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently \"vite --host 0.0.0.0\" \"node api-server.js\"",
-    "build": "vite build",
+    "build": "node scripts/generate-version.js && vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "lint": "eslint src",

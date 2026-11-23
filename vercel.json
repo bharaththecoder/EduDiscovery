@@ -86,7 +86,7 @@
       "destination": "https://edudiscovery-9cff0.firebaseapp.com/__/:path*"
     },
     {
-      "source": "/((?!api/).*)",
+      "source": "/((?!api/|version\\.json).*)",
       "destination": "/index.html"
     }
   ]
