@@ -968,8 +968,8 @@ export default function WebOptionsPage() {
           </p>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {displayItems.map((item) => {
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {displayItems.map((item, idx) => {
               const originalIndex = activeList.findIndex(o => o.id === item.id);
               const isDream = item.tier === 'Dream';
               const isTarget = item.tier === 'Target';
@@ -980,7 +980,7 @@ export default function WebOptionsPage() {
 
               return (
                 <div
-                  key={item.id}
+                  key={`${tierFilter}-${item.id}-${idx}`}
                   className="web-option-card"
                   style={{
                     background: 'var(--surface)',

@@ -45,7 +45,7 @@ class ChatRequest(BaseModel):
     context: Optional[str] = ""
 
 
-@spaces.GPU(duration=15)
+@spaces.GPU(duration=30)
 def generate_reply(message: str, history: List[dict], context: str = "") -> str:
     system_content = SYSTEM_PROMPT
     if context:
@@ -65,7 +65,7 @@ def generate_reply(message: str, history: List[dict], context: str = "") -> str:
     with torch.no_grad():
         generated_ids = model.generate(
             **inputs,
-            max_new_tokens=512,
+            max_new_tokens=320,
             temperature=0.6,
             top_p=0.9,
             do_sample=True,

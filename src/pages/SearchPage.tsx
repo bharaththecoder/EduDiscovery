@@ -263,7 +263,7 @@ export default function SearchPage() {
                   flex: 1,
                   minWidth: 0,
                   padding: '10px 8px',
-                  fontSize: '14px',
+                  fontSize: '16px',
                   outline: 'none',
                   color: 'var(--text-main)',
                   fontWeight: '600',

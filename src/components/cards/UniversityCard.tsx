@@ -121,7 +121,7 @@ const UniversityCard = React.memo(({ university, compact = false, reasons = [], 
       }}
     >
       {/* Image */}
-      <div style={{ position: 'relative', aspectRatio: '16/10', maxHeight: '160px', overflow: 'hidden', flexShrink: 0, borderTopLeftRadius: 'var(--radius-lg)', borderTopRightRadius: 'var(--radius-lg)' }}>
+      <div style={{ position: 'relative', width: '100%', height: '160px', overflow: 'hidden', flexShrink: 0, borderTopLeftRadius: 'var(--radius-lg)', borderTopRightRadius: 'var(--radius-lg)' }}>
         <img
           src={imgSrc}
           alt={university.name}

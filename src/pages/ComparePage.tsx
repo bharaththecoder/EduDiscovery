@@ -356,7 +356,8 @@ export default function ComparePage() {
             : selectedColleges.length === 3
             ? 'md:grid-cols-2 lg:grid-cols-3'
             : 'md:grid-cols-2 lg:grid-cols-4'
-        } gap-6 lg:gap-8 items-start mb-8`}
+        } items-start`}
+        style={{ gap: '28px', marginBottom: '36px' }}
       >
         {selectedColleges.map((selected, idx) => {
           const isHiddenOnMobile = mobileTab !== 'all' && mobileTab !== idx;
@@ -447,7 +448,7 @@ export default function ComparePage() {
                     </div>
                   </div>
 
-                  <CardHeader className="p-6 pb-4">
+                  <CardHeader style={{ padding: '22px 24px 14px' }}>
                     <CardTitle className="text-xl font-black text-foreground leading-snug">
                       {selected.shortName || selected.name}
                     </CardTitle>
@@ -457,7 +458,7 @@ export default function ComparePage() {
                     </div>
                   </CardHeader>
 
-                  <CardContent className="p-6 pt-0 flex flex-col gap-6 flex-1">
+                  <CardContent style={{ padding: '4px 24px 24px', display: 'flex', flexDirection: 'column', gap: '20px', flex: 1 }}>
                     {/* Accreditation & Fit */}
                     <div className="space-y-3.5">
                       <div className="flex gap-2 items-center">
@@ -488,7 +489,7 @@ export default function ComparePage() {
                     </div>
 
                     {/* Verified Admission Pathway Panel */}
-                    <div className="p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 space-y-1.5">
+                    <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       <div className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
                         <ShieldCheck size={14} /> Admission Pathway
                       </div>
@@ -513,7 +514,7 @@ export default function ComparePage() {
                     </div>
 
                     {/* Placements & Package */}
-                    <div className="bg-chip-bg p-4 rounded-xl border border-border space-y-2.5">
+                    <div className="bg-chip-bg rounded-xl border border-border" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                       <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-extrabold uppercase tracking-wider mb-1">
                         <Briefcase size={13} className="text-primary" /> Placements & Packages
                       </div>
@@ -534,7 +535,7 @@ export default function ComparePage() {
                     </div>
 
                     {/* Branch-wise Fees Section */}
-                    <div className="bg-chip-bg p-4 rounded-xl border border-border space-y-2.5">
+                    <div className="bg-chip-bg rounded-xl border border-border" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                       <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-extrabold uppercase tracking-wider mb-1">
                         <DollarSign size={13} className="text-primary" /> Statutory Tuition Fees (/yr)
                       </div>

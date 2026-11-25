@@ -266,7 +266,7 @@ export function generateWebOptions(
 
       candidatePool.push({
         item: {
-          id: `${uni.id}-${branchNorm.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
+          id: `${uni.id}-${branchNorm.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${candidatePool.length}`,
           collegeId: uni.id,
           collegeName: uni.name,
           collegeShortName: uni.shortName || uni.name,

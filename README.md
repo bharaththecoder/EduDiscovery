@@ -56,6 +56,15 @@ npm run build
 
 ---
 
+## v1.0.0 Android APK Release Notes
+
+- **EduAI ZeroGPU Counselor:** Floating Gemini-style chat assistant on Home with grounded AP college links, Web-Options shortcut, and Verified Local Engine fallback.
+- **Optimized & Compact APK:** Built with R8 code/resource shrinking and `arm64-v8a` ABI filtering for faster downloads and installation.
+- **Full Mobile & iOS Safari Polish:** Fixed card image proportions, prevented input auto-zoom, and added portal-layered modals above mobile navigation.
+- **Web-Options & Compare Upgrades:** Fixed Dream/Target/Safe tier filtering order and upgraded ComparePage spacing & layout.
+
+---
+
 ## Legal & Links
 - **Live Web App:** [https://edu-discovery.vercel.app](https://edu-discovery.vercel.app)
 - **Privacy Policy:** [https://edu-discovery.vercel.app/privacy](https://edu-discovery.vercel.app/privacy)
