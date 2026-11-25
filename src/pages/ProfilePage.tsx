@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWishlist } from '@/contexts/WishlistContext';
@@ -123,7 +124,7 @@ function EditModal({ currentUser, onClose }: { currentUser: any; onClose: () => 
   };
 
   return (
-    <div className="overlay" onClick={onClose}>
+    <div className="overlay" onClick={onClose} style={{ zIndex: 99999 }}>
       <div className="modal-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
         <button onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', zIndex: 10 }}>×</button>
         <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '4px' }}>Edit Profile & Scholar Details</h2>
@@ -381,7 +382,7 @@ function NotificationsModal({ onClose }: { onClose: () => void }) {
     { icon: <GraduationCap size={24} color="#8b5cf6" />, text: 'Govt Model Colleges: 100% tuition-free seats available for top regional rankers.', time: 'Yesterday', color: '#8b5cf6' },
   ];
   return (
-    <div className="overlay" onClick={onClose}>
+    <div className="overlay" onClick={onClose} style={{ zIndex: 99999 }}>
       <div className="modal-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
         <button onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>×</button>
         <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '20px' }}>Educational Updates</h2>
@@ -406,7 +407,7 @@ function PrivacyModal({ onClose }: { onClose: () => void }) {
   const toggle = (key: keyof typeof toggles) => setToggles(p => ({ ...p, [key]: !p[key] }));
   const labels = { activity: 'Share Activity Data', emails: 'Marketing Emails', personalized: 'Personalised Recommendations', share: 'Share with Partner Colleges' };
   return (
-    <div className="overlay" onClick={onClose}>
+    <div className="overlay" onClick={onClose} style={{ zIndex: 99999 }}>
       <div className="modal-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
         <button onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>×</button>
         <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '20px' }}>Privacy & Security</h2>
@@ -437,7 +438,7 @@ function PrivacyModal({ onClose }: { onClose: () => void }) {
 function HelpModal({ onClose }: { onClose: () => void }) {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   return (
-    <div className="overlay" onClick={onClose}>
+    <div className="overlay" onClick={onClose} style={{ zIndex: 99999 }}>
       <div className="modal-sheet" onClick={e => e.stopPropagation()} style={{ position: 'relative' }}>
         <button onClick={onClose} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--primary-light)', color: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>×</button>
         <h2 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '20px' }}>Help Center & FAQs</h2>
@@ -549,6 +550,8 @@ export default function Profile() {
     { icon: <Edit3 size={20} />, label: 'Edit Profile Info', color: 'var(--primary)', bg: 'var(--primary-light)', modal: 'edit' },
     { icon: <Bell size={20} />, label: 'Counseling Alerts', color: '#f59e0b', bg: '#fef3c7', modal: 'notifications' },
     { icon: <Shield size={20} />, label: 'Privacy & Security', color: '#10b981', bg: '#d1fae5', modal: 'privacy' },
+    { icon: <ShieldCheck size={20} />, label: 'Privacy Policy', color: '#059669', bg: '#ecfdf5', route: '/privacy' },
+    { icon: <FileText size={20} />, label: 'Terms of Service', color: '#0284c7', bg: '#e0f2fe', route: '/terms' },
     { icon: <HelpCircle size={20} />, label: 'Help Center & FAQs', color: '#8b5cf6', bg: '#ede9fe', modal: 'help' },
   ];
 
@@ -1120,7 +1123,7 @@ export default function Profile() {
               {quickActions.map((action, i) => (
                 <button
                   key={i}
-                  onClick={() => setModal(action.modal)}
+                  onClick={() => action.route ? navigate(action.route) : setModal(action.modal || null)}
                   style={{
                     width: '100%', display: 'flex', alignItems: 'center', gap: '14px',
                     padding: '16px 20px', borderBottom: i < quickActions.length - 1 ? '1px solid var(--border)' : 'none',
@@ -1271,10 +1274,16 @@ export default function Profile() {
         </div>
       </div>
 
-      {modal === 'edit' && <EditModal currentUser={currentUser} onClose={() => setModal(null)} />}
-      {modal === 'notifications' && <NotificationsModal onClose={() => setModal(null)} />}
-      {modal === 'privacy' && <PrivacyModal onClose={() => setModal(null)} />}
-      {modal === 'help' && <HelpModal onClose={() => setModal(null)} />}
+      {typeof document !== 'undefined' &&
+        createPortal(
+          <>
+            {modal === 'edit' && <EditModal currentUser={currentUser} onClose={() => setModal(null)} />}
+            {modal === 'notifications' && <NotificationsModal onClose={() => setModal(null)} />}
+            {modal === 'privacy' && <PrivacyModal onClose={() => setModal(null)} />}
+            {modal === 'help' && <HelpModal onClose={() => setModal(null)} />}
+          </>,
+          document.body
+        )}
     </div>
   );
 }

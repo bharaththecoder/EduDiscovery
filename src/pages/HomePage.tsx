@@ -13,6 +13,7 @@ import { ActivityEvent, University, NewsArticle } from '@/types';
 import { HolographicBadge, MagneticButton, NeonCard } from '@/components/Animation3DComponents';
 import { parseRankToNumber, computeFitScore, getIntelligenceScores } from '@/utils/intelligenceEngine';
 import { getRecommendations, QuizAnswers } from '@/utils/quizAgent';
+import CounselorChatWidget from '@/components/ai/CounselorChatWidget';
 
 // ─── News Modal ───────────────────────────────────────────────
 function NewsModal({ article, onClose }: { article: NewsArticle; onClose: () => void }) {
@@ -669,6 +670,7 @@ export default function Home() {
       </div>
 
       {activeNews && createPortal(<NewsModal article={activeNews} onClose={() => setActiveNews(null)} />, document.body)}
+      <CounselorChatWidget universities={universities} />
     </div>
   );
 }

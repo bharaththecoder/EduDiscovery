@@ -36,6 +36,8 @@ const LandingPage = lazyWithRetry(() => import('@/pages/LandingPage'));
 const HomePage = lazyWithRetry(() => import('@/pages/HomePage'));
 const SearchPage = lazyWithRetry(() => import('@/pages/SearchPage'));
 const ComparePage = lazyWithRetry(() => import('@/pages/ComparePage'));
+const PrivacyPolicyPage = lazyWithRetry(() => import('@/pages/PrivacyPolicyPage'));
+const TermsOfServicePage = lazyWithRetry(() => import('@/pages/TermsOfServicePage'));
 const UniversityDetailPage = lazyWithRetry(() => import('@/pages/UniversityDetailPage'));
 const ProfilePage = lazyWithRetry(() => import('@/pages/ProfilePage'));
 const QuizPage = lazyWithRetry(() => import('@/pages/QuizPage'));
@@ -93,6 +95,8 @@ function App() {
                 <Route path="/university/:id" element={<UniversityDetailPage />} />
                 <Route path="/college/:id" element={<Navigate to="/university/:id" replace />} />
                 <Route path="/compare" element={<ComparePage />} />
+                <Route path="/privacy" element={<PrivacyPolicyPage />} />
+                <Route path="/terms" element={<TermsOfServicePage />} />
 
                 {/* Protected Routes: Require authentication for personalized dashboard & counseling tools */}
                 <Route element={<RequireAuth />}>
