@@ -1,5 +1,7 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { Capacitor } from '@capacitor/core';
+import { App as CapApp } from '@capacitor/app';
 import { useAuth } from '@/contexts/AuthContext';
 import Layout from '@/components/layout/Layout';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
@@ -76,6 +78,28 @@ const LoadingScreen = () => (
 
 function App() {
   const { currentUser } = useAuth();
+
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+    let listenerHandle: { remove: () => Promise<void> } | null = null;
+
+    CapApp.addListener('backButton', ({ canGoBack }) => {
+      const path = window.location.pathname;
+      if (canGoBack && path !== '/' && path !== '/home') {
+        window.history.back();
+      } else if (path !== '/' && path !== '/home') {
+        window.history.back();
+      } else {
+        CapApp.exitApp();
+      }
+    }).then((handle) => {
+      listenerHandle = handle;
+    });
+
+    return () => {
+      listenerHandle?.remove();
+    };
+  }, []);
 
   return (
     <ErrorBoundary>

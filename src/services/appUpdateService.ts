@@ -1,6 +1,6 @@
 import { Capacitor } from '@capacitor/core';
 
-export const CURRENT_APP_VERSION = '1.0.1';
+export const CURRENT_APP_VERSION = '1.0.0';
 const GITHUB_REPO = 'bharaththecoder/EduDiscovery';
 const CACHE_KEY = 'edudiscovery_release_info';
 const DISMISSED_KEY = 'edudiscovery_update_dismissed_tag';

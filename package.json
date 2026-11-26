@@ -1,6 +1,6 @@
 {
   "name": "edu-discovery",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -33,6 +33,7 @@
   "dependencies": {
     "@capacitor-firebase/authentication": "^8.6.0",
     "@capacitor/android": "^8.5.3",
+    "@capacitor/app": "^8.1.2",
     "@capacitor/cli": "^8.5.3",
     "@capacitor/core": "^8.5.3",
     "@radix-ui/react-slot": "^1.2.4",
