@@ -80,6 +80,19 @@ function App() {
   const { currentUser } = useAuth();
 
   useEffect(() => {
+    // Preload core navigation chunks in the background so tab switches are instant
+    const timer = setTimeout(() => {
+      import('@/pages/HomePage');
+      import('@/pages/SearchPage');
+      import('@/pages/WebOptionsPage');
+      import('@/pages/ComparePage');
+      import('@/pages/WishlistPage');
+      import('@/pages/ProfilePage');
+    }, 600);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
     let listenerHandle: { remove: () => Promise<void> } | null = null;
 
